@@ -6,11 +6,11 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema } from "@/lib/zod/schema";
+import { signupSchema } from "@/lib/zod/schema";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 
-export type FormInputs = z.infer<typeof loginSchema>;
+export type FormInputs = z.infer<typeof signupSchema>;
 
 export function SignUpForm({
   className,
@@ -21,7 +21,7 @@ export function SignUpForm({
     handleSubmit,
     formState: { errors },
   } = useForm<FormInputs>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(signupSchema),
   });
 
   const { role } = props;
