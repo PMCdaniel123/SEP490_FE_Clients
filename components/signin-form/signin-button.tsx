@@ -11,12 +11,15 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "../ui/separator";
 import { SignInForm } from "./signin-form";
+import { useState } from "react";
 
 export function SignInButton({
   className,
 }: React.ComponentPropsWithoutRef<"div">) {
+  const [open, isOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={isOpen}>
       <DialogTrigger asChild>
         <Button className={cn("text-white py-6 font-semibold", className)}>
           Đăng nhập
@@ -29,7 +32,7 @@ export function SignInButton({
           </DialogTitle>
           <Separator />
         </DialogHeader>
-        <SignInForm />
+        <SignInForm onClose={() => isOpen(false)} />
       </DialogContent>
     </Dialog>
   );

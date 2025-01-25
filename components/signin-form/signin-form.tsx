@@ -1,26 +1,27 @@
-import { Button } from "../ui/button";
 import { Mail } from "lucide-react";
 import { signinSchema } from "@/lib/zod/schema";
 import { z } from "zod";
 import { toast } from "react-toastify";
 import { cn } from "@/lib/utils";
-import { useRef, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Button } from "../ui/button";
+import { SignInFormProps } from "@/types";
 
 export type FormInputs = z.infer<typeof signinSchema>;
-export function SignInForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<"form">) {
-  const [phone, setPhone] = useState<string>("");
-  const phoneRef = useRef<HTMLInputElement>(null);
-  const [isFocused, setIsFocused] = useState(false);
 
-  const handleFocus = () => setIsFocused(true);
-  const handleBlur = () => setIsFocused(false);
+export function SignInForm({ className, onClose }: SignInFormProps) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormInputs>({
+    resolver: zodResolver(signinSchema),
+  });
 
-  const handleSignIn = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    console.log("Phone: ", phone);
+  const handleSignIn: SubmitHandler<FormInputs> = (data) => {
+    console.log(data);
+    onClose();
     toast.success("Đăng nhập thành công!", {
       position: "bottom-right",
       autoClose: 2000,
@@ -29,7 +30,7 @@ export function SignInForm({
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      theme: "colorful",
+      theme: "dark",
     });
   };
 
@@ -39,7 +40,7 @@ export function SignInForm({
         "flex flex-col items-center space-x-2 gap-4 mt-8 w-full",
         className
       )}
-      {...props}
+      onSubmit={handleSubmit(handleSignIn)}
     >
       <div className="flex w-full justify-center items-center">
         <div className="flex w-1/3 rounded-s-full items-center border overflow-hidden">
@@ -60,16 +61,10 @@ export function SignInForm({
             type="tel"
             className="py-2 focus:outline-none"
             placeholder="Nhập số điện thoại"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            ref={phoneRef}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
+            {...register("phone")}
           />
-          {!isFocused && phone.length < 10 && phone.length > 0 && (
-            <p className="text-red-500 text-xs">
-              Số điện thoại phải có ít nhất 10 ký tự
-            </p>
+          {errors.phone && (
+            <p className="text-red-500 text-xs">{errors.phone.message}</p>
           )}
         </div>
       </div>
@@ -83,7 +78,6 @@ export function SignInForm({
           <Button
             className="w-full text-white py-6 font-semibold"
             type="submit"
-            onClick={handleSignIn}
           >
             Tiếp tục
           </Button>
