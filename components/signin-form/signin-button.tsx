@@ -10,12 +10,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Separator } from "../ui/separator";
-import { SignInForm } from "./signin-form";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/stores";
 import { PasswordForm } from "./password-form";
 import { logout } from "@/stores/slices/authSlice";
+import { PhoneForm } from "./phone-form";
+import { EmailForm } from "./email-form";
 
 export function SignInButton({
   className,
@@ -33,7 +34,12 @@ export function SignInButton({
   return (
     <Dialog open={open} onOpenChange={isOpen}>
       <DialogTrigger asChild>
-        <Button className={cn("text-white py-6 font-semibold", className)}>
+        <Button
+          className={cn(
+            "bg-transparent p-0 m-0 border-0 shadow-none rounded-none hover:bg-transparent h-auto",
+            className
+          )}
+        >
           Đăng nhập
         </Button>
       </DialogTrigger>
@@ -44,9 +50,9 @@ export function SignInButton({
           </DialogTitle>
           <Separator />
         </DialogHeader>
-        {loginStep === "emailOrPhone" ? (
-          <SignInForm onClose={() => isOpen(false)} />
-        ) : (
+        {loginStep === "phone" && <PhoneForm onClose={() => isOpen(false)} />}
+        {loginStep === "email" && <EmailForm onClose={() => isOpen(false)} />}
+        {loginStep === "password" && (
           <PasswordForm onClose={() => isOpen(false)} />
         )}
       </DialogContent>

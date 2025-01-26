@@ -1,33 +1,32 @@
 import { Mail } from "lucide-react";
-import { signinSchema } from "@/lib/zod/schema";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { SignInFormProps, ValidatePayload } from "@/types";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/stores";
-import { validateEmailOrPhone } from "@/stores/slices/authSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/stores";
+import { phoneSchema } from "@/lib/zod/schema";
+import { setLoginStep, validatePhone } from "@/stores/slices/authSlice";
 
-export type FormInputs = z.infer<typeof signinSchema>;
+export type FormInputs = z.infer<typeof phoneSchema>;
 
-export function SignInForm({ className }: SignInFormProps) {
+export function PhoneForm({ className }: SignInFormProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const { loginStep } = useSelector((state: RootState) => state.auth);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormInputs>({
-    resolver: zodResolver(signinSchema),
+    resolver: zodResolver(phoneSchema),
   });
 
   const handleContinue: SubmitHandler<FormInputs> = async (data) => {
     try {
       const payload: ValidatePayload = { input: data.phone };
-      await dispatch(validateEmailOrPhone(payload)).unwrap();
+      await dispatch(validatePhone(payload)).unwrap();
     } catch {
       alert("Invalid email or phone number");
     }
@@ -62,14 +61,14 @@ export function SignInForm({ className }: SignInFormProps) {
             placeholder="Nhập số điện thoại"
             {...register("phone")}
           />
-          {loginStep === "emailOrPhone" && errors.phone && (
+          {errors.phone && (
             <p className="text-red-500 text-xs">{errors.phone.message}</p>
           )}
         </div>
       </div>
       <div className="flex items-center w-full mb-4">
         <p className="text-xs text-fifth">
-          Nhập sdt bên trên để đăng nhập vào tài khoản WorkHive
+          Nhập số điện thoại bên trên để đăng nhập vào tài khoản WorkHive
         </p>
       </div>
       <div className="flex items-center w-full sm:gap-10">
@@ -81,7 +80,10 @@ export function SignInForm({ className }: SignInFormProps) {
             Tiếp tục
           </Button>
         </div>
-        <div className="flex items-center gap-2 w-2/3 text-fourth hover:text-primary cursor-pointer text-sm">
+        <div
+          className="flex items-center gap-2 w-2/3 text-fourth hover:text-primary cursor-pointer text-sm"
+          onClick={() => dispatch(setLoginStep("email"))}
+        >
           <Mail /> <span className="font-semibold">Đăng nhập bằng Email</span>
         </div>
       </div>

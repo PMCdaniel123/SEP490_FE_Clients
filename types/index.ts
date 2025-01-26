@@ -6,3 +6,8 @@ export interface SignInFormProps {
 export interface ValidatePayload {
   input: string;
 }
+
+export interface MenuItemProps {
+  name: string;
+  path: string;
+}
