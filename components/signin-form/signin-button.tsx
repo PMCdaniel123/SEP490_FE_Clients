@@ -11,12 +11,24 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "../ui/separator";
 import { SignInForm } from "./signin-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/stores";
+import { PasswordForm } from "./password-form";
+import { logout } from "@/stores/slices/authSlice";
 
 export function SignInButton({
   className,
 }: React.ComponentPropsWithoutRef<"div">) {
   const [open, isOpen] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { loginStep } = useSelector((state: RootState) => state.auth);
+
+  useEffect(() => {
+    if (!open) {
+      dispatch(logout());
+    }
+  }, [open, dispatch]);
 
   return (
     <Dialog open={open} onOpenChange={isOpen}>
@@ -32,7 +44,11 @@ export function SignInButton({
           </DialogTitle>
           <Separator />
         </DialogHeader>
-        <SignInForm onClose={() => isOpen(false)} />
+        {loginStep === "emailOrPhone" ? (
+          <SignInForm onClose={() => isOpen(false)} />
+        ) : (
+          <PasswordForm onClose={() => isOpen(false)} />
+        )}
       </DialogContent>
     </Dialog>
   );

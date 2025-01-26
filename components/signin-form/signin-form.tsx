@@ -1,16 +1,21 @@
 import { Mail } from "lucide-react";
 import { signinSchema } from "@/lib/zod/schema";
 import { z } from "zod";
-import { toast } from "react-toastify";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
-import { SignInFormProps } from "@/types";
+import { SignInFormProps, ValidatePayload } from "@/types";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/stores";
+import { validateEmailOrPhone } from "@/stores/slices/authSlice";
 
 export type FormInputs = z.infer<typeof signinSchema>;
 
-export function SignInForm({ className, onClose }: SignInFormProps) {
+export function SignInForm({ className }: SignInFormProps) {
+  const dispatch = useDispatch<AppDispatch>();
+  const { loginStep } = useSelector((state: RootState) => state.auth);
+
   const {
     register,
     handleSubmit,
@@ -19,19 +24,13 @@ export function SignInForm({ className, onClose }: SignInFormProps) {
     resolver: zodResolver(signinSchema),
   });
 
-  const handleSignIn: SubmitHandler<FormInputs> = (data) => {
-    console.log(data);
-    onClose();
-    toast.success("Đăng nhập thành công!", {
-      position: "bottom-right",
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
+  const handleContinue: SubmitHandler<FormInputs> = async (data) => {
+    try {
+      const payload: ValidatePayload = { input: data.phone };
+      await dispatch(validateEmailOrPhone(payload)).unwrap();
+    } catch {
+      alert("Invalid email or phone number");
+    }
   };
 
   return (
@@ -40,7 +39,7 @@ export function SignInForm({ className, onClose }: SignInFormProps) {
         "flex flex-col items-center space-x-2 gap-4 mt-8 w-full",
         className
       )}
-      onSubmit={handleSubmit(handleSignIn)}
+      onSubmit={handleSubmit(handleContinue)}
     >
       <div className="flex w-full justify-center items-center">
         <div className="flex w-1/3 rounded-s-full items-center border overflow-hidden">
@@ -63,7 +62,7 @@ export function SignInForm({ className, onClose }: SignInFormProps) {
             placeholder="Nhập số điện thoại"
             {...register("phone")}
           />
-          {errors.phone && (
+          {loginStep === "emailOrPhone" && errors.phone && (
             <p className="text-red-500 text-xs">{errors.phone.message}</p>
           )}
         </div>
