@@ -1,9 +1,11 @@
 "use client";
 
+import SearchBanner from "@/components/search-banner/search-banner";
+
 function HomePage() {
   return (
     <div>
-      <h1>Welcome to the Home Page</h1>
+      <SearchBanner />
     </div>
   );
 }
