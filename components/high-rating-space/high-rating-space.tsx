@@ -7,6 +7,7 @@ import { Card } from "../ui/card";
 import { CardContent } from "../ui/card-content";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import Loader from "../loader/Loader";
 
 interface Workspace {
   title: string;
@@ -40,7 +41,11 @@ export default function HighRatingSpace() {
   }, []);
 
   if (loading) {
-    return <div className="text-center">Loading...</div>;
+    return (
+      <div className="text-center">
+        <Loader />
+      </div>
+    );
   }
 
   const settings = {
