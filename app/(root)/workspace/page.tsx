@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Filter, Heart, Users, Ruler, Bed } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { CardContent } from "@/components/ui/card-content";
@@ -8,6 +9,7 @@ import Loader from "@/components/loader/Loader";
 import Pagination from "@/components/pagination/pagination";
 
 interface Workspace {
+  id: string;
   title: string;
   address: string;
   price: string;
@@ -25,6 +27,7 @@ export default function PropertyGrid() {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState<string[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     fetch("https://67271c49302d03037e6f6a3b.mockapi.io/spaceList")
@@ -33,7 +36,6 @@ export default function PropertyGrid() {
         setWorkspaces(data);
         setLoading(false);
 
-        // Extract unique room types for categories
         const uniqueCategories = Array.from(
           new Set(data.map((workspace: Workspace) => workspace.roomType))
         );
@@ -96,7 +98,8 @@ export default function PropertyGrid() {
         {paginatedWorkspaces.map((workspace, index) => (
           <Card
             key={index}
-            className="relative overflow-hidden rounded-lg shadow-md"
+            className="relative overflow-hidden rounded-lg shadow-md transition-transform transform hover:scale-105 cursor-pointer"
+            onClick={() => router.push(`/workspace/${workspace.id}`)}
           >
             <div className="relative">
               <img
