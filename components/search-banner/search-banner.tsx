@@ -44,9 +44,7 @@ export default function SearchBanner() {
           )}
         </div>
 
-        {/* Search Bar */}
         <div className="mt-8 bg-white text-black rounded-full flex items-center shadow-lg p-2 w-[85%] max-w-5xl">
-          {/* Địa điểm */}
           <Dropdown
             label="Địa điểm"
             value={location}

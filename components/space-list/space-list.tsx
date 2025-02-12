@@ -5,6 +5,7 @@ import { Heart, Users, Ruler, Bed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "../ui/card";
 import { CardContent } from "../ui/card-content";
+import Loader from "../loader/Loader";
 
 interface Workspace {
   title: string;
@@ -34,7 +35,11 @@ export default function SpaceList() {
   }, []);
 
   if (loading) {
-    return <div className="text-center">Loading...</div>;
+    return (
+      <div className="text-center">
+        <Loader />
+      </div>
+    );
   }
 
   return (
