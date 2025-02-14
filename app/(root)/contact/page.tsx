@@ -94,7 +94,7 @@ function Contact() {
             />
           </div>
           <div className="md:col-span-1">
-            <label className="block text-sm font-medium">Email</label>
+            <label className="block text-sm font-medium pt-5">Email</label>
             <input
               type="email"
               name="email"
