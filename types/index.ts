@@ -92,3 +92,15 @@ export interface CustomerProps {
   gender: string;
   dateOfBirth: string;
 }
+
+export interface WorkspaceProps {
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+  image: string;
+  capacity: number;
+  category: string;
+  rating: number;
+  status: string;
+}

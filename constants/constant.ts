@@ -4,6 +4,7 @@ import {
   NewCustomerItemProps,
   ReviewItemProps,
   TopWorkspace,
+  WorkspaceProps,
 } from "@/types";
 
 export const menuItems: MenuItemProps[] = [
@@ -238,5 +239,41 @@ export const customerList: CustomerProps[] = [
     location: "Hà Nội, Việt Nam",
     gender: "Nữ",
     dateOfBirth: "14/02/2005",
+  },
+];
+
+export const workspaceList: WorkspaceProps[] = [
+  {
+    id: "1",
+    name: "Không gian 1",
+    description: "Mô tả 1",
+    price: "100000",
+    image: "/banner.png",
+    capacity: 10,
+    category: "Bàn cá nhân",
+    rating: 4.5,
+    status: "Hoạt động",
+  },
+  {
+    id: "2",
+    name: "Không gian 2",
+    description: "Mô tả 2",
+    price: "200000",
+    image: "/banner1.png",
+    capacity: 20,
+    category: "Văn phòng",
+    rating: 4.5,
+    status: "Hoạt động",
+  },
+  {
+    id: "3",
+    name: "Không gian 3",
+    description: "Mô tả 3",
+    price: "300000",
+    image: "/banner2.jpg",
+    capacity: 30,
+    category: "Phòng hội thảo",
+    rating: 4.5,
+    status: "Ngưng hoạt động",
   },
 ];
