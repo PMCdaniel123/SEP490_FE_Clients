@@ -1,14 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { MenuItemProps } from "@/types";
 import { AlignJustify, ChevronDown, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { SignInButton } from "../signin-form/signin-button";
+import { Modal } from "antd";
+import SignupPage from "@/app/(auth)/sign-up/page";
 
 function Header() {
   const pathname = usePathname();
   const router = useRouter();
+  const [isSignUpModalOpen, setSignUpModalOpen] = useState(false);
 
   const menuItems: MenuItemProps[] = [
     { name: "Trang chủ", path: "/" },
@@ -94,14 +98,14 @@ function Header() {
           </span>
           <ul className="absolute hidden group-hover:block top-3/4 right-0 z-10 mt-2 w-auto gap-3 rounded-md bg-white shadow-lg p-4">
             <li>
-              <Link
-                href="/sign-up?role=customer"
+              <button
+                onClick={() => setSignUpModalOpen(true)}
                 className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-seventh hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
               >
                 <div className="text-base font-semibold leading-none text-primary">
                   Đăng ký
                 </div>
-              </Link>
+              </button>
             </li>
             <li>
               <div className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-seventh hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
@@ -111,6 +115,16 @@ function Header() {
           </ul>
         </div>
       </div>
+
+      {/* Sign Up Modal */}
+      <Modal
+        visible={isSignUpModalOpen}
+        onCancel={() => setSignUpModalOpen(false)}
+        footer={null}
+        width={900}
+      >
+        <SignupPage />
+      </Modal>
     </header>
   );
 }
