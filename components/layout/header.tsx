@@ -12,11 +12,7 @@ import SignupPage from "@/app/(auth)/sign-up/page";
 function Header() {
   const pathname = usePathname();
   const router = useRouter();
-
-  const menuItems: MenuItemProps[] = [
-    { name: "Trang chủ", path: "/" },
-    { name: "Giới thiệu", path: "/about" },
-  ];
+  const [isSignUpModalOpen, setSignUpModalOpen] = useState(false);
 
   return (
     <header className="bg-primary py-4 px-20 flex items-center justify-between text-white">
