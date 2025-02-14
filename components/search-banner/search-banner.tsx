@@ -12,7 +12,6 @@ export default function SearchBanner() {
 
   return (
     <div className="relative w-full h-[500px]">
-      {/* Background Image */}
       <Image
         src="/banner.png"
         alt="Banner"
@@ -21,11 +20,9 @@ export default function SearchBanner() {
         className="brightness-75"
       />
 
-      {/* Overlay Content */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
         <h2 className="text-6xl font-extrabold tracking-wide">WorkHive</h2>
 
-        {/* Tabs */}
         <div className="flex gap-6 mt-6 text-lg font-medium">
           {["Bàn cá nhân", "Văn phòng", "Phòng họp", "Phòng hội thảo"].map(
             (tab) => (
@@ -57,7 +54,6 @@ export default function SearchBanner() {
             <DropdownItem value="danang">Đà Nẵng</DropdownItem>
           </Dropdown>
 
-          {/* Thời gian */}
           <Dropdown
             label="Thời gian"
             value={time}
@@ -70,7 +66,6 @@ export default function SearchBanner() {
             <DropdownItem value="full">Cả ngày</DropdownItem>
           </Dropdown>
 
-          {/* Loại không gian */}
           <Dropdown
             label="Loại không gian"
             value={space}
@@ -83,7 +78,6 @@ export default function SearchBanner() {
             <DropdownItem value="meeting">Phòng họp</DropdownItem>
           </Dropdown>
 
-          {/* Số lượng người */}
           <Dropdown
             label="Số lượng người"
             value={people}
@@ -96,7 +90,6 @@ export default function SearchBanner() {
             <DropdownItem value="11-20">11-20 người</DropdownItem>
           </Dropdown>
 
-          {/* Nút tìm kiếm */}
           <button className="bg-gray-800 text-white p-4 rounded-full shadow-md transition-transform transform hover:scale-105 active:scale-95">
             <Search size={22} />
           </button>
@@ -106,7 +99,6 @@ export default function SearchBanner() {
   );
 }
 
-/* Component Dropdown */
 interface DropdownProps {
   label: string;
   value: string;
@@ -147,7 +139,6 @@ function Dropdown({
   );
 }
 
-/* Component Dropdown Item */
 interface DropdownItemProps {
   value: string;
   children: React.ReactNode;

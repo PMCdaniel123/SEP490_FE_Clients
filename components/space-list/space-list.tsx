@@ -47,7 +47,6 @@ export default function SpaceList() {
                 alt={workspace.title}
                 className="w-full h-48 object-cover"
               />
-              {/* Price overlay (inside the image) */}
               <div className="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white px-3 py-1 rounded-md text-sm">
                 {workspace.price}
               </div>

@@ -9,10 +9,10 @@ export default function SignupPage() {
   const role = searchParams?.get("role") || "customer";
 
   return (
-    <div className="grid min-h-svh lg:grid-cols-2">
+    <div className="grid min-h-[80vh] lg:grid-cols-2">
       <div className="relative hidden bg-muted lg:block">
         <Image
-          src="/signup.png"
+          src="/signup.jpg"
           alt="Image"
           fill
           className="object-cover dark:brightness-[0.2] dark:grayscale"
