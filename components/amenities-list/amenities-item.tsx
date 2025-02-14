@@ -1,11 +1,6 @@
-import { LucideIcon } from "lucide-react";
+import { LabelIconProps } from "@/types";
 
-interface AmenitiesItemProps {
-  icon: LucideIcon;
-  label: string;
-}
-
-function AmenitiesItem({ icon: Icon, label }: AmenitiesItemProps) {
+function AmenitiesItem({ icon: Icon, label }: LabelIconProps) {
   return (
     <div className="flex items-center gap-4 mb-2">
       <Icon size={24} />

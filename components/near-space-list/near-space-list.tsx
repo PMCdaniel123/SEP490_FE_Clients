@@ -8,19 +8,10 @@ import { CardContent } from "../ui/card-content";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Loader from "../loader/Loader";
-
-interface Workspace {
-  title: string;
-  address: string;
-  price: string;
-  image: string;
-  roomCapacity: number;
-  roomType: string;
-  roomSize: number;
-}
+import { WorkspaceNotRating } from "@/types";
 
 export default function NearSpaceList() {
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [workspaces, setWorkspaces] = useState<WorkspaceNotRating[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-function WorkshopManagement() {
+function CheckoutPage() {
     return (
         <div>
             Enter
@@ -6,4 +6,4 @@ function WorkshopManagement() {
     );
 }
 
-export default WorkshopManagement;
+export default CheckoutPage;

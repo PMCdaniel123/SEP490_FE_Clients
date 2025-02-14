@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { MenuItemProps } from "@/types";
 import { AlignJustify, ChevronDown, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { SignInButton } from "../signin-form/signin-button";
+import { menuItems } from "@/constants/constant";
 import { Modal } from "antd";
 import SignupPage from "@/app/(auth)/sign-up/page";
 
@@ -13,11 +13,6 @@ function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const [isSignUpModalOpen, setSignUpModalOpen] = useState(false);
-
-  const menuItems: MenuItemProps[] = [
-    { name: "Trang chủ", path: "/" },
-    { name: "Liên hệ", path: "/contact" },
-  ];
 
   return (
     <header className="bg-primary py-4 px-20 flex items-center justify-between text-white">

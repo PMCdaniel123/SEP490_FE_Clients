@@ -3,7 +3,7 @@
 import SidebarItem from "@/components/layout/sidebar-item";
 import {
   Bell,
-  CalendarRange,
+  Boxes,
   DiamondPercent,
   Home,
   KeyRound,
@@ -21,7 +21,7 @@ function sidebar() {
         <SidebarItem icon={Home} label="Trang chủ" href="/owners" />
         <SidebarItem
           icon={UsersRound}
-          label="Quản lý người dùng"
+          label="Quản lý khách hàng"
           href="/owners/customers"
         />
         <SidebarItem
@@ -30,9 +30,9 @@ function sidebar() {
           href="/owners/workspaces"
         />
         <SidebarItem
-          icon={CalendarRange}
-          label="Quản lý workshop"
-          href="/owners/workshops"
+          icon={Boxes}
+          label="Quản lý tiện ích"
+          href="/owners/amenities"
         />
         <SidebarItem
           icon={DiamondPercent}

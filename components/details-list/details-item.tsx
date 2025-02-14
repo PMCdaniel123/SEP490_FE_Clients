@@ -1,11 +1,6 @@
-import { LucideIcon } from "lucide-react";
+import { LabelIconProps } from "@/types";
 
-interface DetailsItemProps {
-  icon: LucideIcon;
-  label: string;
-}
-
-function DetailsItem({ icon: Icon, label }: DetailsItemProps) {
+function DetailsItem({ icon: Icon, label }: LabelIconProps) {
   return (
     <div className="flex flex-col items-center text-center bg-[#EFF0F2] justify-center h-40 rounded-xl text-fourth gap-2">
       <Icon size={44} />
