@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={montserrat.className}>
         <Providers>
-          <div className="flex h-screen bg-third p-4 gap-4">
+          <div className="flex bg-third p-4 gap-4 min-h-screen">
             <Sidebar />
             <main className="flex-1">
               <TopNav />

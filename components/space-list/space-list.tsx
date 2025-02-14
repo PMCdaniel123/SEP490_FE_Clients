@@ -6,19 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "../ui/card";
 import { CardContent } from "../ui/card-content";
 import Loader from "../loader/Loader";
-
-interface Workspace {
-  title: string;
-  address: string;
-  price: string;
-  image: string;
-  roomCapacity: number;
-  roomType: string;
-  roomSize: number;
-}
+import { WorkspaceNotRating } from "@/types";
 
 export default function SpaceList() {
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [workspaces, setWorkspaces] = useState<WorkspaceNotRating[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

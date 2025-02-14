@@ -19,3 +19,65 @@ export interface SidebarItemProps {
   label: string;
   href: string;
 }
+
+export interface TopWorkspace {
+  id: string;
+  title: string;
+  booking: string;
+  price: string;
+  image: string;
+  amount: number;
+  roomType: string;
+}
+
+export interface Workspace {
+  title: string;
+  address: string;
+  price: string;
+  image: string;
+  roomCapacity: number;
+  roomType: string;
+  roomSize: number;
+  rating: number;
+}
+
+export interface WorkspaceNotRating {
+  title: string;
+  address: string;
+  price: string;
+  image: string;
+  roomCapacity: number;
+  roomType: string;
+  roomSize: number;
+}
+
+export interface NewCustomerItemProps {
+  avatar: string;
+  name: string;
+  address: string;
+}
+
+export interface ReviewItemProps {
+  avatar: string;
+  name: string;
+  date: string;
+  rating: number;
+  review: string;
+}
+
+export interface LabelIconProps {
+  icon: LucideIcon;
+  label: string;
+}
+
+export interface DetailsListProps {
+  roomCapacity: number;
+  roomSize: number;
+  roomType: string;
+};
+
+export interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}

@@ -8,17 +8,7 @@ import { CardContent } from "../ui/card-content";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Loader from "../loader/Loader";
-
-interface Workspace {
-  title: string;
-  address: string;
-  price: string;
-  image: string;
-  roomCapacity: number;
-  roomType: string;
-  roomSize: number;
-  rating: number;
-}
+import { Workspace } from "@/types";
 
 export default function HighRatingSpace() {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);

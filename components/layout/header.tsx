@@ -1,19 +1,14 @@
 "use client";
 
-import { MenuItemProps } from "@/types";
 import { AlignJustify, ChevronDown, UserRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { SignInButton } from "../signin-form/signin-button";
+import { menuItems } from "@/constants/constant";
 
 function Header() {
   const pathname = usePathname();
   const router = useRouter();
-
-  const menuItems: MenuItemProps[] = [
-    { name: "Trang chủ", path: "/" },
-    { name: "Giới thiệu", path: "/about" },
-  ];
 
   return (
     <header className="bg-primary py-4 px-20 flex items-center justify-between text-white">

@@ -1,13 +1,6 @@
+import { ReviewItemProps } from "@/types";
 import { Star } from "lucide-react";
 import Image from "next/image";
-
-interface ReviewItemProps {
-  avatar: string;
-  name: string;
-  date: string;
-  rating: number;
-  review: string;
-}
 
 function ReviewItem({ avatar, name, date, rating, review }: ReviewItemProps) {
   return (

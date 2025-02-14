@@ -1,11 +1,5 @@
+import { policies } from "@/constants/constant";
 import { ShieldEllipsis } from "lucide-react";
-
-const policies = [
-  "Không mang đồ ăn thức uống từ bên ngoài vào",
-  "Không mang theo động vật",
-  "Không gây ồn ào xung quanh",
-  "Không khói thuốc",
-];
 
 function PoliciesList() {
   return (
