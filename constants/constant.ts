@@ -1,4 +1,5 @@
 import {
+  CustomerProps,
   MenuItemProps,
   NewCustomerItemProps,
   ReviewItemProps,
@@ -107,17 +108,17 @@ export const newCustomers: NewCustomerItemProps[] = [
   {
     avatar: "/logo.png",
     name: "Nguyễn Văn A",
-    address: "Hà Nội, Việt Nam",
+    location: "Hà Nội, Việt Nam",
   },
   {
     avatar: "/logo.png",
     name: "Nguyễn Văn B",
-    address: "Hà Nội, Việt Nam",
+    location: "Hà Nội, Việt Nam",
   },
   {
     avatar: "/logo.png",
     name: "Nguyễn Văn C",
-    address: "Hà Nội, Việt Nam",
+    location: "Hà Nội, Việt Nam",
   },
 ];
 
@@ -175,4 +176,67 @@ export const policies = [
   "Không mang theo động vật",
   "Không gây ồn ào xung quanh",
   "Không khói thuốc",
+];
+
+export const customerList: CustomerProps[] = [
+  {
+    id: "1",
+    avatar: "/logo.png",
+    name: "Nguyễn Văn A",
+    phone: "0123456789",
+    email: "RyYKd@example.com",
+    location: "Hà Nội, Việt Nam",
+    gender: "Nam",
+    dateOfBirth: "14/02/2005",
+  },
+  {
+    id: "2",
+    avatar: "/logo.png",
+    name: "Nguyễn Văn B",
+    phone: "0123456789",
+    email: "RyYKd@example.com",
+    location: "Hà Nội, Việt Nam",
+    gender: "Nữ",
+    dateOfBirth: "14/02/2005",
+  },
+  {
+    id: "3",
+    avatar: "/logo.png",
+    name: "Nguyễn Văn C",
+    phone: "0123456789",
+    email: "RyYKd@example.com",
+    location: "Hà Nội, Việt Nam",
+    gender: "Nam",
+    dateOfBirth: "14/02/2005",
+  },
+  {
+    id: "4",
+    avatar: "/logo.png",
+    name: "Nguyễn Văn D",
+    phone: "0123456789",
+    email: "RyYKd@example.com",
+    location: "Hà Nội, Việt Nam",
+    gender: "Nữ",
+    dateOfBirth: "14/02/2005",
+  },
+  {
+    id: "5",
+    avatar: "/logo.png",
+    name: "Nguyễn Văn E",
+    phone: "0123456789",
+    email: "RyYKd@example.com",
+    location: "Hà Nội, Việt Nam",
+    gender: "Nam",
+    dateOfBirth: "14/02/2005",
+  },
+  {
+    id: "6",
+    avatar: "/logo.png",
+    name: "Nguyễn Văn F",
+    phone: "0123456789",
+    email: "RyYKd@example.com",
+    location: "Hà Nội, Việt Nam",
+    gender: "Nữ",
+    dateOfBirth: "14/02/2005",
+  },
 ];

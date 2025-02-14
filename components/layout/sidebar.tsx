@@ -21,7 +21,7 @@ function sidebar() {
         <SidebarItem icon={Home} label="Trang chủ" href="/owners" />
         <SidebarItem
           icon={UsersRound}
-          label="Quản lý người dùng"
+          label="Quản lý khách hàng"
           href="/owners/customers"
         />
         <SidebarItem

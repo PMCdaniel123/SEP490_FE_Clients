@@ -54,7 +54,7 @@ export interface WorkspaceNotRating {
 export interface NewCustomerItemProps {
   avatar: string;
   name: string;
-  address: string;
+  location: string;
 }
 
 export interface ReviewItemProps {
@@ -80,4 +80,15 @@ export interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+}
+
+export interface CustomerProps {
+  id: string;
+  avatar: string;
+  name: string;
+  phone: string;
+  email: string;
+  location: string;
+  gender: string;
+  dateOfBirth: string;
 }
