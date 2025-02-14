@@ -12,7 +12,7 @@ function Header() {
 
   const menuItems: MenuItemProps[] = [
     { name: "Trang chủ", path: "/" },
-    { name: "Giới thiệu", path: "/about" },
+    { name: "Liên hệ", path: "/contact" },
   ];
 
   return (
