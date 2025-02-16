@@ -13,6 +13,11 @@ function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const [isSignUpModalOpen, setSignUpModalOpen] = useState(false);
+  const [isSignInModalOpen, setSignInModalOpen] = useState(false);
+
+  const handleCloseSignUpForm = () => {
+    setSignUpModalOpen(false);
+  };
 
   return (
     <header className="bg-primary py-4 px-20 flex items-center justify-between text-white">
@@ -103,23 +108,56 @@ function Header() {
               </button>
             </li>
             <li>
-              <div className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-seventh hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground">
-                <SignInButton className="text-base font-semibold leading-none text-primary" />
-              </div>
+              <button
+                onClick={() => {
+                  setSignInModalOpen(true);
+                  handleCloseSignUpForm();
+                }}
+                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-seventh hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+              >
+                <div className="text-base font-semibold leading-none text-primary">
+                  Đăng nhập
+                </div>
+              </button>
+            </li>
+            <li>
+              <Link
+                href="/checkout"
+                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-seventh hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+              >
+                <div className="text-base font-semibold leading-none text-primary">
+                  Checkout
+                </div>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/profile"
+                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-seventh hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+              >
+                <div className="text-base font-semibold leading-none text-primary">
+                  Profile
+                </div>
+              </Link>
             </li>
           </ul>
         </div>
       </div>
 
-      {/* Sign Up Modal */}
       <Modal
-        visible={isSignUpModalOpen}
+        open={isSignUpModalOpen}
         onCancel={() => setSignUpModalOpen(false)}
         footer={null}
         width={900}
       >
-        <SignupPage />
+        <SignupPage onCloseSignUpForm={handleCloseSignUpForm} />
       </Modal>
+
+      <SignInButton
+        open={isSignInModalOpen}
+        onOpenChange={setSignInModalOpen}
+        onCloseSignUpForm={handleCloseSignUpForm}
+      />
     </header>
   );
 }
