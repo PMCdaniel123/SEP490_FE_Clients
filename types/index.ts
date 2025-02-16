@@ -74,7 +74,7 @@ export interface DetailsListProps {
   roomCapacity: number;
   roomSize: number;
   roomType: string;
-};
+}
 
 export interface PaginationProps {
   currentPage: number;
@@ -103,4 +103,35 @@ export interface WorkspaceProps {
   category: string;
   rating: number;
   status: string;
+}
+
+export interface AmenityProps {
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+  image: string;
+  quantity: number;
+  status: string;
+}
+
+export interface BeverageProps {
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+  image: string;
+  category: string;
+  status: string;
+}
+
+export interface PromotionProps {
+  id: string;
+  code: string;
+  description: string;
+  discount: string;
+  quantity: number;
+  status: string;
+  startDate: string;
+  endDate: string;
 }
