@@ -39,7 +39,7 @@ export function SignInButton({
   return (
     <Modal
       title="Đăng nhập"
-      visible={open}
+      open={open}
       onCancel={() => onOpenChange(false)}
       footer={null}
     >
