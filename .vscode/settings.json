@@ -2,6 +2,7 @@
     "conventionalCommits.scopes": [
         "Workspace-page",
         "contact-page",
-        "profile-page"
+        "profile-page",
+        "checkout-page"
     ]
 }
