@@ -9,6 +9,7 @@ import {
   KeyRound,
   Sofa,
   UsersRound,
+  UtensilsCrossed,
 } from "lucide-react";
 
 function sidebar() {
@@ -33,6 +34,11 @@ function sidebar() {
           icon={Boxes}
           label="Quản lý tiện ích"
           href="/owners/amenities"
+        />
+        <SidebarItem
+          icon={UtensilsCrossed}
+          label="Quản lý thực đơn"
+          href="/owners/beverages"
         />
         <SidebarItem
           icon={DiamondPercent}
