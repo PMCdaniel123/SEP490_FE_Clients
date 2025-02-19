@@ -3,6 +3,7 @@
         "Workspace-page",
         "contact-page",
         "profile-page",
-        "checkout-page"
+        "checkout-page",
+        "notfound"
     ]
 }
