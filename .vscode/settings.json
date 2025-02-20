@@ -4,6 +4,7 @@
         "contact-page",
         "profile-page",
         "checkout-page",
-        "notfound"
+        "notfound",
+        "purchase-history"
     ]
 }

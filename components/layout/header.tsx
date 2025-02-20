@@ -125,7 +125,7 @@ function Header() {
                 className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-seventh hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
               >
                 <div className="text-base font-semibold leading-none text-primary">
-                  Checkout
+                  Thanh toán
                 </div>
               </Link>
             </li>
@@ -135,7 +135,17 @@ function Header() {
                 className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-seventh hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
               >
                 <div className="text-base font-semibold leading-none text-primary">
-                  Profile
+                  Hồ sơ
+                </div>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/purchase-history"
+                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-seventh hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+              >
+                <div className="text-base font-semibold leading-none text-primary">
+                  Lịch sử thanh toán
                 </div>
               </Link>
             </li>
