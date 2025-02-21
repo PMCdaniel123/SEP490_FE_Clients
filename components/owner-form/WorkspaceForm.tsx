@@ -18,7 +18,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { workspaceSchema } from "@/lib/zod/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ImageUpload from "../custom-ui/image-upload";
+import MultiImageUpload from "../custom-ui/multi-image-upload";
 
 export type FormInputs = z.infer<typeof workspaceSchema>;
 
@@ -49,7 +49,7 @@ function WorkspaceForm({ initialData }: WorkspaceFormProps) {
 
   return (
     <div className="flex flex-col">
-      <h1 className="text-xl font-bold text-primary flex items-center gap-4">
+      <h1 className="text-xl font-bold text-primary flex items-center gap-4 mt-4">
         <SquarePen />
         <span>Tạo mới không gian</span>
       </h1>
@@ -305,6 +305,38 @@ function WorkspaceForm({ initialData }: WorkspaceFormProps) {
             {...register("facilities")}
           />
         </div>
+        <div className="sm:col-span-1 flex flex-col gap-2 w-full">
+          <Label
+            htmlFor="category"
+            className="text-fourth font-bold text-base ml-6"
+          >
+            Trạng thái
+          </Label>
+          <Select
+            onValueChange={(value) => setValue("status", value as "1" | "2")}
+          >
+            <SelectTrigger className="py-6 px-4 rounded-md">
+              <SelectValue placeholder="Chọn trạng thái" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem
+                className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                value="1"
+              >
+                Hoạt động
+              </SelectItem>
+              <SelectItem
+                className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                value="2"
+              >
+                Ngừng hoạt động
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          {errors.status && (
+            <p className="text-red-500 text-xs">{errors.status.message}</p>
+          )}
+        </div>
         <div className="sm:col-span-2 flex flex-col gap-2 w-full">
           <Label
             htmlFor="facilities"
@@ -326,7 +358,7 @@ function WorkspaceForm({ initialData }: WorkspaceFormProps) {
           />
         </div>
         <div className="sm:col-span-2 flex flex-col gap-2 w-full">
-          <ImageUpload
+          <MultiImageUpload
             value={images}
             handleChange={(item) => setValue("images", [...images, item])}
             handleRemove={(tag) =>

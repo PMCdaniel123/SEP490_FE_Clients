@@ -96,13 +96,22 @@ export interface CustomerProps {
 export interface WorkspaceProps {
   id: string;
   name: string;
-  description: string;
-  price: string;
-  image: string;
-  capacity: number;
+  address: string;
+  googleMapUrl: string;
+  capacity: string;
   category: string;
+  area: string;
+  cleanTime: string;
+  description: string;
+  shortTermPrice: string;
+  longTermPrice: string;
+  facilities: string[];
+  policies: string[];
+  images: string[];
   rating: number;
   status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AmenityProps {
@@ -112,7 +121,10 @@ export interface AmenityProps {
   price: string;
   image: string;
   quantity: number;
+  category: string;
   status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface BeverageProps {
@@ -123,6 +135,8 @@ export interface BeverageProps {
   image: string;
   category: string;
   status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface PromotionProps {
@@ -130,8 +144,9 @@ export interface PromotionProps {
   code: string;
   description: string;
   discount: string;
-  quantity: number;
   status: string;
   startDate: string;
   endDate: string;
+  createdAt: string;
+  updatedAt: string;
 }

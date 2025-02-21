@@ -73,7 +73,7 @@ export default function WorkspaceTable<TData, TValue>({
   return (
     <div className="flex flex-col gap-4">
       <div className="mt-4 flex items-center justify-between">
-        <h1 className="font-bold">Danh sách không gian</h1>
+        <h1 className="font-bold text-primary text-xl">Danh sách không gian</h1>
         <Button
           className="flex items-center gap-2 text-white font-semibold"
           onClick={() => router.push("workspaces/new")}

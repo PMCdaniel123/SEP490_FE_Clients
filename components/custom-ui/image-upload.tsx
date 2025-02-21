@@ -6,86 +6,67 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { X } from "lucide-react";
 
-interface ImagePreview {
-  id: string;
-  file: File;
-}
-
 interface ImageUploadProps {
-  value: string[];
+  value: string;
   handleChange: (value: string) => void;
-  handleRemove: (value: string) => void;
+  handleRemove: () => void;
 }
 
 const ImageUpload = ({
-  value = [],
+  value,
   handleChange,
   handleRemove,
 }: ImageUploadProps) => {
-  const [images, setImages] = useState<ImagePreview[]>([]);
+  const [image, setImage] = useState<string>("");
 
   useEffect(() => {
-    const existingImages = value.map((url) => ({
-      id: url,
-      file: new File([], url),
-    }));
-    setImages(existingImages);
+    setImage(value);
   }, [value]);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const validImages = files.filter((file) => file.type.startsWith("image/"));
-
-    const imagePreviews = validImages.map((file) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith("image/")) {
       const url = URL.createObjectURL(file);
       handleChange(url);
-      return { id: url, file };
-    });
-
-    setImages((prevImages) => [...prevImages, ...imagePreviews]);
+      setImage(url);
+    }
   };
 
-  const removeImage = (id: string) => {
-    setImages((prevImages) => prevImages.filter((img) => img.id !== id));
-    handleRemove(id);
-    URL.revokeObjectURL(id);
+  const removeImage = () => {
+    handleRemove();
+    URL.revokeObjectURL(image);
+    setImage("");
   };
 
   return (
-    <div>
-      <Label htmlFor="images" className="text-fourth font-bold text-base ml-6">
+    <div className="flex flex-col gap-2">
+      <Label htmlFor="image" className="text-fourth font-bold text-base ml-6">
         Hình ảnh
       </Label>
       <Input
-        className="py-3 px-4 rounded-md file:bg-seventh border h-12"
-        id="images"
+        className="py-3 px-4 rounded-md file:bg-seventh border h-[50px]"
+        id="image"
         type="file"
         accept="image/*"
-        multiple
         onChange={handleImageChange}
       />
 
-      <div className="flex flex-wrap gap-4 mt-4">
-        {images.map((img) => (
-          <div
-            key={img.id}
-            className="relative w-36 h-36 border rounded-md overflow-hidden"
+      {image && (
+        <div className="relative w-36 h-36 border rounded-md overflow-hidden mt-2">
+          <img
+            src={image}
+            alt="Preview"
+            className="w-full h-full object-cover"
+          />
+          <button
+            onClick={removeImage}
+            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+            type="button"
           >
-            <img
-              src={img.id}
-              alt="Preview"
-              className="w-full h-full object-cover"
-            />
-            <button
-              onClick={() => removeImage(img.id)}
-              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
-              type="button"
-            >
-              <X size={16} />
-            </button>
-          </div>
-        ))}
-      </div>
+            <X size={16} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

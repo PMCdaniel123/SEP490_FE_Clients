@@ -1,6 +1,6 @@
 "use client";
 
-import WorkspaceForm from "@/components/workspace/WorkspaceForm";
+import WorkspaceForm from "@/components/owner-form/WorkspaceForm";
 
 function NewWorkspace() {
   return (

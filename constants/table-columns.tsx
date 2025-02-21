@@ -260,7 +260,7 @@ export const WorkspaceTableColumns: ColumnDef<WorkspaceProps>[] = [
       return (
         <div className="flex items-center justify-center">
           <Image
-            src={row.original.image}
+            src={row.original.images[0]}
             alt={row.original.name}
             width={200}
             height={200}
@@ -270,8 +270,9 @@ export const WorkspaceTableColumns: ColumnDef<WorkspaceProps>[] = [
       );
     },
   },
+  { accessorKey: "longTermPrice", header: () => <p></p>, cell: () => <p></p> },
   {
-    accessorKey: "price",
+    accessorKey: "shortTermPrice",
     header: () => {
       return (
         <p className="text-black font-semibold text-base text-center">
@@ -280,21 +281,10 @@ export const WorkspaceTableColumns: ColumnDef<WorkspaceProps>[] = [
       );
     },
     cell: ({ row }) => {
-      return <p className="text-center font-medium">{row.getValue("price")}</p>;
-    },
-  },
-  {
-    accessorKey: "capacity",
-    header: () => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Sức chứa
+        <p className="text-center font-medium">
+          {row.getValue("shortTermPrice")} - {row.getValue("longTermPrice")}
         </p>
-      );
-    },
-    cell: ({ row }) => {
-      return (
-        <p className="text-center font-medium">{row.getValue("capacity")}</p>
       );
     },
   },
@@ -638,21 +628,6 @@ export const PromotionTableColumns: ColumnDef<PromotionProps>[] = [
     cell: ({ row }) => {
       return (
         <p className="text-center font-medium">{row.getValue("discount")}</p>
-      );
-    },
-  },
-  {
-    accessorKey: "quantity",
-    header: () => {
-      return (
-        <p className="text-black font-semibold text-base text-center">
-          Số lượng
-        </p>
-      );
-    },
-    cell: ({ row }) => {
-      return (
-        <p className="text-center font-medium">{row.getValue("quantity")}</p>
       );
     },
   },
