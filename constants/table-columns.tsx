@@ -22,6 +22,11 @@ import { ArrowUpDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+const formatDate = (dateStr: string): string => {
+  const [year, month, day] = dateStr.split("-");
+  return `${day}-${month}-${year}`;
+};
+
 export const topWorkspaceTableColumns: ColumnDef<TopWorkspace>[] = [
   {
     accessorKey: "name",
@@ -235,6 +240,13 @@ export const CustomerTableColumns: ColumnDef<CustomerProps>[] = [
   },
 ];
 
+const workspaceCategory: Record<string, string> = {
+  "1": "Bàn cá nhân",
+  "2": "Văn phòng",
+  "3": "Phòng họp",
+  "4": "Phòng hội thảo",
+};
+
 export const WorkspaceTableColumns: ColumnDef<WorkspaceProps>[] = [
   {
     accessorKey: "name",
@@ -299,7 +311,10 @@ export const WorkspaceTableColumns: ColumnDef<WorkspaceProps>[] = [
     },
     cell: ({ row }) => {
       return (
-        <p className="text-center font-medium">{row.getValue("category")}</p>
+        <p className="text-center font-medium">
+          {workspaceCategory[String(row.getValue("category"))] ||
+            "Không xác định"}
+        </p>
       );
     },
   },
@@ -332,15 +347,15 @@ export const WorkspaceTableColumns: ColumnDef<WorkspaceProps>[] = [
       );
     },
     cell: ({ row }) => {
-      return row.getValue("status") === "Hoạt động" ? (
+      return row.getValue("status") === "1" ? (
         <p className="text-center font-medium flex items-center justify-center text-green-500">
           <Dot size={60} />
-          <span>{row.getValue("status")}</span>
+          <span>Hoạt động</span>
         </p>
       ) : (
         <p className="text-center font-medium flex items-center justify-center text-red-500">
           <Dot size={60} />
-          <span>{row.getValue("status")}</span>
+          <span>Ngừng hoạt động</span>
         </p>
       );
     },
@@ -435,6 +450,21 @@ export const AmenityTableColumns: ColumnDef<AmenityProps>[] = [
     },
   },
   {
+    accessorKey: "category",
+    header: () => {
+      return (
+        <p className="text-black font-semibold text-base text-center">
+          Phân loại
+        </p>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <p className="text-center font-medium">{row.getValue("category")}</p>
+      );
+    },
+  },
+  {
     accessorKey: "status",
     header: ({ column }) => {
       return (
@@ -448,15 +478,15 @@ export const AmenityTableColumns: ColumnDef<AmenityProps>[] = [
       );
     },
     cell: ({ row }) => {
-      return row.getValue("status") === "Hoạt động" ? (
+      return row.getValue("status") === "1" ? (
         <p className="text-center font-medium flex items-center justify-center text-green-500">
           <Dot size={60} />
-          <span>{row.getValue("status")}</span>
+          <span>Hoạt động</span>
         </p>
       ) : (
         <p className="text-center font-medium flex items-center justify-center text-red-500">
           <Dot size={60} />
-          <span>{row.getValue("status")}</span>
+          <span>Ngừng hoạt động</span>
         </p>
       );
     },
@@ -486,6 +516,10 @@ export const AmenityTableColumns: ColumnDef<AmenityProps>[] = [
   },
 ];
 
+const beverageCategory: Record<string, string> = {
+  "1": "Thức uống",
+  "2": "Đồ ăn",
+};
 export const BeverageTableColumns: ColumnDef<BeverageProps>[] = [
   {
     accessorKey: "name",
@@ -545,7 +579,10 @@ export const BeverageTableColumns: ColumnDef<BeverageProps>[] = [
     },
     cell: ({ row }) => {
       return (
-        <p className="text-center font-medium">{row.getValue("category")}</p>
+        <p className="text-center font-medium">
+          {beverageCategory[String(row.getValue("category"))] ||
+            "Không xác định"}
+        </p>
       );
     },
   },
@@ -563,15 +600,15 @@ export const BeverageTableColumns: ColumnDef<BeverageProps>[] = [
       );
     },
     cell: ({ row }) => {
-      return row.getValue("status") === "Hoạt động" ? (
+      return row.getValue("status") === "1" ? (
         <p className="text-center font-medium flex items-center justify-center text-green-500">
           <Dot size={60} />
-          <span>{row.getValue("status")}</span>
+          <span>Hoạt động</span>
         </p>
       ) : (
         <p className="text-center font-medium flex items-center justify-center text-red-500">
           <Dot size={60} />
-          <span>{row.getValue("status")}</span>
+          <span>Ngừng hoạt động</span>
         </p>
       );
     },
@@ -627,7 +664,7 @@ export const PromotionTableColumns: ColumnDef<PromotionProps>[] = [
     },
     cell: ({ row }) => {
       return (
-        <p className="text-center font-medium">{row.getValue("discount")}</p>
+        <p className="text-center font-medium">{row.getValue("discount")}%</p>
       );
     },
   },
@@ -642,7 +679,9 @@ export const PromotionTableColumns: ColumnDef<PromotionProps>[] = [
     },
     cell: ({ row }) => {
       return (
-        <p className="text-center font-medium">{row.getValue("startDate")}</p>
+        <p className="text-center font-medium">
+          {formatDate(row.getValue("startDate"))}
+        </p>
       );
     },
   },
@@ -657,7 +696,9 @@ export const PromotionTableColumns: ColumnDef<PromotionProps>[] = [
     },
     cell: ({ row }) => {
       return (
-        <p className="text-center font-medium">{row.getValue("endDate")}</p>
+        <p className="text-center font-medium">
+          {formatDate(row.getValue("endDate"))}
+        </p>
       );
     },
   },
@@ -675,15 +716,15 @@ export const PromotionTableColumns: ColumnDef<PromotionProps>[] = [
       );
     },
     cell: ({ row }) => {
-      return row.getValue("status") === "Hoạt động" ? (
+      return row.getValue("status") === "1" ? (
         <p className="text-center font-medium flex items-center justify-center text-green-500">
           <Dot size={60} />
-          <span>{row.getValue("status")}</span>
+          <span>Hoạt động</span>
         </p>
       ) : (
         <p className="text-center font-medium flex items-center justify-center text-red-500">
           <Dot size={60} />
-          <span>{row.getValue("status")}</span>
+          <span>Ngừng hoạt động</span>
         </p>
       );
     },

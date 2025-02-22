@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 
 interface MultiTextProps {
   placeholder: string;
-  value: string[];
+  value: string[] | undefined;
   handleChange: (value: string) => void;
   handleRemove: (value: string) => void;
 }

@@ -3,7 +3,6 @@
 
 import { useState, useEffect, ChangeEvent } from "react";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { X } from "lucide-react";
 
 interface ImageUploadProps {
@@ -40,9 +39,6 @@ const ImageUpload = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor="image" className="text-fourth font-bold text-base ml-6">
-        Hình ảnh
-      </Label>
       <Input
         className="py-3 px-4 rounded-md file:bg-seventh border h-[50px]"
         id="image"
@@ -50,9 +46,8 @@ const ImageUpload = ({
         accept="image/*"
         onChange={handleImageChange}
       />
-
       {image && (
-        <div className="relative w-36 h-36 border rounded-md overflow-hidden mt-2">
+        <div className="relative w-36 h-36 border rounded-md overflow-hidden">
           <img
             src={image}
             alt="Preview"

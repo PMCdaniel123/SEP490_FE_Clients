@@ -120,7 +120,7 @@ export interface AmenityProps {
   description: string;
   price: string;
   image: string;
-  quantity: number;
+  quantity: string;
   category: string;
   status: string;
   createdAt: string;

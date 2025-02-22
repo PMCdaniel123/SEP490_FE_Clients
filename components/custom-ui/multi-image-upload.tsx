@@ -3,7 +3,6 @@
 
 import { useState, useEffect, ChangeEvent } from "react";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { X } from "lucide-react";
 
 interface ImagePreview {
@@ -12,7 +11,7 @@ interface ImagePreview {
 }
 
 interface ImageUploadProps {
-  value: string[];
+  value: string[] | undefined;
   handleChange: (value: string) => void;
   handleRemove: (value: string) => void;
 }
@@ -53,9 +52,6 @@ const MultiImageUpload = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor="images" className="text-fourth font-bold text-base ml-6">
-        Hình ảnh
-      </Label>
       <Input
         className="py-3 px-4 rounded-md file:bg-seventh border h-[50px]"
         id="images"
@@ -64,8 +60,7 @@ const MultiImageUpload = ({
         multiple
         onChange={handleImageChange}
       />
-
-      <div className="flex flex-wrap gap-4 mt-4">
+      <div className="flex flex-wrap gap-4">
         {images.map((img) => (
           <div
             key={img.id}
