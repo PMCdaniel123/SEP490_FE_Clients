@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import HighRatingSpace from "@/components/high-rating-space/high-rating-space";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Modal } from "antd";
 import "react-datepicker/dist/react-datepicker.css";
 import TimeSelect from "@/components/selection/time-select";
 import DateSelect from "@/components/selection/date-select";
@@ -15,6 +16,14 @@ import DetailsList from "@/components/details-list/details-list";
 import AmenitiesList from "@/components/amenities-list/amenities-list";
 import ReviewList from "@/components/review-list/review-list";
 import PoliciesList from "@/components/policies-list/policies-list";
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  LinkedinShareButton,
+  FacebookIcon,
+  TwitterIcon,
+  LinkedinIcon,
+} from "react-share";
 
 interface Workspace {
   id: string;
@@ -33,6 +42,7 @@ const WorkspaceDetail = () => {
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -50,6 +60,22 @@ const WorkspaceDetail = () => {
         setLoading(false);
       });
   }, [workspaceId]);
+
+  const handleShare = () => {
+    setIsShareModalOpen(true);
+  };
+
+  const handleCopyUrl = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(
+      () => {
+        alert("Sao chép liên kết thành công!");
+      },
+      (error) => {
+        console.error("Error copying URL", error);
+      }
+    );
+  };
 
   if (loading) {
     return (
@@ -97,7 +123,11 @@ const WorkspaceDetail = () => {
             </div>
             <div className="flex items-center justify-center gap-8 text-primary">
               <Heart size={32} />
-              <Share2 size={32} />
+              <Share2
+                size={32}
+                onClick={handleShare}
+                className="cursor-pointer"
+              />
             </div>
           </div>
 
@@ -217,6 +247,50 @@ const WorkspaceDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Share Modal */}
+      <Modal
+        title="Chia sẻ liên kết"
+        open={isShareModalOpen}
+        onCancel={() => setIsShareModalOpen(false)}
+        footer={null}
+      >
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-full p-4 border rounded-lg shadow-md">
+            <img
+              src={workspace.image}
+              alt={workspace.title}
+              className="w-full h-48 object-cover rounded-lg mb-4"
+            />
+            <h3 className="text-lg font-bold">{workspace.title}</h3>
+            <p className="text-sm text-gray-500">{workspace.address}</p>
+            <p className="text-sm text-gray-500">{workspace.price}</p>
+          </div>
+          <Button
+            onClick={handleCopyUrl}
+            className=" text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          >
+            <Share2 size={20} />
+            Sao chép liên kết
+          </Button>
+          <div className="flex items-center gap-2">
+            <Separator className="w-10" />
+            <span className="text-gray-500">HOẶC</span>
+            <Separator className="w-10" />
+          </div>
+          <div className="flex gap-4">
+            <FacebookShareButton url={window.location.href}>
+              <FacebookIcon size={40} round />
+            </FacebookShareButton>
+            <TwitterShareButton url={window.location.href}>
+              <TwitterIcon size={40} round />
+            </TwitterShareButton>
+            <LinkedinShareButton url={window.location.href}>
+              <LinkedinIcon size={40} round />
+            </LinkedinShareButton>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
