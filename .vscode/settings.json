@@ -6,6 +6,7 @@
         "checkout-page",
         "notfound",
         "purchase-history",
-        "your-booking"
+        "your-booking",
+        "workspace-detail"
     ]
 }
