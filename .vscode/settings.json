@@ -3,6 +3,10 @@
         "Workspace-page",
         "contact-page",
         "profile-page",
-        "checkout-page"
+        "checkout-page",
+        "notfound",
+        "purchase-history",
+        "your-booking",
+        "workspace-detail"
     ]
 }

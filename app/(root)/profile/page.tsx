@@ -38,8 +38,7 @@ function Profile() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-12 flex gap-8">
-      {/* Profile Sidebar */}
+    <div className="max-w-7xl mx-auto px-6 py-12 flex gap-8 ">
       <div className="w-1/3 bg-gray-100 p-6 rounded-lg text-center">
         <div className="w-24 h-24 mx-auto bg-gray-300 rounded-full overflow-hidden">
           {avatar ? (
@@ -80,7 +79,6 @@ function Profile() {
         </div>
       </div>
 
-      {/* Profile Details */}
       <div className="w-2/3">
         {!isEditing ? (
           <div>

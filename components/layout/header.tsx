@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AlignJustify, ChevronDown, UserRound } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { SignInButton } from "../signin-form/signin-button";
 import { menuItems } from "@/constants/constant";
 import { Modal } from "antd";
@@ -11,7 +11,7 @@ import SignupPage from "@/app/(auth)/sign-up/page";
 
 function Header() {
   const pathname = usePathname();
-  const router = useRouter();
+
   const [isSignUpModalOpen, setSignUpModalOpen] = useState(false);
   const [isSignInModalOpen, setSignInModalOpen] = useState(false);
 
@@ -20,7 +20,7 @@ function Header() {
   };
 
   return (
-    <header className="bg-primary py-4 px-20 flex items-center justify-between text-white">
+    <header className="bg-primary py-4 px-20 flex items-center justify-between text-white relative z-50">
       <h1 className="text-3xl font-extrabold">WorkHive</h1>
       <nav className="hidden md:flex items-center justify-around space-x-12 md:gap-8">
         {menuItems.map((item) => (
@@ -49,7 +49,7 @@ function Header() {
             </span>
           </div>
 
-          <ul className="absolute hidden group-hover:block top-3/4 left-0 z-10 mt-2 w-[400px] gap-3 rounded-md bg-white shadow-lg p-4">
+          <ul className="absolute hidden group-hover:block top-3/4 left-0 z-50 mt-2 w-[400px] gap-3 rounded-md bg-white shadow-lg p-4">
             <li>
               <Link
                 href="/workspace"
@@ -83,12 +83,11 @@ function Header() {
         </Link>
       </nav>
       <div className="flex items-center space-x-4">
-        <button
-          className="bg-fourth text-white px-6 py-3 rounded-full shadow hover:bg-fifth"
-          onClick={() => router.push(`/sign-up?role=owner`)}
-        >
-          Trở thành doanh nghiệp
-        </button>
+        <Link href="/become-owner" className="font-medium">
+          <button className="bg-fourth text-white px-6 py-3 rounded-full shadow hover:bg-fifth">
+            Trở thành doanh nghiệp
+          </button>
+        </Link>
         <div className="relative group flex items-center rounded-full bg-white pl-3 p-1 gap-2">
           <span className="text-fourth mx-2">
             <AlignJustify size={28} />
@@ -96,7 +95,7 @@ function Header() {
           <span className="rounded-full bg-fourth p-1">
             <UserRound size={32} />
           </span>
-          <ul className="absolute hidden group-hover:block top-3/4 right-0 z-10 mt-2 w-auto gap-3 rounded-md bg-white shadow-lg p-4">
+          <ul className="absolute hidden group-hover:block top-3/4 right-0 z-50 mt-2 w-auto gap-3 rounded-md bg-white shadow-lg p-4">
             <li>
               <button
                 onClick={() => setSignUpModalOpen(true)}
@@ -126,7 +125,7 @@ function Header() {
                 className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-seventh hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
               >
                 <div className="text-base font-semibold leading-none text-primary">
-                  Checkout
+                  Thanh toán
                 </div>
               </Link>
             </li>
@@ -136,7 +135,27 @@ function Header() {
                 className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-seventh hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
               >
                 <div className="text-base font-semibold leading-none text-primary">
-                  Profile
+                  Hồ sơ
+                </div>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/purchase-history"
+                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-seventh hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+              >
+                <div className="text-base font-semibold leading-none text-primary">
+                  Lịch sử thanh toán
+                </div>
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/your-booking"
+                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-seventh hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+              >
+                <div className="text-base font-semibold leading-none text-primary">
+                  Đặt chỗ của bạn
                 </div>
               </Link>
             </li>
