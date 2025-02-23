@@ -70,7 +70,7 @@ export default function CustomerTable<TData, TValue>({
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="font-bold mt-4">Danh sách khách hàng</h1>
+      <h1 className="font-bold mt-4 text-primary text-xl">Danh sách khách hàng</h1>
       <Separator className="mb-4" />
       <div className="flex items-center">
         <Input

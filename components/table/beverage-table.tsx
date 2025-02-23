@@ -73,7 +73,7 @@ export default function BeverageTable<TData, TValue>({
   return (
     <div className="flex flex-col gap-4">
       <div className="mt-4 flex items-center justify-between">
-        <h1 className="font-bold">Danh sách thực đơn</h1>
+        <h1 className="font-bold text-primary text-xl">Danh sách thực đơn</h1>
         <Button
           className="flex items-center gap-2 text-white font-semibold"
           onClick={() => router.push("beverages/new")}
