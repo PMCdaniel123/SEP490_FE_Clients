@@ -99,7 +99,6 @@ export const promotionSchema = z
     description: z.string().min(3, "Mô tả món phải có ít nhất 3 ký tự"),
     discount: z
       .string()
-
       .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
         message: "Giảm giá phải lớn hơn 0",
       }),
@@ -113,3 +112,46 @@ export const promotionSchema = z
     message: "Ngày kết thúc phải lớn hơn ngày bắt đầu",
     path: ["endDate"],
   });
+
+export const identifySchema = z.object({
+  name: z.string().min(3, "Họ và tên phải có ít nhất 3 ký tự"),
+  number: z
+    .string()
+    .min(12, "Số căn cước công dân phải có 12 chữ số")
+    .max(12, "Số căn cước công dân phải có 12 chữ số")
+    .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+      message: "Số căn cước công dân phải có 12 chữ số",
+    }),
+  dateOfBirth: z.string().nonempty("Vui lòng chọn ngày sinh"),
+  gender: z.string({
+    required_error: "Vui lòng chọn giới tính hợp lệ",
+  }),
+  nationality: z.string().nonempty("Vui lòng nhập quốc tịch"),
+  placeOfOrigin: z.string().nonempty("Vui lòng nhập quê quán"),
+  placeOfResidence: z.string().nonempty("Vui lòng nhập nơi thường trú"),
+  dateOfExpiry: z.string().nonempty("Vui lòng chọn ngày hết hạn"),
+  dateOfCreation: z.string().nonempty("Vui lòng chọn ngày tạo cccd"),
+  file: z.string().url("Vui lòng tải lên một file hợp lệ"),
+});
+
+export const socialSchema = z.object({
+  facebook: z.string().url("Vui lòng nhập đường dẫn hợp lệ"),
+  instagram: z.string().url("Vui lòng nhập đường dẫn hợp lệ"),
+  twitter: z.string().url("Vui lòng nhập đường dẫn hợp lệ"),
+  youtube: z.string().url("Vui lòng nhập đường dẫn hợp lệ"),
+  other: z.string().url("Vui lòng nhập đường dẫn hợp lệ"),
+});
+
+export const licenseSchema = z.object({
+  name: z.string().nonempty("Vui lòng nhập tên doanh nghiệp"),
+  number: z.string().nonempty("Vui lòng nhập mã số doanh nghiệp"),
+  address: z
+    .string()
+    .nonempty("Vui lòng nhập địa chỉ trụ sở chính của doanh nghiệp"),
+  charterCapital: z
+    .string()
+    .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+      message: "Vốn tiền lệ phải lớn hơn 0",
+    }),
+  file: z.string().url("Vui lòng tải lên một file hợp lệ"),
+});

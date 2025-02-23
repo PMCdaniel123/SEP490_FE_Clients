@@ -1,6 +1,6 @@
 "use client";
 
-import { Save, SquarePen } from "lucide-react";
+import { Info, Save, SquarePen } from "lucide-react";
 import { Separator } from "../ui/separator";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -28,6 +28,12 @@ import {
   FormMessage,
 } from "../ui/form";
 import { useEffect } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 interface WorkspaceFormProps {
   initialData?: WorkspaceProps | null;
@@ -328,8 +334,20 @@ function WorkspaceForm({ initialData }: WorkspaceFormProps) {
               name="facilities"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-fourth font-bold text-base ml-6">
-                    Cơ sở vật chất
+                  <FormLabel className="text-fourth font-bold text-base ml-6 flex gap-4 items-center">
+                    <span>Cơ sở vật chất</span>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info size={20} className="text-primary" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-white font-medium">
+                            Enter để tạo mới
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </FormLabel>
                   <FormControl>
                     <MultiText
@@ -394,8 +412,20 @@ function WorkspaceForm({ initialData }: WorkspaceFormProps) {
               name="policies"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-fourth font-bold text-base ml-6">
-                    Quy định chung
+                  <FormLabel className="text-fourth font-bold text-base ml-6 flex gap-4 items-center">
+                    <span>Quy định chung</span>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info size={20} className="text-primary" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-white font-medium">
+                            Enter để tạo mới
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </FormLabel>
                   <FormControl>
                     <MultiText
@@ -422,8 +452,20 @@ function WorkspaceForm({ initialData }: WorkspaceFormProps) {
               name="images"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-fourth font-bold text-base ml-6">
-                    Hình ảnh
+                  <FormLabel className="text-fourth font-bold text-base ml-6 flex gap-4 items-center">
+                    <span>Hình ảnh</span>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info size={20} className="text-primary" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="text-white font-medium">
+                            Có thể thêm nhiều hình ảnh
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </FormLabel>
                   <FormControl>
                     <MultiImageUpload

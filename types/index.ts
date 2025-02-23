@@ -150,3 +150,40 @@ export interface PromotionProps {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface IdentifyProps {
+  id: string;
+  name: string;
+  number: string;
+  dateOfBirth: string;
+  gender: string;
+  nationality: string;
+  placeOfOrigin: string;
+  placeOfResidence: string;
+  dateOfExpiry: string;
+  dateOfCreation: string;
+  file: string;
+}
+
+export interface SocialProps {
+  id: string;
+  facebook: string;
+  instagram: string;
+  twitter: string;
+  youtube: string;
+  other: string;
+}
+
+export interface LicenseProps {
+  id: string;
+  name: string;
+  number: string;
+  address: string;
+  charterCapital: string;
+  file: string;
+}
+
+export interface PhoneProps {
+  id: string;
+  phone: string;
+}

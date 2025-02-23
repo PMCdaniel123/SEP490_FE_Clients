@@ -1,36 +1,13 @@
 "use client";
 
+import AuthItem from "@/components/owner-form/authentication-form/auth-item";
+import IdentifyForm from "@/components/owner-form/authentication-form/IdentifyForm";
+import LicenseForm from "@/components/owner-form/authentication-form/LicenseForm";
+import PhoneForm from "@/components/owner-form/authentication-form/PhoneForm";
+import SocialForm from "@/components/owner-form/authentication-form/SocialForm";
 import { IdCard, FileText, Phone, Waypoints } from "lucide-react";
 
-interface VerificationItemProps {
-  icon: React.ReactNode;
-  title: string;
-  onClick: () => void;
-}
-
-const VerificationItem: React.FC<VerificationItemProps> = ({
-  icon,
-  title,
-  onClick,
-}) => (
-  <div className="flex items-center justify-between bg-seventh p-4 rounded-md mb-4">
-    <div className="flex items-center gap-3">
-      {icon}
-      <span className="text-base font-medium">{title}</span>
-    </div>
-    <button
-      onClick={onClick}
-      className="bg-primary text-white font-medium text-base px-8 py-3 rounded-full hover:bg-secondary transition"
-    >
-      Nộp
-    </button>
-  </div>
-);
-
 function AuthenticationManagement() {
-  const handleSubmit = (type: string) => {
-    console.log(`${type} submitted`);
-  };
   return (
     <div className="p-4 bg-white rounded-xl">
       <h1 className="text-xl font-bold text-center text-primary mt-10">
@@ -42,28 +19,28 @@ function AuthenticationManagement() {
       </p>
 
       <div className="mt-10">
-        <VerificationItem
-          icon={<IdCard className="w-6 h-6 text-gray-600" />}
+        <AuthItem
+          icon={IdCard}
           title="Căn cước công dân"
-          onClick={() => handleSubmit("Căn cước công dân")}
+          form={<IdentifyForm onSubmit={() => {}} />}
         />
 
-        <VerificationItem
-          icon={<Waypoints className="w-6 h-6 text-gray-600" />}
+        <AuthItem
+          icon={Waypoints}
           title="Tài khoản mạng xã hội"
-          onClick={() => handleSubmit("Tài khoản mạng xã hội")}
+          form={<SocialForm onSubmit={() => {}} />}
         />
 
-        <VerificationItem
-          icon={<FileText className="w-6 h-6 text-gray-600" />}
+        <AuthItem
+          icon={FileText}
           title="Giấy phép kinh doanh"
-          onClick={() => handleSubmit("Giấy phép kinh doanh")}
+          form={<LicenseForm onSubmit={() => {}} />}
         />
 
-        <VerificationItem
-          icon={<Phone className="w-6 h-6 text-gray-600" />}
+        <AuthItem
+          icon={Phone}
           title="Xác thực số điện thoại"
-          onClick={() => handleSubmit("Xác thực số điện thoại")}
+          form={<PhoneForm onSubmit={() => {}} />}
         />
       </div>
     </div>
