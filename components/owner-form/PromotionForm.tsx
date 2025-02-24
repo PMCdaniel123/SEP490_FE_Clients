@@ -60,9 +60,9 @@ function PromotionForm({ initialData }: PromotionFormProps) {
       <h1 className="text-xl font-bold text-primary flex items-center gap-4 mt-4">
         <SquarePen />
         {initialData ? (
-          <span>Chỉnh sửa mã khuyến mại</span>
+          <span>Chỉnh sửa mã khuyến mãi</span>
         ) : (
-          <span>Tạo mới mã khuyến mại</span>
+          <span>Tạo mới mã khuyến mãi</span>
         )}
       </h1>
       <Separator className="mt-4 mb-8 bg-primary" />
@@ -80,12 +80,12 @@ function PromotionForm({ initialData }: PromotionFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-fourth font-bold text-base ml-6">
-                        Mã khuyến mại
+                        Mã khuyến mãi
                       </FormLabel>
                       <FormControl>
                         <Input
                           className="py-6 px-4 rounded-md file:bg-seventh"
-                          placeholder="Nhập mã khuyến mại..."
+                          placeholder="Nhập mã khuyến mãi..."
                           {...field}
                         />
                       </FormControl>

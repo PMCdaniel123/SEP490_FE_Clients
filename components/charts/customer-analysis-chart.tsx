@@ -44,7 +44,7 @@ export default function CustomerAnalysisChart() {
   return (
     <Card className="flex flex-col h-full">
       <CardHeader className="items-center mt-4">
-        <CardTitle>Phân tích người dùng</CardTitle>
+        <CardTitle>Số lượng khách hàng</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer config={chartConfig} className="mx-auto aspect-square">

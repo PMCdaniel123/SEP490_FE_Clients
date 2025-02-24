@@ -11,7 +11,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
-import { Ban, Dot, Eye, MoreHorizontal, UserRoundPen } from "lucide-react";
+import { Ban, Eye, MoreHorizontal } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -113,23 +113,29 @@ export const topWorkspaceTableColumns: ColumnDef<TopWorkspace>[] = [
 export const CustomerTableColumns: ColumnDef<CustomerProps>[] = [
   {
     accessorKey: "name",
-    header: () => (
-      <div className="text-black font-semibold text-base text-center">
-        Họ và tên
-      </div>
-    ),
+    header: ({ column }) => {
+      return (
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Họ và tên</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
+      );
+    },
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <Image
             src={row.original.avatar}
             alt=""
-            width={50}
-            height={50}
+            width={46}
+            height={46}
             className="border rounded-full"
           />
           <div>
-            <p className="font-semibold text-base">{row.original.name}</p>
+            <p className="font-medium text-base">{row.original.name}</p>
           </div>
         </div>
       );
@@ -137,11 +143,15 @@ export const CustomerTableColumns: ColumnDef<CustomerProps>[] = [
   },
   {
     accessorKey: "phone",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Số điện thoại
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Số điện thoại</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -150,9 +160,15 @@ export const CustomerTableColumns: ColumnDef<CustomerProps>[] = [
   },
   {
     accessorKey: "email",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">Email</p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Email</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -161,31 +177,20 @@ export const CustomerTableColumns: ColumnDef<CustomerProps>[] = [
   },
   {
     accessorKey: "location",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Địa chỉ
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Địa chỉ</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
       return (
         <p className="text-center font-medium">{row.getValue("location")}</p>
-      );
-    },
-  },
-  {
-    accessorKey: "dateOfBirth",
-    header: () => {
-      return (
-        <p className="text-black font-semibold text-base text-center">
-          Ngày sinh
-        </p>
-      );
-    },
-    cell: ({ row }) => {
-      return (
-        <p className="text-center font-medium">{row.getValue("dateOfBirth")}</p>
       );
     },
   },
@@ -230,9 +235,6 @@ export const CustomerTableColumns: ColumnDef<CustomerProps>[] = [
             <li className="px-4 rounded-sm flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer">
               <Ban size={16} /> <span>Chặn</span>
             </li>
-            <li className="px-4 rounded-sm flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer">
-              <UserRoundPen size={16} /> <span>Khiếu nại</span>
-            </li>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -250,11 +252,15 @@ const workspaceCategory: Record<string, string> = {
 export const WorkspaceTableColumns: ColumnDef<WorkspaceProps>[] = [
   {
     accessorKey: "name",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Tên không gian
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Tên không gian</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -274,8 +280,8 @@ export const WorkspaceTableColumns: ColumnDef<WorkspaceProps>[] = [
           <Image
             src={row.original.images[0]}
             alt={row.original.name}
-            width={200}
-            height={200}
+            width={160}
+            height={160}
             className="object-cover rounded-md"
           />
         </div>
@@ -285,11 +291,15 @@ export const WorkspaceTableColumns: ColumnDef<WorkspaceProps>[] = [
   { accessorKey: "longTermPrice", header: () => <p></p>, cell: () => <p></p> },
   {
     accessorKey: "shortTermPrice",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Đơn giá
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Đơn giá</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -302,11 +312,15 @@ export const WorkspaceTableColumns: ColumnDef<WorkspaceProps>[] = [
   },
   {
     accessorKey: "category",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Loại không gian
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Loại không gian</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -320,11 +334,15 @@ export const WorkspaceTableColumns: ColumnDef<WorkspaceProps>[] = [
   },
   {
     accessorKey: "rating",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Đánh giá
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Đánh giá</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -339,7 +357,7 @@ export const WorkspaceTableColumns: ColumnDef<WorkspaceProps>[] = [
       return (
         <div
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-black font-semibold text-base text-center items-center flex justify-center gap-2 cursor-pointer"
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
         >
           <p>Trạng thái</p>
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -349,12 +367,10 @@ export const WorkspaceTableColumns: ColumnDef<WorkspaceProps>[] = [
     cell: ({ row }) => {
       return row.getValue("status") === "1" ? (
         <p className="text-center font-medium flex items-center justify-center text-green-500">
-          <Dot size={60} />
           <span>Hoạt động</span>
         </p>
       ) : (
         <p className="text-center font-medium flex items-center justify-center text-red-500">
-          <Dot size={60} />
           <span>Ngừng hoạt động</span>
         </p>
       );
@@ -389,11 +405,15 @@ export const WorkspaceTableColumns: ColumnDef<WorkspaceProps>[] = [
 export const AmenityTableColumns: ColumnDef<AmenityProps>[] = [
   {
     accessorKey: "name",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Tên tiện ích
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Tên tiện ích</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -413,8 +433,8 @@ export const AmenityTableColumns: ColumnDef<AmenityProps>[] = [
           <Image
             src={row.original.image}
             alt={row.original.name}
-            width={200}
-            height={200}
+            width={160}
+            height={160}
             className="object-cover rounded-md"
           />
         </div>
@@ -423,11 +443,15 @@ export const AmenityTableColumns: ColumnDef<AmenityProps>[] = [
   },
   {
     accessorKey: "price",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Đơn giá
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Đơn giá</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -436,11 +460,15 @@ export const AmenityTableColumns: ColumnDef<AmenityProps>[] = [
   },
   {
     accessorKey: "quantity",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Số lượng
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Số lượng</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -451,11 +479,15 @@ export const AmenityTableColumns: ColumnDef<AmenityProps>[] = [
   },
   {
     accessorKey: "category",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Phân loại
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Phân loại</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -480,12 +512,10 @@ export const AmenityTableColumns: ColumnDef<AmenityProps>[] = [
     cell: ({ row }) => {
       return row.getValue("status") === "1" ? (
         <p className="text-center font-medium flex items-center justify-center text-green-500">
-          <Dot size={60} />
           <span>Hoạt động</span>
         </p>
       ) : (
         <p className="text-center font-medium flex items-center justify-center text-red-500">
-          <Dot size={60} />
           <span>Ngừng hoạt động</span>
         </p>
       );
@@ -523,11 +553,15 @@ const beverageCategory: Record<string, string> = {
 export const BeverageTableColumns: ColumnDef<BeverageProps>[] = [
   {
     accessorKey: "name",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Tên món
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Tên món</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -547,8 +581,8 @@ export const BeverageTableColumns: ColumnDef<BeverageProps>[] = [
           <Image
             src={row.original.image}
             alt={row.original.name}
-            width={200}
-            height={200}
+            width={160}
+            height={160}
             className="object-cover rounded-md"
           />
         </div>
@@ -557,11 +591,15 @@ export const BeverageTableColumns: ColumnDef<BeverageProps>[] = [
   },
   {
     accessorKey: "price",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Đơn giá
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Đơn giá</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -570,11 +608,15 @@ export const BeverageTableColumns: ColumnDef<BeverageProps>[] = [
   },
   {
     accessorKey: "category",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Phân loại
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Phân loại</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -602,12 +644,10 @@ export const BeverageTableColumns: ColumnDef<BeverageProps>[] = [
     cell: ({ row }) => {
       return row.getValue("status") === "1" ? (
         <p className="text-center font-medium flex items-center justify-center text-green-500">
-          <Dot size={60} />
           <span>Hoạt động</span>
         </p>
       ) : (
         <p className="text-center font-medium flex items-center justify-center text-red-500">
-          <Dot size={60} />
           <span>Ngừng hoạt động</span>
         </p>
       );
@@ -617,7 +657,6 @@ export const BeverageTableColumns: ColumnDef<BeverageProps>[] = [
     id: "actions",
     cell: ({ row }) => {
       const beverage = row.original;
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -642,11 +681,15 @@ export const BeverageTableColumns: ColumnDef<BeverageProps>[] = [
 export const PromotionTableColumns: ColumnDef<PromotionProps>[] = [
   {
     accessorKey: "code",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Mã khuyến mại
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Mã khuyến mãi</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -655,11 +698,15 @@ export const PromotionTableColumns: ColumnDef<PromotionProps>[] = [
   },
   {
     accessorKey: "discount",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Giảm giá
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Giảm giá</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -670,11 +717,15 @@ export const PromotionTableColumns: ColumnDef<PromotionProps>[] = [
   },
   {
     accessorKey: "startDate",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Ngày bắt đầu
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Ngày bắt đầu</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -687,11 +738,15 @@ export const PromotionTableColumns: ColumnDef<PromotionProps>[] = [
   },
   {
     accessorKey: "endDate",
-    header: () => {
+    header: ({ column }) => {
       return (
-        <p className="text-black font-semibold text-base text-center">
-          Ngày kết thúc
-        </p>
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Ngày kết thúc</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
       );
     },
     cell: ({ row }) => {
@@ -718,12 +773,10 @@ export const PromotionTableColumns: ColumnDef<PromotionProps>[] = [
     cell: ({ row }) => {
       return row.getValue("status") === "1" ? (
         <p className="text-center font-medium flex items-center justify-center text-green-500">
-          <Dot size={60} />
           <span>Hoạt động</span>
         </p>
       ) : (
         <p className="text-center font-medium flex items-center justify-center text-red-500">
-          <Dot size={60} />
           <span>Ngừng hoạt động</span>
         </p>
       );
