@@ -7,7 +7,7 @@ import { Separator } from "../ui/separator";
 
 function TopNav() {
   const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null); // Reference for dropdown
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

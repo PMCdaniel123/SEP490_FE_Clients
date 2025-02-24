@@ -343,7 +343,7 @@ function WorkspaceForm({ initialData }: WorkspaceFormProps) {
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="text-white font-medium">
-                            Enter để tạo mới
+                            Enter để thêm
                           </p>
                         </TooltipContent>
                       </Tooltip>
@@ -351,7 +351,7 @@ function WorkspaceForm({ initialData }: WorkspaceFormProps) {
                   </FormLabel>
                   <FormControl>
                     <MultiText
-                      placeholder="Nhập cơ sở vật chất..."
+                      placeholder="Nhập cơ sở vật chất - Enter để thêm mới..."
                       value={field.value}
                       handleChange={(tag) =>
                         field.onChange([...field.value, tag])
@@ -421,7 +421,7 @@ function WorkspaceForm({ initialData }: WorkspaceFormProps) {
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="text-white font-medium">
-                            Enter để tạo mới
+                            Enter để thêm
                           </p>
                         </TooltipContent>
                       </Tooltip>
@@ -429,7 +429,7 @@ function WorkspaceForm({ initialData }: WorkspaceFormProps) {
                   </FormLabel>
                   <FormControl>
                     <MultiText
-                      placeholder="Nhập quy định chung..."
+                      placeholder="Nhập quy định chung - Enter để thêm mới..."
                       value={field.value}
                       handleChange={(tag) =>
                         field.onChange([...field.value, tag])
