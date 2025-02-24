@@ -645,7 +645,7 @@ export const PromotionTableColumns: ColumnDef<PromotionProps>[] = [
     header: () => {
       return (
         <p className="text-black font-semibold text-base text-center">
-          Mã khuyến mại
+          Mã khuyến mãi
         </p>
       );
     },

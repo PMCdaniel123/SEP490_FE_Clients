@@ -42,7 +42,7 @@ function sidebar() {
         />
         <SidebarItem
           icon={DiamondPercent}
-          label="Khuyến mại"
+          label="Khuyến mãi"
           href="/owners/promotions"
         />
         <SidebarItem
