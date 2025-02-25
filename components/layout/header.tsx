@@ -10,6 +10,7 @@ import { Modal } from "antd";
 import SignupPage from "@/app/(auth)/sign-up/page";
 import Image from "next/image";
 import { Separator } from "../ui/separator";
+import Notification from "../ui/notification";
 
 function Header() {
   const pathname = usePathname();
@@ -77,6 +78,7 @@ function Header() {
             Trở thành doanh nghiệp
           </button>
         </Link>
+        <Notification />
         <div ref={dropdownRef} className="relative">
           <div
             className="group flex items-center justify-center border rounded-xl py-2 px-4 gap-4 group hover:bg-secondary cursor-pointer transition-colors duration-200"
