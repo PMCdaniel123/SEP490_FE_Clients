@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Heart, Share2, Clock, Phone, Eye, X } from "lucide-react";
+import {
+  Heart,
+  Share2,
+  Clock,
+  Phone,
+  Eye,
+  X,
+  ShieldEllipsis,
+  Boxes,
+} from "lucide-react";
 import Loader from "@/components/loader/Loader";
 import { useParams } from "next/navigation";
 import HighRatingSpace from "@/components/high-rating-space/high-rating-space";
@@ -13,7 +22,7 @@ import TimeSelect from "@/components/selection/time-select";
 import DateSelect from "@/components/selection/date-select";
 import GoogleMap from "@/components/google-map/google-map";
 import DetailsList from "@/components/details-list/details-list";
-import AmenitiesList from "@/components/amenities-list/amenities-list";
+import FacilitiesList from "@/components/facilities-list/facilities-list";
 import ReviewList from "@/components/review-list/review-list";
 import PoliciesList from "@/components/policies-list/policies-list";
 import {
@@ -24,6 +33,9 @@ import {
   TwitterIcon,
   LinkedinIcon,
 } from "react-share";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import ImageList from "@/components/images-list/images-list";
 
 interface Workspace {
   id: string;
@@ -41,8 +53,9 @@ const WorkspaceDetail = () => {
   const { workspaceId } = useParams() as { workspaceId: string };
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shortTerm, setShortTerm] = useState("1");
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -91,26 +104,7 @@ const WorkspaceDetail = () => {
 
   return (
     <div className="flex flex-col container mx-auto px-10 py-8 gap-20">
-      <div className="w-full">
-        <div className="relative w-full h-96">
-          <img
-            src={workspace.image}
-            alt={workspace.title}
-            className="w-full h-full object-cover rounded-lg"
-          />
-        </div>
-        <div className="grid grid-cols-3 gap-4 mt-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="relative w-full h-48">
-              <img
-                src={workspace.image}
-                alt={`Coworking Space ${i + 1}`}
-                className="w-full h-full object-cover rounded-lg"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
+      <ImageList workspace={workspace} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6 flex flex-col gap-8">
@@ -151,16 +145,18 @@ const WorkspaceDetail = () => {
           </div>
 
           <div className="flex flex-col gap-6">
-            <h2 className="text-xl font-bold text-primary">Tiện ích</h2>
-            <AmenitiesList />
-            <button className="text-fourth border border-1 border-primary rounded-xl py-4 font-semibold md:max-w-[250px] hover:bg-primary hover:text-white transition-colors duration-300">
+            <h2 className="text-xl font-bold text-primary flex gap-4">
+              <Boxes size={28} /> <span>Tiện ích</span>
+            </h2>
+            <FacilitiesList />
+            {/* <button className="text-fourth border border-1 border-primary rounded-xl py-4 font-semibold md:max-w-[250px] hover:bg-primary hover:text-white transition-colors duration-300">
               Hiển thị Menu dịch vụ
-            </button>
+            </button> */}
           </div>
 
           <div>
-            <h2 className="text-xl font-bold text-primary mb-6">
-              Quy định chung
+            <h2 className="text-xl font-bold text-primary mb-6 flex gap-4">
+              <ShieldEllipsis size={28} /> <span>Quy định chung</span>
             </h2>
             <PoliciesList />
           </div>
@@ -174,9 +170,9 @@ const WorkspaceDetail = () => {
             <div>
               <HighRatingSpace />
             </div>
-            <button className="text-fourth border border-1 border-primary rounded-xl py-4 font-semibold md:max-w-[250px] hover:bg-primary hover:text-white transition-colors duration-300">
+            {/* <button className="text-fourth border border-1 border-primary rounded-xl py-4 font-semibold md:max-w-[250px] hover:bg-primary hover:text-white transition-colors duration-300">
               Hiển thị trên bản đồ
-            </button>
+            </button> */}
           </div>
 
           <div className="flex flex-col gap-6">
@@ -197,7 +193,7 @@ const WorkspaceDetail = () => {
         )}
 
         <div
-          className={`fixed right-0 top-1/2 -translate-y-1/2 bg-white p-8 rounded-xl shadow-2xl border transition-all duration-300 transform ${
+          className={`fixed md:min-w-[400px] right-0 top-1/2 -translate-y-1/2 bg-white p-8 rounded-xl shadow-2xl border transition-all duration-300 transform z-50 ${
             isOpen ? "translate-x-0 right-8" : "translate-x-full"
           } flex flex-col`}
         >
@@ -211,25 +207,31 @@ const WorkspaceDetail = () => {
                 <X size={24} />
               </button>
             </div>
-            <Separator className="my-8" />
-            <p className="text-fifth">
+            <Separator className="my-6" />
+            <p className="text-fifth text-sm">
               Thuê theo giờ: $1 <br />
-              Thuê dài hạn: $20
+              Thuê theo ngày: $20
             </p>
-            <Separator className="my-8" />
-            <div className="mt-8">
-              <p className="font-semibold text-fourth mb-2 text-sm">
-                Chủ Nhật 16 tháng 7 năm 2023 lúc 5:00 chiều
-              </p>
-              <p className="text-sm text-fifth mb-6">
-                Thời lượng 1 giờ, kết thúc lúc 6:00 chiều
-              </p>
+            <Separator className="my-6" />
+            <div>
+              <RadioGroup
+                defaultValue={shortTerm}
+                onValueChange={(value) => setShortTerm(value)}
+                className="flex flex-col gap-2 my-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="1" id="short-term" />
+                  <Label htmlFor="short-term">Thuê theo giờ</Label>
+                </div>
+                {shortTerm === "1" && <TimeSelect />}
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="2" id="long-term" />
+                  <Label htmlFor="long-term">Thuê theo ngày</Label>
+                </div>
+                {shortTerm === "2" && <DateSelect />}
+              </RadioGroup>
 
-              <TimeSelect />
-
-              <DateSelect />
-
-              <Button className="w-full py-8 bg-primary text-white font-semibold rounded-full text-lg my-10">
+              <Button className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base my-4">
                 Đặt Ngay
               </Button>
 
