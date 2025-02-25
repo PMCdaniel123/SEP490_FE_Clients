@@ -7,7 +7,7 @@ function ReviewList() {
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 mb-4">
         {(showAll ? reviews : reviews.slice(0, 4)).map((review, index) => (
           <ReviewItem
             key={index}
