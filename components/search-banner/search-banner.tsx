@@ -8,13 +8,46 @@ import {
   UsersRound,
 } from "lucide-react";
 import * as Select from "@radix-ui/react-select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { fakeData } from "@/constants/fakeData";
 
 export default function SearchBanner() {
   const [location, setLocation] = useState("");
   const [time, setTime] = useState("");
   const [space, setSpace] = useState("");
   const [people, setPeople] = useState("");
+  const [locations, setLocations] = useState<string[]>([]);
+  const [times, setTimes] = useState<string[]>([]);
+  const [spaces, setSpaces] = useState<string[]>([]);
+  const [capacities, setCapacities] = useState<string[]>([]);
+
+  useEffect(() => {
+    const uniqueLocations = Array.from(
+      new Set(fakeData.map((item) => item.address))
+    );
+    const uniqueTimes = ["Sáng", "Chiều", "Cả ngày"];
+    const uniqueSpaces = Array.from(
+      new Set(fakeData.map((item) => item.roomType))
+    );
+    const uniqueCapacities = Array.from(
+      new Set(fakeData.map((item) => item.roomCapacity))
+    );
+
+    setLocations(uniqueLocations);
+    setTimes(uniqueTimes);
+    setSpaces(uniqueSpaces);
+    setCapacities(uniqueCapacities);
+  }, []);
+
+  const buildQuery = () => {
+    return new URLSearchParams({
+      location,
+      time,
+      space,
+      people,
+    }).toString();
+  };
 
   return (
     <div className="relative w-full h-[500px]">
@@ -38,9 +71,11 @@ export default function SearchBanner() {
             placeholder="Bạn muốn làm việc ở đâu?"
             hasBorder
           >
-            <DropdownItem value="hcm">Hồ Chí Minh</DropdownItem>
-            <DropdownItem value="hanoi">Hà Nội</DropdownItem>
-            <DropdownItem value="danang">Đà Nẵng</DropdownItem>
+            {locations.map((loc) => (
+              <DropdownItem key={loc} value={loc}>
+                {loc}
+              </DropdownItem>
+            ))}
           </Dropdown>
 
           <Dropdown
@@ -51,9 +86,11 @@ export default function SearchBanner() {
             placeholder="Chọn thời gian"
             hasBorder
           >
-            <DropdownItem value="morning">Sáng</DropdownItem>
-            <DropdownItem value="afternoon">Chiều</DropdownItem>
-            <DropdownItem value="full">Cả ngày</DropdownItem>
+            {times.map((t) => (
+              <DropdownItem key={t} value={t}>
+                {t}
+              </DropdownItem>
+            ))}
           </Dropdown>
 
           <Dropdown
@@ -64,10 +101,11 @@ export default function SearchBanner() {
             placeholder="Chọn loại không gian"
             hasBorder
           >
-            <DropdownItem value="private">Bàn cá nhân</DropdownItem>
-            <DropdownItem value="office">Văn phòng</DropdownItem>
-            <DropdownItem value="meeting">Phòng họp</DropdownItem>
-            <DropdownItem value="workshop">Phòng hội thảo</DropdownItem>
+            {spaces.map((sp) => (
+              <DropdownItem key={sp} value={sp}>
+                {sp}
+              </DropdownItem>
+            ))}
           </Dropdown>
 
           <Dropdown
@@ -78,14 +116,18 @@ export default function SearchBanner() {
             placeholder="Chọn sức chứa"
             hasBorder
           >
-            <DropdownItem value="1-5">1-5 người</DropdownItem>
-            <DropdownItem value="6-10">6-10 người</DropdownItem>
-            <DropdownItem value="11-20">11-20 người</DropdownItem>
+            {capacities.map((cap) => (
+              <DropdownItem key={cap} value={cap}>
+                {cap}
+              </DropdownItem>
+            ))}
           </Dropdown>
 
-          <button className="ml-2 bg-gray-800 text-white p-4 rounded-full shadow-md transition-transform transform hover:scale-105 active:scale-95">
-            <Search size={22} />
-          </button>
+          <Link href={`/search/${buildQuery()}`}>
+            <div className="ml-2 bg-gray-800 text-white p-4 rounded-full shadow-md transition-transform transform hover:scale-105 active:scale-95">
+              <Search size={22} />
+            </div>
+          </Link>
         </div>
       </div>
     </div>
