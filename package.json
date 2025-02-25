@@ -31,6 +31,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.13",
+    "framer-motion": "^12.4.7",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.471.2",
     "next": "15.1.4",
