@@ -160,6 +160,13 @@ function Header() {
               >
                 <span>Đặt chỗ của bạn</span>
               </Link>
+              <Link
+                onClick={() => setOpenAccount(!openAccount)}
+                href="/wallet"
+                className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
+              >
+                <span>Ví WorkHive</span>
+              </Link>
             </ul>
           )}
         </div>
