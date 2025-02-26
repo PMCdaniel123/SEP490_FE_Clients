@@ -5,8 +5,6 @@ import { useEffect, useState } from "react";
 import {
   Heart,
   Share2,
-  Clock,
-  Phone,
   Eye,
   X,
   ShieldEllipsis,
@@ -250,20 +248,9 @@ const WorkspaceDetail = () => {
                 {shortTerm === "2" && <DateSelect />}
               </RadioGroup>
 
-              <Button className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base my-4">
+              <Button className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base mt-4">
                 Đặt Ngay
               </Button>
-
-              <div className="flex justify-between items-center mt-4 text-sm text-fourth font-semibold">
-                <div className="flex items-center gap-2">
-                  <Clock />
-                  <span>Chính sách hoàn tiền</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Phone />
-                  <span>Liên hệ</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
