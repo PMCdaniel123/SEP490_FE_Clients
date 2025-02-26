@@ -67,7 +67,7 @@ function Footer() {
           © 2025 SP25SE173 | All rights reserved
         </p>
         <p className="text-fourth font-semibold">
-          Created with love by KHANH CUONG HUY TUAN
+          Created with love by GSP25SE13
         </p>
       </div>
     </footer>
