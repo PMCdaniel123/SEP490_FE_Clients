@@ -7,6 +7,7 @@ import {
   PromotionProps,
   ReviewItemProps,
   TopWorkspace,
+  WithdrawalProps,
   WorkspaceProps,
 } from "@/types";
 
@@ -440,5 +441,35 @@ export const promotionList: PromotionProps[] = [
     endDate: "2023-01-31",
     createdAt: "01/01/2023",
     updatedAt: "01/01/2023",
+  },
+];
+
+export const withdrawalList: WithdrawalProps[] = [
+  {
+    id: "1",
+    number: "123456789",
+    bank: "Vietcombank",
+    money: "100000",
+    status: "1",
+    createdAt: "2023-01-01",
+    updatedAt: "2023-01-01",
+  },
+  {
+    id: "2",
+    number: "987654321",
+    bank: "Techcombank",
+    money: "200000",
+    status: "2",
+    createdAt: "2023-01-01",
+    updatedAt: "2023-01-01",
+  },
+  {
+    id: "3",
+    number: "555555555",
+    bank: "Vietinbank",
+    money: "150000",
+    status: "3",
+    createdAt: "2023-01-01",
+    updatedAt: "2023-01-01",
   },
 ];
