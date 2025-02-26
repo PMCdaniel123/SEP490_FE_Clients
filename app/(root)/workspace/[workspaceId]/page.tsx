@@ -1,15 +1,16 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
 import {
   Heart,
   Share2,
-  Clock,
-  Phone,
   Eye,
   X,
   ShieldEllipsis,
   Boxes,
+  Archive,
+  HandPlatter,
 } from "lucide-react";
 import Loader from "@/components/loader/Loader";
 import { useParams } from "next/navigation";
@@ -36,6 +37,8 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import ImageList from "@/components/images-list/images-list";
+import AmenitiesList from "@/components/amenities-list/amenities-list";
+import BeveragesList from "@/components/beverages-list/beverages-list";
 
 interface Workspace {
   id: string;
@@ -146,7 +149,7 @@ const WorkspaceDetail = () => {
 
           <div className="flex flex-col gap-6">
             <h2 className="text-xl font-bold text-primary flex gap-4">
-              <Boxes size={28} /> <span>Tiện ích</span>
+              <Archive size={28} /> <span>Cơ sở vật chất</span>
             </h2>
             <FacilitiesList />
             {/* <button className="text-fourth border border-1 border-primary rounded-xl py-4 font-semibold md:max-w-[250px] hover:bg-primary hover:text-white transition-colors duration-300">
@@ -159,6 +162,20 @@ const WorkspaceDetail = () => {
               <ShieldEllipsis size={28} /> <span>Quy định chung</span>
             </h2>
             <PoliciesList />
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-primary mb-6 flex gap-4">
+              <Boxes size={28} /> <span>Các tiện ích đi kèm</span>
+            </h2>
+            <AmenitiesList />
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold text-primary mb-6 flex gap-4">
+              <HandPlatter size={28} /> <span>Thực đơn</span>
+            </h2>
+            <BeveragesList />
           </div>
 
           <GoogleMap />
@@ -231,20 +248,9 @@ const WorkspaceDetail = () => {
                 {shortTerm === "2" && <DateSelect />}
               </RadioGroup>
 
-              <Button className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base my-4">
+              <Button className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base mt-4">
                 Đặt Ngay
               </Button>
-
-              <div className="flex justify-between items-center mt-4 text-sm text-fourth font-semibold">
-                <div className="flex items-center gap-2">
-                  <Clock />
-                  <span>Chính sách hoàn tiền</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Phone />
-                  <span>Liên hệ</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>

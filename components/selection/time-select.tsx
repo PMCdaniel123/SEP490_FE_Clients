@@ -1,26 +1,31 @@
+import { DatePicker } from "antd";
+import dayjs from "dayjs";
 import { ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function TimeSelect() {
-  const [time, setTime] = useState({
-    hours: "00",
-    minutes: "00",
+  const [date, setDate] = useState(dayjs());
+  const [startTime, setStartTime] = useState({
+    hours: dayjs().hour(),
+    minutes: dayjs().minute(),
+  });
+  const [endTime, setEndTime] = useState({
+    hours: dayjs().hour() + 1,
+    minutes: dayjs().minute(),
   });
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
-  const [description, setDescription] = useState("");
-  const [error, setError] = useState("");
 
   const getNowTime = () => {
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-
-    setTime({
-      hours: String(hours).padStart(2, "0"),
-      minutes: String(minutes).padStart(2, "0"),
+    const now = dayjs();
+    setStartTime({
+      hours: now.hour(),
+      minutes: now.minute(),
     });
-
-    updateDescription(hours, minutes);
+    setEndTime({
+      hours: now.hour() + 1,
+      minutes: now.minute(),
+    });
+    setDate(now);
   };
 
   const toggleTimePicker = () => {
@@ -28,73 +33,65 @@ function TimeSelect() {
     getNowTime();
   };
 
-  useEffect(() => {
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-
-    setTime({
-      hours: String(hours).padStart(2, "0"),
-      minutes: String(minutes).padStart(2, "0"),
-    });
-
-    updateDescription(hours, minutes);
-  }, []);
-
-  const handleInputChange = (field: string, value: string) => {
-    if (["hours", "minutes"].includes(field) && !/^\d*$/.test(value)) {
-      return;
+  const handleDateChange = (selectedDate: dayjs.Dayjs | null) => {
+    if (selectedDate) {
+      setDate(selectedDate);
+      if (selectedDate.isSame(dayjs(), "day")) {
+        getNowTime();
+      }
     }
+  };
 
-    setTime((prevTime) => ({
-      ...prevTime,
-      [field]: value.padStart(2, "0"),
-    }));
+  const handleStartTimeInput = (field: string, value: string) => {
+    if (!/^\d*$/.test(value)) return;
 
-    const updatedTime = {
-      ...time,
-      [field]: value.padStart(2, "0"),
+    let newStartTime = {
+      ...startTime,
+      [field]: Number(value),
     };
 
-    validateTime(updatedTime.hours, updatedTime.minutes);
-  };
+    if (date.isSame(dayjs(), "day")) {
+      const now = dayjs();
+      const selectedTime = dayjs()
+        .hour(newStartTime.hours)
+        .minute(newStartTime.minutes);
 
-  const validateTime = (hours: string, minutes: string) => {
-    const now = new Date();
-    const selected = new Date();
-
-    selected.setHours(parseInt(hours));
-    selected.setMinutes(parseInt(minutes));
-    selected.setSeconds(0);
-
-    const nowPlusOneHour = new Date(now.getTime() + 60 * 60 * 1000);
-
-    if (selected < nowPlusOneHour) {
-      setError("Thời gian phải sau ít nhất 1 giờ so với hiện tại.");
-      setDescription("");
-    } else {
-      setError("");
-      updateDescription(parseInt(hours), parseInt(minutes));
+      if (selectedTime.isBefore(now)) {
+        newStartTime = {
+          hours: now.hour(),
+          minutes: now.minute(),
+        };
+      }
     }
+
+    setStartTime(newStartTime);
+
+    const start = dayjs().hour(newStartTime.hours).minute(newStartTime.minutes);
+    setEndTime({
+      hours: start.hour() + 1,
+      minutes: start.minute(),
+    });
   };
 
-  const updateDescription = (hours: number, minutes: number) => {
-    const selected = new Date();
-    selected.setHours(hours);
-    selected.setMinutes(minutes);
+  const handleEndTimeInput = (field: string, value: string) => {
+    if (!/^\d*$/.test(value)) return;
 
-    const end = new Date(selected.getTime() + 60 * 60 * 1000);
+    let newEndTime = {
+      ...endTime,
+      [field]: Number(value),
+    };
 
-    const formatTime = (date: Date) =>
-      `${date.getHours() % 12 || 12}:${String(date.getMinutes()).padStart(
-        2,
-        "0"
-      )} ${date.getHours() >= 12 ? "chiều" : "sáng"}`;
+    const start = dayjs().hour(startTime.hours).minute(startTime.minutes);
+    const end = dayjs().hour(newEndTime.hours).minute(newEndTime.minutes);
 
-    const formattedDate = `Bắt đầu lúc ${formatTime(selected)}`;
-    const endTime = `Kết thúc lúc ${formatTime(end)}`;
+    if (!end.isAfter(start)) {
+      newEndTime = {
+        hours: start.hour() + 1,
+        minutes: start.minute(),
+      };
+    }
 
-    setDescription(`${formattedDate}\n${endTime}`);
+    setEndTime(newEndTime);
   };
 
   return (
@@ -112,46 +109,81 @@ function TimeSelect() {
       </div>
       {isTimePickerOpen && (
         <div className="mt-2">
-          <div className="border rounded-lg p-3 bg-gray-50">
-            <div className="flex justify-between items-center">
-              <select
-                value={time.hours}
-                className="border rounded-lg px-4 py-2"
-                onChange={(e) => handleInputChange("hours", e.target.value)}
-              >
-                {Array.from({ length: 24 }, (_, i) => (
-                  <option key={i} value={String(i).padStart(2, "0")}>
-                    {i < 10 ? `0${i}` : i}
-                  </option>
-                ))}
-              </select>
-              <span>:</span>
-              <select
-                value={time.minutes}
-                className="border rounded-lg px-4 py-2"
-                onChange={(e) => handleInputChange("minutes", e.target.value)}
-              >
-                {Array.from({ length: 60 }, (_, i) => (
-                  <option key={i} value={String(i).padStart(2, "0")}>
-                    {i < 10 ? `0${i}` : i}
-                  </option>
-                ))}
-              </select>
+          <div className="border rounded-lg p-3 bg-gray-50 flex flex-col gap-2">
+            <DatePicker
+              className="w-full py-2"
+              format="DD/MM/YYYY"
+              value={date}
+              onChange={handleDateChange}
+              disabledDate={(current) =>
+                current &&
+                (current < dayjs().startOf("day") ||
+                  current > dayjs().add(2, "day"))
+              }
+            />
+            <div className="grid grid-cols-3 items-center">
+              <p className="col-span-1">Từ:</p>
+              <div className="flex justify-between items-center w-full col-span-2">
+                <select
+                  value={startTime.hours}
+                  className="border rounded-lg px-4 py-2"
+                  onChange={(e) =>
+                    handleStartTimeInput("hours", e.target.value)
+                  }
+                >
+                  {Array.from({ length: 24 }, (_, i) => (
+                    <option key={i} value={String(i)}>
+                      {i < 10 ? `0${i}` : i}
+                    </option>
+                  ))}
+                </select>
+                <span>:</span>
+                <select
+                  value={startTime.minutes}
+                  className="border rounded-lg px-4 py-2"
+                  onChange={(e) =>
+                    handleStartTimeInput("minutes", e.target.value)
+                  }
+                >
+                  {Array.from({ length: 60 }, (_, i) => (
+                    <option key={i} value={String(i)}>
+                      {i < 10 ? `0${i}` : i}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 items-center">
+              <p className="col-span-1">Đến:</p>
+              <div className="flex justify-between items-center w-full col-span-2">
+                <select
+                  value={endTime.hours}
+                  className="border rounded-lg px-4 py-2"
+                  onChange={(e) => handleEndTimeInput("hours", e.target.value)}
+                >
+                  {Array.from({ length: 24 }, (_, i) => (
+                    <option key={i} value={String(i)}>
+                      {i < 10 ? `0${i}` : i}
+                    </option>
+                  ))}
+                </select>
+                <span>:</span>
+                <select
+                  value={endTime.minutes}
+                  className="border rounded-lg px-4 py-2"
+                  disabled
+                >
+                  {Array.from({ length: 60 }, (_, i) => (
+                    <option key={i} value={String(i)}>
+                      {i < 10 ? `0${i}` : i}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         </div>
       )}
-      {/* This is a description time booking */}
-      <div className="flex flex-col mt-4 gap-2">
-        {description && (
-          <>
-            <p className="font-normal text-fifth text-sm whitespace-pre-line space-y-2 ml-4">
-              {description}
-            </p>
-          </>
-        )}
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-      </div>
     </div>
   );
 }
