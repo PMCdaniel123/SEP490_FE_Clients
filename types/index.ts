@@ -151,6 +151,16 @@ export interface PromotionProps {
   updatedAt: string;
 }
 
+export interface WithdrawalProps {
+  id: string;
+  number: string;
+  bank: string;
+  money: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface IdentifyProps {
   id: string;
   name: string;

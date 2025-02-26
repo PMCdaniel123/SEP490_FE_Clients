@@ -6,6 +6,7 @@ import {
   CustomerProps,
   PromotionProps,
   TopWorkspace,
+  WithdrawalProps,
   WorkspaceProps,
 } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
@@ -502,7 +503,7 @@ export const AmenityTableColumns: ColumnDef<AmenityProps>[] = [
       return (
         <div
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-black font-semibold text-base text-center items-center flex justify-center gap-2 cursor-pointer"
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
         >
           <p>Trạng thái</p>
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -634,7 +635,7 @@ export const BeverageTableColumns: ColumnDef<BeverageProps>[] = [
       return (
         <div
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-black font-semibold text-base text-center items-center flex justify-center gap-2 cursor-pointer"
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
         >
           <p>Trạng thái</p>
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -763,7 +764,7 @@ export const PromotionTableColumns: ColumnDef<PromotionProps>[] = [
       return (
         <div
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="text-black font-semibold text-base text-center items-center flex justify-center gap-2 cursor-pointer"
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
         >
           <p>Trạng thái</p>
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -803,6 +804,108 @@ export const PromotionTableColumns: ColumnDef<PromotionProps>[] = [
             </Link>
           </DropdownMenuContent>
         </DropdownMenu>
+      );
+    },
+  },
+];
+
+export const WithdrawalTableColumns: ColumnDef<WithdrawalProps>[] = [
+  {
+    accessorKey: "number",
+    header: () => {
+      return (
+        <div className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer">
+          <p>Số tài khoản ngân hàng</p>
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <p className="text-center font-medium">{row.getValue("number")}</p>
+      );
+    },
+  },
+  {
+    accessorKey: "bank",
+    header: ({ column }) => {
+      return (
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Tên ngân hàng</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      return <p className="text-center font-medium">{row.getValue("bank")}</p>;
+    },
+  },
+  {
+    accessorKey: "money",
+    header: ({ column }) => {
+      return (
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Số tiền</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      return <p className="text-center font-medium">{row.getValue("money")}</p>;
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => {
+      return (
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Ngày tạo</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <p className="text-center font-medium">
+          {formatDate(row.getValue("createdAt"))}
+        </p>
+      );
+    },
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => {
+      return (
+        <div
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="text-black font-semibold text-base text-center items-center flex justify-center cursor-pointer"
+        >
+          <p>Trạng thái</p>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      return row.getValue("status") === "1" ? (
+        <p className="text-center font-medium flex items-center justify-center text-yellow-500">
+          <span>Chờ xử lý</span>
+        </p>
+      ) : row.getValue("status") === "2" ? (
+        <p className="text-center font-medium flex items-center justify-center text-green-500">
+          <span>Thành công</span>
+        </p>
+      ) : (
+        <p className="text-center font-medium flex items-center justify-center text-red-500">
+          <span>Thất bại</span>
+        </p>
       );
     },
   },

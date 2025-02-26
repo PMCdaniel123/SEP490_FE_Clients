@@ -13,28 +13,28 @@ function Footer() {
               eiusmod tempor incididunt ut labore et dolore magna aliqua.
             </p>
             <div className="flex gap-4 mt-4">
-              <button className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg">
-                PlayStore
+              <button className="bg-sixth hover:bg-fifth px-4 py-2 rounded-lg">
+                CH Play
               </button>
-              <button className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg">
-                AppleStore
+              <button className="bg-sixth hover:bg-fifth px-4 py-2 rounded-lg">
+                App Store
               </button>
             </div>
           </div>
 
-          <div>
+          <div className="col-span-1">
             <h3 className="font-bold text-fourth">COMPANY</h3>
-            <ul className="mt-4 font-base space-y-2 text-fourth">
+            <ul className="mt-4 font-base text-base space-y-2 text-fourth">
               <li>Trang chủ</li>
               <li>Giới thiệu</li>
               <li>Không gian</li>
-              <li>Workshop</li>
+              <li>Liên hệ</li>
             </ul>
           </div>
 
-          <div>
+          <div className="col-span-1">
             <h3 className="font-bold text-fourth">HELP CENTER</h3>
-            <ul className="mt-4 font-base space-y-2 text-fourth">
+            <ul className="mt-4 font-base text-base space-y-2 text-fourth">
               <li>Find a Property</li>
               <li>How To Host?</li>
               <li>Why Us?</li>
@@ -45,7 +45,7 @@ function Footer() {
 
           <div className="col-span-1 sm:col-span-2">
             <h3 className="font-bold text-fourth">CONTACT INFO</h3>
-            <ul className="mt-4 font-base space-y-2 text-fourth">
+            <ul className="mt-4 font-base text-base space-y-2 text-fourth">
               <li>Phone: 1234567890</li>
               <li>Email: company@email.com</li>
               <li>Location: 100 Smart Street, LA, USA</li>

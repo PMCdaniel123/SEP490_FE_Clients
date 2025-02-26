@@ -2,11 +2,11 @@
 
 import SidebarItem from "@/components/layout/sidebar-item";
 import {
-  Bell,
   Boxes,
   DiamondPercent,
   Home,
   KeyRound,
+  Landmark,
   Sofa,
   UsersRound,
   UtensilsCrossed,
@@ -51,9 +51,9 @@ function sidebar() {
           href="/owners/authentication"
         />
         <SidebarItem
-          icon={Bell}
-          label="Thông báo"
-          href="/owners/notifications"
+          icon={Landmark}
+          label="Rút tiền"
+          href="/owners/withdrawal"
         />
       </nav>
     </aside>

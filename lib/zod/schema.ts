@@ -113,6 +113,14 @@ export const promotionSchema = z
     path: ["endDate"],
   });
 
+export const withdrawalSchema = z.object({
+  number: z.string().nonempty("Vui lòng nhập số tài khoản ngân hàng"),
+  bank: z.string().nonempty("Vui lòng tên ngân hàng"),
+  money: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+    message: "Giá phải lớn hơn 0",
+  }),
+});
+
 export const identifySchema = z.object({
   name: z.string().min(3, "Họ và tên phải có ít nhất 3 ký tự"),
   number: z
