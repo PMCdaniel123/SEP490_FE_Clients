@@ -3,11 +3,15 @@
 
 import { AmenityProps } from "@/types";
 import { Card, CardContent } from "../ui/card";
-import { Banknote } from "lucide-react";
+import { Banknote, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { Modal } from "antd";
+import { useDispatch } from "react-redux";
+import { addAmenity } from "@/stores/slices/cartSlice";
+import { Button } from "../ui/button";
 
 function AmenitiesItem({
+  id,
   name,
   price,
   image,
@@ -16,6 +20,20 @@ function AmenitiesItem({
   description,
 }: AmenityProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    dispatch(
+      addAmenity({
+        id,
+        name,
+        image,
+        price: Number(price),
+        quantity: 1,
+      })
+    );
+    setIsOpen(false);
+  };
 
   return (
     <>
@@ -50,7 +68,7 @@ function AmenitiesItem({
               alt={name}
               className="w-48 h-48 object-cover rounded-t-lg"
             />
-            <div className="bg-primary bg-opacity-90 text-white px-3 py-2 rounded-b-lg text-base flex gap-2 items-center justify-center">
+            <div className="bg-primary text-white px-3 py-2 rounded-b-lg text-base flex gap-2 items-center justify-center">
               <Banknote /> {price} VND
             </div>
           </div>
@@ -60,6 +78,13 @@ function AmenitiesItem({
             <p className="text-gray-600 text-sm">Số lượng: {quantity}</p>
             <p className="text-gray-600 text-sm">Loại: {category}</p>
             <p className="text-gray-600 text-sm">Mô tả: {description}</p>
+            <Button
+              className="text-white flex gap-2 items-center"
+              onClick={handleAddToCart}
+            >
+              <ShoppingCart />
+              <span>Thêm vào giỏ hàng</span>
+            </Button>
           </div>
         </div>
       </Modal>
