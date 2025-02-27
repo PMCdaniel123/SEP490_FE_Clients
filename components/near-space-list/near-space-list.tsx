@@ -7,19 +7,11 @@ import { Card } from "../ui/card";
 import { CardContent } from "../ui/card-content";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
-interface Workspace {
-  title: string;
-  address: string;
-  price: string;
-  image: string;
-  roomCapacity: number;
-  roomType: string;
-  roomSize: number;
-}
+import Loader from "../loader/Loader";
+import { WorkspaceNotRating } from "@/types";
 
 export default function NearSpaceList() {
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [workspaces, setWorkspaces] = useState<WorkspaceNotRating[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,7 +28,11 @@ export default function NearSpaceList() {
   }, []);
 
   if (loading) {
-    return <div className="text-center">Loading...</div>;
+    return (
+      <div className="text-center">
+        <Loader />
+      </div>
+    );
   }
 
   const settings = {

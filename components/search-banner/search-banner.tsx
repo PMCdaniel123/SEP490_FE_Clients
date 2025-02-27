@@ -1,18 +1,56 @@
 import Image from "next/image";
-import { Search, ChevronDown } from "lucide-react";
+import {
+  Clock,
+  LucideIcon,
+  MapPin,
+  Search,
+  Sofa,
+  UsersRound,
+} from "lucide-react";
 import * as Select from "@radix-ui/react-select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { fakeData } from "@/constants/fakeData";
 
 export default function SearchBanner() {
   const [location, setLocation] = useState("");
   const [time, setTime] = useState("");
   const [space, setSpace] = useState("");
   const [people, setPeople] = useState("");
-  const [selectedTab, setSelectedTab] = useState("Bàn cá nhân");
+  const [locations, setLocations] = useState<string[]>([]);
+  const [times, setTimes] = useState<string[]>([]);
+  const [spaces, setSpaces] = useState<string[]>([]);
+  const [capacities, setCapacities] = useState<string[]>([]);
+
+  useEffect(() => {
+    const uniqueLocations = Array.from(
+      new Set(fakeData.map((item) => item.address))
+    );
+    const uniqueTimes = ["Sáng", "Chiều", "Cả ngày"];
+    const uniqueSpaces = Array.from(
+      new Set(fakeData.map((item) => item.roomType))
+    );
+    const uniqueCapacities = Array.from(
+      new Set(fakeData.map((item) => item.roomCapacity))
+    );
+
+    setLocations(uniqueLocations);
+    setTimes(uniqueTimes);
+    setSpaces(uniqueSpaces);
+    setCapacities(uniqueCapacities);
+  }, []);
+
+  const buildQuery = () => {
+    return new URLSearchParams({
+      location,
+      time,
+      space,
+      people,
+    }).toString();
+  };
 
   return (
     <div className="relative w-full h-[500px]">
-      {/* Background Image */}
       <Image
         src="/banner.png"
         alt="Banner"
@@ -21,96 +59,84 @@ export default function SearchBanner() {
         className="brightness-75"
       />
 
-      {/* Overlay Content */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
         <h2 className="text-6xl font-extrabold tracking-wide">WorkHive</h2>
 
-        {/* Tabs */}
-        <div className="flex gap-6 mt-6 text-lg font-medium">
-          {["Bàn cá nhân", "Văn phòng", "Phòng họp", "Phòng hội thảo"].map(
-            (tab) => (
-              <span
-                key={tab}
-                className={`pb-2 cursor-pointer transition-all duration-100 ease-in-out ${
-                  selectedTab === tab
-                    ? "border-b-2 border-white text-white"
-                    : "text-gray-400"
-                }`}
-                onClick={() => setSelectedTab(tab)}
-              >
-                {tab}
-              </span>
-            )
-          )}
-        </div>
-
-        {/* Search Bar */}
-        <div className="mt-8 bg-white text-black rounded-full flex items-center shadow-lg p-2 w-[85%] max-w-5xl">
-          {/* Địa điểm */}
+        <div className="mt-8 bg-white text-black rounded-full flex items-center justify-center shadow-lg p-2 w-[72%]">
           <Dropdown
             label="Địa điểm"
+            icon={MapPin}
             value={location}
             setValue={setLocation}
-            placeholder="Hồ Chí Minh"
+            placeholder="Bạn muốn làm việc ở đâu?"
             hasBorder
           >
-            <DropdownItem value="hcm">Hồ Chí Minh</DropdownItem>
-            <DropdownItem value="hanoi">Hà Nội</DropdownItem>
-            <DropdownItem value="danang">Đà Nẵng</DropdownItem>
+            {locations.map((loc) => (
+              <DropdownItem key={loc} value={loc}>
+                {loc}
+              </DropdownItem>
+            ))}
           </Dropdown>
 
-          {/* Thời gian */}
           <Dropdown
             label="Thời gian"
+            icon={Clock}
             value={time}
             setValue={setTime}
             placeholder="Chọn thời gian"
             hasBorder
           >
-            <DropdownItem value="morning">Sáng</DropdownItem>
-            <DropdownItem value="afternoon">Chiều</DropdownItem>
-            <DropdownItem value="full">Cả ngày</DropdownItem>
+            {times.map((t) => (
+              <DropdownItem key={t} value={t}>
+                {t}
+              </DropdownItem>
+            ))}
           </Dropdown>
 
-          {/* Loại không gian */}
           <Dropdown
             label="Loại không gian"
+            icon={Sofa}
             value={space}
             setValue={setSpace}
-            placeholder="Loại không gian"
+            placeholder="Chọn loại không gian"
             hasBorder
           >
-            <DropdownItem value="coworking">Coworking Space</DropdownItem>
-            <DropdownItem value="private">Văn phòng riêng</DropdownItem>
-            <DropdownItem value="meeting">Phòng họp</DropdownItem>
+            {spaces.map((sp) => (
+              <DropdownItem key={sp} value={sp}>
+                {sp}
+              </DropdownItem>
+            ))}
           </Dropdown>
 
-          {/* Số lượng người */}
           <Dropdown
-            label="Số lượng người"
+            label="Sức chứa"
+            icon={UsersRound}
             value={people}
             setValue={setPeople}
-            placeholder="Chọn số người"
-            hasBorder={false}
+            placeholder="Chọn sức chứa"
+            hasBorder
           >
-            <DropdownItem value="1-5">1-5 người</DropdownItem>
-            <DropdownItem value="6-10">6-10 người</DropdownItem>
-            <DropdownItem value="11-20">11-20 người</DropdownItem>
+            {capacities.map((cap) => (
+              <DropdownItem key={cap} value={cap}>
+                {cap}
+              </DropdownItem>
+            ))}
           </Dropdown>
 
-          {/* Nút tìm kiếm */}
-          <button className="bg-gray-800 text-white p-4 rounded-full shadow-md transition-transform transform hover:scale-105 active:scale-95">
-            <Search size={22} />
-          </button>
+          <Link href={`/search/${buildQuery()}`}>
+            <div className="ml-2 bg-gray-800 text-white p-4 rounded-full shadow-md transition-transform transform hover:scale-105 active:scale-95">
+              <Search size={22} />
+            </div>
+          </Link>
         </div>
       </div>
     </div>
   );
 }
 
-/* Component Dropdown */
 interface DropdownProps {
   label: string;
+  icon: LucideIcon;
   value: string;
   setValue: (value: string) => void;
   placeholder: string;
@@ -120,6 +146,7 @@ interface DropdownProps {
 
 function Dropdown({
   label,
+  icon: Icon,
   value,
   setValue,
   placeholder,
@@ -128,17 +155,21 @@ function Dropdown({
 }: DropdownProps) {
   return (
     <div className={`flex-1 p-4 ${hasBorder ? "border-r" : ""}`}>
-      <p className="text-xs font-semibold">{label}</p>
+      <p className="text-sm font-semibold mb-2 items-center justify-start flex px-2 gap-2">
+        <Icon size={20} />
+        <span>{label}</span>
+      </p>
       <Select.Root value={value} onValueChange={setValue}>
-        <Select.Trigger className="w-full flex justify-between items-center bg-transparent text-sm outline-none p-3 border rounded-lg shadow-sm cursor-pointer focus:ring-2 focus:ring-gray-300">
+        <Select.Trigger
+          className={`w-full flex justify-between items-center bg-transparent text-sm outline-none p-2 cursor-pointer font-semibold ${
+            value ? "text-black" : "text-sixth"
+          }`}
+        >
           <Select.Value placeholder={placeholder} />
-          <Select.Icon>
-            <ChevronDown size={16} />
-          </Select.Icon>
         </Select.Trigger>
         <Select.Portal>
           <Select.Content
-            className="bg-white rounded-lg shadow-lg p-2 w-56"
+            className="bg-white rounded-xl shadow-xl p-2 z-50 overflow-hidden border border-black"
             position="popper"
           >
             <Select.Viewport>{children}</Select.Viewport>
@@ -149,7 +180,6 @@ function Dropdown({
   );
 }
 
-/* Component Dropdown Item */
 interface DropdownItemProps {
   value: string;
   children: React.ReactNode;

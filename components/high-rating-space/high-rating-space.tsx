@@ -7,17 +7,8 @@ import { Card } from "../ui/card";
 import { CardContent } from "../ui/card-content";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
-interface Workspace {
-  title: string;
-  address: string;
-  price: string;
-  image: string;
-  roomCapacity: number;
-  roomType: string;
-  roomSize: number;
-  rating: number;
-}
+import Loader from "../loader/Loader";
+import { Workspace } from "@/types";
 
 export default function HighRatingSpace() {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
@@ -40,7 +31,11 @@ export default function HighRatingSpace() {
   }, []);
 
   if (loading) {
-    return <div className="text-center">Loading...</div>;
+    return (
+      <div className="text-center">
+        <Loader />
+      </div>
+    );
   }
 
   const settings = {
@@ -70,7 +65,7 @@ export default function HighRatingSpace() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 mb-10">
+    <div className="mx-auto mb-10">
       <Slider {...settings}>
         {workspaces.map((workspace, index) => (
           <div key={index} className="px-2">

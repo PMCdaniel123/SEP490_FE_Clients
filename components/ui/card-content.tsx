@@ -3,7 +3,6 @@
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 
-// CardContent Component
 interface CardContentProps {
   children: ReactNode;
   className?: string;

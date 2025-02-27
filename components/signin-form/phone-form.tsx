@@ -41,19 +41,7 @@ export function PhoneForm({ className }: SignInFormProps) {
       onSubmit={handleSubmit(handleContinue)}
     >
       <div className="flex w-full justify-center items-center">
-        <div className="flex w-1/3 rounded-s-full items-center border overflow-hidden">
-          <div className="flex flex-col pl-6 p-4 w-full justify-center h-full">
-            <p className="text-sm font-medium text-fifth">Quốc gia</p>
-            <select
-              className="py-2 focus:outline-none w-full font-bold text-fourth cursor-pointer"
-              defaultValue="VN"
-            >
-              <option value="VN">VN (+84)</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="flex flex-col w-2/3 border rounded-e-full h-full justify-center pl-6 pr-4">
+        <div className="flex flex-col w-full border rounded-full h-full justify-center px-8 py-3">
           <p className="text-sm font-medium text-fifth">Số điện thoại</p>
           <input
             type="tel"

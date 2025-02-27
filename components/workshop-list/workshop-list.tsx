@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Card } from "../ui/card";
 import { CardContent } from "../ui/card-content";
 import { Button } from "../ui/button";
+import Loader from "../loader/Loader";
 
 interface Workspace {
   title: string;
@@ -29,7 +30,11 @@ export default function WorkshopList() {
   }, []);
 
   if (loading) {
-    return <div className="text-center">Loading...</div>;
+    return (
+      <div className="text-center">
+        <Loader />
+      </div>
+    );
   }
 
   return (

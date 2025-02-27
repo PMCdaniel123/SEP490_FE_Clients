@@ -5,19 +5,11 @@ import { Heart, Users, Ruler, Bed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "../ui/card";
 import { CardContent } from "../ui/card-content";
-
-interface Workspace {
-  title: string;
-  address: string;
-  price: string;
-  image: string;
-  roomCapacity: number;
-  roomType: string;
-  roomSize: number;
-}
+import Loader from "../loader/Loader";
+import { WorkspaceNotRating } from "@/types";
 
 export default function SpaceList() {
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [workspaces, setWorkspaces] = useState<WorkspaceNotRating[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,7 +26,11 @@ export default function SpaceList() {
   }, []);
 
   if (loading) {
-    return <div className="text-center">Loading...</div>;
+    return (
+      <div className="text-center">
+        <Loader />
+      </div>
+    );
   }
 
   return (
@@ -51,7 +47,6 @@ export default function SpaceList() {
                 alt={workspace.title}
                 className="w-full h-48 object-cover"
               />
-              {/* Price overlay (inside the image) */}
               <div className="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white px-3 py-1 rounded-md text-sm">
                 {workspace.price}
               </div>
