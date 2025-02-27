@@ -14,7 +14,7 @@ function HomePage() {
   return (
     <div>
       <SearchBanner />
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-6">
         <SectionTitle>
           WorkHive cung cấp đa dạng <br /> giải pháp không gian làm việc
         </SectionTitle>

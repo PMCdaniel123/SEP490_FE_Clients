@@ -17,7 +17,7 @@ export default function Banner({
   buttonLink,
 }: BannerProps) {
   return (
-    <div className="relative w-full max-w-5xl mx-auto overflow-hidden rounded-xl shadow-lg mb-12">
+    <div className="relative w-full max-w-7xl mx-auto overflow-hidden rounded-xl shadow-lg mb-12">
       <div className="relative w-full h-[300px] md:h-[400px]">
         <Image
           src={imageUrl}
