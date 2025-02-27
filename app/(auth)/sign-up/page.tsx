@@ -8,7 +8,7 @@ interface SignUpPageProps {
   onCloseSignUpForm: () => void;
 }
 
-export default function SignupPage({ onCloseSignUpForm }: SignUpPageProps) {
+function SignupPage({ onCloseSignUpForm }: SignUpPageProps) {
   const searchParams = useSearchParams();
   const role = searchParams?.get("role") || "customer";
 
@@ -33,3 +33,5 @@ export default function SignupPage({ onCloseSignUpForm }: SignUpPageProps) {
     </div>
   );
 }
+
+export default SignupPage;
