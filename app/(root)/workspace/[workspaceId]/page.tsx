@@ -5,8 +5,6 @@ import { useEffect, useState } from "react";
 import {
   Heart,
   Share2,
-  Eye,
-  X,
   ShieldEllipsis,
   Boxes,
   Archive,
@@ -39,6 +37,11 @@ import { Label } from "@/components/ui/label";
 import ImageList from "@/components/images-list/images-list";
 import AmenitiesList from "@/components/amenities-list/amenities-list";
 import BeveragesList from "@/components/beverages-list/beverages-list";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/stores";
+import { setWorkspaceId } from "@/stores/slices/cartSlice";
+import Amenity from "@/components/amenities-list/amenity";
+import Beverage from "@/components/beverages-list/beverage";
 
 interface Workspace {
   id: string;
@@ -56,12 +59,17 @@ const WorkspaceDetail = () => {
   const { workspaceId } = useParams() as { workspaceId: string };
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isOpen, setIsOpen] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [shortTerm, setShortTerm] = useState("1");
+  const dispatch = useDispatch();
+  const { beverageList, amenityList } = useSelector(
+    (state: RootState) => state.cart
+  );
 
   useEffect(() => {
     if (!workspaceId) return;
+
+    dispatch(setWorkspaceId(workspaceId));
 
     fetch(
       `https://67271c49302d03037e6f6a3b.mockapi.io/spaceList/${workspaceId}`
@@ -75,7 +83,7 @@ const WorkspaceDetail = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }, [workspaceId]);
+  }, [dispatch, workspaceId]);
 
   const handleShare = () => {
     setIsShareModalOpen(true);
@@ -105,10 +113,12 @@ const WorkspaceDetail = () => {
     return <div className="text-center">Workspace not found</div>;
   }
 
+  console.log(beverageList);
+  console.log(amenityList);
+
   return (
     <div className="flex flex-col container mx-auto px-10 py-8 gap-20">
       <ImageList workspace={workspace} />
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6 flex flex-col gap-8">
           <div className="flex items-center justify-between">
@@ -166,7 +176,7 @@ const WorkspaceDetail = () => {
 
           <div>
             <h2 className="text-xl font-bold text-primary mb-6 flex gap-4">
-              <Boxes size={28} /> <span>Các tiện ích đi kèm</span>
+              <Boxes size={28} /> <span>Các tiện ích</span>
             </h2>
             <AmenitiesList />
           </div>
@@ -200,29 +210,10 @@ const WorkspaceDetail = () => {
           </div>
         </div>
 
-        {!isOpen && (
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="fixed right-4 bottom-4 bg-primary text-white p-4 rounded-full shadow-lg z-50 transition-transform hover:scale-110"
-          >
-            <Eye size={24} />
-          </button>
-        )}
-
-        <div
-          className={`fixed md:min-w-[400px] right-0 top-1/2 -translate-y-1/2 bg-white p-8 rounded-xl shadow-2xl border transition-all duration-300 transform z-50 ${
-            isOpen ? "translate-x-0 right-8" : "translate-x-full"
-          } flex flex-col`}
-        >
+        <div className="flex flex-col p-4 bg-white border rounded-xl shadow-xl">
           <div>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center mt-4">
               <h2 className="text-2xl font-bold text-fourth">$1 - $20</h2>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="text-gray-500 hover:text-red-500"
-              >
-                <X size={24} />
-              </button>
             </div>
             <Separator className="my-6" />
             <p className="text-fifth text-sm">
@@ -230,28 +221,45 @@ const WorkspaceDetail = () => {
               Thuê theo ngày: $20
             </p>
             <Separator className="my-6" />
-            <div>
-              <RadioGroup
-                defaultValue={shortTerm}
-                onValueChange={(value) => setShortTerm(value)}
-                className="flex flex-col gap-2 my-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="1" id="short-term" />
-                  <Label htmlFor="short-term">Thuê theo giờ</Label>
+            <RadioGroup
+              defaultValue={shortTerm}
+              onValueChange={(value) => setShortTerm(value)}
+              className="flex flex-col gap-2 my-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="1" id="short-term" />
+                <Label htmlFor="short-term">Thuê theo giờ</Label>
+              </div>
+              {shortTerm === "1" && <TimeSelect />}
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="2" id="long-term" />
+                <Label htmlFor="long-term">Thuê theo ngày</Label>
+              </div>
+              {shortTerm === "2" && <DateSelect />}
+            </RadioGroup>
+            <div className="flex flex-col gap-2 my-8">
+              {beverageList.length > 0 && (
+                <div>
+                  <Separator className="my-6" />
+                  <Label className="mb-2">Thực đơn:</Label>
                 </div>
-                {shortTerm === "1" && <TimeSelect />}
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="2" id="long-term" />
-                  <Label htmlFor="long-term">Thuê theo ngày</Label>
+              )}
+              {beverageList.map((item) => (
+                <Beverage key={item.id} item={item} />
+              ))}
+              {amenityList.length > 0 && (
+                <div>
+                  <Separator className="my-6" />
+                  <Label className="mb-2">Các tiện ích:</Label>
                 </div>
-                {shortTerm === "2" && <DateSelect />}
-              </RadioGroup>
-
-              <Button className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base mt-4">
-                Đặt Ngay
-              </Button>
+              )}
+              {amenityList.map((item) => (
+                <Amenity key={item.id} item={item} />
+              ))}
             </div>
+            <Button className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base">
+              Đặt Ngay
+            </Button>
           </div>
         </div>
       </div>
