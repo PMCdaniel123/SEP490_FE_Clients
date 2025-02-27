@@ -62,7 +62,7 @@ export default function NearSpaceList() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 mb-10">
+    <div className="max-w-7xl mx-auto p-6 mb-10">
       <div className="flex items-center justify-end mb-4">
         <div className="flex items-center text-[#835101] cursor-pointer">
           <MapPin className="mr-2 text-black" size={24} />
