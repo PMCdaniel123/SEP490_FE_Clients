@@ -10,6 +10,7 @@
         "workspace-detail",
         "Notification",
         "search-page",
-        "user-wallet"
+        "user-wallet",
+        "about-us"
     ]
 }

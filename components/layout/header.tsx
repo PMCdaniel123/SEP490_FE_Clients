@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronsUpDown } from "lucide-react";
+import { ChevronsUpDown, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { SignInButton } from "../signin-form/signin-button";
@@ -18,6 +18,7 @@ function Header() {
   const [isSignUpModalOpen, setSignUpModalOpen] = useState(false);
   const [isSignInModalOpen, setSignInModalOpen] = useState(false);
   const [openAccount, setOpenAccount] = useState(false);
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -45,7 +46,7 @@ function Header() {
   };
 
   return (
-    <header className="bg-primary py-4 px-16 flex items-center justify-between text-white relative z-50">
+    <header className="bg-primary py-4 px-4 flex items-center justify-between text-white relative z-50">
       <h1
         className="text-3xl font-extrabold cursor-pointer"
         onClick={() => router.push("/")}
@@ -73,7 +74,7 @@ function Header() {
         ))}
       </nav>
       <div className="flex items-center gap-4">
-        <Link href="/become-owner" className="font-medium">
+        <Link href="/become-owner" className="font-medium hidden md:block">
           <button className="text-base px-5 py-3 rounded-xl shadow hover:bg-secondary bg-[#484848]">
             Trở thành doanh nghiệp
           </button>
@@ -91,7 +92,7 @@ function Header() {
               height={40}
               className="rounded-full border bg-white"
             />
-            <div className="flex flex-col justify-center items-start">
+            <div className="hidden md:flex flex-col justify-center items-start">
               <p className="text-sm font-semibold">WorkHive Customer</p>
               <p className="text-sm">customer@gmail.com</p>
             </div>
@@ -170,7 +171,37 @@ function Header() {
             </ul>
           )}
         </div>
+        <button
+          className="md:hidden flex items-center justify-center p-2"
+          onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
+
+      {isMobileMenuOpen && (
+        <nav className="absolute top-full left-0 w-full bg-primary text-white flex flex-col items-center gap-4 py-4 md:hidden">
+          {menuItems.map((item) => (
+            <Link
+              key={item.path}
+              href={item.path}
+              className="font-medium text-base"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {item.name}
+            </Link>
+          ))}
+          <Link
+            href="/become-owner"
+            className="font-medium"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <button className="text-base px-5 py-3 rounded-xl shadow hover:bg-secondary bg-[#484848]">
+              Trở thành doanh nghiệp
+            </button>
+          </Link>
+        </nav>
+      )}
 
       <Modal
         open={isSignUpModalOpen}
