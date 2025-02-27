@@ -4,11 +4,11 @@ import { SignUpForm } from "@/components/signup-form/signup-form";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 
-export default function SignupPage({
-  onCloseSignUpForm,
-}: {
+interface SignUpPageProps {
   onCloseSignUpForm: () => void;
-}) {
+}
+
+export default function SignupPage({ onCloseSignUpForm }: SignUpPageProps) {
   const searchParams = useSearchParams();
   const role = searchParams?.get("role") || "customer";
 
