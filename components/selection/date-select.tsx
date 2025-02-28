@@ -48,6 +48,9 @@ function DateSelect() {
               date?.from ? dayjs(date.from) : undefined,
               date?.to ? dayjs(date.to) : undefined,
             ]}
+            disabledDate={(current) =>
+              current && current < dayjs().startOf("day")
+            }
           />
         </div>
       )}

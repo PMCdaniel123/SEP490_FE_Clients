@@ -11,7 +11,7 @@ import {
   HandPlatter,
 } from "lucide-react";
 import Loader from "@/components/loader/Loader";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import HighRatingSpace from "@/components/high-rating-space/high-rating-space";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
@@ -39,7 +39,7 @@ import AmenitiesList from "@/components/amenities-list/amenities-list";
 import BeveragesList from "@/components/beverages-list/beverages-list";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores";
-import { setWorkspaceId } from "@/stores/slices/cartSlice";
+import { clearCart, setWorkspaceId } from "@/stores/slices/cartSlice";
 import Amenity from "@/components/amenities-list/amenity";
 import Beverage from "@/components/beverages-list/beverage";
 
@@ -60,16 +60,18 @@ const WorkspaceDetail = () => {
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [loading, setLoading] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isBeverageOpen, setIsBeverageOpen] = useState(false);
   const [shortTerm, setShortTerm] = useState("1");
+  const router = useRouter();
   const dispatch = useDispatch();
-  const { beverageList, amenityList } = useSelector(
+  const { beverageList, amenityList, total } = useSelector(
     (state: RootState) => state.cart
   );
 
   useEffect(() => {
     if (!workspaceId) return;
 
-    dispatch(setWorkspaceId(workspaceId));
+    dispatch(setWorkspaceId({ id: workspaceId, price: 1000 }));
 
     fetch(
       `https://67271c49302d03037e6f6a3b.mockapi.io/spaceList/${workspaceId}`
@@ -84,6 +86,10 @@ const WorkspaceDetail = () => {
         setLoading(false);
       });
   }, [dispatch, workspaceId]);
+
+  const handleClearAll = () => {
+    dispatch(clearCart());
+  };
 
   const handleShare = () => {
     setIsShareModalOpen(true);
@@ -112,9 +118,6 @@ const WorkspaceDetail = () => {
   if (!workspace) {
     return <div className="text-center">Workspace not found</div>;
   }
-
-  console.log(beverageList);
-  console.log(amenityList);
 
   return (
     <div className="flex flex-col container mx-auto px-10 py-8 gap-20">
@@ -162,9 +165,6 @@ const WorkspaceDetail = () => {
               <Archive size={28} /> <span>Cơ sở vật chất</span>
             </h2>
             <FacilitiesList />
-            {/* <button className="text-fourth border border-1 border-primary rounded-xl py-4 font-semibold md:max-w-[250px] hover:bg-primary hover:text-white transition-colors duration-300">
-              Hiển thị Menu dịch vụ
-            </button> */}
           </div>
 
           <div>
@@ -185,7 +185,12 @@ const WorkspaceDetail = () => {
             <h2 className="text-xl font-bold text-primary mb-6 flex gap-4">
               <HandPlatter size={28} /> <span>Thực đơn</span>
             </h2>
-            <BeveragesList />
+            <button
+              className="text-fourth border border-1 border-primary rounded-xl p-4 font-semibold md:max-w-[250px] hover:bg-primary hover:text-white transition-colors duration-300"
+              onClick={() => setIsBeverageOpen(true)}
+            >
+              Hiển thị Menu dịch vụ
+            </button>
           </div>
 
           <GoogleMap />
@@ -197,9 +202,6 @@ const WorkspaceDetail = () => {
             <div>
               <HighRatingSpace />
             </div>
-            {/* <button className="text-fourth border border-1 border-primary rounded-xl py-4 font-semibold md:max-w-[250px] hover:bg-primary hover:text-white transition-colors duration-300">
-              Hiển thị trên bản đồ
-            </button> */}
           </div>
 
           <div className="flex flex-col gap-6">
@@ -210,7 +212,7 @@ const WorkspaceDetail = () => {
           </div>
         </div>
 
-        <div className="flex flex-col p-4 bg-white border rounded-xl shadow-xl">
+        <div className="flex flex-col p-4 bg-white border rounded-xl shadow-xl w-full max-w-full h-fit lg:sticky lg:top-4 lg:max-h-[90vh] overflow-auto">
           <div>
             <div className="flex justify-between items-center mt-4">
               <h2 className="text-2xl font-bold text-fourth">$1 - $20</h2>
@@ -238,9 +240,17 @@ const WorkspaceDetail = () => {
               {shortTerm === "2" && <DateSelect />}
             </RadioGroup>
             <div className="flex flex-col gap-2 my-8">
+              {beverageList.length + amenityList.length > 1 && (
+                <p
+                  className="text-red-500 flex justify-end cursor-pointer hover:text-red-300"
+                  onClick={handleClearAll}
+                >
+                  Xóa tất cả
+                </p>
+              )}
               {beverageList.length > 0 && (
                 <div>
-                  <Separator className="my-6" />
+                  <Separator className="mb-6 mt-2" />
                   <Label className="mb-2">Thực đơn:</Label>
                 </div>
               )}
@@ -249,7 +259,7 @@ const WorkspaceDetail = () => {
               ))}
               {amenityList.length > 0 && (
                 <div>
-                  <Separator className="my-6" />
+                  <Separator className="mb-6 mt-2" />
                   <Label className="mb-2">Các tiện ích:</Label>
                 </div>
               )}
@@ -257,16 +267,22 @@ const WorkspaceDetail = () => {
                 <Amenity key={item.id} item={item} />
               ))}
             </div>
-            <Button className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base">
+            <p className="text-base font-medium">Tổng tiền: {total}</p>
+            <Separator className="my-6" />
+            <Button
+              className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base"
+              onClick={() => router.push(`/checkout`)}
+            >
               Đặt Ngay
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Share Modal */}
       <Modal
-        title="Chia sẻ liên kết"
+        title={
+          <p className="text-xl font-bold text-primary">Chia sẻ liên kết</p>
+        }
         open={isShareModalOpen}
         onCancel={() => setIsShareModalOpen(false)}
         footer={null}
@@ -306,6 +322,15 @@ const WorkspaceDetail = () => {
             </LinkedinShareButton>
           </div>
         </div>
+      </Modal>
+
+      <Modal
+        title={<p className="text-xl font-bold text-primary">Thực đơn</p>}
+        open={isBeverageOpen}
+        onCancel={() => setIsBeverageOpen(false)}
+        footer={null}
+      >
+        <BeveragesList />
       </Modal>
     </div>
   );

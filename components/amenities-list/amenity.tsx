@@ -69,7 +69,7 @@ function Amenity({ item }: Props) {
         </div>
       </div>
 
-      <p className="text-base font-medium">{item.price * item.quantity} VND</p>
+      <p className="text-sm font-medium">{item.price * item.quantity} VND</p>
 
       <button
         onClick={handleRemove}
