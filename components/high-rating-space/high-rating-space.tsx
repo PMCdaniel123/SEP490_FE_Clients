@@ -65,7 +65,7 @@ export default function HighRatingSpace() {
   };
 
   return (
-    <div className="mx-auto mb-10">
+    <div className="max-w-7xl mx-auto p-6">
       <Slider {...settings}>
         {workspaces.map((workspace, index) => (
           <div key={index} className="px-2">

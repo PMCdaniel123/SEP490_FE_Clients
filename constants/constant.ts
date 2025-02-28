@@ -16,6 +16,7 @@ export const menuItems: MenuItemProps[] = [
   { name: "Liên hệ", path: "/contact" },
   { name: "Không gian", path: "/workspace" },
   { name: "Tải WorkHive", path: "/download" },
+  { name: "Giới thiệu", path: "/about-us" },
 ];
 
 export const topWorkspace: TopWorkspace[] = [
