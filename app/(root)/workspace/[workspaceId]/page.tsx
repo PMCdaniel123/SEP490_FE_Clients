@@ -39,9 +39,14 @@ import AmenitiesList from "@/components/amenities-list/amenities-list";
 import BeveragesList from "@/components/beverages-list/beverages-list";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores";
-import { clearCart, setWorkspaceId } from "@/stores/slices/cartSlice";
+import {
+  clearBeverageAndAmenity,
+  clearWorkspaceTime,
+  setWorkspaceId,
+} from "@/stores/slices/cartSlice";
 import Amenity from "@/components/amenities-list/amenity";
 import Beverage from "@/components/beverages-list/beverage";
+import TimeList from "@/components/selection/time-list";
 
 interface Workspace {
   id: string;
@@ -61,17 +66,26 @@ const WorkspaceDetail = () => {
   const [loading, setLoading] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isBeverageOpen, setIsBeverageOpen] = useState(false);
+  const [isTimeListOpen, setIsTimeListOpen] = useState(false);
   const [shortTerm, setShortTerm] = useState("1");
   const router = useRouter();
   const dispatch = useDispatch();
-  const { beverageList, amenityList, total } = useSelector(
+  const { beverageList, amenityList, total, startTime, endTime } = useSelector(
     (state: RootState) => state.cart
   );
+
+  console.log({ startTime, endTime });
 
   useEffect(() => {
     if (!workspaceId) return;
 
-    dispatch(setWorkspaceId({ id: workspaceId, price: 1000 }));
+    dispatch(
+      setWorkspaceId({
+        id: workspaceId,
+        price: shortTerm === "1" ? 1000 : 20000,
+        priceType: shortTerm,
+      })
+    );
 
     fetch(
       `https://67271c49302d03037e6f6a3b.mockapi.io/spaceList/${workspaceId}`
@@ -85,10 +99,10 @@ const WorkspaceDetail = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }, [dispatch, workspaceId]);
+  }, [dispatch, workspaceId, shortTerm]);
 
-  const handleClearAll = () => {
-    dispatch(clearCart());
+  const handleClearBeverageAndAmenity = () => {
+    dispatch(clearBeverageAndAmenity());
   };
 
   const handleShare = () => {
@@ -223,9 +237,26 @@ const WorkspaceDetail = () => {
               Thuê theo ngày: $20
             </p>
             <Separator className="my-6" />
+            <div
+              className="text-primary flex flex-col items-end cursor-pointer hover:text-secondary mb-6 text-sm font-bold"
+              onClick={() => setIsTimeListOpen(true)}
+            >
+              <p className="break-words">Xem danh sách thời gian</p>
+              <p className="break-words">không khả dụng</p>
+            </div>
             <RadioGroup
               defaultValue={shortTerm}
-              onValueChange={(value) => setShortTerm(value)}
+              onValueChange={(value) => {
+                setShortTerm(value);
+                dispatch(clearWorkspaceTime());
+                dispatch(
+                  setWorkspaceId({
+                    id: workspaceId,
+                    price: value === "1" ? 1000 : 20000,
+                    priceType: value,
+                  })
+                );
+              }}
               className="flex flex-col gap-2 my-2"
             >
               <div className="flex items-center space-x-2">
@@ -243,7 +274,7 @@ const WorkspaceDetail = () => {
               {beverageList.length + amenityList.length > 1 && (
                 <p
                   className="text-red-500 flex justify-end cursor-pointer hover:text-red-300"
-                  onClick={handleClearAll}
+                  onClick={handleClearBeverageAndAmenity}
                 >
                   Xóa tất cả
                 </p>
@@ -331,6 +362,19 @@ const WorkspaceDetail = () => {
         footer={null}
       >
         <BeveragesList />
+      </Modal>
+
+      <Modal
+        title={
+          <p className="text-xl font-bold text-primary">
+            Danh sách thời gian không khả dụng
+          </p>
+        }
+        open={isTimeListOpen}
+        onCancel={() => setIsTimeListOpen(false)}
+        footer={null}
+      >
+        <TimeList />
       </Modal>
     </div>
   );

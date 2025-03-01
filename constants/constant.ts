@@ -6,6 +6,7 @@ import {
   NewCustomerItemProps,
   PromotionProps,
   ReviewItemProps,
+  TimeItemProps,
   TopWorkspace,
   WithdrawalProps,
   WorkspaceProps,
@@ -494,5 +495,98 @@ export const withdrawalList: WithdrawalProps[] = [
     status: "3",
     createdAt: "2023-01-01",
     updatedAt: "2023-01-01",
+  },
+];
+
+export const timeList: TimeItemProps[] = [
+  {
+    id: "1",
+    startDate: "00:00 02/03/2025",
+    endDate: "01:00 02/03/2025",
+    status: "1",
+  },
+  {
+    id: "2",
+    startDate: "04:00 02/03/2025",
+    endDate: "05:00 02/03/2025",
+    status: "2",
+  },
+  {
+    id: "3",
+    startDate: "08:00 02/03/2025",
+    endDate: "09:00 02/03/2025",
+    status: "1",
+  },
+  {
+    id: "4",
+    startDate: "13:00 02/03/2025",
+    endDate: "15:00 02/03/2025",
+    status: "2",
+  },
+  {
+    id: "5",
+    startDate: "18:00 02/03/2025",
+    endDate: "21:00 02/03/2025",
+    status: "1",
+  },
+  {
+    id: "6",
+    startDate: "22:00 02/03/2025",
+    endDate: "23:00 02/03/2025",
+    status: "2",
+  },
+  {
+    id: "7",
+    startDate: "00:00 03/03/2025",
+    endDate: "01:00 03/03/2025",
+    status: "1",
+  },
+  {
+    id: "8",
+    startDate: "04:00 03/03/2025",
+    endDate: "05:00 03/03/2025",
+    status: "2",
+  },
+  {
+    id: "9",
+    startDate: "08:00 03/03/2025",
+    endDate: "09:00 03/03/2025",
+    status: "1",
+  },
+  {
+    id: "10",
+    startDate: "13:00 03/03/2025",
+    endDate: "15:00 03/03/2025",
+    status: "2",
+  },
+  {
+    id: "11",
+    startDate: "18:00 03/03/2025",
+    endDate: "21:00 03/03/2025",
+    status: "1",
+  },
+  {
+    id: "12",
+    startDate: "22:00 03/03/2025",
+    endDate: "23:00 03/03/2025",
+    status: "2",
+  },
+  {
+    id: "13",
+    startDate: "00:00 04/03/2025",
+    endDate: "01:00 04/03/2025",
+    status: "1",
+  },
+  {
+    id: "14",
+    startDate: "04:00 04/03/2025",
+    endDate: "05:00 04/03/2025",
+    status: "2",
+  },
+  {
+    id: "15",
+    startDate: "08:00 04/03/2025",
+    endDate: "09:00 04/03/2025",
+    status: "1",
   },
 ];

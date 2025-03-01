@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import dayjs from "dayjs";
 
 export type CartItem = {
   id: string;
@@ -10,7 +11,10 @@ export type CartItem = {
 
 interface CartState {
   workspaceId: string;
-  workspacePrice: number;
+  price: number;
+  priceType: string;
+  startTime: string;
+  endTime: string;
   beverageList: CartItem[];
   amenityList: CartItem[];
   total: number;
@@ -18,7 +22,10 @@ interface CartState {
 
 const initialState: CartState = {
   workspaceId: "",
-  workspacePrice: 0,
+  price: 0,
+  priceType: "1",
+  startTime: "",
+  endTime: "",
   beverageList: [],
   amenityList: [],
   total: 0,
@@ -30,10 +37,25 @@ const cartSlice = createSlice({
   reducers: {
     setWorkspaceId: (
       state,
-      action: PayloadAction<{ id: string; price: number }>
+      action: PayloadAction<{ id: string; price: number; priceType: string }>
     ) => {
       state.workspaceId = action.payload.id;
-      state.workspacePrice = action.payload.price;
+      state.price = action.payload.price;
+      state.priceType = action.payload.priceType;
+      cartSlice.caseReducers.calculateTotal(state);
+    },
+    setWorkspaceTime: (
+      state,
+      action: PayloadAction<{ startTime: string; endTime: string }>
+    ) => {
+      state.startTime = action.payload.startTime;
+      state.endTime = action.payload.endTime;
+      cartSlice.caseReducers.calculateTotal(state);
+    },
+    clearWorkspaceTime: (state) => {
+      state.startTime = "";
+      state.endTime = "";
+      state.total = 0;
       cartSlice.caseReducers.calculateTotal(state);
     },
     addBeverage: (state, action: PayloadAction<CartItem>) => {
@@ -90,12 +112,20 @@ const cartSlice = createSlice({
       }
       cartSlice.caseReducers.calculateTotal(state);
     },
+    clearBeverageAndAmenity: (state) => {
+      state.beverageList = [];
+      state.amenityList = [];
+      state.total = 0;
+      cartSlice.caseReducers.calculateTotal(state);
+    },
     clearCart: (state) => {
       state.beverageList = [];
       state.amenityList = [];
       state.workspaceId = "";
-      state.workspacePrice = 0;
+      state.startTime = "";
+      state.endTime = "";
       state.total = 0;
+      cartSlice.caseReducers.calculateTotal(state);
     },
     calculateTotal: (state) => {
       const beverageTotal = state.beverageList.reduce(
@@ -106,7 +136,27 @@ const cartSlice = createSlice({
         (acc, item) => acc + item.price * item.quantity,
         0
       );
-      state.total = state.workspacePrice + beverageTotal + amenityTotal;
+
+      let duration = 0;
+
+      if (state.priceType === "1") {
+        const start = dayjs(state.startTime, "HH:mm DD/MM/YYYY")
+          .toDate()
+          .getTime();
+        const end = dayjs(state.endTime, "HH:mm DD/MM/YYYY").toDate().getTime();
+        duration = (end - start) / (1000 * 60 * 60);
+      } else {
+        const start = dayjs(state.startTime, "HH:mm DD/MM/YYYY").startOf("day");
+        const end = dayjs(state.endTime, "HH:mm DD/MM/YYYY").startOf("day");
+        const result = end.diff(start, "day");
+        duration = result === 0 ? 1 : result;
+      }
+
+      console.log(state.price, state.priceType, duration);
+
+      const price = state.price * duration;
+
+      state.total = price + beverageTotal + amenityTotal;
     },
   },
 });
@@ -121,6 +171,9 @@ export const {
   updateAmenityQuantity,
   clearCart,
   calculateTotal,
+  setWorkspaceTime,
+  clearWorkspaceTime,
+  clearBeverageAndAmenity,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;
