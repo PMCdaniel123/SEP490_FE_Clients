@@ -36,6 +36,13 @@ function BeveragesItem({ id, name, price, image, description }: BeverageProps) {
     }, 1000);
   };
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(value);
+  };
+
   if (hidden) return null;
 
   return (
@@ -58,7 +65,7 @@ function BeveragesItem({ id, name, price, image, description }: BeverageProps) {
                 className="w-full h-36 object-cover rounded-t-lg"
               />
               <div className="bg-primary text-white px-3 py-1 rounded-b-lg text-base flex gap-2 items-center justify-center">
-                <Banknote /> {price} VND
+                <Banknote /> {formatCurrency(Number(price))}
               </div>
             </div>
             <div className="col-span-2 p-4 flex flex-col gap-2 items-start justify-center">
