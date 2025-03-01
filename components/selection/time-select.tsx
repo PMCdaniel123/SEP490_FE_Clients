@@ -1,7 +1,12 @@
+import {
+  clearWorkspaceTime,
+  setWorkspaceTime,
+} from "@/stores/slices/cartSlice";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 function TimeSelect() {
   const [date, setDate] = useState(dayjs());
@@ -14,31 +19,67 @@ function TimeSelect() {
     minutes: dayjs().minute(),
   });
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
+  const dispatch = useDispatch();
 
-  const getNowTime = () => {
+  useEffect(() => {
+    if (!isTimePickerOpen) {
+      dispatch(clearWorkspaceTime());
+    }
+  }, [isTimePickerOpen, dispatch]);
+
+  const saveTime = (
+    startHours: number,
+    startMinutes: number,
+    endHours: number,
+    endMinutes: number,
+    selectedDate: dayjs.Dayjs
+  ) => {
+    const formattedStartTime = `${String(startHours).padStart(2, "0")}:${String(
+      startMinutes
+    ).padStart(2, "0")} ${selectedDate.format("DD/MM/YYYY")}`;
+
+    const formattedEndTime = `${String(endHours).padStart(2, "0")}:${String(
+      endMinutes
+    ).padStart(2, "0")} ${selectedDate.format("DD/MM/YYYY")}`;
+
+    dispatch(
+      setWorkspaceTime({
+        startTime: formattedStartTime,
+        endTime: formattedEndTime,
+      })
+    );
+  };
+
+  const getNowTime = (selectedDate: dayjs.Dayjs) => {
     const now = dayjs();
+    const isToday = selectedDate.isSame(now, "day");
+
     setStartTime({
-      hours: now.hour(),
-      minutes: now.minute(),
+      hours: isToday ? now.hour() : 0,
+      minutes: isToday ? now.minute() : 0,
     });
     setEndTime({
-      hours: now.hour() + 1,
-      minutes: now.minute(),
+      hours: isToday ? now.hour() + 1 : 1,
+      minutes: isToday ? now.minute() : 0,
     });
-    setDate(now);
+    saveTime(
+      isToday ? now.hour() : 0,
+      isToday ? now.minute() : 0,
+      isToday ? now.hour() + 1 : 1,
+      isToday ? now.minute() : 0,
+      selectedDate
+    );
   };
 
   const toggleTimePicker = () => {
     setIsTimePickerOpen(!isTimePickerOpen);
-    getNowTime();
+    getNowTime(date);
   };
 
   const handleDateChange = (selectedDate: dayjs.Dayjs | null) => {
     if (selectedDate) {
       setDate(selectedDate);
-      if (selectedDate.isSame(dayjs(), "day")) {
-        getNowTime();
-      }
+      getNowTime(selectedDate);
     }
   };
 
@@ -71,6 +112,14 @@ function TimeSelect() {
       hours: start.hour() + 1,
       minutes: start.minute(),
     });
+
+    saveTime(
+      newStartTime.hours,
+      newStartTime.minutes,
+      start.hour() + 1,
+      start.minute(),
+      date
+    );
   };
 
   const handleEndTimeInput = (field: string, value: string) => {
@@ -92,6 +141,14 @@ function TimeSelect() {
     }
 
     setEndTime(newEndTime);
+
+    saveTime(
+      startTime.hours,
+      startTime.minutes,
+      newEndTime.hours,
+      newEndTime.minutes,
+      date
+    );
   };
 
   return (

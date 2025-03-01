@@ -197,3 +197,10 @@ export interface PhoneProps {
   id: string;
   phone: string;
 }
+
+export interface TimeItemProps {
+  id: string;
+  startDate: string;
+  endDate: string;
+  status: string;
+}
