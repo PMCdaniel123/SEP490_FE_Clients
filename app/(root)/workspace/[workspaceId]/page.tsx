@@ -121,6 +121,13 @@ const WorkspaceDetail = () => {
     );
   };
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(value);
+  };
+
   if (loading) {
     return (
       <div className="text-center">
@@ -229,12 +236,14 @@ const WorkspaceDetail = () => {
         <div className="flex flex-col p-4 bg-white border rounded-xl shadow-xl w-full max-w-full h-fit lg:sticky lg:top-4 lg:max-h-[90vh] overflow-auto">
           <div>
             <div className="flex justify-between items-center mt-4">
-              <h2 className="text-2xl font-bold text-fourth">$1 - $20</h2>
+              <h2 className="text-2xl font-bold text-fourth">
+                {formatCurrency(35000)} - {formatCurrency(250000)}
+              </h2>
             </div>
             <Separator className="my-6" />
             <p className="text-fifth text-sm">
-              Thuê theo giờ: $1 <br />
-              Thuê theo ngày: $20
+              Thuê theo giờ: {formatCurrency(35000)} <br />
+              Thuê theo ngày: {formatCurrency(250000)}
             </p>
             <Separator className="my-6" />
             <div
@@ -298,7 +307,9 @@ const WorkspaceDetail = () => {
                 <Amenity key={item.id} item={item} />
               ))}
             </div>
-            <p className="text-base font-medium">Tổng tiền: {total}</p>
+            <p className="text-base font-medium">
+              Tổng tiền: {formatCurrency(total)}
+            </p>
             <Separator className="my-6" />
             <Button
               className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base"
@@ -327,7 +338,9 @@ const WorkspaceDetail = () => {
             />
             <h3 className="text-lg font-bold">{workspace.title}</h3>
             <p className="text-sm text-gray-500">{workspace.address}</p>
-            <p className="text-sm text-gray-500">{workspace.price}</p>
+            <p className="text-sm text-gray-500">
+              {formatCurrency(Number(workspace.price))}
+            </p>
           </div>
           <Button
             onClick={handleCopyUrl}

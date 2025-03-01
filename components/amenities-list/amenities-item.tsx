@@ -35,6 +35,13 @@ function AmenitiesItem({
     setIsOpen(false);
   };
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(value);
+  };
+
   return (
     <>
       <Card
@@ -44,7 +51,7 @@ function AmenitiesItem({
         <div className="relative">
           <img src={image} alt={name} className="w-full h-48 object-cover" />
           <div className="absolute bottom-2 left-2 bg-primary bg-opacity-90 text-white px-3 py-1 rounded-md text-sm flex md:flex-row flex-col gap-2 items-center">
-            <Banknote /> {price} VND
+            <Banknote /> {formatCurrency(Number(price))}
           </div>
         </div>
         <CardContent className="p-4 flex flex-col gap-2">
@@ -69,7 +76,7 @@ function AmenitiesItem({
               className="w-48 h-48 object-cover rounded-t-lg"
             />
             <div className="bg-primary text-white px-3 py-2 rounded-b-lg text-base flex gap-2 items-center justify-center">
-              <Banknote /> {price} VND
+              <Banknote /> {formatCurrency(Number(price))}
             </div>
           </div>
 

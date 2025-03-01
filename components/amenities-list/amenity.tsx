@@ -34,6 +34,13 @@ function Amenity({ item }: Props) {
     }
   };
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(value);
+  };
+
   return (
     <div className="flex items-center justify-between p-2 bg-white shadow-md border rounded-md">
       <img
@@ -44,7 +51,7 @@ function Amenity({ item }: Props) {
       <div className="flex flex-col gap-2">
         <div>
           <p className="text-sm font-semibold">{item.name}</p>
-          <p className="text-xs text-gray-500">{item.price} VND</p>
+          <p className="text-xs text-gray-500">{formatCurrency(item.price)}</p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -69,7 +76,9 @@ function Amenity({ item }: Props) {
         </div>
       </div>
 
-      <p className="text-sm font-medium">{item.price * item.quantity} VND</p>
+      <p className="text-sm font-medium">
+        {formatCurrency(item.price * item.quantity)}
+      </p>
 
       <button
         onClick={handleRemove}
