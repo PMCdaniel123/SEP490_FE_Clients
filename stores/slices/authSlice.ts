@@ -1,9 +1,16 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { ValidatePayload } from "@/types";
 
+interface Customer {
+  auth: string | null;
+  token: string | null;
+  fullName: string | null;
+  password: string;
+}
+
 interface AuthState {
   isAuthenticated: boolean;
-  customer: { auth: string | null; password: string } | null;
+  customer: Customer | null;
   user: string | null;
   isPhoneValid: boolean;
   loginStep: "phone" | "email" | "password";
@@ -69,7 +76,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login(state, action: PayloadAction<{ auth: string; password: string }>) {
+    login(state, action: PayloadAction<Customer>) {
       state.isAuthenticated = true;
       state.customer = action.payload;
       state.loginStep = "phone";
