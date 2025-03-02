@@ -49,7 +49,15 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
         return;
       }
 
-      dispatch(login({ auth: auth ? auth : "", password: data.password }));
+      const result = await response.json();
+      const customerData = {
+        auth: auth ? auth : "",
+        password: data.password,
+        token: result.token,
+        fullName: user,
+      };
+
+      dispatch(login(customerData));
 
       toast.success("Đăng nhập thành công!", {
         position: "bottom-right",
@@ -57,11 +65,9 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
         hideProgressBar: true,
         theme: "dark",
       });
-      localStorage.setItem(
-        "customer",
-        JSON.stringify({ auth: auth ? auth : "", password: data.password })
-      );
+      localStorage.setItem("customer", JSON.stringify(customerData));
       onClose();
+      window.location.reload();
     } catch {
       toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
         position: "bottom-right",
