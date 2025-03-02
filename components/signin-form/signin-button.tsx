@@ -53,7 +53,7 @@ export function SignInButton({
       {loginStep === "password" && (
         <PasswordForm onClose={() => onOpenChange(false)} />
       )}
-      <OwnerButton />
+      <OwnerButton onOpenChange={onOpenChange} />
     </Modal>
   );
 }

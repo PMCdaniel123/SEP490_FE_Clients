@@ -8,7 +8,7 @@ import SectionTitle from "@/components/ui/section-tilte";
 import Banner from "@/components/ui/banner";
 import WorkshopList from "@/components/workshop-list/workshop-list";
 import FeatureSection from "@/components/ui/feauture-section";
-import { Send } from "lucide-react";
+import { Send, MapPin } from "lucide-react";
 
 function HomePage() {
   return (
@@ -19,7 +19,16 @@ function HomePage() {
           WorkHive cung cấp đa dạng <br /> giải pháp không gian làm việc
         </SectionTitle>
         <SpaceList />
-        <SectionTitle>Nơi làm việc gần bạn</SectionTitle>
+        <div className="flex items-center justify-between mb-4">
+          <SectionTitle>Nơi làm việc gần bạn</SectionTitle>
+          <div className="flex items-center text-[#835101] cursor-pointer">
+            <MapPin className="mr-2 text-black" size={24} />
+            <span>
+              Hiển thị <br />
+              trên bản đồ
+            </span>
+          </div>
+        </div>
         <NearSpaceList />
         <SectionTitle>
           Không gian làm việc <br /> được đánh giá cao

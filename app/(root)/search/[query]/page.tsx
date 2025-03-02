@@ -124,7 +124,7 @@ const SearchPage = ({ params }: { params: { query: string } }) => {
                     <div className="flex items-center text-yellow-500 font-semibold">
                       <Star size={16} className="mr-1" /> {result.rating}
                     </div>
-                    <p className="text-lg font-bold">${result.price}</p>
+                    <p className="text-lg font-bold">{result.price}</p>
                   </div>
                 </div>
               </div>
