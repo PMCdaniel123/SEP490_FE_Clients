@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/stores";
 import { login } from "@/stores/slices/authSlice";
 import Image from "next/image";
+import { useState } from "react";
+import { LoadingOutlined } from "@ant-design/icons";
 
 export type FormInputs = z.infer<typeof passwordSchema>;
 
@@ -17,6 +19,7 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
   const auth = localStorage.getItem("auth");
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -27,6 +30,7 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
   });
 
   const handleSignIn: SubmitHandler<FormInputs> = async (data) => {
+    setIsLoading(true);
     try {
       const response = await fetch("https://localhost:5050/users/login", {
         method: "POST",
@@ -75,6 +79,8 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
         hideProgressBar: true,
         theme: "dark",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -114,8 +120,8 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
         )}
       </div>
       <div className="text-center w-full">
-        <Button className="text-white py-6 font-semibold w-3/5">
-          Đăng nhập
+        <Button className="text-white py-6 font-semibold w-3/5" disabled={isLoading}>
+          {isLoading ? <LoadingOutlined style={{ color: "white" }} /> : "Đăng nhập"}
         </Button>
       </div>
       <div className="flex items-center my-6 w-full">
