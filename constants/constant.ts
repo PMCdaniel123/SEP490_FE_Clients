@@ -14,10 +14,10 @@ import {
 
 export const menuItems: MenuItemProps[] = [
   { name: "Trang chủ", path: "/" },
-  { name: "Liên hệ", path: "/contact" },
-  { name: "Không gian", path: "/workspace" },
-  { name: "Tải WorkHive", path: "/download" },
   { name: "Giới thiệu", path: "/about-us" },
+  { name: "Không gian", path: "/workspace" },
+  { name: "Liên hệ", path: "/contact" },
+  // { name: "Tải WorkHive", path: "/download" },
 ];
 
 export const topWorkspace: TopWorkspace[] = [
