@@ -9,11 +9,14 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/stores";
 import { emailSchema } from "@/lib/zod/schema";
 import { setLoginStep, validateEmail } from "@/stores/slices/authSlice";
+import { useState } from "react";
+import { LoadingOutlined } from "@ant-design/icons";
 
 export type FormInputs = z.infer<typeof emailSchema>;
 
 export function EmailForm({ className }: SignInFormProps) {
   const dispatch = useDispatch<AppDispatch>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -24,11 +27,14 @@ export function EmailForm({ className }: SignInFormProps) {
   });
 
   const handleContinue: SubmitHandler<FormInputs> = async (data) => {
+    setIsLoading(true);
     try {
       const payload: ValidatePayload = { input: data.email };
       await dispatch(validateEmail(payload)).unwrap();
     } catch {
       alert("Email không hợp lệ!");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -62,8 +68,9 @@ export function EmailForm({ className }: SignInFormProps) {
           <Button
             className="w-full text-white py-6 font-semibold"
             type="submit"
+            disabled={isLoading}
           >
-            Tiếp tục
+            {isLoading ? <LoadingOutlined style={{ color: "white" }} /> : "Tiếp tục"}
           </Button>
         </div>
         <div

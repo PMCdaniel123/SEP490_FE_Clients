@@ -15,7 +15,9 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { LoadingOutlined } from '@ant-design/icons';
-
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/stores";
+import { login } from "@/stores/slices/authSlice";
 
 export type FormInputs = z.infer<typeof signupSchema>;
 
@@ -28,12 +30,15 @@ export function SignUpForm({
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormInputs>({
     resolver: zodResolver(signupSchema),
   });
 
   const { role } = props;
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const auth = localStorage.getItem("auth");
   const [isSignInModalOpen, setSignInModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -51,31 +56,49 @@ export function SignUpForm({
         hideProgressBar: true,
         theme: "dark",
       });
+      const loginResponse = await fetch("https://localhost:5050/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          auth: auth ? auth : data.email,
+          password: data.password,
+        }),
+      });
+      const result = await loginResponse.json();
+      const customerData = {
+        auth: auth ? auth : data.email,
+        password: data.password,
+        token: result.token,
+        fullName: data.name,
+      };
+
+      dispatch(login(customerData));
+      localStorage.setItem("customer", JSON.stringify(customerData));
+      onCloseSignUpForm();
+      window.location.reload();
+
       if (role === "owner") {
         router.push("/owners");
       } else {
         router.push("/");
       }
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response && error.response.status === 400) {
-        toast.error("Email hoặc số điện thoại đã được sử dụng.", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
-        });
-      } else {
-        console.error("Error signing up:", error);
-        toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
-        });
-      }
+    } catch {
+      toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        theme: "dark",
+      });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCloseSignUpForm = () => {
+    reset();
+    onCloseSignUpForm();
   };
 
   return (
@@ -173,7 +196,7 @@ export function SignUpForm({
               type="button"
               onClick={() => {
                 setSignInModalOpen(true);
-                onCloseSignUpForm();
+                handleCloseSignUpForm();
               }}
               className="underline underline-offset-4 text-primary"
             >
@@ -221,7 +244,7 @@ export function SignUpForm({
       <SignInButton
         open={isSignInModalOpen}
         onOpenChange={setSignInModalOpen}
-        onCloseSignUpForm={onCloseSignUpForm}
+        onCloseSignUpForm={handleCloseSignUpForm} // Use the new handleCloseSignUpForm function
       />
     </>
   );
