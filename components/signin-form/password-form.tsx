@@ -6,8 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { SignInFormProps } from "@/types";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/stores";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/stores";
 import { login } from "@/stores/slices/authSlice";
 import Image from "next/image";
 
@@ -15,6 +15,8 @@ export type FormInputs = z.infer<typeof passwordSchema>;
 
 export function PasswordForm({ className, onClose }: SignInFormProps) {
   const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.auth);
+  const auth = localStorage.getItem("auth");
 
   const {
     register,
@@ -24,19 +26,50 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
     resolver: zodResolver(passwordSchema),
   });
 
-  const handleSignIn: SubmitHandler<FormInputs> = (data) => {
-    dispatch(login(data.password));
-    onClose();
-    toast.success("Đăng nhập thành công!", {
-      position: "bottom-right",
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
+  const handleSignIn: SubmitHandler<FormInputs> = async (data) => {
+    try {
+      const response = await fetch("https://localhost:5050/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          auth: auth ? auth : "",
+          password: data.password,
+        }),
+      });
+
+      if (!response.ok) {
+        toast.error("Đăng nhập thất bại! Vui lòng kiểm tra lại.", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          theme: "dark",
+        });
+        return;
+      }
+
+      dispatch(login({ auth: auth ? auth : "", password: data.password }));
+
+      toast.success("Đăng nhập thành công!", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        theme: "dark",
+      });
+      localStorage.setItem(
+        "customer",
+        JSON.stringify({ auth: auth ? auth : "", password: data.password })
+      );
+      onClose();
+    } catch {
+      toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        theme: "dark",
+      });
+    }
   };
 
   return (
@@ -52,13 +85,13 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
           <Image
             src="/logo.png"
             alt="Image"
-            width={80}
-            height={80}
+            width={60}
+            height={60}
             className="rounded-full border"
           />
         </div>
-        <div className="flex flex-col ml-6 gap-2">
-          <p className="text-xl font-bold text-fourth">Xin chào,</p>
+        <div className="flex flex-col ml-2 gap-1">
+          <p className="text-base font-bold text-fourth">Xin chào, {user}</p>
           <p className="text-sm font-medium text-fifth">Không phải bạn?</p>
         </div>
       </div>
@@ -81,7 +114,7 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
       </div>
       <div className="flex items-center my-6 w-full">
         <hr className="w-[10%] border-sixth h-1" />
-        <span className="w-[40%] px-3 text-fifth font-semibold text-sm">
+        <span className="w-[50%] px-3 text-fifth font-semibold text-sm">
           Hoặc tiếp tục với
         </span>
         <hr className="w-full border-sixth h-1" />

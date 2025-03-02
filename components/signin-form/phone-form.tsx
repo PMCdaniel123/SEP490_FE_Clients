@@ -28,7 +28,7 @@ export function PhoneForm({ className }: SignInFormProps) {
       const payload: ValidatePayload = { input: data.phone };
       await dispatch(validatePhone(payload)).unwrap();
     } catch {
-      alert("Invalid email or phone number");
+      alert("Số điện thoại không hợp lệ!");
     }
   };
 
@@ -77,7 +77,7 @@ export function PhoneForm({ className }: SignInFormProps) {
       </div>
       <div className="flex items-center my-6 w-full">
         <hr className="w-[10%] border-sixth h-1" />
-        <span className="w-[40%] px-3 text-fifth font-semibold text-sm">
+        <span className="w-[50%] px-3 text-fifth font-semibold text-sm">
           Hoặc tiếp tục với
         </span>
         <hr className="w-full border-sixth h-1" />

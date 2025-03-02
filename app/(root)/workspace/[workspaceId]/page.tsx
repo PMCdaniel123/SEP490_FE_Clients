@@ -74,8 +74,6 @@ const WorkspaceDetail = () => {
     (state: RootState) => state.cart
   );
 
-  console.log({ startTime, endTime });
-
   useEffect(() => {
     if (!workspaceId) return;
 
@@ -307,9 +305,11 @@ const WorkspaceDetail = () => {
                 <Amenity key={item.id} item={item} />
               ))}
             </div>
-            <p className="text-base font-medium">
-              Tổng tiền: {formatCurrency(total)}
-            </p>
+            {startTime === "" && endTime === "" && (
+              <p className="text-base font-medium">
+                Tổng tiền: {formatCurrency(total)}
+              </p>
+            )}
             <Separator className="my-6" />
             <Button
               className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base"
