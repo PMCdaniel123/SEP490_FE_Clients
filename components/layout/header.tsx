@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronsUpDown, Menu, X } from "lucide-react";
+import { BriefcaseBusiness, ChevronsUpDown, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { SignInButton } from "../signin-form/signin-button";
@@ -99,30 +99,29 @@ function Header() {
       </nav>
       <div className="flex items-center gap-4">
         <Link href="/become-owner" className="font-medium hidden md:block">
-          <button className="text-base px-5 py-3 rounded-xl shadow hover:bg-secondary bg-[#484848]">
-            Trở thành doanh nghiệp
+          <button className="flex gap-2 text-base px-5 py-3 rounded-xl shadow border bg-secondary/60 hover:bg-fourth hover:text-white transition-colors duration-200">
+            <BriefcaseBusiness /> Trở thành doanh nghiệp
           </button>
         </Link>
-        <Notification />
+        {customer.token !== null && <Notification />}
         {customer.token === null ? (
-          <div className="flex items-center gap-2 border px-5 py-3 rounded-xl">
+          <div className="flex items-center border rounded-xl bg-secondary/60">
             <p
               onClick={() => {
                 setSignInModalOpen(true);
                 handleCloseSignUpForm();
                 setOpenAccount(!openAccount);
               }}
-              className="font-medium flex items-center hover:text-third transition-colors duration-200 cursor-pointer"
+              className="font-medium flex items-center hover:bg-fourth hover:text-white py-3 px-5 rounded-l-xl border-r transition-colors duration-200 cursor-pointer"
             >
               <span>Đăng nhập</span>
             </p>
-            <p>/</p>
             <p
               onClick={() => {
                 setSignUpModalOpen(true);
                 setOpenAccount(!openAccount);
               }}
-              className="font-medium flex items-center hover:text-third transition-colors duration-200 cursor-pointer"
+              className="font-medium flex items-center hover:bg-fourth hover:text-white py-3 px-5 rounded-r-xl border-l transition-colors duration-200 cursor-pointer"
             >
               <span>Đăng ký</span>
             </p>

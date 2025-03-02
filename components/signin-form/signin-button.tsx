@@ -39,7 +39,7 @@ export function SignInButton({
 
   return (
     <Modal
-      title="Đăng nhập"
+      title={<p className="text-xl font-bold text-primary">Đăng nhập</p>}
       open={open}
       onCancel={() => onOpenChange(false)}
       footer={null}

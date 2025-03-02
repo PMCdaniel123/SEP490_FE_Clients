@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import Loader from "@/components/loader/Loader";
 import { useParams, useRouter } from "next/navigation";
-import HighRatingSpace from "@/components/high-rating-space/high-rating-space";
+// import HighRatingSpace from "@/components/high-rating-space/high-rating-space";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Modal } from "antd";
@@ -195,7 +195,7 @@ const WorkspaceDetail = () => {
 
           <div>
             <h2 className="text-xl font-bold text-primary mb-6 flex gap-4">
-              <Boxes size={28} /> <span>Các tiện ích</span>
+              <Boxes size={28} /> <span>Tiện ích</span>
             </h2>
             <AmenitiesList />
           </div>
@@ -214,14 +214,14 @@ const WorkspaceDetail = () => {
 
           <GoogleMap />
 
-          <div className="flex flex-col gap-6">
+          {/* <div className="flex flex-col gap-6">
             <h2 className="text-xl font-bold text-primary">
               Các không gian tương tự
             </h2>
             <div>
               <HighRatingSpace />
             </div>
-          </div>
+          </div> */}
 
           <div className="flex flex-col gap-6">
             <h2 className="text-xl font-bold text-primary">
@@ -264,7 +264,7 @@ const WorkspaceDetail = () => {
                   })
                 );
               }}
-              className="flex flex-col gap-2 my-2"
+              className="flex flex-col gap-4 my-2"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="1" id="short-term" />
@@ -277,7 +277,7 @@ const WorkspaceDetail = () => {
               </div>
               {shortTerm === "2" && <DateSelect />}
             </RadioGroup>
-            <div className="flex flex-col gap-2 my-8">
+            <div className="flex flex-col gap-2 my-4">
               {beverageList.length + amenityList.length > 1 && (
                 <p
                   className="text-red-500 flex justify-end cursor-pointer hover:text-red-300"
@@ -305,7 +305,7 @@ const WorkspaceDetail = () => {
                 <Amenity key={item.id} item={item} />
               ))}
             </div>
-            {startTime === "" && endTime === "" && (
+            {startTime !== "" && endTime !== "" && (
               <p className="text-base font-medium">
                 Tổng tiền: {formatCurrency(total)}
               </p>

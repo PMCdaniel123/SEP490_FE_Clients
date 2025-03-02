@@ -21,7 +21,7 @@ function SignupPage() {
           src="/login.jpg"
           alt="Image"
           fill
-          className="object-cover dark:brightness-[0.2] dark:grayscale"
+          className="object-cover dark:brightness-[0.2] dark:grayscale rounded-lg"
           priority
         />
       </div>

@@ -118,11 +118,11 @@ export function SignUpForm({
         </div>
         <div className="grid gap-4">
           <div className="grid gap-1">
-            <Label htmlFor="name" className="text-fifth font-semibold text-xs">
+            <Label htmlFor="name" className="text-fourth font-semibold text-xs">
               Họ và tên
             </Label>
             <Input
-              className="py-6 px-4 rounded-2xl bg-seventh"
+              className="py-6 px-4 rounded-md bg-white shadow-sm"
               id="name"
               type="text"
               placeholder="Nhập họ và tên"
@@ -133,11 +133,14 @@ export function SignUpForm({
             )}
           </div>
           <div className="grid gap-1">
-            <Label htmlFor="email" className="text-fifth font-semibold text-xs">
+            <Label
+              htmlFor="email"
+              className="text-fourth font-semibold text-xs"
+            >
               Email
             </Label>
             <Input
-              className="py-6 px-4 rounded-2xl bg-seventh"
+              className="py-6 px-4 rounded-md bg-white shadow-sm"
               id="email"
               type="email"
               placeholder="Nhập email"
@@ -148,11 +151,14 @@ export function SignUpForm({
             )}
           </div>
           <div className="grid gap-1">
-            <Label htmlFor="phone" className="text-fifth font-semibold text-xs">
+            <Label
+              htmlFor="phone"
+              className="text-fourth font-semibold text-xs"
+            >
               Số điện thoại
             </Label>
             <Input
-              className="py-6 px-4 rounded-2xl bg-seventh"
+              className="py-6 px-4 rounded-md bg-white shadow-sm"
               id="phone"
               type="tel"
               placeholder="Nhập số điện thoại"
@@ -165,12 +171,12 @@ export function SignUpForm({
           <div className="grid gap-1">
             <Label
               htmlFor="password"
-              className="text-fifth font-semibold text-xs"
+              className="text-fourth font-semibold text-xs"
             >
               Mật khẩu
             </Label>
             <Input
-              className="py-6 px-4 rounded-2xl bg-seventh"
+              className="py-6 px-4 rounded-md bg-white shadow-sm"
               id="password"
               type="password"
               placeholder="Nhập mật khẩu"
@@ -186,11 +192,15 @@ export function SignUpForm({
               className="text-white py-6 font-semibold w-3/5"
               disabled={isLoading}
             >
-              {isLoading ? <LoadingOutlined style={{ color: "white" }} /> : "Đăng ký"}
+              {isLoading ? (
+                <LoadingOutlined style={{ color: "white" }} />
+              ) : (
+                "Đăng ký"
+              )}
             </Button>
           </div>
 
-          <div className="text-left text-sm text-fifth font-medium my-1">
+          <div className="text-left text-sm text-fourth font-medium my-1">
             Bạn đã có tài khoản ?{" "}
             <button
               type="button"
