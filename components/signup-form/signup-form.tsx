@@ -11,6 +11,11 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SignInButton } from "@/components/signin-form/signin-button";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { LoadingOutlined } from '@ant-design/icons';
+
 
 export type FormInputs = z.infer<typeof signupSchema>;
 
@@ -30,17 +35,52 @@ export function SignUpForm({
   const { role } = props;
   const router = useRouter();
   const [isSignInModalOpen, setSignInModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignUp = () => {
-    if (role === "owner") {
-      router.push("/owners");
-    } else {
-      router.push("/");
+  const handleSignUp = async (data: FormInputs) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        "https://localhost:5050/users/register",
+        data
+      );
+      console.log("Sign up successful:", response.data);
+      toast.success("Đăng ký thành công!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        theme: "dark",
+      });
+      if (role === "owner") {
+        router.push("/owners");
+      } else {
+        router.push("/");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response && error.response.status === 400) {
+        toast.error("Email hoặc số điện thoại đã được sử dụng.", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          theme: "dark",
+        });
+      } else {
+        console.error("Error signing up:", error);
+        toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          theme: "dark",
+        });
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <>
+      <ToastContainer />
       <form
         className={cn("flex flex-col gap-6 w-full", className)}
         {...props}
@@ -55,21 +95,18 @@ export function SignUpForm({
         </div>
         <div className="grid gap-4">
           <div className="grid gap-1">
-            <Label
-              htmlFor="username"
-              className="text-fifth font-semibold text-xs"
-            >
-              Tên đăng nhập
+            <Label htmlFor="name" className="text-fifth font-semibold text-xs">
+              Họ và tên
             </Label>
             <Input
               className="py-6 px-4 rounded-2xl bg-seventh"
-              id="username"
+              id="name"
               type="text"
-              placeholder="Nhập tên đăng nhập"
-              {...register("username")}
+              placeholder="Nhập họ và tên"
+              {...register("name")}
             />
-            {errors.username && (
-              <p className="text-red-500 text-xs">{errors.username.message}</p>
+            {errors.name && (
+              <p className="text-red-500 text-xs">{errors.name.message}</p>
             )}
           </div>
           <div className="grid gap-1">
@@ -124,8 +161,9 @@ export function SignUpForm({
             <Button
               type="submit"
               className="text-white py-6 font-semibold w-3/5"
+              disabled={isLoading}
             >
-              Đăng ký
+              {isLoading ? <LoadingOutlined style={{ color: "white" }} /> : "Đăng ký"}
             </Button>
           </div>
 
