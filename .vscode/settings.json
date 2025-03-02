@@ -12,6 +12,7 @@
     "search-page",
     "user-wallet",
     "about-us",
-    "login"
+    "login",
+    "signUp"
   ]
 }
