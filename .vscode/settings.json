@@ -11,6 +11,7 @@
         "Notification",
         "search-page",
         "user-wallet",
-        "about-us"
+        "about-us",
+        "owner-login"
     ]
 }
