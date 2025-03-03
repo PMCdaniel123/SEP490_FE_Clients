@@ -33,9 +33,11 @@ const HelpSection: React.FC<HelpSectionProps> = ({
       <Dialog open={isHelpModalOpen} onOpenChange={setIsHelpModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Hỗ trợ khách hàng</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-primary">
+              Hỗ trợ khách hàng
+            </DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 my-4">
             <div className="flex items-center gap-3 mb-2">
               <Phone size={24} className="text-primary" />
               <span className="text-gray-600">Điện thoại: 0123-456-789</span>

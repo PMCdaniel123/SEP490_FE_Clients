@@ -25,7 +25,7 @@ const FailPage = () => {
           </motion.div>
         </div>
         <h2 className="text-3xl font-semibold text-gray-900">THẤT BẠI</h2>
-        <p className="text-gray-500 mt-4">Giao dịch không thành công <br/>hãy thử lại hoặc chọn phương thức thanh toán khác.</p>
+        <p className="text-gray-500 mt-4">Giao dịch không thành công <br/>Hãy thử lại hoặc chọn phương thức thanh toán khác.</p>
         <div className="mt-8">
             <Link href="/">
           <Button className=" text-white px-8 py-4 rounded-lg text-base">
