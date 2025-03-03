@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  CreditCard,
-  ArrowDownCircle,
-  ArrowUpCircle,
-  Phone,
-  Mail,
-  HelpCircle,
-} from "lucide-react";
+import { CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,6 +11,9 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import TransactionHistory from "@/components/transaction-history/transaction-history";
+import HelpSection from "@/components/help-section/help-section";
+import Image from "next/image";
 
 const WalletPage = () => {
   const [balance, setBalance] = useState(100000);
@@ -127,120 +123,38 @@ const WalletPage = () => {
         </div>
         {error && <p className="text-red-500 mt-2">{error}</p>}
       </div>
-
-      <div>
-        <h2 className="text-lg font-semibold mb-2">Lịch sử giao dịch</h2>
-        <div className="bg-gray-100 p-4 rounded-lg">
-          {transactions.length > 0 ? (
-            <ul>
-              {transactions.map((tx) => (
-                <li
-                  key={tx.id}
-                  className="flex flex-col p-2 border-b last:border-b-0"
-                >
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      {tx.type === "Nạp tiền" ? (
-                        <ArrowDownCircle className="text-green-500" />
-                      ) : (
-                        <ArrowUpCircle className="text-red-500" />
-                      )}
-                      <span>{tx.type}</span>
-                    </div>
-                    <span>{formatCurrency(tx.amount)}</span>
-                  </div>
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-gray-500 text-sm">{tx.date}</span>
-                    <span className="text-gray-500 text-sm">
-                      {tx.paymentMethod}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-gray-500 text-sm">
-                      {tx.description}
-                    </span>
-                    <span
-                      className={`text-sm ${
-                        tx.status === "Hoàn thành"
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }`}
-                    >
-                      {tx.status}
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-500">Chưa có giao dịch nào.</p>
-          )}
-        </div>
-      </div>
-
-      {/* Help Section */}
-      <div className="mt-8 flex justify-end">
-        <Button
-          variant="outline"
-          className="flex items-center gap-2"
-          onClick={() => setIsHelpModalOpen(true)}
-        >
-          <HelpCircle size={24} className="text-primary" />
-          <span>Hỗ trợ khách hàng</span>
-        </Button>
-      </div>
-
-      <Dialog open={isHelpModalOpen} onOpenChange={setIsHelpModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Hỗ trợ khách hàng</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-3 mb-2">
-              <Phone size={24} className="text-primary" />
-              <span className="text-gray-600">Điện thoại: 0123-456-789</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Mail size={24} className="text-primary" />
-              <span className="text-gray-600">Email: support@workhive.com</span>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsHelpModalOpen(false)}>
-              Đóng
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
+      <TransactionHistory transactions={transactions} formatCurrency={formatCurrency} />
+      <HelpSection isHelpModalOpen={isHelpModalOpen} setIsHelpModalOpen={setIsHelpModalOpen} />
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Chọn phương thức thanh toán</DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <Button
-              variant={
-                selectedPaymentMethod === "Bank Transfer"
-                  ? "default"
-                  : "outline"
-              }
-              className={
-                selectedPaymentMethod === "Bank Transfer" ? "text-white" : ""
-              }
-              onClick={() => setSelectedPaymentMethod("Bank Transfer")}
+              variant={selectedPaymentMethod === "Chuyển khoản ngân hàng" ? "default" : "outline"}
+              className={`flex flex-col items-center justify-center gap-2 p-6 ${selectedPaymentMethod === "Chuyển khoản ngân hàng" ? "text-white" : ""}`}
+              onClick={() => setSelectedPaymentMethod("Chuyển khoản ngân hàng")}
             >
+              <Image
+                src="/vietqr.png"
+                alt="Bank Transfer"
+                width={32}
+                height={32}
+              />
               Chuyển khoản ngân hàng
             </Button>
             <Button
-              variant={
-                selectedPaymentMethod === "E-Wallet" ? "default" : "outline"
-              }
-              className={
-                selectedPaymentMethod === "E-Wallet" ? "text-white" : ""
-              }
-              onClick={() => setSelectedPaymentMethod("E-Wallet")}
+              variant={selectedPaymentMethod === "Ví điện tử" ? "default" : "outline"}
+              className={`flex flex-col items-center justify-center gap-2 p-6 ${selectedPaymentMethod === "Ví điện tử" ? "text-white" : ""}`}
+              onClick={() => setSelectedPaymentMethod("Ví điện tử")}
             >
+              <Image
+                src="/zalopay.png"
+                alt="E-Wallet"
+                width={32}
+                height={32}
+              />
               Ví điện tử
             </Button>
           </div>
