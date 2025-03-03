@@ -13,6 +13,7 @@
     "user-wallet",
     "about-us",
     "login",
-    "signUp"
+    "signUp",
+    "fail&success-page"
   ]
 }
