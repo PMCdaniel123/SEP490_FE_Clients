@@ -95,7 +95,7 @@ const WalletPage = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-8">
+    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg my-8 border">
       <h1 className="text-2xl font-bold mb-4">Ví WorkHive</h1>
 
       <div className="flex items-center justify-between p-4 bg-gray-100 rounded-lg mb-6">
@@ -123,37 +123,58 @@ const WalletPage = () => {
         </div>
         {error && <p className="text-red-500 mt-2">{error}</p>}
       </div>
-      <TransactionHistory transactions={transactions} formatCurrency={formatCurrency} />
-      <HelpSection isHelpModalOpen={isHelpModalOpen} setIsHelpModalOpen={setIsHelpModalOpen} />
+      <TransactionHistory
+        transactions={transactions}
+        formatCurrency={formatCurrency}
+      />
+      <HelpSection
+        isHelpModalOpen={isHelpModalOpen}
+        setIsHelpModalOpen={setIsHelpModalOpen}
+      />
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Chọn phương thức thanh toán</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-primary">
+              Chọn phương thức thanh toán
+            </DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 my-8">
             <Button
-              variant={selectedPaymentMethod === "Chuyển khoản ngân hàng" ? "default" : "outline"}
-              className={`flex flex-col items-center justify-center gap-2 p-6 ${selectedPaymentMethod === "Chuyển khoản ngân hàng" ? "text-white" : ""}`}
+              variant={
+                selectedPaymentMethod === "Chuyển khoản ngân hàng"
+                  ? "default"
+                  : "outline"
+              }
+              className={`flex flex-col items-center justify-center gap-2 py-8 ${
+                selectedPaymentMethod === "Chuyển khoản ngân hàng"
+                  ? "text-white"
+                  : ""
+              }`}
               onClick={() => setSelectedPaymentMethod("Chuyển khoản ngân hàng")}
             >
               <Image
                 src="/vietqr.png"
                 alt="Bank Transfer"
-                width={32}
-                height={32}
+                width={60}
+                height={60}
               />
               Chuyển khoản ngân hàng
             </Button>
             <Button
-              variant={selectedPaymentMethod === "Ví điện tử" ? "default" : "outline"}
-              className={`flex flex-col items-center justify-center gap-2 p-6 ${selectedPaymentMethod === "Ví điện tử" ? "text-white" : ""}`}
+              variant={
+                selectedPaymentMethod === "Ví điện tử" ? "default" : "outline"
+              }
+              className={`flex flex-col items-center justify-center py-8 ${
+                selectedPaymentMethod === "Ví điện tử" ? "text-white" : ""
+              }`}
               onClick={() => setSelectedPaymentMethod("Ví điện tử")}
             >
               <Image
                 src="/zalopay.png"
                 alt="E-Wallet"
-                width={32}
-                height={32}
+                width={40}
+                height={20}
+                className="object-cover"
               />
               Ví điện tử
             </Button>
