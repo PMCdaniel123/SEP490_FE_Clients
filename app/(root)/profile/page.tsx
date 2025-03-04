@@ -5,12 +5,12 @@ import { useState } from "react";
 function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: "Khanh",
-    lastName: "Quang",
+    name: "Khanh Quang",
     email: "khanhqn03@gmail.com",
     address: "Thu Duc",
     phoneNumber: "0123456789",
     dob: "1990-01-01",
+    gender: "Nam", // Add gender field
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -21,7 +21,7 @@ function Profile() {
     { id: 2, content: "Very satisfied.", rating: 4 },
   ]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -58,9 +58,7 @@ function Profile() {
           onChange={handleAvatarChange}
           className="mt-2"
         />
-        <p className="font-bold text-xl pt-5">
-          {formData.lastName} {formData.firstName}
-        </p>
+        <p className="font-bold text-xl pt-5">{formData.name}</p>
         <h3 className="mt-6 text-md font-semibold">Thông tin cá nhân</h3>
         <div className="text-left mt-4 space-y-2">
           <p className="text-gray-600">
@@ -76,15 +74,16 @@ function Profile() {
           <p className="text-gray-600">
             <span className="font-semibold">Ngày sinh:</span> {formData.dob}
           </p>
+          <p className="text-gray-600">
+            <span className="font-semibold">Giới tính:</span> {formData.gender}
+          </p>
         </div>
       </div>
 
       <div className="w-2/3">
         {!isEditing ? (
           <div>
-            <h1 className="text-2xl font-bold">
-              Xin chào, {formData.lastName} {formData.firstName}
-            </h1>
+            <h1 className="text-2xl font-bold">Xin chào, {formData.name}</h1>
             <button
               className="mt-4 px-4 py-2 border border-black rounded-lg hover:bg-gray-200"
               onClick={() => setIsEditing(true)}
@@ -119,21 +118,11 @@ function Profile() {
             </h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium">Họ</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded-lg mt-1"
-                />
-              </div>
-              <div>
                 <label className="block text-sm font-medium">Tên</label>
                 <input
                   type="text"
-                  name="firstName"
-                  value={formData.firstName}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
                   className="w-full p-2 border rounded-lg mt-1"
                 />
@@ -180,6 +169,19 @@ function Profile() {
                   onChange={handleChange}
                   className="w-full p-2 border rounded-lg mt-1"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Giới tính</label>
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-lg mt-1"
+                >
+                  <option value="Nam">Nam</option>
+                  <option value="Nữ">Nữ</option>
+                  <option value="Khác">Khác</option>
+                </select>
               </div>
             </div>
             <h3 className="text-lg font-bold mt-6">Thay đổi mật khẩu</h3>
