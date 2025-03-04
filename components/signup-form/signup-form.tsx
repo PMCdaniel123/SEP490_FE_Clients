@@ -66,18 +66,61 @@ export function SignUpForm({
           password: data.password,
         }),
       });
-      const result = await loginResponse.json();
-      const customerData = {
-        auth: auth ? auth : data.email,
-        password: data.password,
-        token: result.token,
-        fullName: data.name,
-      };
 
-      dispatch(login(customerData));
-      localStorage.setItem("customer", JSON.stringify(customerData));
-      onCloseSignUpForm();
-      window.location.reload();
+      if (!loginResponse.ok) {
+        toast.error("Đăng nhập thất bại! Vui lòng kiểm tra lại.", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          theme: "dark",
+        });
+        return;
+      }
+
+      const result = await loginResponse.json();
+      const token = result.token;
+
+      localStorage.setItem("token", token);
+
+      try {
+        const decodeResponse = await fetch(
+          "https://localhost:5050/users/decodejwttoken",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              token: token,
+            }),
+          }
+        );
+        const decoded = await decodeResponse.json();
+        const customerData = {
+          fullName: decoded.claims.name,
+          email: decoded.claims.email,
+          phone: decoded.claims.Phone,
+          roleId: decoded.claims.RoleId,
+        };
+        toast.success("Đăng nhập thành công!", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          theme: "dark",
+        });
+
+        dispatch(login(customerData));
+        onCloseSignUpForm();
+        window.location.reload();
+      } catch {
+        toast.error("Có lỗi xảy ra khi giải mã token.", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          theme: "dark",
+        });
+        return;
+      }
 
       if (role === "owner") {
         router.push("/owners");
@@ -184,6 +227,26 @@ export function SignUpForm({
             />
             {errors.password && (
               <p className="text-red-500 text-xs">{errors.password.message}</p>
+            )}
+          </div>
+          <div className="grid gap-1">
+            <Label
+              htmlFor="sex"
+              className="text-fourth font-semibold text-xs"
+            >
+              Giới tính
+            </Label>
+            <select
+              id="sex"
+              className="py-6 px-4 rounded-md bg-white shadow-sm"
+              {...register("sex")}
+            >
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+              <option value="Khác">Khác</option>
+            </select>
+            {errors.sex && (
+              <p className="text-red-500 text-xs">{errors.sex.message}</p>
             )}
           </div>
           <div className="text-center w-full">
