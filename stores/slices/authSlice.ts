@@ -1,8 +1,16 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { ValidatePayload } from "@/types";
 
+interface Customer {
+  auth: string | null;
+  token: string | null;
+  fullName: string | null;
+  password: string;
+}
+
 interface AuthState {
   isAuthenticated: boolean;
+  customer: Customer | null;
   user: string | null;
   isPhoneValid: boolean;
   loginStep: "phone" | "email" | "password";
@@ -10,9 +18,10 @@ interface AuthState {
 
 const initialState: AuthState = {
   isAuthenticated: false,
+  customer: null,
   user: null,
   isPhoneValid: false,
-  loginStep: "phone", // Start with phone by default
+  loginStep: "phone",
 };
 
 export const validatePhone = createAsyncThunk<
@@ -23,17 +32,19 @@ export const validatePhone = createAsyncThunk<
   }
 >("auth/validatePhone", async ({ input }, { rejectWithValue }) => {
   try {
-    const response = await fetch("/api/validates", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ input }),
-    });
-    if (!response.ok) {
-      return rejectWithValue("Invalid phone number");
-    }
-    return input;
+    const response = await fetch(
+      "https://localhost:5050/users/checkuserphone",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: input }),
+      }
+    );
+    localStorage.setItem("auth", input);
+    const result = await response.text();
+    return JSON.parse(result);
   } catch {
-    return rejectWithValue("Validation failed. Please try again.");
+    return rejectWithValue("Xác thực không thành công. Vui lòng thử lại.");
   }
 });
 
@@ -45,17 +56,19 @@ export const validateEmail = createAsyncThunk<
   }
 >("auth/validateEmail", async ({ input }, { rejectWithValue }) => {
   try {
-    const response = await fetch("/api/validates", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ input }),
-    });
-    if (!response.ok) {
-      return rejectWithValue("Invalid email address");
-    }
-    return input;
+    const response = await fetch(
+      "https://localhost:5050/users/checkuseremail",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: input }),
+      }
+    );
+    localStorage.setItem("auth", input);
+    const result = await response.text();
+    return JSON.parse(result);
   } catch {
-    return rejectWithValue("Validation failed. Please try again.");
+    return rejectWithValue("Xác thực không thành công. Vui lòng thử lại.");
   }
 });
 
@@ -63,13 +76,14 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login(state, action: PayloadAction<string>) {
+    login(state, action: PayloadAction<Customer>) {
       state.isAuthenticated = true;
-      state.user = action.payload;
+      state.customer = action.payload;
       state.loginStep = "phone";
     },
     logout(state) {
       state.isAuthenticated = false;
+      state.customer = null;
       state.user = null;
       state.loginStep = "phone";
     },
@@ -81,14 +95,16 @@ const authSlice = createSlice({
     builder.addCase(validatePhone.pending, (state) => {
       state.isPhoneValid = false;
     });
-    builder.addCase(validatePhone.fulfilled, (state) => {
+    builder.addCase(validatePhone.fulfilled, (state, action) => {
       state.isPhoneValid = true;
+      state.user = action.payload;
       state.loginStep = "password";
     });
     builder.addCase(validatePhone.rejected, (state) => {
       state.isPhoneValid = false;
     });
-    builder.addCase(validateEmail.fulfilled, (state) => {
+    builder.addCase(validateEmail.fulfilled, (state, action) => {
+      state.user = action.payload;
       state.loginStep = "password";
     });
     builder.addCase(validateEmail.rejected, (state) => {

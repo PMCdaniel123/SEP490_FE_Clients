@@ -6,15 +6,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { SignInFormProps } from "@/types";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/stores";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/stores";
 import { login } from "@/stores/slices/authSlice";
 import Image from "next/image";
+import { useState } from "react";
+import { LoadingOutlined } from "@ant-design/icons";
 
 export type FormInputs = z.infer<typeof passwordSchema>;
 
 export function PasswordForm({ className, onClose }: SignInFormProps) {
   const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.auth);
+  const auth = localStorage.getItem("auth");
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -24,19 +29,59 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
     resolver: zodResolver(passwordSchema),
   });
 
-  const handleSignIn: SubmitHandler<FormInputs> = (data) => {
-    dispatch(login(data.password));
-    onClose();
-    toast.success("Đăng nhập thành công!", {
-      position: "bottom-right",
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
+  const handleSignIn: SubmitHandler<FormInputs> = async (data) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("https://localhost:5050/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          auth: auth ? auth : "",
+          password: data.password,
+        }),
+      });
+
+      if (!response.ok) {
+        toast.error("Đăng nhập thất bại! Vui lòng kiểm tra lại.", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          theme: "dark",
+        });
+        return;
+      }
+
+      const result = await response.json();
+      const customerData = {
+        auth: auth ? auth : "",
+        password: data.password,
+        token: result.token,
+        fullName: user,
+      };
+
+      dispatch(login(customerData));
+
+      toast.success("Đăng nhập thành công!", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        theme: "dark",
+      });
+      localStorage.setItem("customer", JSON.stringify(customerData));
+      onClose();
+      window.location.reload();
+    } catch {
+      toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        theme: "dark",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -52,13 +97,13 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
           <Image
             src="/logo.png"
             alt="Image"
-            width={80}
-            height={80}
+            width={60}
+            height={60}
             className="rounded-full border"
           />
         </div>
-        <div className="flex flex-col ml-6 gap-2">
-          <p className="text-xl font-bold text-fourth">Xin chào,</p>
+        <div className="flex flex-col ml-2 gap-1">
+          <p className="text-base font-bold text-fourth">Xin chào, {user}</p>
           <p className="text-sm font-medium text-fifth">Không phải bạn?</p>
         </div>
       </div>
@@ -75,13 +120,13 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
         )}
       </div>
       <div className="text-center w-full">
-        <Button className="text-white py-6 font-semibold w-3/5">
-          Đăng nhập
+        <Button className="text-white py-6 font-semibold w-3/5" disabled={isLoading}>
+          {isLoading ? <LoadingOutlined style={{ color: "white" }} /> : "Đăng nhập"}
         </Button>
       </div>
       <div className="flex items-center my-6 w-full">
         <hr className="w-[10%] border-sixth h-1" />
-        <span className="w-[40%] px-3 text-fifth font-semibold text-sm">
+        <span className="w-[50%] px-3 text-fifth font-semibold text-sm">
           Hoặc tiếp tục với
         </span>
         <hr className="w-full border-sixth h-1" />

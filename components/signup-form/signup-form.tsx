@@ -11,6 +11,13 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SignInButton } from "@/components/signin-form/signin-button";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { LoadingOutlined } from '@ant-design/icons';
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/stores";
+import { login } from "@/stores/slices/authSlice";
 
 export type FormInputs = z.infer<typeof signupSchema>;
 
@@ -23,24 +30,80 @@ export function SignUpForm({
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormInputs>({
     resolver: zodResolver(signupSchema),
   });
 
   const { role } = props;
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const auth = localStorage.getItem("auth");
   const [isSignInModalOpen, setSignInModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSignUp = () => {
-    if (role === "owner") {
-      router.push("/owners");
-    } else {
-      router.push("/");
+  const handleSignUp = async (data: FormInputs) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        "https://localhost:5050/users/register",
+        data
+      );
+      console.log("Sign up successful:", response.data);
+      toast.success("Đăng ký thành công!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        theme: "dark",
+      });
+      const loginResponse = await fetch("https://localhost:5050/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          auth: auth ? auth : data.email,
+          password: data.password,
+        }),
+      });
+      const result = await loginResponse.json();
+      const customerData = {
+        auth: auth ? auth : data.email,
+        password: data.password,
+        token: result.token,
+        fullName: data.name,
+      };
+
+      dispatch(login(customerData));
+      localStorage.setItem("customer", JSON.stringify(customerData));
+      onCloseSignUpForm();
+      window.location.reload();
+
+      if (role === "owner") {
+        router.push("/owners");
+      } else {
+        router.push("/");
+      }
+    } catch {
+      toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        theme: "dark",
+      });
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const handleCloseSignUpForm = () => {
+    reset();
+    onCloseSignUpForm();
   };
 
   return (
     <>
+      <ToastContainer />
       <form
         className={cn("flex flex-col gap-6 w-full", className)}
         {...props}
@@ -55,29 +118,29 @@ export function SignUpForm({
         </div>
         <div className="grid gap-4">
           <div className="grid gap-1">
-            <Label
-              htmlFor="username"
-              className="text-fifth font-semibold text-xs"
-            >
-              Tên đăng nhập
+            <Label htmlFor="name" className="text-fourth font-semibold text-xs">
+              Họ và tên
             </Label>
             <Input
-              className="py-6 px-4 rounded-2xl bg-seventh"
-              id="username"
+              className="py-6 px-4 rounded-md bg-white shadow-sm"
+              id="name"
               type="text"
-              placeholder="Nhập tên đăng nhập"
-              {...register("username")}
+              placeholder="Nhập họ và tên"
+              {...register("name")}
             />
-            {errors.username && (
-              <p className="text-red-500 text-xs">{errors.username.message}</p>
+            {errors.name && (
+              <p className="text-red-500 text-xs">{errors.name.message}</p>
             )}
           </div>
           <div className="grid gap-1">
-            <Label htmlFor="email" className="text-fifth font-semibold text-xs">
+            <Label
+              htmlFor="email"
+              className="text-fourth font-semibold text-xs"
+            >
               Email
             </Label>
             <Input
-              className="py-6 px-4 rounded-2xl bg-seventh"
+              className="py-6 px-4 rounded-md bg-white shadow-sm"
               id="email"
               type="email"
               placeholder="Nhập email"
@@ -88,11 +151,14 @@ export function SignUpForm({
             )}
           </div>
           <div className="grid gap-1">
-            <Label htmlFor="phone" className="text-fifth font-semibold text-xs">
+            <Label
+              htmlFor="phone"
+              className="text-fourth font-semibold text-xs"
+            >
               Số điện thoại
             </Label>
             <Input
-              className="py-6 px-4 rounded-2xl bg-seventh"
+              className="py-6 px-4 rounded-md bg-white shadow-sm"
               id="phone"
               type="tel"
               placeholder="Nhập số điện thoại"
@@ -105,12 +171,12 @@ export function SignUpForm({
           <div className="grid gap-1">
             <Label
               htmlFor="password"
-              className="text-fifth font-semibold text-xs"
+              className="text-fourth font-semibold text-xs"
             >
               Mật khẩu
             </Label>
             <Input
-              className="py-6 px-4 rounded-2xl bg-seventh"
+              className="py-6 px-4 rounded-md bg-white shadow-sm"
               id="password"
               type="password"
               placeholder="Nhập mật khẩu"
@@ -124,18 +190,23 @@ export function SignUpForm({
             <Button
               type="submit"
               className="text-white py-6 font-semibold w-3/5"
+              disabled={isLoading}
             >
-              Đăng ký
+              {isLoading ? (
+                <LoadingOutlined style={{ color: "white" }} />
+              ) : (
+                "Đăng ký"
+              )}
             </Button>
           </div>
 
-          <div className="text-left text-sm text-fifth font-medium my-1">
+          <div className="text-left text-sm text-fourth font-medium my-1">
             Bạn đã có tài khoản ?{" "}
             <button
               type="button"
               onClick={() => {
                 setSignInModalOpen(true);
-                onCloseSignUpForm();
+                handleCloseSignUpForm();
               }}
               className="underline underline-offset-4 text-primary"
             >
@@ -183,7 +254,7 @@ export function SignUpForm({
       <SignInButton
         open={isSignInModalOpen}
         onOpenChange={setSignInModalOpen}
-        onCloseSignUpForm={onCloseSignUpForm}
+        onCloseSignUpForm={handleCloseSignUpForm} // Use the new handleCloseSignUpForm function
       />
     </>
   );

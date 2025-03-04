@@ -8,6 +8,7 @@ import { logout } from "@/stores/slices/authSlice";
 import { PhoneForm } from "./phone-form";
 import { EmailForm } from "./email-form";
 import { PasswordForm } from "./password-form";
+import { OwnerButton } from "./owner-button";
 
 interface SignInButtonProps {
   open: boolean;
@@ -38,7 +39,7 @@ export function SignInButton({
 
   return (
     <Modal
-      title="Đăng nhập"
+      title={<p className="text-xl font-bold text-primary">Đăng nhập</p>}
       open={open}
       onCancel={() => onOpenChange(false)}
       footer={null}
@@ -52,6 +53,7 @@ export function SignInButton({
       {loginStep === "password" && (
         <PasswordForm onClose={() => onOpenChange(false)} />
       )}
+      <OwnerButton onOpenChange={onOpenChange} />
     </Modal>
   );
 }

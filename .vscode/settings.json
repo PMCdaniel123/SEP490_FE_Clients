@@ -1,15 +1,19 @@
 {
-    "conventionalCommits.scopes": [
-        "Workspace-page",
-        "contact-page",
-        "profile-page",
-        "checkout-page",
-        "notfound",
-        "purchase-history",
-        "your-booking",
-        "workspace-detail",
-        "Notification",
-        "search-page",
-        "user-wallet"
-    ]
+  "conventionalCommits.scopes": [
+    "Workspace-page",
+    "contact-page",
+    "profile-page",
+    "checkout-page",
+    "notfound",
+    "purchase-history",
+    "your-booking",
+    "workspace-detail",
+    "Notification",
+    "search-page",
+    "user-wallet",
+    "about-us",
+    "login",
+    "signUp",
+    "fail&success-page"
+  ]
 }

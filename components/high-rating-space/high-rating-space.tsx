@@ -65,7 +65,7 @@ export default function HighRatingSpace() {
   };
 
   return (
-    <div className="mx-auto mb-10">
+    <div className="max-w-7xl mx-auto p-6 pb-12">
       <Slider {...settings}>
         {workspaces.map((workspace, index) => (
           <div key={index} className="px-2">
@@ -91,7 +91,9 @@ export default function HighRatingSpace() {
                 <h3 className="text-lg font-semibold mt-2">
                   {workspace.title}
                 </h3>
-                <p className="text-gray-600 text-sm">{workspace.address}</p>
+                <p className="text-gray-600 text-sm truncate whitespace-nowrap">
+                  {workspace.address}
+                </p>
                 <div className="flex items-center text-gray-600 text-sm mt-2">
                   <span className="flex items-center mr-2">
                     <Users className="mr-1" size={16} />{" "}

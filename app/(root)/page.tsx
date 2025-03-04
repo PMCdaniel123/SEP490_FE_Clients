@@ -8,24 +8,35 @@ import SectionTitle from "@/components/ui/section-tilte";
 import Banner from "@/components/ui/banner";
 import WorkshopList from "@/components/workshop-list/workshop-list";
 import FeatureSection from "@/components/ui/feauture-section";
-import { Send } from "lucide-react";
+import { Send, MapPin } from "lucide-react";
 
 function HomePage() {
   return (
     <div>
       <SearchBanner />
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-6 mt-8">
         <SectionTitle>
           WorkHive cung cấp đa dạng <br /> giải pháp không gian làm việc
         </SectionTitle>
         <SpaceList />
-        <SectionTitle>Nơi làm việc gần bạn</SectionTitle>
+        <div className="flex items-center justify-between mb-4 mt-12">
+          <SectionTitle>Nơi làm việc gần bạn</SectionTitle>
+          <div className="flex items-center text-[#835101] cursor-pointer">
+            <MapPin className="mr-2 text-black" size={24} />
+            <span>
+              Hiển thị <br />
+              trên bản đồ
+            </span>
+          </div>
+        </div>
         <NearSpaceList />
-        <SectionTitle>
-          Không gian làm việc <br /> được đánh giá cao
-        </SectionTitle>
+        <div className="mb-8 mt-16">
+          <SectionTitle>
+            Không gian làm việc <br /> được đánh giá cao
+          </SectionTitle>
+        </div>
         <HighRatingSpace />
-        <div className="space-y-8">
+        <div className="mt-12">
           <Banner
             imageUrl="/banner1.png"
             title="Đăng ký dịch vụ của WorkHive ngay"
@@ -34,9 +45,11 @@ function HomePage() {
             buttonLink="#"
           />
         </div>
-        <SectionTitle>Workshop nổi bật</SectionTitle>
+        <div className="mt-16 -mb-2">
+          <SectionTitle>Workshop nổi bật</SectionTitle>
+        </div>
         <WorkshopList />
-        <div className="space-y-8">
+        <div className="my-12">
           <Banner
             imageUrl="/banner2.jpg"
             title="Tham gia các buổi Workshop"

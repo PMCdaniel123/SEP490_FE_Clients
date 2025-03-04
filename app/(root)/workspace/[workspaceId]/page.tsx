@@ -5,16 +5,14 @@ import { useEffect, useState } from "react";
 import {
   Heart,
   Share2,
-  Eye,
-  X,
   ShieldEllipsis,
   Boxes,
   Archive,
   HandPlatter,
 } from "lucide-react";
 import Loader from "@/components/loader/Loader";
-import { useParams } from "next/navigation";
-import HighRatingSpace from "@/components/high-rating-space/high-rating-space";
+import { useParams, useRouter } from "next/navigation";
+// import HighRatingSpace from "@/components/high-rating-space/high-rating-space";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Modal } from "antd";
@@ -39,6 +37,16 @@ import { Label } from "@/components/ui/label";
 import ImageList from "@/components/images-list/images-list";
 import AmenitiesList from "@/components/amenities-list/amenities-list";
 import BeveragesList from "@/components/beverages-list/beverages-list";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/stores";
+import {
+  clearBeverageAndAmenity,
+  clearWorkspaceTime,
+  setWorkspaceId,
+} from "@/stores/slices/cartSlice";
+import Amenity from "@/components/amenities-list/amenity";
+import Beverage from "@/components/beverages-list/beverage";
+import TimeList from "@/components/selection/time-list";
 
 interface Workspace {
   id: string;
@@ -56,12 +64,26 @@ const WorkspaceDetail = () => {
   const { workspaceId } = useParams() as { workspaceId: string };
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isOpen, setIsOpen] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isBeverageOpen, setIsBeverageOpen] = useState(false);
+  const [isTimeListOpen, setIsTimeListOpen] = useState(false);
   const [shortTerm, setShortTerm] = useState("1");
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { beverageList, amenityList, total, startTime, endTime } = useSelector(
+    (state: RootState) => state.cart
+  );
 
   useEffect(() => {
     if (!workspaceId) return;
+
+    dispatch(
+      setWorkspaceId({
+        id: workspaceId,
+        price: shortTerm === "1" ? 1000 : 20000,
+        priceType: shortTerm,
+      })
+    );
 
     fetch(
       `https://67271c49302d03037e6f6a3b.mockapi.io/spaceList/${workspaceId}`
@@ -75,7 +97,11 @@ const WorkspaceDetail = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }, [workspaceId]);
+  }, [dispatch, workspaceId, shortTerm]);
+
+  const handleClearBeverageAndAmenity = () => {
+    dispatch(clearBeverageAndAmenity());
+  };
 
   const handleShare = () => {
     setIsShareModalOpen(true);
@@ -93,6 +119,13 @@ const WorkspaceDetail = () => {
     );
   };
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(value);
+  };
+
   if (loading) {
     return (
       <div className="text-center">
@@ -108,7 +141,6 @@ const WorkspaceDetail = () => {
   return (
     <div className="flex flex-col container mx-auto px-10 py-8 gap-20">
       <ImageList workspace={workspace} />
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6 flex flex-col gap-8">
           <div className="flex items-center justify-between">
@@ -152,9 +184,6 @@ const WorkspaceDetail = () => {
               <Archive size={28} /> <span>Cơ sở vật chất</span>
             </h2>
             <FacilitiesList />
-            {/* <button className="text-fourth border border-1 border-primary rounded-xl py-4 font-semibold md:max-w-[250px] hover:bg-primary hover:text-white transition-colors duration-300">
-              Hiển thị Menu dịch vụ
-            </button> */}
           </div>
 
           <div>
@@ -166,7 +195,7 @@ const WorkspaceDetail = () => {
 
           <div>
             <h2 className="text-xl font-bold text-primary mb-6 flex gap-4">
-              <Boxes size={28} /> <span>Các tiện ích đi kèm</span>
+              <Boxes size={28} /> <span>Tiện ích</span>
             </h2>
             <AmenitiesList />
           </div>
@@ -175,22 +204,24 @@ const WorkspaceDetail = () => {
             <h2 className="text-xl font-bold text-primary mb-6 flex gap-4">
               <HandPlatter size={28} /> <span>Thực đơn</span>
             </h2>
-            <BeveragesList />
+            <button
+              className="text-fourth border border-1 border-primary rounded-xl p-4 font-semibold md:max-w-[250px] hover:bg-primary hover:text-white transition-colors duration-300"
+              onClick={() => setIsBeverageOpen(true)}
+            >
+              Hiển thị Menu dịch vụ
+            </button>
           </div>
 
           <GoogleMap />
 
-          <div className="flex flex-col gap-6">
+          {/* <div className="flex flex-col gap-6">
             <h2 className="text-xl font-bold text-primary">
               Các không gian tương tự
             </h2>
             <div>
               <HighRatingSpace />
             </div>
-            {/* <button className="text-fourth border border-1 border-primary rounded-xl py-4 font-semibold md:max-w-[250px] hover:bg-primary hover:text-white transition-colors duration-300">
-              Hiển thị trên bản đồ
-            </button> */}
-          </div>
+          </div> */}
 
           <div className="flex flex-col gap-6">
             <h2 className="text-xl font-bold text-primary">
@@ -200,65 +231,100 @@ const WorkspaceDetail = () => {
           </div>
         </div>
 
-        {!isOpen && (
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="fixed right-4 bottom-4 bg-primary text-white p-4 rounded-full shadow-lg z-50 transition-transform hover:scale-110"
-          >
-            <Eye size={24} />
-          </button>
-        )}
-
-        <div
-          className={`fixed md:min-w-[400px] right-0 top-1/2 -translate-y-1/2 bg-white p-8 rounded-xl shadow-2xl border transition-all duration-300 transform z-50 ${
-            isOpen ? "translate-x-0 right-8" : "translate-x-full"
-          } flex flex-col`}
-        >
+        <div className="flex flex-col p-4 bg-white border rounded-xl shadow-xl w-full max-w-full h-fit lg:sticky lg:top-4 lg:max-h-[90vh] overflow-auto">
           <div>
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-fourth">$1 - $20</h2>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="text-gray-500 hover:text-red-500"
-              >
-                <X size={24} />
-              </button>
+            <div className="flex justify-between items-center mt-4">
+              <h2 className="text-2xl font-bold text-fourth">
+                {formatCurrency(35000)} - {formatCurrency(250000)}
+              </h2>
             </div>
             <Separator className="my-6" />
             <p className="text-fifth text-sm">
-              Thuê theo giờ: $1 <br />
-              Thuê theo ngày: $20
+              Thuê theo giờ: {formatCurrency(35000)} <br />
+              Thuê theo ngày: {formatCurrency(250000)}
             </p>
             <Separator className="my-6" />
-            <div>
-              <RadioGroup
-                defaultValue={shortTerm}
-                onValueChange={(value) => setShortTerm(value)}
-                className="flex flex-col gap-2 my-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="1" id="short-term" />
-                  <Label htmlFor="short-term">Thuê theo giờ</Label>
-                </div>
-                {shortTerm === "1" && <TimeSelect />}
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="2" id="long-term" />
-                  <Label htmlFor="long-term">Thuê theo ngày</Label>
-                </div>
-                {shortTerm === "2" && <DateSelect />}
-              </RadioGroup>
-
-              <Button className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base mt-4">
-                Đặt Ngay
-              </Button>
+            <div
+              className="text-primary flex flex-col items-end cursor-pointer hover:text-secondary mb-6 text-sm font-bold"
+              onClick={() => setIsTimeListOpen(true)}
+            >
+              <p className="break-words">Xem danh sách thời gian</p>
+              <p className="break-words">không khả dụng</p>
             </div>
+            <RadioGroup
+              defaultValue={shortTerm}
+              onValueChange={(value) => {
+                setShortTerm(value);
+                dispatch(clearWorkspaceTime());
+                dispatch(
+                  setWorkspaceId({
+                    id: workspaceId,
+                    price: value === "1" ? 1000 : 20000,
+                    priceType: value,
+                  })
+                );
+              }}
+              className="flex flex-col gap-4 my-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="1" id="short-term" />
+                <Label htmlFor="short-term">Thuê theo giờ</Label>
+              </div>
+              {shortTerm === "1" && <TimeSelect />}
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="2" id="long-term" />
+                <Label htmlFor="long-term">Thuê theo ngày</Label>
+              </div>
+              {shortTerm === "2" && <DateSelect />}
+            </RadioGroup>
+            <div className="flex flex-col gap-2 my-4">
+              {beverageList.length + amenityList.length > 1 && (
+                <p
+                  className="text-red-500 flex justify-end cursor-pointer hover:text-red-300"
+                  onClick={handleClearBeverageAndAmenity}
+                >
+                  Xóa tất cả
+                </p>
+              )}
+              {beverageList.length > 0 && (
+                <div>
+                  <Separator className="mb-6 mt-2" />
+                  <Label className="mb-2">Thực đơn:</Label>
+                </div>
+              )}
+              {beverageList.map((item) => (
+                <Beverage key={item.id} item={item} />
+              ))}
+              {amenityList.length > 0 && (
+                <div>
+                  <Separator className="mb-6 mt-2" />
+                  <Label className="mb-2">Các tiện ích:</Label>
+                </div>
+              )}
+              {amenityList.map((item) => (
+                <Amenity key={item.id} item={item} />
+              ))}
+            </div>
+            {startTime !== "" && endTime !== "" && (
+              <p className="text-base font-medium">
+                Tổng tiền: {formatCurrency(total)}
+              </p>
+            )}
+            <Separator className="my-6" />
+            <Button
+              className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base"
+              onClick={() => router.push(`/checkout`)}
+            >
+              Đặt Ngay
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Share Modal */}
       <Modal
-        title="Chia sẻ liên kết"
+        title={
+          <p className="text-xl font-bold text-primary">Chia sẻ liên kết</p>
+        }
         open={isShareModalOpen}
         onCancel={() => setIsShareModalOpen(false)}
         footer={null}
@@ -272,7 +338,9 @@ const WorkspaceDetail = () => {
             />
             <h3 className="text-lg font-bold">{workspace.title}</h3>
             <p className="text-sm text-gray-500">{workspace.address}</p>
-            <p className="text-sm text-gray-500">{workspace.price}</p>
+            <p className="text-sm text-gray-500">
+              {formatCurrency(Number(workspace.price))}
+            </p>
           </div>
           <Button
             onClick={handleCopyUrl}
@@ -298,6 +366,28 @@ const WorkspaceDetail = () => {
             </LinkedinShareButton>
           </div>
         </div>
+      </Modal>
+
+      <Modal
+        title={<p className="text-xl font-bold text-primary">Thực đơn</p>}
+        open={isBeverageOpen}
+        onCancel={() => setIsBeverageOpen(false)}
+        footer={null}
+      >
+        <BeveragesList />
+      </Modal>
+
+      <Modal
+        title={
+          <p className="text-xl font-bold text-primary">
+            Danh sách thời gian không khả dụng
+          </p>
+        }
+        open={isTimeListOpen}
+        onCancel={() => setIsTimeListOpen(false)}
+        footer={null}
+      >
+        <TimeList />
       </Modal>
     </div>
   );

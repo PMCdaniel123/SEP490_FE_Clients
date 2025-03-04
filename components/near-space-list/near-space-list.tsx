@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Slider from "react-slick";
-import { Heart, Users, Ruler, Bed, MapPin } from "lucide-react";
+import { Bed, Heart, Ruler, Users } from "lucide-react";
 import { Card } from "../ui/card";
 import { CardContent } from "../ui/card-content";
 import "slick-carousel/slick/slick.css";
@@ -62,16 +62,8 @@ export default function NearSpaceList() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 mb-10">
-      <div className="flex items-center justify-end mb-4">
-        <div className="flex items-center text-[#835101] cursor-pointer">
-          <MapPin className="mr-2 text-black" size={24} />
-          <span>
-            Hiển thị <br />
-            trên bản đồ
-          </span>
-        </div>
-      </div>
+    <div className="max-w-7xl mx-auto p-6 mb-10">
+      <div className="flex items-center justify-between mb-4"></div>
       <Slider {...settings}>
         {workspaces.slice(0, 3).map((workspace, index) => (
           <div key={index} className="px-2">
@@ -94,7 +86,9 @@ export default function NearSpaceList() {
                 <h3 className="text-lg font-semibold mt-2">
                   {workspace.title}
                 </h3>
-                <p className="text-gray-600 text-sm">{workspace.address}</p>
+                <p className="text-gray-600 text-sm truncate whitespace-nowrap">
+                  {workspace.address}
+                </p>
                 <div className="flex items-center text-gray-600 text-sm mt-2">
                   <span className="flex items-center mr-2">
                     <Users className="mr-1" size={16} />{" "}
