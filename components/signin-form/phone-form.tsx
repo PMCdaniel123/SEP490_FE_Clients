@@ -47,8 +47,10 @@ export function PhoneForm({ className }: SignInFormProps) {
       onSubmit={handleSubmit(handleContinue)}
     >
       <div className="flex w-full justify-center items-center">
-        <div className="flex flex-col w-full border rounded-full h-full justify-center px-8 py-3">
-          <p className="text-sm font-medium text-fifth">Số điện thoại</p>
+        <div className="flex flex-col w-full border rounded-md h-full justify-center px-6 py-3 relative">
+          <p className="text-xs font-medium text-sixth absolute -top-2 left-5 bg-white px-4">
+            Số điện thoại
+          </p>
           <input
             type="tel"
             className="py-2 focus:outline-none"
@@ -61,7 +63,7 @@ export function PhoneForm({ className }: SignInFormProps) {
         </div>
       </div>
       <div className="flex items-center w-full mb-4">
-        <p className="text-xs text-fifth">
+        <p className="text-xs text-fourth">
           Nhập số điện thoại bên trên để đăng nhập vào tài khoản WorkHive
         </p>
       </div>
@@ -72,7 +74,11 @@ export function PhoneForm({ className }: SignInFormProps) {
             type="submit"
             disabled={isLoading}
           >
-            {isLoading ? <LoadingOutlined style={{ color: "white" }} /> : "Tiếp tục"}
+            {isLoading ? (
+              <LoadingOutlined style={{ color: "white" }} />
+            ) : (
+              "Tiếp tục"
+            )}
           </Button>
         </div>
         <div
