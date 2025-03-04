@@ -32,7 +32,7 @@ export function EmailForm({ className }: SignInFormProps) {
       const payload: ValidatePayload = { input: data.email };
       await dispatch(validateEmail(payload)).unwrap();
     } catch {
-      alert("Email không hợp lệ!");
+      return new Error("Email không hợp lệ!");
     } finally {
       setIsLoading(false);
     }
