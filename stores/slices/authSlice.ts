@@ -2,10 +2,10 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { ValidatePayload } from "@/types";
 
 interface Customer {
-  auth: string | null;
-  token: string | null;
   fullName: string | null;
-  password: string;
+  email: string | null;
+  phone: string | null;
+  roleId: string | null;
 }
 
 interface AuthState {
@@ -79,6 +79,7 @@ const authSlice = createSlice({
     login(state, action: PayloadAction<Customer>) {
       state.isAuthenticated = true;
       state.customer = action.payload;
+      state.user = action.payload.fullName;
       state.loginStep = "phone";
     },
     logout(state) {
@@ -86,6 +87,7 @@ const authSlice = createSlice({
       state.customer = null;
       state.user = null;
       state.loginStep = "phone";
+      localStorage.removeItem("token");
     },
     setLoginStep(state, action: PayloadAction<"phone" | "email" | "password">) {
       state.loginStep = action.payload;
