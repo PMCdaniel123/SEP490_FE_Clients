@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { ValidatePayload } from "@/types";
+import { toast } from "react-toastify";
 
 interface Customer {
   fullName: string | null;
@@ -40,11 +41,20 @@ export const validatePhone = createAsyncThunk<
         body: JSON.stringify({ phone: input }),
       }
     );
+    if (!response.ok) {
+      toast.error("Số điện thoại không hợp lệ!", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        theme: "dark",
+      });
+      return rejectWithValue("Số điện thoại không hợp lệ!");
+    }
     localStorage.setItem("auth", input);
     const result = await response.text();
     return JSON.parse(result);
   } catch {
-    return rejectWithValue("Xác thực không thành công. Vui lòng thử lại.");
+    return rejectWithValue("Lỗi truy cập");
   }
 });
 
@@ -64,11 +74,20 @@ export const validateEmail = createAsyncThunk<
         body: JSON.stringify({ email: input }),
       }
     );
+    if (!response.ok) {
+      toast.error("Email không hợp lệ!", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        theme: "dark",
+      });
+      return rejectWithValue("Email không hợp lệ!");
+    }
     localStorage.setItem("auth", input);
     const result = await response.text();
     return JSON.parse(result);
   } catch {
-    return rejectWithValue("Xác thực không thành công. Vui lòng thử lại.");
+    return rejectWithValue("Lỗi truy cập");
   }
 });
 

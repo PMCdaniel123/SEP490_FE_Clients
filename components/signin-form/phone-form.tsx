@@ -32,7 +32,7 @@ export function PhoneForm({ className }: SignInFormProps) {
       const payload: ValidatePayload = { input: data.phone };
       await dispatch(validatePhone(payload)).unwrap();
     } catch {
-      alert("Số điện thoại không hợp lệ!");
+      return new Error("Số điện thoại không hợp lệ!");
     } finally {
       setIsLoading(false);
     }
