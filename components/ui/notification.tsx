@@ -60,10 +60,10 @@ const Notification = () => {
   return (
     <div className="relative" ref={dropdownRef}>
       <div
-        className="relative cursor-pointer p-2 bg-gray-100 rounded-full hover:bg-gray-200"
+        className="relative cursor-pointer p-3 bg-secondary/60 hover:bg-fourth rounded-full text-white border"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <Bell size={24} className="text-gray-700" />
+        <Bell size={24} />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
             {unreadCount}
@@ -76,7 +76,7 @@ const Notification = () => {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          className="absolute right-0 mt-2 w-80 bg-[#835101] shadow-lg rounded-lg border overflow-hidden"
+          className="absolute right-0 mt-4 w-80 bg-[#835101] shadow-lg rounded-lg border overflow-hidden"
         >
           <div className="p-4 font-semibold border-b text-white">Thông báo</div>
           {notifications.length > 0 ? (
