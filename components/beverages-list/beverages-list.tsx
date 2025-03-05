@@ -1,37 +1,91 @@
 "use client";
 
-import { beverageList } from "@/constants/constant";
 import BeveragesItem from "./beverages-item";
+import Loader from "../loader/Loader";
+import { useEffect, useState } from "react";
+import { BeverageProps } from "@/types";
+import { toast } from "react-toastify";
 
-function BeveragesList() {
+function BeveragesList({ workspaceId }: { workspaceId: string }) {
+  const [loading, setLoading] = useState(false);
+  const [beverageList, setBeverageList] = useState<BeverageProps[]>([]);
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    setLoading(true);
+
+    const fetchBeverageList = async () => {
+      try {
+        const response = await fetch(
+          `https://localhost:5050/beverages/workspace/${workspaceId}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Có lỗi xảy ra khi tải thực đơn.");
+        }
+
+        const data = await response.json();
+        setBeverageList(Array.isArray(data.beverages) ? data.beverages : []);
+        setLoading(false);
+      } catch {
+        toast.error("Có lỗi xảy ra khi tải thực đơn.", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          theme: "dark",
+        });
+        setBeverageList([]);
+        setLoading(false);
+      }
+    };
+
+    fetchBeverageList();
+  }, [workspaceId]);
+
+  if (loading) {
+    return (
+      <div className="text-center">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto w-full flex flex-col gap-4 mt-8">
       <p className="text-base font-semibold leading-none text-black">
         1. Thức uống
       </p>
-      <div>
-        {beverageList.map(
-          (beverage) =>
-            beverage.category === "1" && (
-              <div key={beverage.id} className="px-2">
-                <BeveragesItem {...beverage} />
-              </div>
-            )
-        )}
-      </div>
+      {beverageList.length > 0 ? (
+        <div>
+          {beverageList.map(
+            (beverage) =>
+              beverage.category === "1" && (
+                <div key={beverage.id} className="px-2">
+                  <BeveragesItem {...beverage} />
+                </div>
+              )
+          )}
+        </div>
+      ) : (
+        <p className="text-sm text-sixth italic flex items-center">Trống</p>
+      )}
       <p className="text-base font-semibold leading-none text-black">
         2. Đồ ăn
       </p>
-      <div>
-        {beverageList.map(
-          (beverage) =>
-            beverage.category === "2" && (
-              <div key={beverage.id} className="px-2">
-                <BeveragesItem {...beverage} />
-              </div>
-            )
-        )}
-      </div>
+      {beverageList.length > 0 ? (
+        <div>
+          {beverageList.map(
+            (beverage) =>
+              beverage.category === "2" && (
+                <div key={beverage.id} className="px-2">
+                  <BeveragesItem {...beverage} />
+                </div>
+              )
+          )}
+        </div>
+      ) : (
+        <p className="text-sm text-sixth italic flex items-center">Trống</p>
+      )}
     </div>
   );
 }

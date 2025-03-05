@@ -119,7 +119,7 @@ export interface AmenityProps {
   name: string;
   description: string;
   price: string;
-  image: string;
+  img_url: string;
   quantity: string;
   category: string;
   status: string;
@@ -132,7 +132,7 @@ export interface BeverageProps {
   name: string;
   description: string;
   price: string;
-  image: string;
+  img_url: string;
   category: string;
   status: string;
   createdAt: string;
