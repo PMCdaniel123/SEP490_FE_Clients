@@ -38,7 +38,6 @@ export function SignUpForm({
   const { role } = props;
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const auth = localStorage.getItem("auth");
   const [isSignInModalOpen, setSignInModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -56,19 +55,9 @@ export function SignUpForm({
         hideProgressBar: true,
         theme: "dark",
       });
-      const loginResponse = await fetch("https://localhost:5050/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          auth: auth ? auth : data.email,
-          password: data.password,
-        }),
-      });
 
-      if (!loginResponse.ok) {
-        toast.error("Đăng nhập thất bại! Vui lòng kiểm tra lại.", {
+      if (response.status !== 201) {
+        toast.error("Đăng ký thất bại! Vui lòng kiểm tra lại.", {
           position: "bottom-right",
           autoClose: 2000,
           hideProgressBar: true,
@@ -77,8 +66,7 @@ export function SignUpForm({
         return;
       }
 
-      const result = await loginResponse.json();
-      const token = result.token;
+      const token = response.data.token;
 
       localStorage.setItem("token", token);
 
@@ -111,8 +99,8 @@ export function SignUpForm({
         });
 
         dispatch(login(customerData));
-        onCloseSignUpForm();
-        window.location.reload();
+        handleCloseSignUpForm();
+       
       } catch {
         toast.error("Có lỗi xảy ra khi giải mã token.", {
           position: "bottom-right",
@@ -318,7 +306,7 @@ export function SignUpForm({
       <SignInButton
         open={isSignInModalOpen}
         onOpenChange={setSignInModalOpen}
-        onCloseSignUpForm={handleCloseSignUpForm} // Use the new handleCloseSignUpForm function
+        onCloseSignUpForm={handleCloseSignUpForm}
       />
     </>
   );
