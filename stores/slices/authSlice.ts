@@ -3,6 +3,7 @@ import { ValidatePayload } from "@/types";
 import { toast } from "react-toastify";
 
 interface Customer {
+  id: string | null;
   fullName: string | null;
   email: string | null;
   phone: string | null;

@@ -97,6 +97,7 @@ export function SignUpForm({
         );
         const decoded = await decodeResponse.json();
         const customerData = {
+          id: decoded.claims.sub,
           fullName: decoded.claims.name,
           email: decoded.claims.email,
           phone: decoded.claims.Phone,
