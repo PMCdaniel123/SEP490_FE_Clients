@@ -6,6 +6,8 @@ import Loader from "../loader/Loader";
 import { useEffect, useState } from "react";
 import { AmenityProps } from "@/types";
 import { toast } from "react-toastify";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function AmenitiesList({ workspaceId }: { workspaceId: string }) {
   const [loading, setLoading] = useState(false);
