@@ -4,25 +4,27 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 
+interface Image {
+  id: string;
+  imgUrl: string;
+}
+
 interface Workspace {
   id: string;
-  title: string;
-  address: string;
-  price: string;
-  image: string;
-  roomCapacity: number;
-  roomType: string;
-  roomSize: number;
+  name: string;
   description: string;
+  shortTermPrice: string;
+  longTermPrice: string;
+  images: Image[];
+  capacity: number;
+  category: string;
+  area: number;
+  address: string;
 }
 
 function ImageList({ workspace }: { workspace: Workspace }) {
-  const [mainImage, setMainImage] = useState("/banner.png");
-  const thumbnails = [
-    "/banner.png",
-    workspace.image,
-    ...Array(5).fill(workspace.image),
-  ];
+  const [mainImage, setMainImage] = useState(workspace.images[0].imgUrl);
+  const thumbnails = [...workspace.images];
   const [currentIndex, setCurrentIndex] = useState(0);
   const visibleThumbnails = 3;
 
@@ -43,7 +45,7 @@ function ImageList({ workspace }: { workspace: Workspace }) {
       <div className="relative w-full h-96">
         <img
           src={mainImage}
-          alt={workspace.title}
+          alt={workspace.name}
           className="w-full h-full object-cover rounded-lg transition-transform duration-300"
         />
       </div>
@@ -80,12 +82,14 @@ function ImageList({ workspace }: { workspace: Workspace }) {
               <div
                 key={i}
                 className={`relative w-80 h-48 flex-shrink-0 cursor-pointer ${
-                  mainImage === img ? "border-4 border-primary rounded-lg" : ""
+                  mainImage === img.imgUrl
+                    ? "border-4 border-primary rounded-lg"
+                    : ""
                 }`}
-                onClick={() => setMainImage(img)}
+                onClick={() => setMainImage(img.imgUrl)}
               >
                 <img
-                  src={img}
+                  src={img.imgUrl}
                   alt={`Coworking Space ${i + 1}`}
                   className="w-full h-full object-cover rounded-lg hover:opacity-80 transition-opacity"
                   loading="lazy"
