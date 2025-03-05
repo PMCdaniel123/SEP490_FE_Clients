@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { SignInButton } from "../signin-form/signin-button";
 import { menuItems } from "@/constants/constant";
 import { Modal } from "antd";
-import SignupPage from "@/app/(auth)/sign-up/page";
+import { SignUpForm } from "@/components/signup-form/signup-form";
 import Image from "next/image";
 import { Separator } from "../ui/separator";
 import Notification from "../ui/notification";
@@ -300,9 +300,9 @@ function Header() {
         open={isSignUpModalOpen}
         onCancel={() => setSignUpModalOpen(false)}
         footer={null}
-        width={900}
+        width={530}
       >
-        <SignupPage />
+        <SignUpForm onCloseSignUpForm={handleCloseSignUpForm} />
       </Modal>
 
       <SignInButton
