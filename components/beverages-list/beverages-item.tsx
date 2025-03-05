@@ -10,7 +10,7 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { motion } from "framer-motion";
 
-function BeveragesItem({ id, name, price, img_url, description }: BeverageProps) {
+function BeveragesItem({ id, name, price, imgUrl, description }: BeverageProps) {
   const dispatch = useDispatch();
   const [animate, setAnimate] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -22,7 +22,7 @@ function BeveragesItem({ id, name, price, img_url, description }: BeverageProps)
         addBeverage({
           id,
           name,
-          img_url,
+          imgUrl,
           price: Number(price),
           quantity: 1,
         })
@@ -60,7 +60,7 @@ function BeveragesItem({ id, name, price, img_url, description }: BeverageProps)
           <div className="grid grid-cols-3">
             <div className="flex flex-col col-span-1">
               <img
-                src={img_url}
+                src={imgUrl}
                 alt={name}
                 className="w-full h-36 object-cover rounded-t-lg"
               />
