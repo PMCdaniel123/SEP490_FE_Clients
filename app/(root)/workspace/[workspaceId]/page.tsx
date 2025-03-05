@@ -47,17 +47,25 @@ import {
 import Amenity from "@/components/amenities-list/amenity";
 import Beverage from "@/components/beverages-list/beverage";
 import TimeList from "@/components/selection/time-list";
+import { toast } from "react-toastify";
+import { LoadingOutlined } from "@ant-design/icons";
+
+interface Image {
+  id: string;
+  imgUrl: string;
+}
 
 interface Workspace {
   id: string;
-  title: string;
-  address: string;
-  price: string;
-  image: string;
-  roomCapacity: number;
-  roomType: string;
-  roomSize: number;
+  name: string;
   description: string;
+  shortTermPrice: string;
+  longTermPrice: string;
+  images: Image[];
+  capacity: number;
+  category: string;
+  area: number;
+  address: string;
 }
 
 const WorkspaceDetail = () => {
@@ -67,6 +75,7 @@ const WorkspaceDetail = () => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isBeverageOpen, setIsBeverageOpen] = useState(false);
   const [isTimeListOpen, setIsTimeListOpen] = useState(false);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [shortTerm, setShortTerm] = useState("1");
   const router = useRouter();
   const dispatch = useDispatch();
@@ -77,26 +86,45 @@ const WorkspaceDetail = () => {
   useEffect(() => {
     if (!workspaceId) return;
 
-    dispatch(
-      setWorkspaceId({
-        id: workspaceId,
-        price: shortTerm === "1" ? 1000 : 20000,
-        priceType: shortTerm,
-      })
-    );
+    const fetchWorkspace = async () => {
+      try {
+        const response = await fetch(
+          `https://localhost:5050/workspaces/${workspaceId}`
+        );
 
-    fetch(
-      `https://67271c49302d03037e6f6a3b.mockapi.io/spaceList/${workspaceId}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setWorkspace(data);
+        if (!response.ok) {
+          throw new Error("Có lỗi xảy ra khi tải thông tin không gian.");
+        }
+
+        const data = await response.json();
+        setWorkspace({
+          ...data,
+          address: "HCM",
+          shortTermPrice: data.prices[0].price,
+          longTermPrice: data.prices[1].price,
+        });
+        dispatch(
+          setWorkspaceId({
+            id: workspaceId,
+            price:
+              shortTerm === "1"
+                ? Number(data.prices[0].price)
+                : Number(data.prices[1].price),
+            priceType: shortTerm,
+          })
+        );
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      });
+      } catch {
+        toast.error("Có lỗi xảy ra khi tải thông tin không gian.", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          theme: "dark",
+        });
+      }
+    };
+
+    fetchWorkspace();
   }, [dispatch, workspaceId, shortTerm]);
 
   const handleClearBeverageAndAmenity = () => {
@@ -117,6 +145,50 @@ const WorkspaceDetail = () => {
         console.error("Error copying URL", error);
       }
     );
+  };
+
+  const handleSelectedDateValidte = async () => {
+    if (startTime === "" || endTime === "") {
+      toast.error("Vui lòng chọn thời gian!", {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        theme: "dark",
+      });
+      return;
+    }
+    if (startTime !== "" && endTime !== "") {
+      setIsButtonLoading(true);
+      try {
+        const response = await fetch(
+          `https://localhost:5050/users/booking/checktimesoverlap`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              workspaceId,
+              startDate: startTime,
+              endDate: endTime,
+            }),
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Thời gian không khả dụng.");
+        }
+        setIsButtonLoading(false);
+        router.push("/checkout");
+      } catch {
+        toast.error("Không thể đặt thời gian sau 23h.", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          theme: "dark",
+        });
+        setIsButtonLoading(false);
+      }
+    }
   };
 
   const formatCurrency = (value: number) => {
@@ -146,7 +218,7 @@ const WorkspaceDetail = () => {
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-2">
               <h1 className="text-3xl font-bold text-primary">
-                {workspace.title}
+                {workspace.name}
               </h1>
               <p className="text-fifth max-w-xl">{workspace.address}</p>
             </div>
@@ -161,22 +233,16 @@ const WorkspaceDetail = () => {
           </div>
 
           <DetailsList
-            roomCapacity={workspace.roomCapacity}
-            roomSize={workspace.roomSize}
-            roomType={workspace.roomType}
+            roomCapacity={workspace.capacity}
+            roomSize={workspace.area}
+            roomType={workspace.category}
           />
 
           <div>
             <h2 className="text-xl font-bold text-primary mb-6">
               Mô tả chi tiết
             </h2>
-            <p className="text-fifth">
-              Tạo không gian làm việc riêng biệt với Dedicated Desk – chỗ ngồi
-              cố định dành riêng cho bạn hoặc nhóm nhỏ trong không gian
-              coworking chuyên nghiệp. Với Dedicated Desk, bạn sẽ có một môi
-              trường làm việc yên tĩnh, riêng tư và đầy đủ tiện nghi, giúp bạn
-              tập trung hoàn toàn vào công việc của mình.
-            </p>
+            <p className="text-fifth">{workspace.description}</p>
           </div>
 
           <div className="flex flex-col gap-6">
@@ -197,7 +263,7 @@ const WorkspaceDetail = () => {
             <h2 className="text-xl font-bold text-primary mb-6 flex gap-4">
               <Boxes size={28} /> <span>Tiện ích</span>
             </h2>
-            <AmenitiesList />
+            <AmenitiesList workspaceId={workspaceId} />
           </div>
 
           <div>
@@ -235,13 +301,14 @@ const WorkspaceDetail = () => {
           <div>
             <div className="flex justify-between items-center mt-4">
               <h2 className="text-2xl font-bold text-fourth">
-                {formatCurrency(35000)} - {formatCurrency(250000)}
+                {formatCurrency(Number(workspace.shortTermPrice))} -{" "}
+                {formatCurrency(Number(workspace.longTermPrice))}
               </h2>
             </div>
             <Separator className="my-6" />
             <p className="text-fifth text-sm">
-              Thuê theo giờ: {formatCurrency(35000)} <br />
-              Thuê theo ngày: {formatCurrency(250000)}
+              Thuê theo giờ: {Number(workspace.shortTermPrice)} <br />
+              Thuê theo ngày: {formatCurrency(Number(workspace.longTermPrice))}
             </p>
             <Separator className="my-6" />
             <div
@@ -259,7 +326,10 @@ const WorkspaceDetail = () => {
                 dispatch(
                   setWorkspaceId({
                     id: workspaceId,
-                    price: value === "1" ? 1000 : 20000,
+                    price:
+                      value === "1"
+                        ? Number(workspace.shortTermPrice)
+                        : Number(workspace.longTermPrice),
                     priceType: value,
                   })
                 );
@@ -313,9 +383,14 @@ const WorkspaceDetail = () => {
             <Separator className="my-6" />
             <Button
               className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base"
-              onClick={() => router.push(`/checkout`)}
+              onClick={handleSelectedDateValidte}
+              disabled={startTime === "" || endTime === ""}
             >
-              Đặt Ngay
+              {isButtonLoading ? (
+                <LoadingOutlined style={{ color: "white" }} />
+              ) : (
+                "Đặt ngay"
+              )}
             </Button>
           </div>
         </div>
@@ -332,14 +407,15 @@ const WorkspaceDetail = () => {
         <div className="flex flex-col items-center gap-4">
           <div className="w-full p-4 border rounded-lg shadow-md">
             <img
-              src={workspace.image}
-              alt={workspace.title}
+              src={workspace.images[0].imgUrl}
+              alt={workspace.name}
               className="w-full h-48 object-cover rounded-lg mb-4"
             />
-            <h3 className="text-lg font-bold">{workspace.title}</h3>
+            <h3 className="text-lg font-bold">{workspace.name}</h3>
             <p className="text-sm text-gray-500">{workspace.address}</p>
             <p className="text-sm text-gray-500">
-              {formatCurrency(Number(workspace.price))}
+              {formatCurrency(Number(workspace.shortTermPrice))} -{" "}
+              {formatCurrency(Number(workspace.longTermPrice))}
             </p>
           </div>
           <Button
@@ -374,7 +450,7 @@ const WorkspaceDetail = () => {
         onCancel={() => setIsBeverageOpen(false)}
         footer={null}
       >
-        <BeveragesList />
+        <BeveragesList workspaceId={workspaceId} />
       </Modal>
 
       <Modal
@@ -387,7 +463,7 @@ const WorkspaceDetail = () => {
         onCancel={() => setIsTimeListOpen(false)}
         footer={null}
       >
-        <TimeList />
+        <TimeList workspaceId={workspaceId} />
       </Modal>
     </div>
   );

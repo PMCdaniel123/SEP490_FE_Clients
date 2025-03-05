@@ -44,7 +44,7 @@ function Amenity({ item }: Props) {
   return (
     <div className="flex items-center justify-between p-2 bg-white shadow-md border rounded-md">
       <img
-        src={item.image}
+        src={item.img_url}
         alt={item.name}
         className="w-20 h-20 object-cover rounded-md"
       />

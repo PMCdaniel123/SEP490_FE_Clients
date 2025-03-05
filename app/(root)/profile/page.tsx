@@ -38,7 +38,7 @@ function Profile() {
           );
 
           if (!profileResponse.ok) {
-            throw new Error("Failed to fetch profile");
+            throw new Error("Có lỗi xảy ra khi tải thông tin hồ sơ.");
           }
 
           const profileData = await profileResponse.json();

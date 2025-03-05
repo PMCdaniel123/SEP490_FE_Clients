@@ -1,24 +1,72 @@
 "use client";
 
-import { timeList } from "@/constants/constant";
 import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import Loader from "../loader/Loader";
 
-function TimeList() {
+interface Time {
+  id: string;
+  start_date: string;
+  end_date: string;
+  status: string;
+}
+
+function TimeList({ workspaceId }: { workspaceId: string }) {
   const today = dayjs();
   const tomorrow = today.add(1, "day");
   const nextDay = today.add(2, "day");
+  const [loading, setLoading] = useState(false);
+  const [timeList, setTimeList] = useState<Time[]>([]);
 
-  const todayList = timeList.filter((item) =>
-    dayjs(item.startDate, "HH:mm DD/MM/YYYY").isSame(today, "day")
-  );
+  useEffect(() => {
+    if (!workspaceId) return;
+    setLoading(true);
 
-  const tomorrowList = timeList.filter((item) =>
-    dayjs(item.startDate, "HH:mm DD/MM/YYYY").isSame(tomorrow, "day")
-  );
+    const fetchTimeList = async () => {
+      try {
+        const response = await fetch(
+          `https://localhost:5050/users/booking/workspacetimes?WorkspaceId=${workspaceId}`
+        );
 
-  const nextDayList = timeList.filter((item) =>
-    dayjs(item.startDate, "HH:mm DD/MM/YYYY").isSame(nextDay, "day")
-  );
+        if (!response.ok) {
+          throw new Error(
+            "Có lỗi xảy ra khi tải các thời gian không khả dụng."
+          );
+        }
+
+        const data = await response.json();
+        setTimeList(Array.isArray(data) ? data : []);
+        setLoading(false);
+      } catch {
+        toast.error("Có lỗi xảy ra khi tải các thời gian không khả dụng.", {
+          position: "bottom-right",
+          autoClose: 2000,
+          hideProgressBar: true,
+          theme: "dark",
+        });
+      }
+    };
+
+    fetchTimeList();
+  }, [workspaceId]);
+
+  const filterByDate = (date: dayjs.Dayjs) =>
+    timeList.filter((item) =>
+      dayjs(item.start_date, "HH:mm DD/MM/YYYY").isSame(date, "day")
+    );
+
+  const todayList = filterByDate(today);
+  const tomorrowList = filterByDate(tomorrow);
+  const nextDayList = filterByDate(nextDay);
+
+  if (loading) {
+    return (
+      <div className="text-center">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-8 mt-8">
@@ -33,7 +81,7 @@ function TimeList() {
                 key={item.id}
                 className="p-2 rounded-md bg-fourth text-white font-medium text-sm"
               >
-                {item.startDate.split(" ")[0]} - {item.endDate.split(" ")[0]}
+                {item.start_date.split(" ")[0]} - {item.end_date.split(" ")[0]}
               </div>
             ))
           ) : (
@@ -53,7 +101,7 @@ function TimeList() {
                 key={item.id}
                 className="p-2 rounded-md bg-fourth text-white font-medium text-sm"
               >
-                {item.startDate.split(" ")[0]} - {item.endDate.split(" ")[0]}
+                {item.start_date.split(" ")[0]} - {item.end_date.split(" ")[0]}
               </div>
             ))
           ) : (
@@ -73,7 +121,7 @@ function TimeList() {
                 key={item.id}
                 className="p-2 rounded-md bg-fourth text-white font-medium text-sm"
               >
-                {item.startDate.split(" ")[0]} - {item.endDate.split(" ")[0]}
+                {item.start_date.split(" ")[0]} - {item.end_date.split(" ")[0]}
               </div>
             ))
           ) : (
