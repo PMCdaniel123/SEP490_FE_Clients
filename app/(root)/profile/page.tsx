@@ -30,7 +30,7 @@ function Profile() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
+    if (token && customer) {
       const fetchProfile = async () => {
         try {
           const profileResponse = await fetch(
@@ -71,7 +71,7 @@ function Profile() {
 
       fetchProfile();
     }
-  }, []);
+  }, [customer]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

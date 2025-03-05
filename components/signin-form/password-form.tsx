@@ -86,6 +86,7 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
           hideProgressBar: true,
           theme: "dark",
         });
+        localStorage.setItem("customer", JSON.stringify(customerData));
         dispatch(login(customerData));
         onClose();
       } catch {
