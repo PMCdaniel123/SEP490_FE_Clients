@@ -1,8 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import EditProfileForm from "@/components/profile-form/profile-form";
 import UserReview from "@/components/user-review/user-review";
+import { RootState } from "@/stores";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 function Profile() {
@@ -23,32 +26,15 @@ function Profile() {
     { id: 1, content: "Tuyệt vời 5 sao!", rating: 5 },
     { id: 2, content: "Dịch vụ ok nhé sốp.", rating: 4 },
   ]);
+  const { customer } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
+    if (token && customer) {
       const fetchProfile = async () => {
         try {
-          const decodeResponse = await fetch(
-            "https://localhost:5050/users/decodejwttoken",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ token }),
-            }
-          );
-
-          if (!decodeResponse.ok) {
-            throw new Error("Failed to decode token");
-          }
-
-          const decoded = await decodeResponse.json();
-          const userId = decoded.claims.sub;
-
           const profileResponse = await fetch(
-            `https://localhost:5050/users/${userId}`
+            `https://localhost:5050/users/${customer?.id}`
           );
 
           if (!profileResponse.ok) {
@@ -85,9 +71,11 @@ function Profile() {
 
       fetchProfile();
     }
-  }, []);
+  }, [customer]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -109,11 +97,15 @@ function Profile() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 flex gap-8 ">
-      <div className="w-1/3 bg-gray-100 p-6 rounded-lg text-center">
-        <div className="w-24 h-24 mx-auto bg-gray-300 rounded-full overflow-hidden">
+      <div className="w-1/3 bg-secondary p-6 rounded-lg text-center text-white">
+        <div className="w-24 h-24 mx-auto bg-white rounded-full overflow-hidden border">
           {avatar ? (
             <img
-              src={typeof avatar === "string" ? avatar : URL.createObjectURL(avatar)}
+              src={
+                typeof avatar === "string"
+                  ? avatar
+                  : URL.createObjectURL(avatar)
+              }
               alt="Avatar"
               className="w-full h-full object-cover"
             />
@@ -130,11 +122,10 @@ function Profile() {
           type="file"
           accept="image/*"
           onChange={handleAvatarChange}
-          className="mt-2"
+          className="mt-2 border rounded-lg"
         />
-        <p className="font-bold text-xl pt-5">{formData.name}</p>
-        <h3 className="mt-6 text-md font-semibold">Thông tin cá nhân</h3>
-        <div className="text-left mt-4 space-y-2">
+        <p className="font-bold text-2xl pt-10">{formData.name}</p>
+        <div className="text-left space-y-2 bg-white rounded-lg px-4 py-8 mt-8">
           <p className="text-gray-600">
             <span className="font-semibold">Email:</span> {formData.email}
           </p>
@@ -159,7 +150,7 @@ function Profile() {
           <div>
             <h1 className="text-2xl font-bold">Xin chào, {formData.name}</h1>
             <button
-              className="mt-4 px-4 py-2 border border-black rounded-lg hover:bg-gray-200"
+              className="mt-4 px-4 py-2 rounded-lg bg-white border=black hover:bg-primary hover:text-white hover:border-white border"
               onClick={() => setIsEditing(true)}
             >
               Chỉnh sửa

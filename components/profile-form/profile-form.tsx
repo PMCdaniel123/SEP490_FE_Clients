@@ -12,7 +12,9 @@ interface EditProfileFormProps {
     newPassword: string;
     confirmPassword: string;
   };
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  handleChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => void;
   handleSubmit: (e: React.FormEvent) => void;
   handleCancel: () => void;
 }
@@ -24,8 +26,13 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
   handleCancel,
 }) => {
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold mb-4">Chỉnh sửa thông tin cá nhân</h2>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white p-6 rounded-lg shadow-md border"
+    >
+      <h2 className="text-xl font-bold mb-4 text-primary">
+        Chỉnh sửa thông tin cá nhân
+      </h2>
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium">Tên</label>
@@ -92,27 +99,27 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
           </select>
         </div>
       </div>
-      <h3 className="text-lg font-bold mt-6">Thay đổi mật khẩu</h3>
+      <h3 className="text-lg font-bold mt-6 text-primary">Thay đổi mật khẩu</h3>
       <input
         type="password"
         name="currentPassword"
         placeholder="Mật khẩu hiện tại"
         onChange={handleChange}
-        className="w-full p-2 border rounded-lg mt-2"
+        className="w-full p-2 border rounded-lg mt-4"
       />
       <input
         type="password"
         name="newPassword"
         placeholder="Mật khẩu mới"
         onChange={handleChange}
-        className="w-full p-2 border rounded-lg mt-2"
+        className="w-full p-2 border rounded-lg mt-4"
       />
       <input
         type="password"
         name="confirmPassword"
         placeholder="Xác nhận mật khẩu mới"
         onChange={handleChange}
-        className="w-full p-2 border rounded-lg mt-2"
+        className="w-full p-2 border rounded-lg mt-4"
       />
       <div className="flex justify-end gap-4 mt-6">
         <button

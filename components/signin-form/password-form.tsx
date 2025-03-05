@@ -74,6 +74,7 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
         );
         const decoded = await decodeResponse.json();
         const customerData = {
+          id: decoded.claims.sub,
           fullName: decoded.claims.name,
           email: decoded.claims.email,
           phone: decoded.claims.Phone,
@@ -85,7 +86,7 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
           hideProgressBar: true,
           theme: "dark",
         });
-
+        localStorage.setItem("customer", JSON.stringify(customerData));
         dispatch(login(customerData));
         onClose();
       } catch {
