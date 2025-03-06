@@ -468,6 +468,11 @@ export const promotionList: PromotionProps[] = [
   },
 ];
 
+export const paymentMethods = [
+  { value: "1", label: "Thanh toán bằng ngân hàng", image: "/vietqr.png" },
+  { value: "2", label: "Thanh toán bằng ví điện tử", image: "/zalopay.png" },
+];
+
 export const withdrawalList: WithdrawalProps[] = [
   {
     id: "1",
