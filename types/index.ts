@@ -30,27 +30,6 @@ export interface TopWorkspace {
   roomType: string;
 }
 
-export interface Workspace {
-  title: string;
-  address: string;
-  price: string;
-  image: string;
-  roomCapacity: number;
-  roomType: string;
-  roomSize: number;
-  rating: number;
-}
-
-export interface WorkspaceNotRating {
-  title: string;
-  address: string;
-  price: string;
-  image: string;
-  roomCapacity: number;
-  roomType: string;
-  roomSize: number;
-}
-
 export interface NewCustomerItemProps {
   avatar: string;
   name: string;
@@ -203,4 +182,23 @@ export interface TimeItemProps {
   startDate: string;
   endDate: string;
   status: string;
+}
+
+export interface Image {
+  id: string;
+  imgUrl: string;
+}
+
+export interface Workspace {
+  id: string;
+  name: string;
+  description: string;
+  shortTermPrice: string;
+  longTermPrice: string;
+  images: Image[];
+  capacity: number;
+  category: string;
+  area: number;
+  address: string;
+  googleMapUrl: string;
 }

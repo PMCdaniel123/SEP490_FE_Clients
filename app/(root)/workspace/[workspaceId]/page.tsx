@@ -36,24 +36,7 @@ import BeveragesList from "@/components/beverages-list/beverages-list";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import WorkspaceDetailSidebar from "@/components/layout/workspace-detail-sidebar";
-
-interface Image {
-  id: string;
-  imgUrl: string;
-}
-
-interface Workspace {
-  id: string;
-  name: string;
-  description: string;
-  shortTermPrice: string;
-  longTermPrice: string;
-  images: Image[];
-  capacity: number;
-  category: string;
-  area: number;
-  address: string;
-}
+import { Workspace } from "@/types";
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams() as { workspaceId: string };
@@ -79,7 +62,6 @@ const WorkspaceDetail = () => {
         const data = await response.json();
         setWorkspace({
           ...data,
-          address: "HCM",
           shortTermPrice: data.prices[0].price,
           longTermPrice: data.prices[1].price,
         });
@@ -200,7 +182,7 @@ const WorkspaceDetail = () => {
             </button>
           </div>
 
-          <GoogleMap />
+          <GoogleMap url={workspace.googleMapUrl} />
 
           {/* <div className="flex flex-col gap-6">
             <h2 className="text-xl font-bold text-primary">

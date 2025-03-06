@@ -21,24 +21,7 @@ import { Button } from "../ui/button";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Modal } from "antd";
 import TimeList from "../selection/time-list";
-
-interface Image {
-  id: string;
-  imgUrl: string;
-}
-
-interface Workspace {
-  id: string;
-  name: string;
-  description: string;
-  shortTermPrice: string;
-  longTermPrice: string;
-  images: Image[];
-  capacity: number;
-  category: string;
-  area: number;
-  address: string;
-}
+import { Workspace } from "@/types";
 
 function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
   const { beverageList, amenityList, total, startTime, endTime } = useSelector(
