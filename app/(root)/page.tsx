@@ -6,7 +6,6 @@ import NearSpaceList from "@/components/near-space-list/near-space-list";
 import HighRatingSpace from "@/components/high-rating-space/high-rating-space";
 import SectionTitle from "@/components/ui/section-tilte";
 import Banner from "@/components/ui/banner";
-import WorkshopList from "@/components/workshop-list/workshop-list";
 import FeatureSection from "@/components/ui/feauture-section";
 import { Send, MapPin } from "lucide-react";
 
@@ -45,7 +44,7 @@ function HomePage() {
             buttonLink="#"
           />
         </div>
-        <div className="mt-16 -mb-2">
+        {/* <div className="mt-16 -mb-2">
           <SectionTitle>Workshop nổi bật</SectionTitle>
         </div>
         <WorkshopList />
@@ -57,12 +56,12 @@ function HomePage() {
             buttonText="Tham gia ngay"
             buttonLink="#"
           />
-        </div>
+        </div> */}
         <FeatureSection
           title="Khám phá thêm về việc trở thành chủ không gian làm việc"
           description="Tận dụng tối đa tiềm năng không gian của bạn với nền tảng của chúng tôi..."
           buttonText="Đăng ký ngay"
-          buttonLink="#"
+          buttonLink="/become-owner"
           secondaryLinks={[
             { text: "Tư vấn Hotline", href: "#" },
             { text: "Nhắn tin Fanpage", href: "#" },
