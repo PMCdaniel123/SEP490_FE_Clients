@@ -189,16 +189,23 @@ export interface Image {
   imgUrl: string;
 }
 
+export interface Price {
+  id: string;
+  category: string;
+  price: number;
+}
+
 export interface Workspace {
   id: string;
   name: string;
   description: string;
-  shortTermPrice: string;
-  longTermPrice: string;
+  shortTermPrice: number;
+  longTermPrice: number;
   images: Image[];
   capacity: number;
   category: string;
   area: number;
   address: string;
   googleMapUrl: string;
+  prices: Price[];
 }
