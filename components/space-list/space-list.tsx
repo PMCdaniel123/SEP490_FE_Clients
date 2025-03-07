@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -6,19 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "../ui/card";
 import { CardContent } from "../ui/card-content";
 import Loader from "../loader/Loader";
-
-interface Workspace {
-  id: string;
-  name: string;
-  address: string;
-  shortTermPrice: number;
-  longTermPrice: number;
-  images: { imgUrl: string }[];
-  capacity: number;
-  area: number;
-  category: string;
-  prices: { category: string; price: number }[];
-}
+import { Workspace } from "@/types";
 
 export default function SpaceList() {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);

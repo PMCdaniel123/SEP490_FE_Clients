@@ -1,26 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import { Workspace } from "@/types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
-
-interface Image {
-  id: string;
-  imgUrl: string;
-}
-
-interface Workspace {
-  id: string;
-  name: string;
-  description: string;
-  shortTermPrice: string;
-  longTermPrice: string;
-  images: Image[];
-  capacity: number;
-  category: string;
-  area: number;
-  address: string;
-}
 
 function ImageList({ workspace }: { workspace: Workspace }) {
   const [mainImage, setMainImage] = useState(workspace.images[0].imgUrl);

@@ -106,7 +106,11 @@ export default function Checkout() {
         body: JSON.stringify(request),
       });
       const data = await response.json();
-      console.log(data);
+      const bookingData = {
+        bookingId: data.bookingId,
+        status: "PAID",
+      }
+      localStorage.setItem("order", JSON.stringify(bookingData));
       router.push(data.checkoutUrl);
     } catch {
       toast.error("Có lỗi xảy ra khi thanh toán.", {
