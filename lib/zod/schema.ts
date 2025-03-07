@@ -166,3 +166,12 @@ export const licenseSchema = z.object({
     }),
   file: z.string().url("Vui lòng tải lên một file hợp lệ"),
 });
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, "Mật khẩu hiện tại là bắt buộc."),
+  newPassword: z.string().min(6, "Mật khẩu mới phải có ít nhất 6 ký tự."),
+  confirmPassword: z.string().min(6, "Mật khẩu xác nhận phải có ít nhất 6 ký tự."),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Mật khẩu xác nhận không khớp.",
+  path: ["confirmPassword"],
+});

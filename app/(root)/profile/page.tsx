@@ -21,7 +21,7 @@ function Profile() {
     newPassword: "",
     confirmPassword: "",
   });
-  const [avatar, setAvatar] = useState<File | null>(null);
+  const [avatar, setAvatar] = useState<File | string | null>(null);
   const [reviews] = useState([
     { id: 1, content: "Tuyệt vời 5 sao!", rating: 5 },
     { id: 2, content: "Dịch vụ ok nhé sốp.", rating: 4 },
@@ -96,9 +96,9 @@ function Profile() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 flex gap-8 ">
-      <div className="w-1/3 bg-secondary p-6 rounded-lg text-center text-white">
-        <div className="w-24 h-24 mx-auto bg-white rounded-full overflow-hidden border">
+    <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-8">
+      <div className="w-full lg:w-1/3 bg-secondary p-6 rounded-lg text-center text-white">
+        <div className="w-32 h-32 mx-auto bg-white rounded-full overflow-hidden border">
           {avatar ? (
             <img
               src={
@@ -117,14 +117,7 @@ function Profile() {
             />
           )}
         </div>
-
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleAvatarChange}
-          className="mt-2 border rounded-lg"
-        />
-        <p className="font-bold text-2xl pt-10">{formData.name}</p>
+        <p className="font-bold text-2xl pt-5">{formData.name}</p>
         <div className="text-left space-y-2 bg-white rounded-lg px-4 py-8 mt-8">
           <p className="text-gray-600">
             <span className="font-semibold">Email:</span> {formData.email}
@@ -145,7 +138,7 @@ function Profile() {
         </div>
       </div>
 
-      <div className="w-2/3">
+      <div className="w-full lg:w-2/3">
         {!isEditing ? (
           <div>
             <h1 className="text-2xl font-bold">Xin chào, {formData.name}</h1>
@@ -160,7 +153,9 @@ function Profile() {
         ) : (
           <EditProfileForm
             formData={formData}
+            avatar={avatar}
             handleChange={handleChange}
+            handleAvatarChange={handleAvatarChange}
             handleSubmit={handleSubmit}
             handleCancel={handleCancel}
           />
