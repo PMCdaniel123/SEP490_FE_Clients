@@ -36,7 +36,7 @@ import BeveragesList from "@/components/beverages-list/beverages-list";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import WorkspaceDetailSidebar from "@/components/layout/workspace-detail-sidebar";
-import { Workspace } from "@/types";
+import { Price, Workspace } from "@/types";
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams() as { workspaceId: string };
@@ -62,8 +62,12 @@ const WorkspaceDetail = () => {
         const data = await response.json();
         setWorkspace({
           ...data,
-          shortTermPrice: data.prices[0].price,
-          longTermPrice: data.prices[1].price,
+          shortTermPrice:
+            data.prices.find((price: Price) => price.category === "Giờ")
+              ?.price || 0,
+          longTermPrice:
+            data.prices.find((price: Price) => price.category === "Ngày")
+              ?.price || 0,
         });
         setLoading(false);
       } catch {
