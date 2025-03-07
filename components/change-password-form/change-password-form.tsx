@@ -34,7 +34,6 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
     },
   });
 
-  // Reset form when modal is closed
   useEffect(() => {
     if (!isModalOpen) {
       reset({
