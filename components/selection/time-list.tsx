@@ -7,8 +7,8 @@ import Loader from "../loader/Loader";
 
 interface Time {
   id: string;
-  start_date: string;
-  end_date: string;
+  startDate: string;
+  endDate: string;
   status: string;
 }
 
@@ -36,7 +36,9 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
         }
 
         const data = await response.json();
-        setTimeList(Array.isArray(data) ? data : []);
+        setTimeList(
+          Array.isArray(data.workspaceTimes) ? data.workspaceTimes : []
+        );
         setLoading(false);
       } catch {
         toast.error("Có lỗi xảy ra khi tải các thời gian không khả dụng.", {
@@ -52,9 +54,11 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
   }, [workspaceId]);
 
   const filterByDate = (date: dayjs.Dayjs) =>
-    timeList.filter((item) =>
-      dayjs(item.start_date, "HH:mm DD/MM/YYYY").isSame(date, "day")
-    );
+    timeList.filter((item) => {
+      const isSameDay =
+        dayjs(item.startDate).isSame(date, "day") && item.status === "InUse";
+      return isSameDay;
+    });
 
   const todayList = filterByDate(today);
   const tomorrowList = filterByDate(tomorrow);
@@ -81,7 +85,8 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
                 key={item.id}
                 className="p-2 rounded-md bg-fourth text-white font-medium text-sm"
               >
-                {item.start_date.split(" ")[0]} - {item.end_date.split(" ")[0]}
+                {dayjs(item.startDate).format("HH:mm")} -{" "}
+                {dayjs(item.endDate).format("HH:mm")}
               </div>
             ))
           ) : (
@@ -101,7 +106,8 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
                 key={item.id}
                 className="p-2 rounded-md bg-fourth text-white font-medium text-sm"
               >
-                {item.start_date.split(" ")[0]} - {item.end_date.split(" ")[0]}
+                {dayjs(item.startDate).format("HH:mm")} -{" "}
+                {dayjs(item.endDate).format("HH:mm")}
               </div>
             ))
           ) : (
@@ -121,7 +127,8 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
                 key={item.id}
                 className="p-2 rounded-md bg-fourth text-white font-medium text-sm"
               >
-                {item.start_date.split(" ")[0]} - {item.end_date.split(" ")[0]}
+                {dayjs(item.startDate).format("HH:mm")} -{" "}
+                {dayjs(item.endDate).format("HH:mm")}
               </div>
             ))
           ) : (
