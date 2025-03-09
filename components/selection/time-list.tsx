@@ -42,10 +42,10 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
         setLoading(false);
       } catch {
         toast.error("Có lỗi xảy ra khi tải các thời gian không khả dụng.", {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
+          hideProgressBar: false,
+          theme: "light",
         });
       }
     };
@@ -60,9 +60,18 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
       return isSameDay;
     });
 
-  const todayList = filterByDate(today);
-  const tomorrowList = filterByDate(tomorrow);
-  const nextDayList = filterByDate(nextDay);
+  const todayList = filterByDate(today).sort(
+    (a: Time, b: Time) =>
+      Number(dayjs(a.startDate)) - Number(dayjs(b.startDate))
+  );
+  const tomorrowList = filterByDate(tomorrow).sort(
+    (a: Time, b: Time) =>
+      Number(dayjs(a.startDate)) - Number(dayjs(b.startDate))
+  );
+  const nextDayList = filterByDate(nextDay).sort(
+    (a: Time, b: Time) =>
+      Number(dayjs(a.startDate)) - Number(dayjs(b.startDate))
+  );
 
   if (loading) {
     return (

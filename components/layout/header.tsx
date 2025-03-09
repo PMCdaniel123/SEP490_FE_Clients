@@ -52,10 +52,10 @@ function Header() {
 
           if (!decodeResponse.ok) {
             toast.error("Có lỗi xảy ra khi giải mã token.", {
-              position: "bottom-right",
+              position: "top-right",
               autoClose: 2000,
-              hideProgressBar: true,
-              theme: "dark",
+              hideProgressBar: false,
+              theme: "light",
             });
             localStorage.removeItem("token");
             return;
@@ -74,10 +74,10 @@ function Header() {
           dispatch(login(customerData));
         } catch {
           toast.error("Có lỗi xảy ra khi giải mã token.", {
-            position: "bottom-right",
+            position: "top-right",
             autoClose: 2000,
-            hideProgressBar: true,
-            theme: "dark",
+            hideProgressBar: false,
+            theme: "light",
           });
           localStorage.removeItem("token");
           return;

@@ -45,10 +45,10 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
 
       if (!response.ok) {
         toast.error("Đăng nhập thất bại! Vui lòng kiểm tra lại.", {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
+          hideProgressBar: false,
+          theme: "light",
         });
         return;
       }
@@ -81,29 +81,29 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
           roleId: decoded.claims.RoleId,
         };
         toast.success("Đăng nhập thành công!", {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
+          hideProgressBar: false,
+          theme: "light",
         });
         localStorage.setItem("customer", JSON.stringify(customerData));
         dispatch(login(customerData));
         onClose();
       } catch {
         toast.error("Có lỗi xảy ra khi giải mã token.", {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
+          hideProgressBar: false,
+          theme: "light",
         });
         return;
       }
     } catch {
       toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
-        position: "bottom-right",
+        position: "top-right",
         autoClose: 2000,
-        hideProgressBar: true,
-        theme: "dark",
+        hideProgressBar: false,
+        theme: "light",
       });
     } finally {
       setIsLoading(false);

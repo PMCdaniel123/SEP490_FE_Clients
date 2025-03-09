@@ -32,10 +32,10 @@ function AmenitiesList({ workspaceId }: { workspaceId: string }) {
         setLoading(false);
       } catch {
         toast.error("Có lỗi xảy ra khi tải tiện ích.", {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
+          hideProgressBar: false,
+          theme: "light",
         });
         setAmenityList([]);
         setLoading(false);

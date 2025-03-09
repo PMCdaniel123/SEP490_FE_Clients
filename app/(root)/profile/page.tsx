@@ -64,10 +64,10 @@ function Profile() {
           }
         } catch {
           toast.error("Có lỗi xảy ra khi tải thông tin hồ sơ.", {
-            position: "bottom-right",
+            position: "top-right",
             autoClose: 2000,
-            hideProgressBar: true,
-            theme: "dark",
+            hideProgressBar: false,
+            theme: "light",
           });
         } finally {
           setLoading(false);
