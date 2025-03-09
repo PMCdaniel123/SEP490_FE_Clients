@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import Loader from "@/components/loader/Loader";
 import EditProfileForm from "@/components/profile-form/profile-form";
 import UserReview from "@/components/user-review/user-review";
 import { RootState } from "@/stores";
@@ -26,6 +27,7 @@ function Profile() {
     { id: 1, content: "Tuyệt vời 5 sao!", rating: 5 },
     { id: 2, content: "Dịch vụ ok nhé sốp.", rating: 4 },
   ]);
+  const [loading, setLoading] = useState(true);
   const { customer } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
@@ -33,6 +35,7 @@ function Profile() {
     if (token && customer) {
       const fetchProfile = async () => {
         try {
+          setLoading(true);
           const profileResponse = await fetch(
             `https://localhost:5050/users/${customer?.id}`
           );
@@ -66,6 +69,8 @@ function Profile() {
             hideProgressBar: true,
             theme: "dark",
           });
+        } finally {
+          setLoading(false);
         }
       };
 
@@ -94,6 +99,14 @@ function Profile() {
   const handleCancel = () => {
     setIsEditing(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-8">
