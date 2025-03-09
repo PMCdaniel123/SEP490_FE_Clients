@@ -9,6 +9,7 @@ import { RootState } from "@/stores";
 import Loader from "@/components/loader/Loader";
 import { CheckCircle, Clock, XCircle, MapPin, Coffee } from "lucide-react";
 import Pagination from "@/components/pagination/pagination";
+import dayjs from "dayjs";
 
 interface Transaction {
   booking_StartDate: string;
@@ -25,9 +26,11 @@ interface Transaction {
   workspace_CleanTime: number;
   promotion_Code: string;
   discount: number;
-  bookingHistoryAmenities: { name: string; quantity: number }[];
-  bookingHistoryBeverages: { name: string; quantity: number }[];
+  bookingHistoryAmenities: { name: string; quantity: number; unitPrice: number; imageUrl: string }[];
+  bookingHistoryBeverages: { name: string; quantity: number; unitPrice: number; imageUrl: string }[];
   bookingHistoryWorkspaceImages: { imageUrl: string }[];
+  license_Name: string;
+  license_Address: string;
 }
 
 const tabs = [
@@ -129,11 +132,16 @@ export default function PurchaseHistoryPage() {
               key={index}
               className="flex justify-between items-center bg-gray-100 p-4 rounded-lg"
             >
-              <div>
-                <h3 className="font-semibold">{tx.workspace_Name}</h3>
-                <p className="text-gray-500 text-sm">
-                  {new Date(tx.booking_CreatedAt).toLocaleString()}
-                </p>
+              <div className="flex items-center space-x-4">
+                {tx.bookingHistoryWorkspaceImages.length > 0 && (
+                  <img src={tx.bookingHistoryWorkspaceImages[0].imageUrl} alt="Workspace Image" className="w-16 h-16 object-cover rounded-lg shadow-md" />
+                )}
+                <div>
+                  <h3 className="font-semibold">{tx.workspace_Name}</h3>
+                  <p className="text-gray-500 text-sm">
+                    {dayjs(tx.booking_CreatedAt).format("DD/MM/YYYY HH:mm")}
+                  </p>
+                </div>
               </div>
               <div className="flex items-center space-x-4">
                 <p className="font-bold">{new Intl.NumberFormat("vi-VN", {
@@ -168,7 +176,7 @@ export default function PurchaseHistoryPage() {
           <div className="p-4 border border-gray-300 rounded-lg shadow-lg bg-white">
             <div className="flex justify-between items-center mb-4">
               <p className="text-gray-600 text-sm">
-                {new Date(selectedTransaction.booking_CreatedAt).toLocaleString()}
+                {dayjs(selectedTransaction.booking_CreatedAt).format("DD/MM/YYYY HH:mm")}
               </p>
             </div>
 
@@ -187,19 +195,19 @@ export default function PurchaseHistoryPage() {
                 <span className="ml-2">{renderStatus(selectedTransaction.booking_Status || "Không có")}</span>
               </p>
               <p className="flex items-center">
-                <strong className="mr-2">Phương thức thanh toán:</strong> {selectedTransaction.payment_Method}
+                <strong className="mr-2">Phương thức thanh toán:</strong> {selectedTransaction.payment_Method === "payOs" ? "Chuyển khoản ngân hàng" : selectedTransaction.payment_Method}
               </p>
               <p className="flex items-center">
-                <strong className="mr-2">Mã khuyến mãi:</strong> {selectedTransaction.promotion_Code || "Không có"}
+                <strong className="mr-2">Mã khuyến mãi:</strong> {selectedTransaction.promotion_Code === "No Promotion" ? "Không" : selectedTransaction.promotion_Code}
               </p>
               <p className="flex items-center">
                 <strong className="mr-2">Giảm giá:</strong> {selectedTransaction.discount}%
               </p>
               <p className="flex items-center">
-                <strong className="mr-2">Thời gian bắt đầu:</strong> {new Date(selectedTransaction.booking_StartDate).toLocaleString()}
+                <strong className="mr-2">Thời gian bắt đầu:</strong> {dayjs(selectedTransaction.booking_StartDate).format("DD/MM/YYYY HH:mm")}
               </p>
               <p className="flex items-center">
-                <strong className="mr-2">Thời gian kết thúc:</strong> {new Date(selectedTransaction.booking_EndDate).toLocaleString()}
+                <strong className="mr-2">Thời gian kết thúc:</strong> {dayjs(selectedTransaction.booking_EndDate).format("DD/MM/YYYY HH:mm")}
               </p>
             </div>
 
@@ -209,17 +217,17 @@ export default function PurchaseHistoryPage() {
               <h3 className="font-semibold text-lg flex items-center">
                 <MapPin className="mr-2" /> Thông tin không gian
               </h3>
+              <p>{selectedTransaction.license_Name}</p>
+              <p><strong>Địa chỉ:</strong> {selectedTransaction.license_Address}</p>
               <p><strong>Tên:</strong> {selectedTransaction.workspace_Name}</p>
               <p><strong>Loại:</strong> {selectedTransaction.workspace_Category}</p>
               <p><strong>Sức chứa:</strong> {selectedTransaction.workspace_Capacity} người</p>
               <p><strong>Diện tích:</strong> {selectedTransaction.workspace_Area} m²</p>
-              <p><strong>Thời gian dọn dẹp:</strong> {selectedTransaction.workspace_CleanTime} phút</p>
-              <p><strong>Mô tả:</strong> {selectedTransaction.workspace_Description}</p>
+              {/* <p><strong>Thời gian dọn dẹp:</strong> {selectedTransaction.workspace_CleanTime} phút</p>
+              <p><strong>Mô tả:</strong> {selectedTransaction.workspace_Description}</p> */}
               {selectedTransaction.bookingHistoryWorkspaceImages.length > 0 && (
-                <div className="grid grid-cols-2 gap-4 mt-4">
-                  {selectedTransaction.bookingHistoryWorkspaceImages.map((image, index) => (
-                    <img key={index} src={image.imageUrl} alt={`Workspace Image ${index + 1}`} className="w-full h-auto rounded-lg" />
-                  ))}
+                <div className="mt-4 flex justify-center">
+                  <img src={selectedTransaction.bookingHistoryWorkspaceImages[0].imageUrl} alt="Workspace Image" className="w-full h-48 object-cover rounded-lg shadow-md" />
                 </div>
               )}
             </div>
@@ -235,30 +243,42 @@ export default function PurchaseHistoryPage() {
                   <p><strong>Tiện ích:</strong></p>
                   <ul className="list-disc pl-6">
                     {selectedTransaction.bookingHistoryAmenities.map((item, index) => (
-                      <li key={index}>{item.name} (x{item.quantity})</li>
+                      <li key={index}>
+                        <img src={item.imageUrl} alt={item.name} className="inline-block w-10 h-10 mr-2" />
+                        {item.name} (x{item.quantity}) - {new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(item.unitPrice)}
+                      </li>
                     ))}
                   </ul>
                 </>
               ) : (
-                <p>Không có dữ liệu</p>
+                <p>Không</p>
               )}
               {selectedTransaction.bookingHistoryBeverages.length > 0 ? (
                 <>
                   <p><strong>Đồ uống:</strong></p>
                   <ul className="list-disc pl-6">
                     {selectedTransaction.bookingHistoryBeverages.map((item, index) => (
-                      <li key={index}>{item.name} (x{item.quantity})</li>
+                      <li key={index}>
+                        <img src={item.imageUrl} alt={item.name} className="inline-block w-10 h-10 mr-2" />
+                        {item.name} (x{item.quantity}) - {new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        }).format(item.unitPrice)}
+                      </li>
                     ))}
                   </ul>
                 </>
               ) : (
-                <p>Không có dữ liệu</p>
+                <p>Không</p>
               )}
             </div>
 
             <hr className="my-4" />
 
-            <div className="flex justify-between items-center text-lg font-bold">
+            <div className="flex justify-between items-center text-lg font-bold text-primary">
               <span>Tổng tiền:</span>
               <span>{new Intl.NumberFormat("vi-VN", {
                 style: "currency",
