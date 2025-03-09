@@ -44,10 +44,10 @@ export const validatePhone = createAsyncThunk<
     );
     if (!response.ok) {
       toast.error("Số điện thoại không hợp lệ!", {
-        position: "bottom-right",
+        position: "top-right",
         autoClose: 2000,
-        hideProgressBar: true,
-        theme: "dark",
+        hideProgressBar: false,
+        theme: "light",
       });
       return rejectWithValue("Số điện thoại không hợp lệ!");
     }
@@ -77,10 +77,10 @@ export const validateEmail = createAsyncThunk<
     );
     if (!response.ok) {
       toast.error("Email không hợp lệ!", {
-        position: "bottom-right",
+        position: "top-right",
         autoClose: 2000,
-        hideProgressBar: true,
-        theme: "dark",
+        hideProgressBar: false,
+        theme: "light",
       });
       return rejectWithValue("Email không hợp lệ!");
     }

@@ -57,10 +57,10 @@ export default function Checkout() {
         setLoading(false);
       } catch {
         toast.error("Có lỗi xảy ra khi tải thông tin không gian.", {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
+          hideProgressBar: false,
+          theme: "light",
         });
       }
     };
@@ -109,15 +109,15 @@ export default function Checkout() {
       const bookingData = {
         bookingId: data.bookingId,
         status: "PAID",
-      }
+      };
       localStorage.setItem("order", JSON.stringify(bookingData));
       router.push(data.checkoutUrl);
     } catch {
       toast.error("Có lỗi xảy ra khi thanh toán.", {
-        position: "bottom-right",
+        position: "top-right",
         autoClose: 2000,
-        hideProgressBar: true,
-        theme: "dark",
+        hideProgressBar: false,
+        theme: "light",
       });
     }
   };

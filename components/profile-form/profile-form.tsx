@@ -19,7 +19,9 @@ interface EditProfileFormProps {
     confirmPassword: string;
   };
   avatar: string | File | null;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  handleChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => void;
   handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleCancel: () => void;
   handleSubmit: (e: React.FormEvent) => void;
@@ -60,11 +62,11 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
 
   const onSubmit = async (data: typeof formData) => {
     if (!customer) {
-      toast.error("User not authenticated", {
-        position: "bottom-right",
+      toast.error("Chưa đăng nhập", {
+        position: "top-right",
         autoClose: 2000,
-        hideProgressBar: true,
-        theme: "dark",
+        hideProgressBar: false,
+        theme: "light",
       });
       return;
     }
@@ -73,12 +75,12 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
     if (avatar && typeof avatar !== "string") {
       try {
         avatarUrl = await uploadImage(avatar);
-      } catch{
+      } catch {
         toast.error("Có lỗi xảy ra khi tải lên ảnh.", {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
+          hideProgressBar: false,
+          theme: "light",
         });
         return;
       }
@@ -109,10 +111,10 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       }
 
       toast.success("Cập nhật hồ sơ thành công!", {
-        position: "bottom-right",
+        position: "top-right",
         autoClose: 2000,
-        hideProgressBar: true,
-        theme: "dark",
+        hideProgressBar: false,
+        theme: "light",
       });
 
       reset();
@@ -120,10 +122,10 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       window.location.reload();
     } catch {
       toast.error("Cập nhật hồ sơ không thành công", {
-        position: "bottom-right",
+        position: "top-right",
         autoClose: 2000,
-        hideProgressBar: true,
-        theme: "dark",
+        hideProgressBar: false,
+        theme: "light",
       });
     }
   };

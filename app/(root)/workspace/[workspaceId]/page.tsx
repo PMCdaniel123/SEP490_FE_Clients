@@ -72,10 +72,10 @@ const WorkspaceDetail = () => {
         setLoading(false);
       } catch {
         toast.error("Có lỗi xảy ra khi tải thông tin không gian.", {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
+          hideProgressBar: false,
+          theme: "light",
         });
       }
     };

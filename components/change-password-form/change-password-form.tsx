@@ -47,10 +47,10 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
   const onSubmit = async (data: z.infer<typeof changePasswordSchema>) => {
     if (!customer) {
       toast.error("User not authenticated", {
-        position: "bottom-right",
+        position: "top-right",
         autoClose: 2000,
-        hideProgressBar: true,
-        theme: "dark",
+        hideProgressBar: false,
+        theme: "light",
       });
       return;
     }
@@ -63,23 +63,26 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
     };
 
     try {
-      const response = await fetch("https://localhost:5050/users/updatepassword", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
+      const response = await fetch(
+        "https://localhost:5050/users/updatepassword",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Có lỗi xảy ra khi cập nhật mật khẩu.");
       }
 
       toast.success("Cập nhật mật khẩu thành công!", {
-        position: "bottom-right",
+        position: "top-right",
         autoClose: 2000,
-        hideProgressBar: true,
-        theme: "dark",
+        hideProgressBar: false,
+        theme: "light",
       });
 
       reset({
@@ -91,10 +94,10 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
       handleCancel();
     } catch {
       toast.error("Cập nhật mật khẩu không thành công", {
-        position: "bottom-right",
+        position: "top-right",
         autoClose: 2000,
-        hideProgressBar: true,
-        theme: "dark",
+        hideProgressBar: false,
+        theme: "light",
       });
     }
   };
@@ -108,9 +111,7 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
       onSubmit={handleSubmit(onSubmit)}
       className="bg-white p-6 rounded-lg shadow-md border mt-6"
     >
-      <h2 className="text-xl font-bold mb-4 text-primary">
-        Thay đổi mật khẩu
-      </h2>
+      <h2 className="text-xl font-bold mb-4 text-primary">Thay đổi mật khẩu</h2>
       <div className="relative">
         <input
           type={showPassword ? "text" : "password"}
@@ -127,7 +128,9 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         </button>
       </div>
       {errors.currentPassword && (
-        <p className="text-red-500 text-sm mt-1">{errors.currentPassword.message}</p>
+        <p className="text-red-500 text-sm mt-1">
+          {errors.currentPassword.message}
+        </p>
       )}
       <div className="relative">
         <input
@@ -145,7 +148,9 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         </button>
       </div>
       {errors.newPassword && (
-        <p className="text-red-500 text-sm mt-1">{errors.newPassword.message}</p>
+        <p className="text-red-500 text-sm mt-1">
+          {errors.newPassword.message}
+        </p>
       )}
       <div className="relative">
         <input
@@ -163,7 +168,9 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         </button>
       </div>
       {errors.confirmPassword && (
-        <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
+        <p className="text-red-500 text-sm mt-1">
+          {errors.confirmPassword.message}
+        </p>
       )}
       <div className="flex justify-end gap-4 mt-6">
         <button

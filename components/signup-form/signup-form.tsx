@@ -14,7 +14,7 @@ import { SignInButton } from "@/components/signin-form/signin-button";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/stores";
 import { login } from "@/stores/slices/authSlice";
@@ -58,10 +58,10 @@ export function SignUpForm({
 
       if (response.status !== 201) {
         toast.error("Đăng ký thất bại! Vui lòng kiểm tra lại.", {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
+          hideProgressBar: false,
+          theme: "light",
         });
         return;
       }
@@ -92,21 +92,20 @@ export function SignUpForm({
           roleId: decoded.claims.RoleId,
         };
         toast.success("Đăng nhập thành công!", {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
+          hideProgressBar: false,
+          theme: "light",
         });
 
         dispatch(login(customerData));
         handleCloseSignUpForm();
-       
       } catch {
         toast.error("Có lỗi xảy ra khi giải mã token.", {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
+          hideProgressBar: false,
+          theme: "light",
         });
         return;
       }
@@ -219,10 +218,7 @@ export function SignUpForm({
             )}
           </div>
           <div className="grid gap-1">
-            <Label
-              htmlFor="sex"
-              className="text-fourth font-semibold text-xs"
-            >
+            <Label htmlFor="sex" className="text-fourth font-semibold text-xs">
               Giới tính
             </Label>
             <select

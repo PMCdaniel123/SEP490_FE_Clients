@@ -50,10 +50,10 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
   const handleSelectedDateValidte = async () => {
     if (startTime === "" || endTime === "") {
       toast.error("Vui lòng chọn thời gian!", {
-        position: "bottom-right",
+        position: "top-right",
         autoClose: 2000,
-        hideProgressBar: true,
-        theme: "dark",
+        hideProgressBar: false,
+        theme: "light",
       });
       return;
     }
@@ -77,14 +77,19 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
         if (!response.ok) {
           throw new Error("Thời gian không khả dụng.");
         }
+        const data = await response.json();
+        if (data === "Time interval has been used") {
+          throw new Error("Thời gian không khả dụng.");
+        }
+
         setIsButtonLoading(false);
         router.push("/checkout");
       } catch {
-        toast.error("Không thể đặt thời gian sau 23h.", {
-          position: "bottom-right",
+        toast.error("Thời gian không khả dụng.", {
+          position: "top-right",
           autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
+          hideProgressBar: false,
+          theme: "light",
         });
         setIsButtonLoading(false);
       }
@@ -112,7 +117,7 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
       </div>
       <Separator className="my-6" />
       <p className="text-fifth text-sm">
-        Thuê theo giờ: {Number(workspace.shortTermPrice)} <br />
+        Thuê theo giờ: {formatCurrency(Number(workspace.shortTermPrice))} <br />
         Thuê theo ngày: {formatCurrency(Number(workspace.longTermPrice))}
       </p>
       <Separator className="my-6" />
