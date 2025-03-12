@@ -1,15 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Modal } from "antd";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
 import Loader from "@/components/loader/Loader";
-import { CheckCircle, Clock, XCircle, MapPin, Coffee } from "lucide-react";
 import Pagination from "@/components/pagination/pagination";
 import dayjs from "dayjs";
+import TransactionDetailsModal from "@/components/transaction-details-modal/transaction-details-modal";
+import ReviewForm from "@/components/review-list/review-form";
 
 interface Transaction {
   booking_StartDate: string;
@@ -35,18 +35,18 @@ interface Transaction {
 
 const tabs = [
   { key: "Success", label: "Hoàn thành" },
-  { key: "Handling", label: "Chờ thanh toán" },
   { key: "Fail", label: "Đã hủy" },
 ];
 
 export default function PurchaseHistoryPage() {
   const [activeTab, setActiveTab] = useState("success");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<null | Transaction>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [transactionsPerPage] = useState(5); // Number of transactions per page
+  const [transactionsPerPage] = useState(5);
   const { customer } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
@@ -73,12 +73,24 @@ export default function PurchaseHistoryPage() {
     setIsModalOpen(false);
   };
 
+  const showReviewModal = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setIsReviewModalOpen(true);
+  };
+
+  const handleReviewCancel = () => {
+    setIsReviewModalOpen(false);
+  };
+
+  const handleReviewSubmit = (review: { rating: number; comment: string }) => {
+    console.log("Review submitted:", review);
+    setIsReviewModalOpen(false);
+  };
+
   const renderStatus = (status: string) => {
     switch (status) {
       case "Success":
         return "Hoàn thành";
-      case "Handling":
-        return "Chờ thanh toán";
       case "Fail":
         return "Đã hủy";
       default:
@@ -130,7 +142,8 @@ export default function PurchaseHistoryPage() {
           currentTransactions.map((tx, index) => (
             <div
               key={index}
-              className="flex justify-between items-center bg-gray-100 p-4 rounded-lg"
+              className="flex justify-between items-center bg-gray-100 p-4 rounded-lg cursor-pointer hover:bg-gray-200 transition duration-200"
+              onClick={() => showModal(tx)}
             >
               <div className="flex items-center space-x-4">
                 {tx.bookingHistoryWorkspaceImages.length > 0 && (
@@ -148,9 +161,16 @@ export default function PurchaseHistoryPage() {
                   style: "currency",
                   currency: "VND",
                 }).format(tx.booking_Price)}</p>
-                <Button className="text-white" onClick={() => showModal(tx)}>
-                  Xem chi tiết
-                </Button>
+                {tx.booking_Status === "Success" && (
+                  <Button className="text-white" onClick={(e) => { e.stopPropagation(); showReviewModal(tx); }}>
+                    Đánh giá
+                  </Button>
+                )}
+                {tx.booking_Status === "Fail" && (
+                  <Button className="text-white" onClick={(e) => { e.stopPropagation(); showModal(tx); }}>
+                    Xem chi tiết
+                  </Button>
+                )}
               </div>
             </div>
           ))
@@ -165,129 +185,26 @@ export default function PurchaseHistoryPage() {
         onPageChange={paginate}
       />
 
-      <Modal
-        title="Chi tiết giao dịch"
-        open={isModalOpen}
-        onCancel={handleCancel}
-        footer={null}
-        width={600}
-      >
-        {selectedTransaction && (
-          <div className="p-4 border border-gray-300 rounded-lg shadow-lg bg-white">
-            <div className="flex justify-between items-center mb-4">
-              <p className="text-gray-600 text-sm">
-                {dayjs(selectedTransaction.booking_CreatedAt).format("DD/MM/YYYY HH:mm")}
-              </p>
-            </div>
+      <TransactionDetailsModal
+        isModalOpen={isModalOpen}
+        handleCancel={handleCancel}
+        selectedTransaction={selectedTransaction}
+        renderStatus={renderStatus}
+      />
 
-            <div className="space-y-2 text-sm">
-              <p className="flex items-center">
-                <strong className="mr-2">Trạng thái:</strong>
-                {selectedTransaction.booking_Status === "Success" && (
-                  <CheckCircle className="text-green-500" />
-                )}
-                {selectedTransaction.booking_Status === "Handling" && (
-                  <Clock className="text-yellow-500" />
-                )}
-                {selectedTransaction.booking_Status === "Fail" && (
-                  <XCircle className="text-red-500" />
-                )}
-                <span className="ml-2">{renderStatus(selectedTransaction.booking_Status || "Không có")}</span>
-              </p>
-              <p className="flex items-center">
-                <strong className="mr-2">Phương thức thanh toán:</strong> {selectedTransaction.payment_Method === "payOs" ? "Chuyển khoản ngân hàng" : selectedTransaction.payment_Method}
-              </p>
-              <p className="flex items-center">
-                <strong className="mr-2">Mã khuyến mãi:</strong> {selectedTransaction.promotion_Code === "No Promotion" ? "Không" : selectedTransaction.promotion_Code}
-              </p>
-              <p className="flex items-center">
-                <strong className="mr-2">Giảm giá:</strong> {selectedTransaction.discount}%
-              </p>
-              <p className="flex items-center">
-                <strong className="mr-2">Thời gian bắt đầu:</strong> {dayjs(selectedTransaction.booking_StartDate).format("DD/MM/YYYY HH:mm")}
-              </p>
-              <p className="flex items-center">
-                <strong className="mr-2">Thời gian kết thúc:</strong> {dayjs(selectedTransaction.booking_EndDate).format("DD/MM/YYYY HH:mm")}
-              </p>
-            </div>
-
-            <hr className="my-4" />
-
-            <div className="space-y-2 text-sm">
-              <h3 className="font-semibold text-lg flex items-center">
-                <MapPin className="mr-2" /> Thông tin không gian
-              </h3>
-              <p>{selectedTransaction.license_Name}</p>
-              <p><strong>Địa chỉ:</strong> {selectedTransaction.license_Address}</p>
-              <p><strong>Tên:</strong> {selectedTransaction.workspace_Name}</p>
-              <p><strong>Loại:</strong> {selectedTransaction.workspace_Category}</p>
-              <p><strong>Sức chứa:</strong> {selectedTransaction.workspace_Capacity} người</p>
-              <p><strong>Diện tích:</strong> {selectedTransaction.workspace_Area} m²</p>
-              {/* <p><strong>Thời gian dọn dẹp:</strong> {selectedTransaction.workspace_CleanTime} phút</p>
-              <p><strong>Mô tả:</strong> {selectedTransaction.workspace_Description}</p> */}
-              {selectedTransaction.bookingHistoryWorkspaceImages.length > 0 && (
-                <div className="mt-4 flex justify-center">
-                  <img src={selectedTransaction.bookingHistoryWorkspaceImages[0].imageUrl} alt="Workspace Image" className="w-full h-48 object-cover rounded-lg shadow-md" />
-                </div>
-              )}
-            </div>
-
-            <hr className="my-4" />
-
-            <div className="space-y-2 text-sm">
-              <h3 className="font-semibold text-lg flex items-center">
-                <Coffee className="mr-2" /> Dịch vụ kèm theo
-              </h3>
-              {selectedTransaction.bookingHistoryAmenities.length > 0 ? (
-                <>
-                  <p><strong>Tiện ích:</strong></p>
-                  <ul className="list-disc pl-6">
-                    {selectedTransaction.bookingHistoryAmenities.map((item, index) => (
-                      <li key={index}>
-                        <img src={item.imageUrl} alt={item.name} className="inline-block w-10 h-10 mr-2" />
-                        {item.name} (x{item.quantity}) - {new Intl.NumberFormat("vi-VN", {
-                          style: "currency",
-                          currency: "VND",
-                        }).format(item.unitPrice)}
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ) : (
-                <p>Không</p>
-              )}
-              {selectedTransaction.bookingHistoryBeverages.length > 0 ? (
-                <>
-                  <p><strong>Đồ uống:</strong></p>
-                  <ul className="list-disc pl-6">
-                    {selectedTransaction.bookingHistoryBeverages.map((item, index) => (
-                      <li key={index}>
-                        <img src={item.imageUrl} alt={item.name} className="inline-block w-10 h-10 mr-2" />
-                        {item.name} (x{item.quantity}) - {new Intl.NumberFormat("vi-VN", {
-                          style: "currency",
-                          currency: "VND",
-                        }).format(item.unitPrice)}
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              ) : (
-                <p>Không</p>
-              )}
-            </div>
-
-            <hr className="my-4" />
-
-            <div className="flex justify-between items-center text-lg font-bold text-primary">
-              <span>Tổng tiền:</span>
-              <span>{new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND",
-              }).format(selectedTransaction.booking_Price)}</span>
-            </div>
-          </div>
-        )}
-      </Modal>
+      {selectedTransaction && (
+        <ReviewForm
+          isReviewModalOpen={isReviewModalOpen}
+          handleReviewCancel={handleReviewCancel}
+          handleReviewSubmit={handleReviewSubmit}
+          workspaceName={selectedTransaction.workspace_Name}
+          workspaceCategory={selectedTransaction.workspace_Category}
+          workspaceCapacity={selectedTransaction.workspace_Capacity}
+          workspaceArea={selectedTransaction.workspace_Area}
+          licenseName={selectedTransaction.license_Name}
+          workspaceImageUrl={selectedTransaction.bookingHistoryWorkspaceImages[0]?.imageUrl || ""}
+        />
+      )}
     </div>
   );
 }

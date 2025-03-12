@@ -84,10 +84,8 @@ function Profile() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setAvatar(e.target.files[0]);
-    }
+  const handleAvatarChange = (file: File) => {
+    setAvatar(file);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
