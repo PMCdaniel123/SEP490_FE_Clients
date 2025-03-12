@@ -5,6 +5,8 @@ import { RootState } from "@/stores";
 import { toast } from "react-toastify";
 import ChangePasswordForm from "../change-password-form/change-password-form";
 import { Upload } from "lucide-react";
+import { Button, Upload as AntUpload } from "antd";
+import ImgCrop from 'antd-img-crop';
 
 interface EditProfileFormProps {
   formData: {
@@ -22,7 +24,7 @@ interface EditProfileFormProps {
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
-  handleAvatarChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleAvatarChange: (file: File) => void;
   handleCancel: () => void;
   handleSubmit: (e: React.FormEvent) => void;
 }
@@ -162,20 +164,19 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
                   />
                 )}
               </div>
-              <label
-                htmlFor="avatarInput"
-                className="ml-4 px-4 py-2 bg-[#8B5D27] text-white rounded-lg cursor-pointer hover:bg-[#6b451f] flex items-center"
-              >
-                <Upload className="mr-2" />
-                Chọn ảnh
-              </label>
-              <input
-                id="avatarInput"
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarChange}
-                className="hidden"
-              />
+              <ImgCrop rotationSlider>
+                <AntUpload
+                  beforeUpload={(file) => {
+                    handleAvatarChange(file);
+                    return false; // Prevent automatic upload
+                  }}
+                  showUploadList={false}
+                >
+                  <Button icon={<Upload className="mr-2" />}>
+                    Chọn ảnh
+                  </Button>
+                </AntUpload>
+              </ImgCrop>
             </div>
           </div>
           <div>
