@@ -22,6 +22,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { Modal } from "antd";
 import TimeList from "../selection/time-list";
 import { Workspace } from "@/types";
+import Time24hSelect from "../selection/time-24h-select";
 
 function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
   const { beverageList, amenityList, total, startTime, endTime } = useSelector(
@@ -156,6 +157,11 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
           <Label htmlFor="long-term">Thuê theo ngày</Label>
         </div>
         {shortTerm === "2" && <DateSelect />}
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="3" id="short-term" />
+          <Label htmlFor="short-term">Thuê theo 24 giờ</Label>
+        </div>
+        {shortTerm === "3" && <Time24hSelect />}
       </RadioGroup>
       <div className="flex flex-col gap-2 my-4">
         {beverageList.length + amenityList.length > 1 && (
