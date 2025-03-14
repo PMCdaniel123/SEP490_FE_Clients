@@ -48,7 +48,7 @@ const WorkspaceDetail = () => {
 
   useEffect(() => {
     if (!workspaceId) return;
-
+    localStorage.removeItem("cart")
     const fetchWorkspace = async () => {
       try {
         const response = await fetch(
@@ -61,13 +61,15 @@ const WorkspaceDetail = () => {
 
         const data = await response.json();
         setWorkspace({
-          ...data,
+          ...data.getWorkSpaceByIdResult,
           shortTermPrice:
-            data.prices.find((price: Price) => price.category === "Giờ")
-              ?.price || 0,
+            data.getWorkSpaceByIdResult.prices.find(
+              (price: Price) => price.category === "Giờ"
+            )?.price || 0,
           longTermPrice:
-            data.prices.find((price: Price) => price.category === "Ngày")
-              ?.price || 0,
+            data.getWorkSpaceByIdResult.prices.find(
+              (price: Price) => price.category === "Ngày"
+            )?.price || 0,
         });
         setLoading(false);
       } catch {
@@ -157,21 +159,21 @@ const WorkspaceDetail = () => {
             <h2 className="text-xl font-bold text-primary flex gap-4">
               <Archive size={28} /> <span>Cơ sở vật chất</span>
             </h2>
-            <FacilitiesList />
+            <FacilitiesList facilities={workspace.facilities} />
           </div>
 
           <div>
             <h2 className="text-xl font-bold text-primary mb-6 flex gap-4">
               <ShieldEllipsis size={28} /> <span>Quy định chung</span>
             </h2>
-            <PoliciesList />
+            <PoliciesList policies={workspace.policies} />
           </div>
 
           <div>
             <h2 className="text-xl font-bold text-primary mb-6 flex gap-4">
               <Boxes size={28} /> <span>Tiện ích</span>
             </h2>
-            <AmenitiesList workspaceId={workspaceId} />
+            <AmenitiesList ownerId={workspace.ownerId} />
           </div>
 
           <div>
@@ -264,7 +266,7 @@ const WorkspaceDetail = () => {
         onCancel={() => setIsBeverageOpen(false)}
         footer={null}
       >
-        <BeveragesList workspaceId={workspaceId} />
+        <BeveragesList ownerId={workspace.ownerId} />
       </Modal>
     </div>
   );

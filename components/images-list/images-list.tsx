@@ -25,11 +25,11 @@ function ImageList({ workspace }: { workspace: Workspace }) {
 
   return (
     <div className="w-full">
-      <div className="relative w-full h-96">
+      <div className="relative w-full h-[600px]">
         <img
           src={mainImage}
           alt={workspace.name}
-          className="w-full h-full object-cover rounded-lg transition-transform duration-300"
+          className="w-full h-[600px] object-cover rounded-lg transition-transform duration-300"
         />
       </div>
       <div className="relative flex items-center gap-4 mt-4 w-full justify-center">

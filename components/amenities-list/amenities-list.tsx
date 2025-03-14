@@ -9,18 +9,18 @@ import { toast } from "react-toastify";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-function AmenitiesList({ workspaceId }: { workspaceId: string }) {
+function AmenitiesList({ ownerId }: { ownerId: string }) {
   const [loading, setLoading] = useState(false);
   const [amenityList, setAmenityList] = useState<AmenityProps[]>([]);
 
   useEffect(() => {
-    if (!workspaceId) return;
+    if (!ownerId) return;
     setLoading(true);
 
     const fetchAmenityList = async () => {
       try {
         const response = await fetch(
-          `https://localhost:5050/amenities/workspace/${workspaceId}`
+          `https://localhost:5050/amenities/Owner/${ownerId}`
         );
 
         if (!response.ok) {
@@ -43,7 +43,7 @@ function AmenitiesList({ workspaceId }: { workspaceId: string }) {
     };
 
     fetchAmenityList();
-  }, [workspaceId]);
+  }, [ownerId]);
 
   const settings = {
     dots: true,

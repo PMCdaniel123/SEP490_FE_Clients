@@ -152,7 +152,7 @@ function TimeSelect() {
   };
 
   return (
-    <div className="mb-4">
+    <div>
       <div
         className="flex items-center justify-between px-4 py-3 border rounded-lg cursor-pointer hover:bg-gray-50"
         onClick={toggleTimePicker}

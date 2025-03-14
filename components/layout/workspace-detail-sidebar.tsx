@@ -23,6 +23,7 @@ import { Modal } from "antd";
 import TimeList from "../selection/time-list";
 import { Workspace } from "@/types";
 import Time24hSelect from "../selection/time-24h-select";
+import { Clock, Clock10, Clock5 } from "lucide-react";
 
 function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
   const { beverageList, amenityList, total, startTime, endTime } = useSelector(
@@ -82,7 +83,15 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
         if (data === "Time interval has been used") {
           throw new Error("Thời gian không khả dụng.");
         }
-
+        const cartData = {
+          workspaceId: workspace.id,
+          beverageList,
+          amenityList,
+          total,
+          startTime,
+          endTime,
+        };
+        localStorage.setItem("cart", JSON.stringify(cartData));
         setIsButtonLoading(false);
         router.push("/checkout");
       } catch {
@@ -117,10 +126,30 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
         </h2>
       </div>
       <Separator className="my-6" />
-      <p className="text-fifth text-sm">
-        Thuê theo giờ: {formatCurrency(Number(workspace.shortTermPrice))} <br />
-        Thuê theo ngày: {formatCurrency(Number(workspace.longTermPrice))}
-      </p>
+      <div>
+        <p className="text-fifth text-sm">
+          Thuê theo giờ: {formatCurrency(Number(workspace.shortTermPrice))}{" "}
+          <br />
+          Thuê theo ngày: {formatCurrency(Number(workspace.longTermPrice))}
+        </p>
+        <Separator className="my-6" />
+      </div>
+      {workspace.is24h !== 1 ? (
+        <div className="flex flex-col gap-2">
+          <p className="text-primary text-base flex items-center gap-2">
+            <Clock5 /> Mở cửa lúc: {workspace.openTime}
+          </p>
+          <p className="text-primary text-base flex items-center gap-2">
+            <Clock10 /> Đóng cửa lúc: {workspace.closeTime}
+          </p>
+        </div>
+      ) : (
+        <div>
+          <p className="text-primary text-base flex items-center gap-2">
+            <Clock /> Mở cửa 24h
+          </p>
+        </div>
+      )}
       <Separator className="my-6" />
       <div
         className="text-primary flex flex-col items-end cursor-pointer hover:text-secondary mb-6 text-sm font-bold"
@@ -147,21 +176,25 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
         }}
         className="flex flex-col gap-4 my-2"
       >
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem value="1" id="short-term" />
-          <Label htmlFor="short-term">Thuê theo giờ</Label>
-        </div>
-        {shortTerm === "1" && <TimeSelect />}
+        {workspace.is24h !== 1 && (
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="1" id="short-term" />
+            <Label htmlFor="short-term">Thuê theo giờ</Label>
+          </div>
+        )}
+        {workspace.is24h !== 1 && shortTerm === "1" && <TimeSelect />}
+        {workspace.is24h === 1 && (
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="1" id="short-term" />
+            <Label htmlFor="short-term">Thuê theo 24 giờ</Label>
+          </div>
+        )}
+        {workspace.is24h === 1 && shortTerm === "1" && <Time24hSelect />}
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="2" id="long-term" />
           <Label htmlFor="long-term">Thuê theo ngày</Label>
         </div>
         {shortTerm === "2" && <DateSelect />}
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem value="3" id="short-term" />
-          <Label htmlFor="short-term">Thuê theo 24 giờ</Label>
-        </div>
-        {shortTerm === "3" && <Time24hSelect />}
       </RadioGroup>
       <div className="flex flex-col gap-2 my-4">
         {beverageList.length + amenityList.length > 1 && (

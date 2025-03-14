@@ -12,7 +12,7 @@ import Amenity from "@/components/amenities-list/amenity";
 import { Label } from "@/components/ui/label";
 import Loader from "@/components/loader/Loader";
 import { useRouter } from "next/navigation";
-import { Workspace } from "@/types";
+import { Price, Workspace } from "@/types";
 import {
   Select,
   SelectContent,
@@ -23,6 +23,7 @@ import {
 import { paymentMethods, promotionList } from "@/constants/constant";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
+import { clearBeverageAndAmenity } from "@/stores/slices/cartSlice";
 
 export default function Checkout() {
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
@@ -34,6 +35,8 @@ export default function Checkout() {
   const router = useRouter();
   const [voucherCode, setVoucherCode] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("bank");
+  const cart =
+    typeof window !== "undefined" ? localStorage.getItem("cart") : null;
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -50,9 +53,15 @@ export default function Checkout() {
 
         const data = await response.json();
         setWorkspace({
-          ...data,
-          shortTermPrice: data.prices[0].price,
-          longTermPrice: data.prices[1].price,
+          ...data.getWorkSpaceByIdResult,
+          shortTermPrice:
+            data.getWorkSpaceByIdResult.prices.find(
+              (price: Price) => price.category === "Giờ"
+            )?.price || 0,
+          longTermPrice:
+            data.getWorkSpaceByIdResult.prices.find(
+              (price: Price) => price.category === "Ngày"
+            )?.price || 0,
         });
         setLoading(false);
       } catch {
@@ -70,12 +79,12 @@ export default function Checkout() {
 
   useEffect(() => {
     if (!customer) {
-      router.push("/");
-    }
-    if (!startTime || !endTime || startTime === "" || endTime === "") {
       router.push("/workspace");
     }
-  }, [customer, endTime, router, startTime]);
+    if (cart === null) {
+      router.push("/workspace");
+    }
+  }, [customer, cart, router]);
 
   const onCheckout = async () => {
     const amenitiesRequest = amenityList.map((amenity) => ({
@@ -120,6 +129,10 @@ export default function Checkout() {
         theme: "light",
       });
     }
+  };
+
+  const handleClearBeverageAndAmenity = () => {
+    dispatch(clearBeverageAndAmenity());
   };
 
   const formatCurrency = (value: number) => {
@@ -232,23 +245,36 @@ export default function Checkout() {
 
       <div className="bg-white border p-4 rounded-lg h-fit sticky top-6 shadow-lg flex flex-col gap-4">
         <div className="flex flex-col mt-4">
-          <h3 className="text-lg font-semibold">{workspace?.name}</h3>
-          <p className="text-fifth italic text-sm">{workspace?.address}</p>
+          <h3 className="text-lg font-semibold text-primary">
+            {workspace?.name}
+          </h3>
+          <p className="text-fifth text-xs">{workspace?.address}</p>
         </div>
-        <div className="my-2 flex items-center gap-2">
+        <div className="my-2 flex items-center gap-4 border p-4 rounded-lg shadow-md">
           <img
             src={workspace?.images[0].imgUrl}
             alt="Table"
             className="rounded-lg object-cover w-24 h-24 border"
           />
           <div>
-            <p className="text-fifth text-sm">Loại: {workspace?.category}</p>
-            <p className="text-fifth text-sm">Diện tích: {workspace?.area}</p>
+            <p className="text-fourth text-sm">Loại: {workspace?.category}</p>
+            <p className="text-fourth text-sm">
+              Diện tích: {workspace?.area} m2
+            </p>
+            <p className="text-fourth text-sm">
+              Sức chứa: {workspace?.capacity} người
+            </p>
           </div>
         </div>
-        <div className="flex flex-col text-fifth text-sm">
-          <p>Thời gian bắt đầu: {startTime}</p>
-          <p>Thời gian kết thúc: {endTime}</p>
+        <div className="flex flex-col text-fourth text-sm font-medium gap-2">
+          <p>
+            Thời gian bắt đầu:{" "}
+            <span className="text-primary font-semibold">{startTime}</span>
+          </p>
+          <p>
+            Thời gian kết thúc:{" "}
+            <span className="text-primary font-semibold">{endTime}</span>
+          </p>
         </div>
         <div className="border mt-8 text-fourth gap-2 flex flex-col p-4 rounded-lg">
           <div className="flex justify-between">
@@ -264,24 +290,34 @@ export default function Checkout() {
             <span>{formatCurrency(total)}</span>
           </div>
         </div>
-        <div className="flex flex-col gap-2 my-8">
-          {beverageList.length > 0 && (
-            <div>
-              <Label className="mb-2">Thực đơn:</Label>
-              {beverageList.map((item) => (
-                <Beverage key={item.id} item={item} />
-              ))}
-            </div>
-          )}
-          {amenityList.length > 0 && (
-            <div>
-              <Label className="mb-2">Các tiện ích:</Label>
-              {amenityList.map((item) => (
-                <Amenity key={item.id} item={item} />
-              ))}
-            </div>
-          )}
-        </div>
+        {beverageList.length + amenityList.length > 0 && (
+          <div className="flex flex-col gap-2 my-8">
+            {beverageList.length + amenityList.length > 1 && (
+              <p
+                className="text-red-500 flex justify-end cursor-pointer hover:text-red-300"
+                onClick={handleClearBeverageAndAmenity}
+              >
+                Xóa tất cả
+              </p>
+            )}
+            {beverageList.length > 0 && (
+              <div>
+                <Label className="mb-2">Thực đơn:</Label>
+                {beverageList.map((item) => (
+                  <Beverage key={item.id} item={item} />
+                ))}
+              </div>
+            )}
+            {amenityList.length > 0 && (
+              <div>
+                <Label className="mb-2">Các tiện ích:</Label>
+                {amenityList.map((item) => (
+                  <Amenity key={item.id} item={item} />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         <Button
           onClick={onCheckout}
           className="w-full bg-primary hover:bg-secondary text-white py-5 mt-5 rounded-lg font-semibold"
