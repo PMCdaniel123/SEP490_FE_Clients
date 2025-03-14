@@ -5,10 +5,70 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
 
 const SuccessPage = () => {
   const order =
     typeof window !== "undefined" ? localStorage.getItem("order") : null;
+  const searchParams = useSearchParams();
+
+
+  const updateWalletAmount = async (
+    customerWalletId: string,
+    orderCode: string,
+    amount: string
+  ) => {
+    try {
+      console.log("Calling updateWalletAmount with:", {
+        customerWalletId,
+        orderCode,
+        amount,
+      });
+
+      const updateResponse = await fetch(
+        "https://localhost:5050/users/wallet/updatewalletamount",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerWalletId,
+            orderCode,
+            amount,
+          }),
+        }
+      );
+
+      if (!updateResponse.ok) {
+        throw new Error("Có lỗi xảy ra khi cập nhật số dư ví.");
+      }
+
+      await updateResponse.json();
+
+      toast.success("Nạp tiền thành công!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+
+      localStorage.removeItem("customerWalletId");
+      localStorage.removeItem("orderCode");
+      localStorage.removeItem("amount");
+
+    } catch (error) {
+      console.error("Error updating wallet amount:", error);
+      toast.error("Có lỗi xảy ra khi cập nhật số dư ví.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+    }
+  };
+
   useEffect(() => {
     if (order !== null) {
       const parsedOrder = JSON.parse(order);
@@ -37,7 +97,24 @@ const SuccessPage = () => {
 
       updateWorkspaceTimeStatus();
     }
-  }, [order]);
+
+    const status = searchParams.get("status");
+    if (status === "PAID") {
+      const customerWalletId = localStorage.getItem("customerWalletId");
+      const orderCode = localStorage.getItem("orderCode");
+      const amount = localStorage.getItem("amount");
+
+      console.log("Retrieved from localStorage:", {
+        customerWalletId,
+        orderCode,
+        amount,
+      });
+
+      if (customerWalletId && orderCode && amount) {
+        updateWalletAmount(customerWalletId, orderCode, amount);
+      }
+    }
+  }, [order, searchParams]);
 
   return (
     <div className="flex  items-center justify-center min-h-screen bg-gray-100 px-8">

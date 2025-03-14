@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,67 +14,137 @@ import {
 import TransactionHistory from "@/components/transaction-history/transaction-history";
 import HelpSection from "@/components/help-section/help-section";
 import Image from "next/image";
+import { useSelector } from "react-redux";
+import { RootState } from "@/stores";
+import { toast } from "react-toastify";
 
 const WalletPage = () => {
-  const [balance, setBalance] = useState(100000);
+  const { customer } = useSelector((state: RootState) => state.auth);
+  const [balance, setBalance] = useState(0);
   const [amount, setAmount] = useState("");
   const [rawAmount, setRawAmount] = useState(0);
-  const [transactions, setTransactions] = useState([
+  const [transactions, setTransactions] = useState<
     {
-      id: 1,
-      type: "Nạp tiền",
-      amount: 500000,
-      date: "2024-02-25",
-      paymentMethod: "Credit Card",
-      description: "Nạp tiền vào ví",
-      status: "Hoàn thành",
-    },
-    {
-      id: 2,
-      type: "Thanh toán",
-      amount: 300000,
-      date: "2024-02-24",
-      paymentMethod: "Credit Card",
-      description: "Thanh toán dịch vụ",
-      status: "Hoàn thành",
-    },
-    {
-      id: 3,
-      type: "Thanh toán",
-      amount: 150000,
-      date: "2024-02-23",
-      paymentMethod: "Credit Card",
-      description: "Thanh toán dịch vụ",
-      status: "Hoàn thành",
-    },
-  ]);
-  const [error, setError] = useState("");
+      id: number;
+      type: string;
+      amount: number;
+      date: string;
+      paymentMethod: string;
+      description: string;
+      status: string;
+    }[]
+  >([]);
+  const [error] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if (!customer?.id) return;
+      try {
+        const response = await fetch(
+          `https://localhost:5050/users/wallet/getamountwalletbyuserid?UserId=${customer.id}`
+        );
+        if (!response.ok) {
+          throw new Error("Có lỗi xảy ra khi tải số dư ví.");
+        }
+        const data = await response.json();
+        setBalance(data.amount);
+      } catch {
+        toast.error("Có lỗi xảy ra khi tải số dư ví.", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          theme: "light",
+        });
+      }
+    };
+
+    const fetchTransactions = async () => {
+      if (!customer?.id) return;
+      try {
+        const response = await fetch(
+          `https://localhost:5050/users/wallet/getalltransactionhistorybyuserid/${customer.id}`
+        );
+        if (!response.ok) {
+          throw new Error("Có lỗi xảy ra khi tải lịch sử giao dịch.");
+        }
+        const data = await response.json();
+        interface TransactionDTO {
+          amount: number;
+          created_At: string;
+          description: string;
+          status: string;
+        }
+
+        const formattedTransactions = data.userTransactionHistoryDTOs.map(
+          (tx: TransactionDTO, index: number) => {
+            return {
+              id: index + 1,
+              type: tx.amount > 0 ? "Nạp tiền" : "Thanh toán",
+              amount: tx.amount,
+              date: tx.created_At,
+              paymentMethod: "Chuyển khoản ngân hàng",
+              description: tx.description,
+              status: tx.status === "PAID" ? "Hoàn thành" : "Thất bại",
+            };
+          }
+        );
+        setTransactions(formattedTransactions);
+      } catch {
+        toast.error("Có lỗi xảy ra khi tải lịch sử giao dịch.", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          theme: "light",
+        });
+      }
+    };
+
+    fetchBalance();
+    fetchTransactions();
+  }, [customer]);
 
   const handleDeposit = () => {
     setIsModalOpen(true);
   };
 
-  const confirmDeposit = () => {
-    setBalance(balance + rawAmount);
-    setTransactions([
-      {
-        id: transactions.length + 1,
-        type: "Nạp tiền",
-        amount: rawAmount,
-        date: new Date().toISOString().split("T")[0],
-        paymentMethod: selectedPaymentMethod,
-        description: "Nạp tiền vào ví",
-        status: "Hoàn thành",
-      },
-      ...transactions,
-    ]);
-    setAmount("");
-    setRawAmount(0);
-    setError("");
-    setIsModalOpen(false);
+  const confirmDeposit = async () => {
+    if (!customer?.id) return;
+
+    try {
+      const response = await fetch(
+        "https://localhost:5050/users/wallet/createrequestdeposit",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: customer.id,
+            amount: rawAmount,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Có lỗi xảy ra khi nạp tiền.");
+      }
+
+      const data = await response.json();
+      localStorage.setItem("customerWalletId", data.customerWalletId);
+      localStorage.setItem("orderCode", data.orderCode);
+      localStorage.setItem("amount", data.amount);
+      window.location.href = data.checkoutUrl;
+    } catch  {
+      toast.error("Có lỗi xảy ra khi nạp tiền.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+    }
   };
 
   const formatCurrency = (value: number) => {

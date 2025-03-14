@@ -121,10 +121,10 @@ const TransactionDetailsModal: React.FC<TransactionDetailsModalProps> = ({
             {selectedTransaction.bookingHistoryAmenities.length > 0 ? (
               <>
                 <p><strong>Tiện ích:</strong></p>
-                <ul className="list-disc pl-6">
+                <ul className="list-disc pl-6 ">
                   {selectedTransaction.bookingHistoryAmenities.map((item, index) => (
                     <li key={index}>
-                      <img src={item.imageUrl} alt={item.name} className="inline-block w-10 h-10 mr-2" />
+                      <img src={item.imageUrl} alt={item.name} className="inline-block w-10 h-10 mr-2 mb-2 " />
                       {item.name} (x{item.quantity}) - {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
@@ -142,7 +142,7 @@ const TransactionDetailsModal: React.FC<TransactionDetailsModalProps> = ({
                 <ul className="list-disc pl-6">
                   {selectedTransaction.bookingHistoryBeverages.map((item, index) => (
                     <li key={index}>
-                      <img src={item.imageUrl} alt={item.name} className="inline-block w-10 h-10 mr-2" />
+                      <img src={item.imageUrl} alt={item.name} className="inline-block w-10 h-10 mr-2 mb-2" />
                       {item.name} (x{item.quantity}) - {new Intl.NumberFormat("vi-VN", {
                         style: "currency",
                         currency: "VND",
