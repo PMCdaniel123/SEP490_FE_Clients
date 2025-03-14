@@ -77,11 +77,19 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
           }
         );
         if (!response.ok) {
-          throw new Error("Thời gian không khả dụng.");
+          throw new Error("Khoảng thời gian đã được sử dụng");
         }
         const data = await response.json();
-        if (data === "Time interval has been used") {
-          throw new Error("Thời gian không khả dụng.");
+        if (data === "Khoảng thời gian đã được sử dụng") {
+          throw new Error("Khoảng thời gian đã được sử dụng");
+        }
+        if (
+          data ===
+          "Thời gian đặt phải trong cùng một ngày và trong giờ mở cửa của workspace"
+        ) {
+          throw new Error(
+            "Thời gian đặt phải trong cùng một ngày và trong giờ mở cửa của workspace"
+          );
         }
         const cartData = {
           workspaceId: workspace.id,
@@ -94,8 +102,10 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
         localStorage.setItem("cart", JSON.stringify(cartData));
         setIsButtonLoading(false);
         router.push("/checkout");
-      } catch {
-        toast.error("Thời gian không khả dụng.", {
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+        toast.error(errorMessage, {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,

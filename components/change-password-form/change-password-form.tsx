@@ -75,7 +75,7 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
       );
 
       if (!response.ok) {
-        throw new Error("Có lỗi xảy ra khi cập nhật mật khẩu.");
+        throw new Error("Cập nhật mật khẩu không thành công.");
       }
 
       toast.success("Cập nhật mật khẩu thành công!", {
@@ -92,8 +92,10 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
       });
 
       handleCancel();
-    } catch {
-      toast.error("Cập nhật mật khẩu không thành công", {
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,

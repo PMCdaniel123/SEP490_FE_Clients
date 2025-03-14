@@ -7,7 +7,7 @@ import { RootState } from "@/stores";
 import { PhoneForm } from "./phone-form";
 import { EmailForm } from "./email-form";
 import { PasswordForm } from "./password-form";
-import { OwnerButton } from "./owner-button";
+// import { OwnerButton } from "./owner-button";
 
 interface SignInButtonProps {
   open: boolean;
@@ -45,7 +45,7 @@ export function SignInButton({
       {loginStep === "password" && (
         <PasswordForm onClose={() => onOpenChange(false)} />
       )}
-      <OwnerButton onOpenChange={onOpenChange} />
+      {/* <OwnerButton onOpenChange={onOpenChange} /> */}
     </Modal>
   );
 }

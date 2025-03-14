@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BriefcaseBusiness, ChevronsUpDown, Menu, X } from "lucide-react";
+import {
+  BookUser,
+  BriefcaseBusiness,
+  ChevronsUpDown,
+  History,
+  LogOut,
+  Menu,
+  Wallet,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { SignInButton } from "../signin-form/signin-button";
@@ -51,14 +60,7 @@ function Header() {
           );
 
           if (!decodeResponse.ok) {
-            toast.error("Có lỗi xảy ra khi giải mã token.", {
-              position: "top-right",
-              autoClose: 2000,
-              hideProgressBar: false,
-              theme: "light",
-            });
-            localStorage.removeItem("token");
-            return;
+            throw new Error("Có lỗi xảy ra khi giải mã token.");
           }
 
           const decoded = await decodeResponse.json();
@@ -72,8 +74,10 @@ function Header() {
 
           setIsToken(true);
           dispatch(login(customerData));
-        } catch {
-          toast.error("Có lỗi xảy ra khi giải mã token.", {
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+          toast.error(errorMessage, {
             position: "top-right",
             autoClose: 2000,
             hideProgressBar: false,
@@ -221,16 +225,10 @@ function Header() {
                 <Separator className="mb-2" />
                 <Link
                   onClick={() => setOpenAccount(!openAccount)}
-                  href="/checkout"
-                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
-                >
-                  <span>Thanh toán</span>
-                </Link>
-                <Link
-                  onClick={() => setOpenAccount(!openAccount)}
                   href="/profile"
                   className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
                 >
+                  <BookUser size={16} />
                   <span>Hồ sơ</span>
                 </Link>
                 <Link
@@ -238,26 +236,29 @@ function Header() {
                   href="/purchase-history"
                   className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
                 >
+                  <History size={16} />
                   <span>Lịch sử thanh toán</span>
                 </Link>
-                <Link
+                {/* <Link
                   onClick={() => setOpenAccount(!openAccount)}
                   href="/your-booking"
                   className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
                 >
                   <span>Đặt chỗ của bạn</span>
-                </Link>
+                </Link> */}
                 <Link
                   onClick={() => setOpenAccount(!openAccount)}
                   href="/wallet"
                   className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
                 >
+                  <Wallet size={16} />
                   <span>Ví WorkHive</span>
                 </Link>
                 <li
                   onClick={handleLogOut}
                   className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
                 >
+                  <LogOut size={16} />
                   <span>Đăng xuất</span>
                 </li>
               </motion.div>
