@@ -117,7 +117,7 @@ export default function Checkout() {
       const data = await response.json();
       const bookingData = {
         bookingId: data.bookingId,
-        status: "PAID",
+        orderCode: data.orderCode,
       };
       localStorage.setItem("order", JSON.stringify(bookingData));
       router.push(data.checkoutUrl);

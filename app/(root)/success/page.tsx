@@ -23,7 +23,7 @@ const SuccessPage = () => {
               },
               body: JSON.stringify({
                 bookingId: parsedOrder.bookingId,
-                status: parsedOrder.status,
+                orderCode: parsedOrder.orderCode,
               }),
             }
           );
