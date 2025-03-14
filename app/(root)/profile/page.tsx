@@ -62,8 +62,10 @@ function Profile() {
           if (user.avatar) {
             setAvatar(user.avatar);
           }
-        } catch {
-          toast.error("Có lỗi xảy ra khi tải thông tin hồ sơ.", {
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+          toast.error(errorMessage, {
             position: "top-right",
             autoClose: 2000,
             hideProgressBar: false,

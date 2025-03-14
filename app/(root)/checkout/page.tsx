@@ -64,8 +64,10 @@ export default function Checkout() {
             )?.price || 0,
         });
         setLoading(false);
-      } catch {
-        toast.error("Có lỗi xảy ra khi tải thông tin không gian.", {
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+        toast.error(errorMessage, {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -114,6 +116,9 @@ export default function Checkout() {
         },
         body: JSON.stringify(request),
       });
+      if (!response.ok) {
+        throw new Error("Có lỗi xảy ra khi thanh toán.");
+      }
       const data = await response.json();
       const bookingData = {
         bookingId: data.bookingId,
@@ -121,8 +126,10 @@ export default function Checkout() {
       };
       localStorage.setItem("order", JSON.stringify(bookingData));
       router.push(data.checkoutUrl);
-    } catch {
-      toast.error("Có lỗi xảy ra khi thanh toán.", {
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,

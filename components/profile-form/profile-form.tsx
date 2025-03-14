@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import ChangePasswordForm from "../change-password-form/change-password-form";
 import { Upload } from "lucide-react";
 import { Button, Upload as AntUpload } from "antd";
-import ImgCrop from 'antd-img-crop';
+import ImgCrop from "antd-img-crop";
 
 interface EditProfileFormProps {
   formData: {
@@ -77,8 +77,13 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
     if (avatar && typeof avatar !== "string") {
       try {
         avatarUrl = await uploadImage(avatar);
-      } catch {
-        toast.error("Có lỗi xảy ra khi tải lên ảnh.", {
+        if (!avatarUrl) {
+          throw new Error("Có lỗi xảy ra khi tải lên ảnh.");
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+        toast.error(errorMessage, {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -109,7 +114,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       });
 
       if (!response.ok) {
-        throw new Error("Có lỗi xảy ra khi cập nhật hồ sơ.");
+        throw new Error("Cập nhật hồ sơ không thành công.");
       }
 
       toast.success("Cập nhật hồ sơ thành công!", {
@@ -122,8 +127,10 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       reset();
       handleCancel();
       window.location.reload();
-    } catch {
-      toast.error("Cập nhật hồ sơ không thành công", {
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -145,7 +152,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
           <div className="col-span-2">
             <label className="block text-sm font-medium">Ảnh đại diện</label>
             <div className="flex items-center">
-              <div className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden border">
+              <div className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden border my-2 mr-2">
                 {avatar ? (
                   <img
                     src={
@@ -172,9 +179,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
                   }}
                   showUploadList={false}
                 >
-                  <Button icon={<Upload className="mr-2" />}>
-                    Chọn ảnh
-                  </Button>
+                  <Button icon={<Upload className="mr-2" />}>Chọn ảnh</Button>
                 </AntUpload>
               </ImgCrop>
             </div>

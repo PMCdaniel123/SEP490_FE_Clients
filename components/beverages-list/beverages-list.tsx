@@ -27,8 +27,10 @@ function BeveragesList({ ownerId }: { ownerId: string }) {
         const data = await response.json();
         setBeverageList(Array.isArray(data.beverages) ? data.beverages : []);
         setLoading(false);
-      } catch {
-        toast.error("Có lỗi xảy ra khi tải thực đơn.", {
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+        toast.error(errorMessage, {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,

@@ -112,6 +112,10 @@ const authSlice = createSlice({
     setLoginStep(state, action: PayloadAction<"phone" | "email" | "password">) {
       state.loginStep = action.payload;
     },
+    resetLoginStep(state) {
+      state.loginStep = "phone";
+      localStorage.removeItem("auth");
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(validatePhone.pending, (state) => {
@@ -135,5 +139,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { login, logout, setLoginStep } = authSlice.actions;
+export const { login, logout, setLoginStep, resetLoginStep } =
+  authSlice.actions;
 export default authSlice.reducer;

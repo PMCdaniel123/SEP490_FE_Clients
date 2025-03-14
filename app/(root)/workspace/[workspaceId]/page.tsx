@@ -48,7 +48,7 @@ const WorkspaceDetail = () => {
 
   useEffect(() => {
     if (!workspaceId) return;
-    localStorage.removeItem("cart")
+    localStorage.removeItem("cart");
     const fetchWorkspace = async () => {
       try {
         const response = await fetch(
@@ -72,8 +72,10 @@ const WorkspaceDetail = () => {
             )?.price || 0,
         });
         setLoading(false);
-      } catch {
-        toast.error("Có lỗi xảy ra khi tải thông tin không gian.", {
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+        toast.error(errorMessage, {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
