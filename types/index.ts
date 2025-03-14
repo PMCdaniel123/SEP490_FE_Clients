@@ -195,6 +195,16 @@ export interface Price {
   price: number;
 }
 
+export interface Facilities {
+  id: string;
+  facilityName: string;
+}
+
+export interface Policies {
+  id: string;
+  policyName: string;
+}
+
 export interface Workspace {
   id: string;
   name: string;
@@ -208,4 +218,10 @@ export interface Workspace {
   address: string;
   googleMapUrl: string;
   prices: Price[];
+  facilities: Facilities[];
+  policies: Policies[];
+  is24h: number;
+  ownerId: string;
+  openTime: string;
+  closeTime: string;
 }

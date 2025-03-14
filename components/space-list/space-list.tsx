@@ -2,16 +2,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Heart, Users, Ruler, Bed } from "lucide-react";
+import { Heart, Users, Ruler, Sofa } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "../ui/card";
 import { CardContent } from "../ui/card-content";
 import Loader from "../loader/Loader";
 import { Workspace } from "@/types";
+import { useRouter } from "next/navigation";
 
 export default function SpaceList() {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     fetch("https://localhost:5050/workspaces")
@@ -19,12 +21,12 @@ export default function SpaceList() {
       .then((data: { workspaces: Workspace[] }) => {
         const formattedWorkspaces = data.workspaces.map((workspace) => ({
           ...workspace,
-          shortTermPrice: workspace.prices.find(
-            (price) => price.category === "Giờ"
-          )?.price || 0,
-          longTermPrice: workspace.prices.find(
-            (price) => price.category === "Ngày"
-          )?.price || 0,
+          shortTermPrice:
+            workspace.prices.find((price) => price.category === "Giờ")?.price ||
+            0,
+          longTermPrice:
+            workspace.prices.find((price) => price.category === "Ngày")
+              ?.price || 0,
         }));
         setWorkspaces(formattedWorkspaces);
         setLoading(false);
@@ -57,7 +59,8 @@ export default function SpaceList() {
         {workspaces.slice(0, 6).map((workspace, index) => (
           <Card
             key={index}
-            className="relative overflow-hidden rounded-lg shadow-md"
+            className="relative overflow-hidden rounded-lg shadow-md hover:scale-105 transition-transform duration-300 cursor-pointer"
+            onClick={() => router.push(`/workspace/${workspace.id}`)}
           >
             <div className="relative">
               <img
@@ -83,15 +86,16 @@ export default function SpaceList() {
               </div>
               <h3 className="text-lg font-semibold mt-2">{workspace.name}</h3>
               <p className="text-gray-600 text-sm">{workspace.address}</p>
-              <div className="flex items-center text-gray-600 text-sm mt-2">
+              <div className="flex items-center text-gray-600 text-sm mt-2 md:justify-between">
                 <span className="flex items-center mr-2">
-                  <Users className="mr-1" size={16} /> {workspace.capacity}
+                  <Users className="mr-1" size={16} /> {workspace.capacity}{" "}
+                  người
                 </span>
                 <span className="flex items-center mr-2">
-                  <Ruler className="mr-1" size={16} /> {workspace.area}
+                  <Ruler className="mr-1" size={16} /> {workspace.area} m2
                 </span>
                 <span className="flex items-center">
-                  <Bed className="mr-1" size={16} /> {workspace.category}
+                  <Sofa className="mr-1" size={16} /> {workspace.category}
                 </span>
               </div>
             </CardContent>

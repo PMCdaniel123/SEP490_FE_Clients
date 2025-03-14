@@ -46,8 +46,6 @@ function Time24hSelect() {
       endMinutes
     ).padStart(2, "0")} ${updatedEndDate.format("DD/MM/YYYY")}`;
 
-    console.log(formattedStartTime, formattedEndTime);
-
     dispatch(
       setWorkspaceTime({
         startTime: formattedStartTime,
@@ -86,30 +84,30 @@ function Time24hSelect() {
     let newStartTime = startTime;
     let newEndTime = endTime;
     let newEndDate = endDate;
+    let newStartDate = startDate;
 
     if (type === "start") {
+      newStartDate = selectedDate;
       setStartDate(selectedDate);
 
       if (!selectedDate.isSame(dayjs(), "day")) {
-        newStartTime = { hours: 0, minutes: dayjs().minute() };
+        newStartTime = { hours: 0, minutes: 0 };
       } else {
         newStartTime = { hours: dayjs().hour(), minutes: dayjs().minute() };
       }
-
+      newEndDate = selectedDate;
+      setEndDate(newEndDate);
+      newEndTime = {
+        hours: newStartTime.hours + 1,
+        minutes: newStartTime.minutes,
+      };
+      setEndTime(newEndTime);
       setStartTime(newStartTime);
-
-      if (selectedDate.isSame(endDate, "day")) {
-        newEndTime = {
-          hours: newStartTime.hours + 1,
-          minutes: newStartTime.minutes,
-        };
-      } else {
-        newEndTime = { hours: 0, minutes: newStartTime.minutes };
-      }
     } else {
+      newEndDate = selectedDate;
       setEndDate(selectedDate);
 
-      if (!selectedDate.isSame(dayjs(), "day")) {
+      if (!selectedDate.isSame(startDate, "day")) {
         newEndTime = { hours: 0, minutes: startTime.minutes };
       } else {
         newEndTime = { hours: startTime.hours + 1, minutes: startTime.minutes };
@@ -128,7 +126,7 @@ function Time24hSelect() {
       newStartTime.minutes,
       newEndTime.hours,
       newEndTime.minutes,
-      selectedDate,
+      newStartDate,
       newEndDate
     );
   };
@@ -137,6 +135,7 @@ function Time24hSelect() {
     if (!/^\d*$/.test(value)) return;
 
     let newStartTime = { ...startTime, [field]: Number(value) };
+    let newEndDate = endDate;
 
     if (
       startDate.isSame(dayjs(), "day") &&
@@ -157,7 +156,8 @@ function Time24hSelect() {
 
     if (newStartTime.hours === 23) {
       newEndTime = { hours: 0, minutes: newStartTime.minutes };
-      setEndDate(startDate.add(1, "day"));
+      newEndDate = startDate.add(1, "day");
+      setEndDate(newEndDate);
     }
 
     setEndTime(newEndTime);
@@ -167,7 +167,7 @@ function Time24hSelect() {
       newEndTime.hours,
       newEndTime.minutes,
       startDate,
-      endDate
+      newEndDate
     );
   };
 

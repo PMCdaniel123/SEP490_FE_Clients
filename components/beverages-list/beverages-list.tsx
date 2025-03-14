@@ -6,18 +6,18 @@ import { useEffect, useState } from "react";
 import { BeverageProps } from "@/types";
 import { toast } from "react-toastify";
 
-function BeveragesList({ workspaceId }: { workspaceId: string }) {
+function BeveragesList({ ownerId }: { ownerId: string }) {
   const [loading, setLoading] = useState(false);
   const [beverageList, setBeverageList] = useState<BeverageProps[]>([]);
 
   useEffect(() => {
-    if (!workspaceId) return;
+    if (!ownerId) return;
     setLoading(true);
 
     const fetchBeverageList = async () => {
       try {
         const response = await fetch(
-          `https://localhost:5050/beverages/workspace/${workspaceId}`
+          `https://localhost:5050/beverages/Owner/${ownerId}`
         );
 
         if (!response.ok) {
@@ -40,7 +40,7 @@ function BeveragesList({ workspaceId }: { workspaceId: string }) {
     };
 
     fetchBeverageList();
-  }, [workspaceId]);
+  }, [ownerId]);
 
   if (loading) {
     return (
@@ -59,7 +59,7 @@ function BeveragesList({ workspaceId }: { workspaceId: string }) {
         <div>
           {beverageList.map(
             (beverage) =>
-              beverage.category === "1" && (
+              beverage.category === "Thức uống" && (
                 <div key={beverage.id} className="px-2">
                   <BeveragesItem {...beverage} />
                 </div>
@@ -76,7 +76,7 @@ function BeveragesList({ workspaceId }: { workspaceId: string }) {
         <div>
           {beverageList.map(
             (beverage) =>
-              beverage.category === "2" && (
+              beverage.category === "Đồ ăn" && (
                 <div key={beverage.id} className="px-2">
                   <BeveragesItem {...beverage} />
                 </div>
