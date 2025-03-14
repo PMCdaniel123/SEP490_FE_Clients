@@ -7,14 +7,16 @@ import { usePathname, useRouter } from "next/navigation";
 import { SignInButton } from "../signin-form/signin-button";
 import { menuItems } from "@/constants/constant";
 import { Modal } from "antd";
-import SignupPage from "@/app/(auth)/sign-up/page";
+import { SignUpForm } from "@/components/signup-form/signup-form";
 import Image from "next/image";
 import { Separator } from "../ui/separator";
 import Notification from "../ui/notification";
 import { useDispatch } from "react-redux";
-import { logout } from "@/stores/slices/authSlice";
-// import { useSelector } from "react-redux";
-// import { RootState } from "@/stores";
+import { login, logout } from "@/stores/slices/authSlice";
+import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import { RootState } from "@/stores";
+import { toast } from "react-toastify";
 
 function Header() {
   const pathname = usePathname();
@@ -24,20 +26,66 @@ function Header() {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const [customer, setCustomer] = useState({
-    auth: null,
-    token: null,
-    fullName: null,
-    password: "",
-  });
   const dispatch = useDispatch();
+  const { customer } = useSelector((state: RootState) => state.auth);
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  const [isToken, setIsToken] = useState(false);
 
   useEffect(() => {
-    const customerData = localStorage.getItem("customer");
-    if (customerData) {
-      setCustomer(JSON.parse(customerData));
+    if (token !== null && token !== undefined && token !== "") {
+      const getCustomerData = async () => {
+        try {
+          const decodeResponse = await fetch(
+            "https://localhost:5050/users/decodejwttoken",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                token: token,
+              }),
+            }
+          );
+
+          if (!decodeResponse.ok) {
+            toast.error("Có lỗi xảy ra khi giải mã token.", {
+              position: "top-right",
+              autoClose: 2000,
+              hideProgressBar: false,
+              theme: "light",
+            });
+            localStorage.removeItem("token");
+            return;
+          }
+
+          const decoded = await decodeResponse.json();
+          const customerData = {
+            id: decoded.claims.sub,
+            fullName: decoded.claims.name,
+            email: decoded.claims.email,
+            phone: decoded.claims.Phone,
+            roleId: decoded.claims.RoleId,
+          };
+
+          setIsToken(true);
+          dispatch(login(customerData));
+        } catch {
+          toast.error("Có lỗi xảy ra khi giải mã token.", {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            theme: "light",
+          });
+          localStorage.removeItem("token");
+          return;
+        }
+      };
+      getCustomerData();
     }
-  }, []);
+  }, [dispatch, token]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -65,7 +113,7 @@ function Header() {
   const handleLogOut = () => {
     setOpenAccount(!openAccount);
     dispatch(logout());
-    localStorage.removeItem("customer");
+    localStorage.removeItem("auth");
     window.location.reload();
   };
 
@@ -98,38 +146,39 @@ function Header() {
         ))}
       </nav>
       <div className="flex items-center gap-4">
-        <Link href="/become-owner" className="font-medium hidden md:block">
-          <button className="flex gap-2 text-base px-5 py-3 rounded-xl shadow border bg-secondary/60 hover:bg-fourth hover:text-white transition-colors duration-200">
+        <Link
+          href="/become-owner"
+          className="font-medium hidden md:block h-full"
+        >
+          <button className="flex gap-2 text-base px-5 py-4 rounded-xl shadow border bg-secondary/60 hover:bg-fourth hover:text-white transition-colors duration-200">
             <BriefcaseBusiness /> Trở thành doanh nghiệp
           </button>
         </Link>
-        {customer.token !== null && <Notification />}
-        {customer.token === null ? (
-          <div className="flex items-center border rounded-xl bg-secondary/60">
+        {isToken && <Notification />}
+        {!isToken ? (
+          <div className="flex items-center border rounded-xl bg-secondary/60 h-full">
             <p
               onClick={() => {
                 setSignInModalOpen(true);
                 handleCloseSignUpForm();
-                setOpenAccount(!openAccount);
               }}
-              className="font-medium flex items-center hover:bg-fourth hover:text-white py-3 px-5 rounded-l-xl border-r transition-colors duration-200 cursor-pointer"
+              className="font-medium flex items-center hover:bg-fourth hover:text-white py-4 px-5 rounded-l-xl border-r transition-colors duration-200 cursor-pointer"
             >
               <span>Đăng nhập</span>
             </p>
             <p
               onClick={() => {
                 setSignUpModalOpen(true);
-                setOpenAccount(!openAccount);
               }}
-              className="font-medium flex items-center hover:bg-fourth hover:text-white py-3 px-5 rounded-r-xl border-l transition-colors duration-200 cursor-pointer"
+              className="font-medium flex items-center hover:bg-fourth hover:text-white py-4 px-5 rounded-r-xl border-l transition-colors duration-200 cursor-pointer"
             >
               <span>Đăng ký</span>
             </p>
           </div>
         ) : (
-          <div ref={dropdownRef} className="relative">
+          <div ref={dropdownRef} className="relative h-full">
             <div
-              className="group flex items-center justify-center border rounded-xl py-2 px-4 gap-4 group hover:bg-secondary cursor-pointer transition-colors duration-200"
+              className="group flex items-center justify-center border rounded-xl py-2 px-4 gap-4 group bg-secondary/60 hover:bg-fourth cursor-pointer transition-colors duration-200"
               onClick={() => setOpenAccount(!openAccount)}
             >
               <Image
@@ -140,12 +189,18 @@ function Header() {
                 className="rounded-full border bg-white"
               />
               <div className="hidden md:flex flex-col justify-center items-start">
-                <p className="text-sm font-semibold">{customer.fullName}</p>
+                <p className="text-sm font-semibold">{customer?.fullName}</p>
+                <p className="text-xs font-medium">{customer?.email}</p>
               </div>
               <ChevronsUpDown size={20} />
             </div>
             {openAccount && (
-              <ul className="absolute top-full right-0 z-10 mt-2 w-auto gap-3 rounded-xl bg-white shadow-xl pb-4 text-black border">
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="absolute top-full right-0 z-10 mt-2 w-auto gap-3 rounded-xl bg-white shadow-xl pb-4 text-black border"
+              >
                 <div className="flex items-center justify-center py-2 px-4 gap-4 bg-primary rounded-t-xl">
                   <Image
                     src="/logo.png"
@@ -156,7 +211,10 @@ function Header() {
                   />
                   <div className="flex flex-col justify-center items-start">
                     <p className="text-sm font-semibold text-white">
-                      {customer.fullName}
+                      {customer?.fullName}
+                    </p>
+                    <p className="text-xs font-medium text-white">
+                      {customer?.email}
                     </p>
                   </div>
                 </div>
@@ -202,7 +260,7 @@ function Header() {
                 >
                   <span>Đăng xuất</span>
                 </li>
-              </ul>
+              </motion.div>
             )}
           </div>
         )}
@@ -242,9 +300,9 @@ function Header() {
         open={isSignUpModalOpen}
         onCancel={() => setSignUpModalOpen(false)}
         footer={null}
-        width={900}
+        width={530}
       >
-        <SignupPage onCloseSignUpForm={handleCloseSignUpForm} />
+        <SignUpForm onCloseSignUpForm={handleCloseSignUpForm} />
       </Modal>
 
       <SignInButton

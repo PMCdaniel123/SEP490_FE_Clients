@@ -1,82 +1,120 @@
 "use client";
 
-import { useState } from "react";
-import { Modal } from "antd";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useSelector } from "react-redux";
+import { RootState } from "@/stores";
+import Loader from "@/components/loader/Loader";
+import Pagination from "@/components/pagination/pagination";
+import dayjs from "dayjs";
+import TransactionDetailsModal from "@/components/transaction-details-modal/transaction-details-modal";
+import ReviewForm from "@/components/review-list/review-form";
 
-const transactions = [
-  {
-    id: 1,
-    title: "Giao dịch 1",
-    date: "12 Tháng 3 2021 lúc 2:00 PM",
-    amount: "1000 USD",
-    status: "completed",
-    details: "Thông tin chi tiết về giao dịch 1.",
-  },
-  {
-    id: 2,
-    title: "Giao dịch 2",
-    date: "15 Tháng 3 2021 lúc 3:00 PM",
-    amount: "2000 USD",
-    status: "pending",
-    details: "Thông tin chi tiết về giao dịch 2.",
-  },
-  {
-    id: 3,
-    title: "Giao dịch 3",
-    date: "18 Tháng 3 2021 lúc 4:00 PM",
-    amount: "1500 USD",
-    status: "canceled",
-    details: "Thông tin chi tiết về giao dịch 3.",
-  },
-  {
-    id: 4,
-    title: "Giao dịch 4",
-    date: "20 Tháng 3 2021 lúc 5:00 PM",
-    amount: "2500 USD",
-    status: "completed",
-    details: "Thông tin chi tiết về giao dịch 4.",
-  },
-  {
-    id: 5,
-    title: "Giao dịch 5",
-    date: "22 Tháng 3 2021 lúc 6:00 PM",
-    amount: "3000 USD",
-    status: "pending",
-    details: "Thông tin chi tiết về giao dịch 5.",
-  },
-];
+interface Transaction {
+  booking_StartDate: string;
+  booking_EndDate: string;
+  booking_Price: number;
+  booking_Status?: string;
+  booking_CreatedAt: string;
+  payment_Method: string;
+  workspace_Name: string;
+  workspace_Capacity: number;
+  workspace_Category: string;
+  workspace_Description: string;
+  workspace_Area: number;
+  workspace_CleanTime: number;
+  promotion_Code: string;
+  discount: number;
+  bookingHistoryAmenities: { name: string; quantity: number; unitPrice: number; imageUrl: string }[];
+  bookingHistoryBeverages: { name: string; quantity: number; unitPrice: number; imageUrl: string }[];
+  bookingHistoryWorkspaceImages: { imageUrl: string }[];
+  license_Name: string;
+  license_Address: string;
+}
 
 const tabs = [
-  { key: "completed", label: "Hoàn thành" },
-  { key: "pending", label: "Chờ thanh toán" },
-  { key: "canceled", label: "Đã hủy" },
+  { key: "Success", label: "Hoàn thành" },
+  { key: "Fail", label: "Đã hủy" },
 ];
 
 export default function PurchaseHistoryPage() {
-  const [activeTab, setActiveTab] = useState("completed");
+  const [activeTab, setActiveTab] = useState("success");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState<
-    null | (typeof transactions)[0]
-  >(null);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<null | Transaction>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [transactionsPerPage] = useState(5);
+  const { customer } = useSelector((state: RootState) => state.auth);
 
-  const showModal = (transaction: (typeof transactions)[0]) => {
+  useEffect(() => {
+    if (customer) {
+      fetch(`https://localhost:5050/users/booking/historybookings?UserId=${customer.id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setTransactions(data.bookingHistories);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        });
+    }
+  }, [customer]);
+
+  const showModal = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
     setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
   };
 
-  const filteredTransactions = transactions.filter(
-    (tx) => tx.status === activeTab
-  );
+  const showReviewModal = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setIsReviewModalOpen(true);
+  };
+
+  const handleReviewCancel = () => {
+    setIsReviewModalOpen(false);
+  };
+
+  const handleReviewSubmit = (review: { rating: number; comment: string }) => {
+    console.log("Review submitted:", review);
+    setIsReviewModalOpen(false);
+  };
+
+  const renderStatus = (status: string) => {
+    switch (status) {
+      case "Success":
+        return "Hoàn thành";
+      case "Fail":
+        return "Đã hủy";
+      default:
+        return status;
+    }
+  };
+
+  const filteredTransactions = transactions
+    .filter((tx) => tx.booking_Status?.toLowerCase() === activeTab)
+    .sort((a, b) => new Date(b.booking_CreatedAt).getTime() - new Date(a.booking_CreatedAt).getTime());
+
+  const indexOfLastTransaction = currentPage * transactionsPerPage;
+  const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
+  const currentTransactions = filteredTransactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  if (loading) {
+    return (
+      <div className="text-center">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-36">
@@ -88,10 +126,10 @@ export default function PurchaseHistoryPage() {
         {tabs.map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => setActiveTab(tab.key.toLowerCase())}
             className={cn(
               "py-2 font-medium text-gray-600",
-              activeTab === tab.key && "border-b-2 border-black text-black"
+              activeTab === tab.key.toLowerCase() && "border-b-2 border-black text-black"
             )}
           >
             {tab.label}
@@ -100,21 +138,39 @@ export default function PurchaseHistoryPage() {
       </div>
 
       <div className="mt-6 space-y-4">
-        {filteredTransactions.length > 0 ? (
-          filteredTransactions.map((tx) => (
+        {currentTransactions.length > 0 ? (
+          currentTransactions.map((tx, index) => (
             <div
-              key={tx.id}
-              className="flex justify-between items-center bg-gray-100 p-4 rounded-lg"
+              key={index}
+              className="flex justify-between items-center bg-gray-100 p-4 rounded-lg cursor-pointer hover:bg-gray-200 transition duration-200"
+              onClick={() => showModal(tx)}
             >
-              <div>
-                <h3 className="font-semibold">{tx.title}</h3>
-                <p className="text-gray-500 text-sm">{tx.date}</p>
+              <div className="flex items-center space-x-4">
+                {tx.bookingHistoryWorkspaceImages.length > 0 && (
+                  <img src={tx.bookingHistoryWorkspaceImages[0].imageUrl} alt="Workspace Image" className="w-16 h-16 object-cover rounded-lg shadow-md" />
+                )}
+                <div>
+                  <h3 className="font-semibold">{tx.workspace_Name}</h3>
+                  <p className="text-gray-500 text-sm">
+                    {dayjs(tx.booking_CreatedAt).format("DD/MM/YYYY HH:mm")}
+                  </p>
+                </div>
               </div>
               <div className="flex items-center space-x-4">
-                <p className="font-bold">{tx.amount}</p>
-                <Button className="text-white" onClick={() => showModal(tx)}>
-                  Xem chi tiết
-                </Button>
+                <p className="font-bold">{new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(tx.booking_Price)}</p>
+                {tx.booking_Status === "Success" && (
+                  <Button className="text-white" onClick={(e) => { e.stopPropagation(); showReviewModal(tx); }}>
+                    Đánh giá
+                  </Button>
+                )}
+                {tx.booking_Status === "Fail" && (
+                  <Button className="text-white" onClick={(e) => { e.stopPropagation(); showModal(tx); }}>
+                    Xem chi tiết
+                  </Button>
+                )}
               </div>
             </div>
           ))
@@ -123,27 +179,32 @@ export default function PurchaseHistoryPage() {
         )}
       </div>
 
-      <Modal
-        title="Chi tiết giao dịch"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        okButtonProps={{
-          style: { backgroundColor: "#8B5E3C", borderColor: "#8B5E3C" },
-        }}
-        cancelButtonProps={{
-          style: { backgroundColor: "#f0f0f0", borderColor: "#d9d9d9" },
-        }}
-      >
-        {selectedTransaction && (
-          <div>
-            <h3 className="font-semibold">{selectedTransaction.title}</h3>
-            <p className="text-gray-500 text-sm">{selectedTransaction.date}</p>
-            <p className="font-bold">{selectedTransaction.amount}</p>
-            <p className="mt-4">{selectedTransaction.details}</p>
-          </div>
-        )}
-      </Modal>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={Math.ceil(filteredTransactions.length / transactionsPerPage)}
+        onPageChange={paginate}
+      />
+
+      <TransactionDetailsModal
+        isModalOpen={isModalOpen}
+        handleCancel={handleCancel}
+        selectedTransaction={selectedTransaction}
+        renderStatus={renderStatus}
+      />
+
+      {selectedTransaction && (
+        <ReviewForm
+          isReviewModalOpen={isReviewModalOpen}
+          handleReviewCancel={handleReviewCancel}
+          handleReviewSubmit={handleReviewSubmit}
+          workspaceName={selectedTransaction.workspace_Name}
+          workspaceCategory={selectedTransaction.workspace_Category}
+          workspaceCapacity={selectedTransaction.workspace_Capacity}
+          workspaceArea={selectedTransaction.workspace_Area}
+          licenseName={selectedTransaction.license_Name}
+          workspaceImageUrl={selectedTransaction.bookingHistoryWorkspaceImages[0]?.imageUrl || ""}
+        />
+      )}
     </div>
   );
 }

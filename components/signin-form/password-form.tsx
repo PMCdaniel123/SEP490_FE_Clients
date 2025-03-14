@@ -45,39 +45,65 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
 
       if (!response.ok) {
         toast.error("Đăng nhập thất bại! Vui lòng kiểm tra lại.", {
-          position: "bottom-right",
+          position: "top-right",
           autoClose: 2000,
-          hideProgressBar: true,
-          theme: "dark",
+          hideProgressBar: false,
+          theme: "light",
         });
         return;
       }
 
       const result = await response.json();
-      const customerData = {
-        auth: auth ? auth : "",
-        password: data.password,
-        token: result.token,
-        fullName: user,
-      };
+      const token = result.token;
 
-      dispatch(login(customerData));
-
-      toast.success("Đăng nhập thành công!", {
-        position: "bottom-right",
-        autoClose: 2000,
-        hideProgressBar: true,
-        theme: "dark",
-      });
-      localStorage.setItem("customer", JSON.stringify(customerData));
+      localStorage.setItem("token", token);
       onClose();
-      window.location.reload();
+
+      try {
+        const decodeResponse = await fetch(
+          "https://localhost:5050/users/decodejwttoken",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              token: token,
+            }),
+          }
+        );
+        const decoded = await decodeResponse.json();
+        const customerData = {
+          id: decoded.claims.sub,
+          fullName: decoded.claims.name,
+          email: decoded.claims.email,
+          phone: decoded.claims.Phone,
+          roleId: decoded.claims.RoleId,
+        };
+        toast.success("Đăng nhập thành công!", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          theme: "light",
+        });
+        localStorage.setItem("customer", JSON.stringify(customerData));
+        dispatch(login(customerData));
+        onClose();
+      } catch {
+        toast.error("Có lỗi xảy ra khi giải mã token.", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          theme: "light",
+        });
+        return;
+      }
     } catch {
       toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
-        position: "bottom-right",
+        position: "top-right",
         autoClose: 2000,
-        hideProgressBar: true,
-        theme: "dark",
+        hideProgressBar: false,
+        theme: "light",
       });
     } finally {
       setIsLoading(false);
@@ -107,8 +133,10 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
           <p className="text-sm font-medium text-fifth">Không phải bạn?</p>
         </div>
       </div>
-      <div className="flex flex-col w-full border rounded-full h-full justify-center px-8 py-3">
-        <p className="text-sm font-medium text-fifth">Mật khẩu</p>
+      <div className="flex flex-col w-full border rounded-md h-full justify-center px-6 py-3 relative">
+        <p className="text-xs font-medium text-sixth absolute -top-2 left-5 bg-white px-4">
+          Mật khẩu
+        </p>
         <input
           type="password"
           className="py-2 focus:outline-none"
@@ -120,8 +148,15 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
         )}
       </div>
       <div className="text-center w-full">
-        <Button className="text-white py-6 font-semibold w-3/5" disabled={isLoading}>
-          {isLoading ? <LoadingOutlined style={{ color: "white" }} /> : "Đăng nhập"}
+        <Button
+          className="text-white py-6 font-semibold w-3/5"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <LoadingOutlined style={{ color: "white" }} />
+          ) : (
+            "Đăng nhập"
+          )}
         </Button>
       </div>
       <div className="flex items-center my-6 w-full">

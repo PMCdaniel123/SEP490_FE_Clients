@@ -11,13 +11,15 @@ import Pagination from "@/components/pagination/pagination";
 
 interface Workspace {
   id: string;
-  title: string;
+  name: string;
   address: string;
-  price: string;
-  image: string;
-  roomCapacity: number;
-  roomType: string;
-  roomSize: number;
+  shortTermPrice: number;
+  longTermPrice: number;
+  images: { imgUrl: string }[];
+  prices: { category: string; price: number }[];
+  capacity: number;
+  category: string;
+  area: number;
 }
 
 export default function PropertyGrid() {
@@ -31,14 +33,25 @@ export default function PropertyGrid() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("https://67271c49302d03037e6f6a3b.mockapi.io/spaceList")
+    fetch("https://localhost:5050/workspaces")
       .then((response) => response.json())
-      .then((data: Workspace[]) => {
-        setWorkspaces(data);
+      .then((data: { workspaces: Workspace[] }) => {
+        const formattedWorkspaces = data.workspaces.map((workspace) => ({
+          ...workspace,
+          shortTermPrice: workspace.prices.find(
+            (price) => price.category === "Giờ"
+          )?.price || 0,
+          longTermPrice: workspace.prices.find(
+            (price) => price.category === "Ngày"
+          )?.price || 0,
+        }));
+        setWorkspaces(formattedWorkspaces);
         setLoading(false);
 
         const uniqueCategories = Array.from(
-          new Set(data.map((workspace: Workspace) => workspace.roomType))
+          new Set(
+            data.workspaces.map((workspace: Workspace) => workspace.category)
+          )
         );
         setCategories(["Tất cả", ...uniqueCategories]);
       })
@@ -56,10 +69,19 @@ export default function PropertyGrid() {
     );
   }
 
+  if (workspaces.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto px-6 py-12 text-center">
+        <img src="/404.png" alt="No data" className="w-96 mx-auto mt-6" />
+        <p className="text-gray-600 text-lg">Không có dữ liệu để hiển thị.</p>
+      </div>
+    );
+  }
+
   const filteredWorkspaces =
     selectedCategory && selectedCategory !== "Tất cả"
       ? workspaces.filter(
-          (workspace) => workspace.roomType === selectedCategory
+          (workspace) => workspace.category === selectedCategory
         )
       : workspaces;
 
@@ -104,30 +126,38 @@ export default function PropertyGrid() {
           >
             <div className="relative">
               <img
-                src={workspace.image}
-                alt={workspace.title}
+                src={workspace.images[0].imgUrl}
+                alt={workspace.name}
                 className="w-full h-48 object-cover"
               />
 
               <div className="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white px-3 py-1 rounded-md text-sm">
-                {workspace.price}
+                {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(workspace.shortTermPrice)}{" "}
+                -{" "}
+                {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(workspace.longTermPrice)}
               </div>
             </div>
             <CardContent className="p-4">
               <div className="absolute top-4 right-4 bg-white p-2 rounded-full shadow">
                 <Heart className="text-gray-500" size={20} />
               </div>
-              <h3 className="text-lg font-semibold mt-2">{workspace.title}</h3>
+              <h3 className="text-lg font-semibold mt-2">{workspace.name}</h3>
               <p className="text-gray-600 text-sm">{workspace.address}</p>
               <div className="flex items-center text-gray-600 text-sm mt-2">
                 <span className="flex items-center mr-2">
-                  <Users className="mr-1" size={16} /> {workspace.roomCapacity}
+                  <Users className="mr-1" size={16} /> {workspace.capacity}
                 </span>
                 <span className="flex items-center mr-2">
-                  <Ruler className="mr-1" size={16} /> {workspace.roomSize}
+                  <Ruler className="mr-1" size={16} /> {workspace.area}
                 </span>
                 <span className="flex items-center">
-                  <Bed className="mr-1" size={16} /> {workspace.roomType}
+                  <Bed className="mr-1" size={16} /> {workspace.category}
                 </span>
               </div>
             </CardContent>

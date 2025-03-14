@@ -1,11 +1,13 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { ValidatePayload } from "@/types";
+import { toast } from "react-toastify";
 
 interface Customer {
-  auth: string | null;
-  token: string | null;
+  id: string | null;
   fullName: string | null;
-  password: string;
+  email: string | null;
+  phone: string | null;
+  roleId: string | null;
 }
 
 interface AuthState {
@@ -40,11 +42,20 @@ export const validatePhone = createAsyncThunk<
         body: JSON.stringify({ phone: input }),
       }
     );
+    if (!response.ok) {
+      toast.error("Số điện thoại không hợp lệ!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+      return rejectWithValue("Số điện thoại không hợp lệ!");
+    }
     localStorage.setItem("auth", input);
     const result = await response.text();
     return JSON.parse(result);
   } catch {
-    return rejectWithValue("Xác thực không thành công. Vui lòng thử lại.");
+    return rejectWithValue("Lỗi truy cập");
   }
 });
 
@@ -64,11 +75,20 @@ export const validateEmail = createAsyncThunk<
         body: JSON.stringify({ email: input }),
       }
     );
+    if (!response.ok) {
+      toast.error("Email không hợp lệ!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+      return rejectWithValue("Email không hợp lệ!");
+    }
     localStorage.setItem("auth", input);
     const result = await response.text();
     return JSON.parse(result);
   } catch {
-    return rejectWithValue("Xác thực không thành công. Vui lòng thử lại.");
+    return rejectWithValue("Lỗi truy cập");
   }
 });
 
@@ -79,6 +99,7 @@ const authSlice = createSlice({
     login(state, action: PayloadAction<Customer>) {
       state.isAuthenticated = true;
       state.customer = action.payload;
+      state.user = action.payload.fullName;
       state.loginStep = "phone";
     },
     logout(state) {
@@ -86,6 +107,7 @@ const authSlice = createSlice({
       state.customer = null;
       state.user = null;
       state.loginStep = "phone";
+      localStorage.removeItem("token");
     },
     setLoginStep(state, action: PayloadAction<"phone" | "email" | "password">) {
       state.loginStep = action.payload;

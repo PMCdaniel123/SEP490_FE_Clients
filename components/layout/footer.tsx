@@ -1,5 +1,6 @@
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Separator } from "../ui/separator";
+import Link from "next/link";
 
 function Footer() {
   return (
@@ -9,8 +10,7 @@ function Footer() {
           <div className="col-span-1 sm:col-span-2">
             <h2 className="text-5xl font-extrabold text-primary">WorkHive</h2>
             <p className="text-fifth text-sm mt-6">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              Chúng tôi cung cấp một nền tảng sáng tạo để quản lý đặt chỗ, thanh toán và không gian làm việc một cách dễ dàng.
             </p>
             <div className="flex gap-4 mt-4">
               <button className="bg-sixth hover:bg-fifth px-4 py-2 rounded-lg">
@@ -23,32 +23,41 @@ function Footer() {
           </div>
 
           <div className="col-span-1">
-            <h3 className="font-bold text-fourth">COMPANY</h3>
+            <h3 className="font-bold text-fourth">TRUY CẬP NHANH</h3>
             <ul className="mt-4 font-base text-base space-y-2 text-fourth">
-              <li>Trang chủ</li>
-              <li>Giới thiệu</li>
-              <li>Không gian</li>
-              <li>Liên hệ</li>
+              <li>
+                <Link href="/">Trang chủ</Link>
+              </li>
+              <li>
+                <Link href="/about">Giới thiệu</Link>
+              </li>
+              <li>
+                <Link href="/workspace">Không gian</Link>
+              </li>
+              <li>
+                <Link href="/contact">Liên hệ</Link>
+              </li>
             </ul>
           </div>
 
           <div className="col-span-1">
-            <h3 className="font-bold text-fourth">HELP CENTER</h3>
+            <h3 className="font-bold text-fourth">TRỢ GIÚP</h3>
             <ul className="mt-4 font-base text-base space-y-2 text-fourth">
-              <li>Find a Property</li>
-              <li>How To Host?</li>
-              <li>Why Us?</li>
-              <li>FAQs</li>
-              <li>Rental Guides</li>
+              <li>
+                <Link href="/contact-us">Liên hệ WorkHive</Link>
+              </li>
+              <li>
+                <Link href="/#">Phản hồi dịch vụ</Link>
+              </li>
             </ul>
           </div>
 
           <div className="col-span-1 sm:col-span-2">
-            <h3 className="font-bold text-fourth">CONTACT INFO</h3>
+            <h3 className="font-bold text-fourth">THÔNG TIN LIÊN HỆ</h3>
             <ul className="mt-4 font-base text-base space-y-2 text-fourth">
-              <li>Phone: 1234567890</li>
-              <li>Email: company@email.com</li>
-              <li>Location: 100 Smart Street, LA, USA</li>
+              <li>Số điện thoại: 1234567890</li>
+              <li>Email: workhive@email.com</li>
+              <li>Địa chỉ: 123 Lê Văn Việt, Thủ Đức</li>
             </ul>
             <div className="flex gap-4 mt-4">
               <Facebook className="text-fourth hover:text-gray-800" />

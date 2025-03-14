@@ -14,7 +14,7 @@ import { SignInButton } from "@/components/signin-form/signin-button";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { LoadingOutlined } from '@ant-design/icons';
+import { LoadingOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/stores";
 import { login } from "@/stores/slices/authSlice";
@@ -38,7 +38,6 @@ export function SignUpForm({
   const { role } = props;
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const auth = localStorage.getItem("auth");
   const [isSignInModalOpen, setSignInModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -56,28 +55,60 @@ export function SignUpForm({
         hideProgressBar: true,
         theme: "dark",
       });
-      const loginResponse = await fetch("https://localhost:5050/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          auth: auth ? auth : data.email,
-          password: data.password,
-        }),
-      });
-      const result = await loginResponse.json();
-      const customerData = {
-        auth: auth ? auth : data.email,
-        password: data.password,
-        token: result.token,
-        fullName: data.name,
-      };
 
-      dispatch(login(customerData));
-      localStorage.setItem("customer", JSON.stringify(customerData));
-      onCloseSignUpForm();
-      window.location.reload();
+      if (response.status !== 201) {
+        toast.error("Đăng ký thất bại! Vui lòng kiểm tra lại.", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          theme: "light",
+        });
+        return;
+      }
+
+      const token = response.data.token;
+
+      localStorage.setItem("token", token);
+
+      try {
+        const decodeResponse = await fetch(
+          "https://localhost:5050/users/decodejwttoken",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              token: token,
+            }),
+          }
+        );
+        const decoded = await decodeResponse.json();
+        const customerData = {
+          id: decoded.claims.sub,
+          fullName: decoded.claims.name,
+          email: decoded.claims.email,
+          phone: decoded.claims.Phone,
+          roleId: decoded.claims.RoleId,
+        };
+        toast.success("Đăng nhập thành công!", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          theme: "light",
+        });
+
+        dispatch(login(customerData));
+        handleCloseSignUpForm();
+      } catch {
+        toast.error("Có lỗi xảy ra khi giải mã token.", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          theme: "light",
+        });
+        return;
+      }
 
       if (role === "owner") {
         router.push("/owners");
@@ -186,6 +217,23 @@ export function SignUpForm({
               <p className="text-red-500 text-xs">{errors.password.message}</p>
             )}
           </div>
+          <div className="grid gap-1">
+            <Label htmlFor="sex" className="text-fourth font-semibold text-xs">
+              Giới tính
+            </Label>
+            <select
+              id="sex"
+              className="py-6 px-4 rounded-md bg-white shadow-sm"
+              {...register("sex")}
+            >
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+              <option value="Khác">Khác</option>
+            </select>
+            {errors.sex && (
+              <p className="text-red-500 text-xs">{errors.sex.message}</p>
+            )}
+          </div>
           <div className="text-center w-full">
             <Button
               type="submit"
@@ -254,7 +302,7 @@ export function SignUpForm({
       <SignInButton
         open={isSignInModalOpen}
         onOpenChange={setSignInModalOpen}
-        onCloseSignUpForm={handleCloseSignUpForm} // Use the new handleCloseSignUpForm function
+        onCloseSignUpForm={handleCloseSignUpForm}
       />
     </>
   );

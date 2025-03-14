@@ -32,7 +32,7 @@ export function EmailForm({ className }: SignInFormProps) {
       const payload: ValidatePayload = { input: data.email };
       await dispatch(validateEmail(payload)).unwrap();
     } catch {
-      alert("Email không hợp lệ!");
+      return new Error("Email không hợp lệ!");
     } finally {
       setIsLoading(false);
     }
@@ -46,8 +46,10 @@ export function EmailForm({ className }: SignInFormProps) {
       )}
       onSubmit={handleSubmit(handleContinue)}
     >
-      <div className="flex flex-col w-full border rounded-full h-full justify-center px-8 py-3">
-        <p className="text-sm font-medium text-fifth">Email</p>
+      <div className="flex flex-col w-full border rounded-md h-full justify-center px-6 py-3 relative">
+        <p className="text-xs font-medium text-sixth absolute -top-2 left-5 bg-white px-4">
+          Email
+        </p>
         <input
           type="email"
           className="py-2 focus:outline-none"
@@ -59,7 +61,7 @@ export function EmailForm({ className }: SignInFormProps) {
         )}
       </div>
       <div className="flex items-center w-full mb-4">
-        <p className="text-xs text-fifth">
+        <p className="text-xs text-fourth">
           Nhập email bên trên để đăng nhập vào tài khoản WorkHive
         </p>
       </div>
@@ -70,7 +72,11 @@ export function EmailForm({ className }: SignInFormProps) {
             type="submit"
             disabled={isLoading}
           >
-            {isLoading ? <LoadingOutlined style={{ color: "white" }} /> : "Tiếp tục"}
+            {isLoading ? (
+              <LoadingOutlined style={{ color: "white" }} />
+            ) : (
+              "Tiếp tục"
+            )}
           </Button>
         </div>
         <div

@@ -23,7 +23,7 @@ const Pagination: React.FC<PaginationProps> = ({
             key={page}
             onClick={() => onPageChange(page)}
             className={`w-8 h-8 flex items-center justify-center rounded-full ${
-              currentPage === page ? "bg-gray-700 text-white" : "text-gray-700"
+              currentPage === page ? "bg-primary text-white" : "text-gray-700"
             }`}
           >
             {page}

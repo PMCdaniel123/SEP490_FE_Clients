@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 export type CartItem = {
   id: string;
   name: string;
-  image: string;
+  imgUrl: string;
   price: number;
   quantity: number;
 };

@@ -8,6 +8,7 @@ import {
 } from "@/stores/slices/cartSlice";
 import { Trash2, Minus, Plus } from "lucide-react";
 import { useDispatch } from "react-redux";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
 interface Props {
   item: CartItem;
@@ -44,13 +45,24 @@ function Amenity({ item }: Props) {
   return (
     <div className="flex items-center justify-between p-2 bg-white shadow-md border rounded-md">
       <img
-        src={item.image}
+        src={item.imgUrl}
         alt={item.name}
         className="w-20 h-20 object-cover rounded-md"
       />
       <div className="flex flex-col gap-2">
         <div>
-          <p className="text-sm font-semibold">{item.name}</p>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <p className="text-sm font-semibold line-clamp-1 sm:w-24">
+                  {item.name}
+                </p>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-white">{item.name}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <p className="text-xs text-gray-500">{formatCurrency(item.price)}</p>
         </div>
 

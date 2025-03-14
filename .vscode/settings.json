@@ -14,6 +14,7 @@
     "about-us",
     "login",
     "signUp",
-    "fail&success-page"
+    "fail&success-page",
+    "login and decode token"
   ]
 }

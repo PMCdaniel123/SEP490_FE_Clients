@@ -11,14 +11,12 @@ import {
   HandPlatter,
 } from "lucide-react";
 import Loader from "@/components/loader/Loader";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 // import HighRatingSpace from "@/components/high-rating-space/high-rating-space";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Modal } from "antd";
 import "react-datepicker/dist/react-datepicker.css";
-import TimeSelect from "@/components/selection/time-select";
-import DateSelect from "@/components/selection/date-select";
 import GoogleMap from "@/components/google-map/google-map";
 import DetailsList from "@/components/details-list/details-list";
 import FacilitiesList from "@/components/facilities-list/facilities-list";
@@ -32,33 +30,13 @@ import {
   TwitterIcon,
   LinkedinIcon,
 } from "react-share";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import ImageList from "@/components/images-list/images-list";
 import AmenitiesList from "@/components/amenities-list/amenities-list";
 import BeveragesList from "@/components/beverages-list/beverages-list";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/stores";
-import {
-  clearBeverageAndAmenity,
-  clearWorkspaceTime,
-  setWorkspaceId,
-} from "@/stores/slices/cartSlice";
-import Amenity from "@/components/amenities-list/amenity";
-import Beverage from "@/components/beverages-list/beverage";
-import TimeList from "@/components/selection/time-list";
-
-interface Workspace {
-  id: string;
-  title: string;
-  address: string;
-  price: string;
-  image: string;
-  roomCapacity: number;
-  roomType: string;
-  roomSize: number;
-  description: string;
-}
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import WorkspaceDetailSidebar from "@/components/layout/workspace-detail-sidebar";
+import { Price, Workspace } from "@/types";
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams() as { workspaceId: string };
@@ -66,42 +44,46 @@ const WorkspaceDetail = () => {
   const [loading, setLoading] = useState(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isBeverageOpen, setIsBeverageOpen] = useState(false);
-  const [isTimeListOpen, setIsTimeListOpen] = useState(false);
-  const [shortTerm, setShortTerm] = useState("1");
-  const router = useRouter();
   const dispatch = useDispatch();
-  const { beverageList, amenityList, total, startTime, endTime } = useSelector(
-    (state: RootState) => state.cart
-  );
 
   useEffect(() => {
     if (!workspaceId) return;
+    localStorage.removeItem("cart")
+    const fetchWorkspace = async () => {
+      try {
+        const response = await fetch(
+          `https://localhost:5050/workspaces/${workspaceId}`
+        );
 
-    dispatch(
-      setWorkspaceId({
-        id: workspaceId,
-        price: shortTerm === "1" ? 1000 : 20000,
-        priceType: shortTerm,
-      })
-    );
+        if (!response.ok) {
+          throw new Error("Có lỗi xảy ra khi tải thông tin không gian.");
+        }
 
-    fetch(
-      `https://67271c49302d03037e6f6a3b.mockapi.io/spaceList/${workspaceId}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        setWorkspace(data);
+        const data = await response.json();
+        setWorkspace({
+          ...data.getWorkSpaceByIdResult,
+          shortTermPrice:
+            data.getWorkSpaceByIdResult.prices.find(
+              (price: Price) => price.category === "Giờ"
+            )?.price || 0,
+          longTermPrice:
+            data.getWorkSpaceByIdResult.prices.find(
+              (price: Price) => price.category === "Ngày"
+            )?.price || 0,
+        });
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      });
-  }, [dispatch, workspaceId, shortTerm]);
+      } catch {
+        toast.error("Có lỗi xảy ra khi tải thông tin không gian.", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          theme: "light",
+        });
+      }
+    };
 
-  const handleClearBeverageAndAmenity = () => {
-    dispatch(clearBeverageAndAmenity());
-  };
+    fetchWorkspace();
+  }, [dispatch, workspaceId]);
 
   const handleShare = () => {
     setIsShareModalOpen(true);
@@ -146,7 +128,7 @@ const WorkspaceDetail = () => {
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-2">
               <h1 className="text-3xl font-bold text-primary">
-                {workspace.title}
+                {workspace.name}
               </h1>
               <p className="text-fifth max-w-xl">{workspace.address}</p>
             </div>
@@ -161,43 +143,37 @@ const WorkspaceDetail = () => {
           </div>
 
           <DetailsList
-            roomCapacity={workspace.roomCapacity}
-            roomSize={workspace.roomSize}
-            roomType={workspace.roomType}
+            roomCapacity={workspace.capacity}
+            roomSize={workspace.area}
+            roomType={workspace.category}
           />
 
           <div>
             <h2 className="text-xl font-bold text-primary mb-6">
               Mô tả chi tiết
             </h2>
-            <p className="text-fifth">
-              Tạo không gian làm việc riêng biệt với Dedicated Desk – chỗ ngồi
-              cố định dành riêng cho bạn hoặc nhóm nhỏ trong không gian
-              coworking chuyên nghiệp. Với Dedicated Desk, bạn sẽ có một môi
-              trường làm việc yên tĩnh, riêng tư và đầy đủ tiện nghi, giúp bạn
-              tập trung hoàn toàn vào công việc của mình.
-            </p>
+            <p className="text-fifth">{workspace.description}</p>
           </div>
 
           <div className="flex flex-col gap-6">
             <h2 className="text-xl font-bold text-primary flex gap-4">
               <Archive size={28} /> <span>Cơ sở vật chất</span>
             </h2>
-            <FacilitiesList />
+            <FacilitiesList facilities={workspace.facilities} />
           </div>
 
           <div>
             <h2 className="text-xl font-bold text-primary mb-6 flex gap-4">
               <ShieldEllipsis size={28} /> <span>Quy định chung</span>
             </h2>
-            <PoliciesList />
+            <PoliciesList policies={workspace.policies} />
           </div>
 
           <div>
             <h2 className="text-xl font-bold text-primary mb-6 flex gap-4">
               <Boxes size={28} /> <span>Tiện ích</span>
             </h2>
-            <AmenitiesList />
+            <AmenitiesList ownerId={workspace.ownerId} />
           </div>
 
           <div>
@@ -212,7 +188,7 @@ const WorkspaceDetail = () => {
             </button>
           </div>
 
-          <GoogleMap />
+          <GoogleMap url={workspace.googleMapUrl} />
 
           {/* <div className="flex flex-col gap-6">
             <h2 className="text-xl font-bold text-primary">
@@ -232,92 +208,7 @@ const WorkspaceDetail = () => {
         </div>
 
         <div className="flex flex-col p-4 bg-white border rounded-xl shadow-xl w-full max-w-full h-fit lg:sticky lg:top-4 lg:max-h-[90vh] overflow-auto">
-          <div>
-            <div className="flex justify-between items-center mt-4">
-              <h2 className="text-2xl font-bold text-fourth">
-                {formatCurrency(35000)} - {formatCurrency(250000)}
-              </h2>
-            </div>
-            <Separator className="my-6" />
-            <p className="text-fifth text-sm">
-              Thuê theo giờ: {formatCurrency(35000)} <br />
-              Thuê theo ngày: {formatCurrency(250000)}
-            </p>
-            <Separator className="my-6" />
-            <div
-              className="text-primary flex flex-col items-end cursor-pointer hover:text-secondary mb-6 text-sm font-bold"
-              onClick={() => setIsTimeListOpen(true)}
-            >
-              <p className="break-words">Xem danh sách thời gian</p>
-              <p className="break-words">không khả dụng</p>
-            </div>
-            <RadioGroup
-              defaultValue={shortTerm}
-              onValueChange={(value) => {
-                setShortTerm(value);
-                dispatch(clearWorkspaceTime());
-                dispatch(
-                  setWorkspaceId({
-                    id: workspaceId,
-                    price: value === "1" ? 1000 : 20000,
-                    priceType: value,
-                  })
-                );
-              }}
-              className="flex flex-col gap-4 my-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="1" id="short-term" />
-                <Label htmlFor="short-term">Thuê theo giờ</Label>
-              </div>
-              {shortTerm === "1" && <TimeSelect />}
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="2" id="long-term" />
-                <Label htmlFor="long-term">Thuê theo ngày</Label>
-              </div>
-              {shortTerm === "2" && <DateSelect />}
-            </RadioGroup>
-            <div className="flex flex-col gap-2 my-4">
-              {beverageList.length + amenityList.length > 1 && (
-                <p
-                  className="text-red-500 flex justify-end cursor-pointer hover:text-red-300"
-                  onClick={handleClearBeverageAndAmenity}
-                >
-                  Xóa tất cả
-                </p>
-              )}
-              {beverageList.length > 0 && (
-                <div>
-                  <Separator className="mb-6 mt-2" />
-                  <Label className="mb-2">Thực đơn:</Label>
-                </div>
-              )}
-              {beverageList.map((item) => (
-                <Beverage key={item.id} item={item} />
-              ))}
-              {amenityList.length > 0 && (
-                <div>
-                  <Separator className="mb-6 mt-2" />
-                  <Label className="mb-2">Các tiện ích:</Label>
-                </div>
-              )}
-              {amenityList.map((item) => (
-                <Amenity key={item.id} item={item} />
-              ))}
-            </div>
-            {startTime !== "" && endTime !== "" && (
-              <p className="text-base font-medium">
-                Tổng tiền: {formatCurrency(total)}
-              </p>
-            )}
-            <Separator className="my-6" />
-            <Button
-              className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base"
-              onClick={() => router.push(`/checkout`)}
-            >
-              Đặt Ngay
-            </Button>
-          </div>
+          <WorkspaceDetailSidebar workspace={workspace} />
         </div>
       </div>
 
@@ -332,14 +223,15 @@ const WorkspaceDetail = () => {
         <div className="flex flex-col items-center gap-4">
           <div className="w-full p-4 border rounded-lg shadow-md">
             <img
-              src={workspace.image}
-              alt={workspace.title}
+              src={workspace.images[0].imgUrl}
+              alt={workspace.name}
               className="w-full h-48 object-cover rounded-lg mb-4"
             />
-            <h3 className="text-lg font-bold">{workspace.title}</h3>
+            <h3 className="text-lg font-bold">{workspace.name}</h3>
             <p className="text-sm text-gray-500">{workspace.address}</p>
             <p className="text-sm text-gray-500">
-              {formatCurrency(Number(workspace.price))}
+              {formatCurrency(Number(workspace.shortTermPrice))} -{" "}
+              {formatCurrency(Number(workspace.longTermPrice))}
             </p>
           </div>
           <Button
@@ -374,20 +266,7 @@ const WorkspaceDetail = () => {
         onCancel={() => setIsBeverageOpen(false)}
         footer={null}
       >
-        <BeveragesList />
-      </Modal>
-
-      <Modal
-        title={
-          <p className="text-xl font-bold text-primary">
-            Danh sách thời gian không khả dụng
-          </p>
-        }
-        open={isTimeListOpen}
-        onCancel={() => setIsTimeListOpen(false)}
-        footer={null}
-      >
-        <TimeList />
+        <BeveragesList ownerId={workspace.ownerId} />
       </Modal>
     </div>
   );
