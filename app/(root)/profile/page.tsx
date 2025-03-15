@@ -23,10 +23,7 @@ function Profile() {
     confirmPassword: "",
   });
   const [avatar, setAvatar] = useState<File | string | null>(null);
-  const [reviews] = useState([
-    { id: 1, content: "Tuyệt vời 5 sao!", rating: 5 },
-    { id: 2, content: "Dịch vụ ok nhé sốp.", rating: 4 },
-  ]);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const { customer } = useSelector((state: RootState) => state.auth);
 
@@ -76,7 +73,43 @@ function Profile() {
         }
       };
 
+      const fetchReviews = async () => {
+        try {
+          const reviewsResponse = await fetch(
+            `https://localhost:5050/users/rating/getallratingbyuserid/${customer?.id}`
+          );
+
+          if (!reviewsResponse.ok) {
+            throw new Error("Có lỗi xảy ra khi tải đánh giá.");
+          }
+
+          const reviewsData = await reviewsResponse.json();
+          const formattedReviews = reviewsData.ratingByUserIdDTOs.map(
+            (review: { comment: string; rate: number; created_At: string; workspace_Name: string; owner_Name: string; images: string[] }, index: number) => ({
+              id: index + 1,
+              content: review.comment,
+              rating: review.rate,
+              created_At: review.created_At,
+              workspace_Name: review.workspace_Name,
+              owner_Name: review.owner_Name,
+              images: review.images,
+            })
+          );
+          setReviews(formattedReviews);
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+          toast.error(errorMessage, {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            theme: "light",
+          });
+        }
+      };
+
       fetchProfile();
+      fetchReviews();
     }
   }, [customer]);
 
@@ -159,7 +192,7 @@ function Profile() {
               className="mt-4 px-4 py-2 rounded-lg bg-white border=black hover:bg-primary hover:text-white hover:border-white border"
               onClick={() => setIsEditing(true)}
             >
-              Chỉnh sửa
+              Chỉnh sửa hồ sơ
             </button>
             <UserReview reviews={reviews} />
           </div>

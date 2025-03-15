@@ -15,6 +15,7 @@
     "login",
     "signUp",
     "fail&success-page",
-    "login and decode token"
+    "login and decode token",
+    "userReview"
   ]
 }
