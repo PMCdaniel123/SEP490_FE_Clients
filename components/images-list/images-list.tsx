@@ -2,76 +2,97 @@
 "use client";
 
 import { Workspace } from "@/types";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Modal } from "antd";
+import Slider from "react-slick";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
-function ImageList({ workspace }: { workspace: Workspace }) {
-  const [mainImage, setMainImage] = useState(workspace.images[0].imgUrl);
-  const thumbnails = [...workspace.images];
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const visibleThumbnails = 3;
+function ImageGallery({ workspace }: { workspace: Workspace }) {
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const images = workspace.images;
 
-  const nextSlide = () => {
-    if (currentIndex + visibleThumbnails < thumbnails.length) {
-      setCurrentIndex(currentIndex + 1);
-    }
+  const handleImageClick = (index: number) => {
+    setSelectedImageIndex(index);
   };
 
-  const prevSlide = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
+  const sliderRef = React.useRef<Slider>(null);
+
+  const next = () => {
+    sliderRef.current?.slickNext();
+  };
+
+  const prev = () => {
+    sliderRef.current?.slickPrev();
+  };
+
+  const settings = {
+    initialSlide: selectedImageIndex!,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: false,
+    dots: true,
   };
 
   return (
-    <div className="w-full">
-      <div className="relative w-full h-[600px]">
-        <img
-          src={mainImage}
-          alt={workspace.name}
-          className="w-full h-[600px] object-cover rounded-lg transition-transform duration-300"
-        />
-      </div>
-      <div className="relative flex items-center gap-4 mt-4 w-full justify-center">
-        <button
-          className="bg-primary p-2 rounded-full disabled:opacity-50 hover:bg-primary/80"
-          onClick={prevSlide}
-          disabled={currentIndex === 0}
-        >
-          <ChevronLeft size={24} className="text-white" />
-        </button>
-        <div className="flex gap-4 overflow-hidden">
-          {thumbnails
-            .slice(currentIndex, currentIndex + visibleThumbnails)
-            .map((img, i) => (
-              <div
-                key={i}
-                className={`relative w-80 h-48 flex-shrink-0 cursor-pointer ${
-                  mainImage === img.imgUrl
-                    ? "border-4 border-primary rounded-lg"
-                    : ""
-                }`}
-                onClick={() => setMainImage(img.imgUrl)}
-              >
-                <img
-                  src={img.imgUrl}
-                  alt={`Coworking Space ${i + 1}`}
-                  className="w-full h-full object-cover rounded-lg hover:opacity-80 transition-opacity"
-                  loading="lazy"
-                />
+    <div className={`grid gap-2 ${images.length > 3 ? "grid-cols-3" : images.length > 1 ? "grid-cols-3" : "grid-cols-1"}`}>
+      {images.length > 0 && (
+        <div className={`col-span-${images.length > 3 ? 2 : images.length > 1 ? 2 : 1}`}>
+          <img
+            src={images[0].imgUrl}
+            alt="Main Workspace"
+            className="w-full h-[400px] object-cover rounded-lg cursor-pointer"
+            onClick={() => handleImageClick(0)}
+          />
+        </div>
+      )}
+
+      {images.length > 1 && (
+        <div className={`grid ${images.length > 3 ? "grid-cols-2" : "grid-cols-1"} gap-2`}>
+          {images.slice(1, 4).map((image, index) => (
+            <img
+              key={index}
+              src={image.imgUrl}
+              alt={`Thumbnail ${index + 1}`}
+              className="w-full h-[195px] object-cover rounded-lg cursor-pointer"
+              onClick={() => handleImageClick(index + 1)}
+            />
+          ))}
+          {images.length > 3 && (
+            <div
+              className="w-full h-[195px] flex items-center justify-center bg-gray-200 rounded-lg cursor-pointer relative"
+              onClick={() => handleImageClick(3)}
+              style={{
+                backgroundImage: `url(${images[3].imgUrl})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <div className="absolute inset-0 bg-black opacity-50 rounded-lg"></div>
+              <span className="text-white font-medium relative z-10">Xem thêm +</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      <Modal open={selectedImageIndex !== null} footer={null} onCancel={() => setSelectedImageIndex(null)} centered>
+        <div className="relative">
+          <Slider ref={sliderRef} {...settings}>
+            {images.map((image, index) => (
+              <div key={index}>
+                <img src={image.imgUrl} alt={`Image ${index + 1}`} className="w-full rounded-lg" />
               </div>
             ))}
+          </Slider>
+          <LeftOutlined className="absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-2xl cursor-pointer" onClick={prev} />
+          <RightOutlined className="absolute right-0 top-1/2 transform -translate-y-1/2 text-white text-2xl cursor-pointer" onClick={next} />
         </div>
-        <button
-          className="bg-primary p-2 rounded-full disabled:opacity-50 hover:bg-primary/80"
-          onClick={nextSlide}
-          disabled={currentIndex + visibleThumbnails >= thumbnails.length}
-        >
-          <ChevronRight size={24} className="text-white" />
-        </button>
-      </div>
+      </Modal>
     </div>
   );
 }
 
-export default ImageList;
+export default ImageGallery;

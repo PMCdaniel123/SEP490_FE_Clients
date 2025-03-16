@@ -12,12 +12,14 @@ import TransactionDetailsModal from "@/components/transaction-details-modal/tran
 import ReviewForm from "@/components/review-list/review-form";
 
 interface Transaction {
+  bookingId: string;
   booking_StartDate: string;
   booking_EndDate: string;
   booking_Price: number;
   booking_Status?: string;
   booking_CreatedAt: string;
   payment_Method: string;
+  workspace_Id: string;
   workspace_Name: string;
   workspace_Capacity: number;
   workspace_Category: string;
@@ -82,9 +84,34 @@ export default function PurchaseHistoryPage() {
     setIsReviewModalOpen(false);
   };
 
-  const handleReviewSubmit = (review: { rating: number; comment: string }) => {
-    console.log("Review submitted:", review);
-    setIsReviewModalOpen(false);
+  const handleReviewSubmit = async (review: { rating: number; comment: string; images: string[] }) => {
+    if (!selectedTransaction) return;
+
+    const reviewData = {
+      bookingId: selectedTransaction.workspace_Id,
+      rate: review.rating,
+      comment: review.comment,
+      images: review.images.map((url) => ({ url })),
+    };
+
+    try {
+      const response = await fetch("https://localhost:5050/users/booking/rating", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reviewData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Có lỗi xảy ra khi gửi đánh giá.");
+      }
+
+      console.log("Review submitted:", reviewData);
+      setIsReviewModalOpen(false);
+    } catch (error) {
+      console.error("Error submitting review:", error);
+    }
   };
 
   const renderStatus = (status: string) => {
