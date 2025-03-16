@@ -50,7 +50,18 @@ function ImageGallery({ workspace }: { workspace: Workspace }) {
         </div>
       )}
 
-      {images.length > 1 && (
+      {images.length === 2 && (
+        <div className="col-span-1">
+          <img
+            src={images[1].imgUrl}
+            alt="Second Workspace"
+            className="w-full h-[400px] object-cover rounded-lg cursor-pointer"
+            onClick={() => handleImageClick(1)}
+          />
+        </div>
+      )}
+
+      {images.length > 2 && (
         <div className={`grid ${images.length > 3 ? "grid-cols-2" : "grid-cols-1"} gap-2`}>
           {images.slice(1, 4).map((image, index) => (
             <img
@@ -61,12 +72,12 @@ function ImageGallery({ workspace }: { workspace: Workspace }) {
               onClick={() => handleImageClick(index + 1)}
             />
           ))}
-          {images.length > 3 && (
+          {images.length > 4 && (
             <div
               className="w-full h-[195px] flex items-center justify-center bg-gray-200 rounded-lg cursor-pointer relative"
-              onClick={() => handleImageClick(3)}
+              onClick={() => handleImageClick(4)}
               style={{
-                backgroundImage: `url(${images[3].imgUrl})`,
+                backgroundImage: `url(${images[4].imgUrl})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
