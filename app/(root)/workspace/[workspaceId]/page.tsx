@@ -205,7 +205,7 @@ const WorkspaceDetail = () => {
             <h2 className="text-xl font-bold text-primary">
               Đánh giá từ khách hàng
             </h2>
-            <ReviewList />
+            <ReviewList workspaceId={workspaceId} />
           </div>
         </div>
 
