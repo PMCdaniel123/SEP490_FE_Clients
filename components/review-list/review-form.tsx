@@ -81,11 +81,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
     }
 
     const reviewData = { rating, comment, images: imageUrls };
-    console.log("Review Data:", reviewData);
     handleReviewSubmit(reviewData);
-    setRating(0);
-    setComment("");
-    setFileList([]);
   };
 
   const handlePreview = async (file: UploadFile) => {
@@ -118,7 +114,6 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
         <div className="flex items-center space-x-4">
           <img src={workspaceImageUrl} alt="Workspace Image" className="w-16 h-16 object-cover rounded-lg shadow-md" />
           <div>
-          
             <h3 className="font-semibold">{workspaceName}</h3>
             <p className="text-gray-600 text-sm mt-2">{licenseName}</p>
             <div className="flex items-center text-gray-600 text-sm mt-2">
@@ -132,7 +127,6 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
                 <Bed className="mr-1" size={16} /> {workspaceCategory}
               </span>
             </div>
-           
           </div>
         </div>
         <h5 className="font-semibold text-sm">Chất lượng không gian</h5>
