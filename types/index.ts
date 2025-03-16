@@ -225,3 +225,14 @@ export interface Workspace {
   openTime: string;
   closeTime: string;
 }
+
+export interface Promotion {
+  id: number;
+  code: string;
+  description: string;
+  discount: number;
+  status: string;
+  startDate: string;
+  endDate: string;
+  workspaceID: number;
+}

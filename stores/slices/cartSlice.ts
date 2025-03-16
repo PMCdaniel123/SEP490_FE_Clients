@@ -18,6 +18,7 @@ interface CartState {
   beverageList: CartItem[];
   amenityList: CartItem[];
   total: number;
+  category: string;
 }
 
 const initialState: CartState = {
@@ -29,6 +30,7 @@ const initialState: CartState = {
   beverageList: [],
   amenityList: [],
   total: 0,
+  category: ""
 };
 
 const cartSlice = createSlice({
@@ -46,16 +48,18 @@ const cartSlice = createSlice({
     },
     setWorkspaceTime: (
       state,
-      action: PayloadAction<{ startTime: string; endTime: string }>
+      action: PayloadAction<{ startTime: string; endTime: string; category: string }>
     ) => {
       state.startTime = action.payload.startTime;
       state.endTime = action.payload.endTime;
+      state.category = action.payload.category
       cartSlice.caseReducers.calculateTotal(state);
     },
     clearWorkspaceTime: (state) => {
       state.startTime = "";
       state.endTime = "";
       state.total = 0;
+      state.category = "";
       cartSlice.caseReducers.calculateTotal(state);
     },
     addBeverage: (state, action: PayloadAction<CartItem>) => {

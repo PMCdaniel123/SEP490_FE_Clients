@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Filter, Heart, Users, Ruler, Bed } from "lucide-react";
+import { Filter, Heart, Users, Ruler, Sofa } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { CardContent } from "@/components/ui/card-content";
 import Loader from "@/components/loader/Loader";
@@ -38,12 +38,12 @@ export default function PropertyGrid() {
       .then((data: { workspaces: Workspace[] }) => {
         const formattedWorkspaces = data.workspaces.map((workspace) => ({
           ...workspace,
-          shortTermPrice: workspace.prices.find(
-            (price) => price.category === "Giờ"
-          )?.price || 0,
-          longTermPrice: workspace.prices.find(
-            (price) => price.category === "Ngày"
-          )?.price || 0,
+          shortTermPrice:
+            workspace.prices.find((price) => price.category === "Giờ")?.price ||
+            0,
+          longTermPrice:
+            workspace.prices.find((price) => price.category === "Ngày")
+              ?.price || 0,
         }));
         setWorkspaces(formattedWorkspaces);
         setLoading(false);
@@ -149,15 +149,16 @@ export default function PropertyGrid() {
               </div>
               <h3 className="text-lg font-semibold mt-2">{workspace.name}</h3>
               <p className="text-gray-600 text-sm">{workspace.address}</p>
-              <div className="flex items-center text-gray-600 text-sm mt-2">
+              <div className="flex items-center text-gray-600 text-sm mt-2 justify-between">
                 <span className="flex items-center mr-2">
-                  <Users className="mr-1" size={16} /> {workspace.capacity}
+                  <Users className="mr-1" size={16} /> {workspace.capacity}{" "}
+                  người
                 </span>
                 <span className="flex items-center mr-2">
-                  <Ruler className="mr-1" size={16} /> {workspace.area}
+                  <Ruler className="mr-1" size={16} /> {workspace.area} m2
                 </span>
                 <span className="flex items-center">
-                  <Bed className="mr-1" size={16} /> {workspace.category}
+                  <Sofa className="mr-1" size={16} /> {workspace.category}
                 </span>
               </div>
             </CardContent>
