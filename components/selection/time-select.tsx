@@ -46,6 +46,7 @@ function TimeSelect() {
       setWorkspaceTime({
         startTime: formattedStartTime,
         endTime: formattedEndTime,
+        category: "Giờ",
       })
     );
   };

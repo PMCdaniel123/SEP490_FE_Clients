@@ -53,6 +53,7 @@ function DateSelect() {
       setWorkspaceTime({
         startTime,
         endTime,
+        category: "Ngày",
       })
     );
   };
@@ -83,6 +84,7 @@ function DateSelect() {
         setWorkspaceTime({
           startTime,
           endTime,
+          category: "Ngày",
         })
       );
     }
