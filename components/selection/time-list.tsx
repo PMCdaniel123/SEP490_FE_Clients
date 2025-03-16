@@ -4,12 +4,18 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Loader from "../loader/Loader";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
 
 interface Time {
   id: string;
   startDate: string;
   endDate: string;
   status: string;
+  workspaceTimeCategory: string;
 }
 
 function TimeList({ workspaceId }: { workspaceId: string }) {
@@ -18,6 +24,8 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
   const nextDay = today.add(2, "day");
   const [loading, setLoading] = useState(false);
   const [timeList, setTimeList] = useState<Time[]>([]);
+
+  console.log(timeList);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -55,22 +63,48 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
     fetchTimeList();
   }, [workspaceId]);
 
-  const filterByDate = (date: dayjs.Dayjs) =>
+  const filterByTime = (date: dayjs.Dayjs) =>
     timeList.filter((item) => {
       const isSameDay =
-        dayjs(item.startDate).isSame(date, "day") && item.status === "InUse";
+        dayjs(item.startDate).isSame(date, "day") &&
+        (item.status === "InUse" || item.status === "Handling") &&
+        item.workspaceTimeCategory !== "Ngày";
       return isSameDay;
     });
 
-  const todayList = filterByDate(today).sort(
+  const filterByDate = () => {
+    const now = dayjs();
+
+    return timeList.filter((item) => {
+      const startDate = dayjs(item.startDate);
+      const endDate = dayjs(item.endDate);
+
+      const isValidTime =
+        startDate.isValid() &&
+        endDate.isValid() &&
+        ((startDate.isSameOrBefore(now, "day") &&
+          endDate.isSameOrAfter(now, "day")) ||
+          startDate.isAfter(now, "day")) &&
+        (item.status === "InUse" || item.status === "Handling") &&
+        item.workspaceTimeCategory === "Ngày";
+
+      return isValidTime;
+    });
+  };
+
+  const todayList = filterByTime(today).sort(
     (a: Time, b: Time) =>
       Number(dayjs(a.startDate)) - Number(dayjs(b.startDate))
   );
-  const tomorrowList = filterByDate(tomorrow).sort(
+  const tomorrowList = filterByTime(tomorrow).sort(
     (a: Time, b: Time) =>
       Number(dayjs(a.startDate)) - Number(dayjs(b.startDate))
   );
-  const nextDayList = filterByDate(nextDay).sort(
+  const nextDayList = filterByTime(nextDay).sort(
+    (a: Time, b: Time) =>
+      Number(dayjs(a.startDate)) - Number(dayjs(b.startDate))
+  );
+  const dateList = filterByDate().sort(
     (a: Time, b: Time) =>
       Number(dayjs(a.startDate)) - Number(dayjs(b.startDate))
   );
@@ -84,7 +118,10 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-8 mt-8">
+    <div className="flex flex-col gap-6 mt-8">
+      <h1 className="text-base font-medium text-white border border-primary bg-primary rounded-md py-2 px-4">
+        1. Đặt theo giờ
+      </h1>
       <div className="flex flex-col gap-4">
         <h1 className="text-base font-medium leading-none text-primary">
           {today.format("DD/MM/YYYY")}:
@@ -146,6 +183,25 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
             <p className="text-sm text-sixth italic flex items-center">Trống</p>
           )}
         </div>
+      </div>
+
+      <h1 className="text-base font-medium text-white border border-primary bg-primary rounded-md py-2 px-4">
+        2. Đặt theo ngày
+      </h1>
+      <div className="flex flex-row flex-wrap gap-2">
+        {dateList.length > 0 ? (
+          dateList.map((item) => (
+            <div
+              key={item.id}
+              className="p-2 rounded-md bg-fourth text-white font-medium text-sm"
+            >
+              {dayjs(item.startDate).format("HH:mm DD/MM/YYYY")} -{" "}
+              {dayjs(item.endDate).format("HH:mm DD/MM/YYYY")}
+            </div>
+          ))
+        ) : (
+          <p className="text-sm text-sixth italic flex items-center">Trống</p>
+        )}
       </div>
     </div>
   );

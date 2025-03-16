@@ -11,7 +11,13 @@ import {
 
 const { RangePicker } = DatePicker;
 
-function DateSelect() {
+function DateSelect({
+  openTime,
+  closeTime,
+}: {
+  openTime: string;
+  closeTime: string;
+}) {
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
     to: new Date(),
@@ -22,6 +28,8 @@ function DateSelect() {
     getNowTime();
   };
   const dispatch = useDispatch();
+  const open = openTime.substring(0, 5);
+  const close = closeTime.substring(0, 5);
 
   useEffect(() => {
     if (!isDatePickerOpen) {
@@ -37,12 +45,12 @@ function DateSelect() {
     const isToday = selectedStart.isSame(now, "day");
 
     const startTime = isToday
-      ? selectedStart.startOf("day").format("HH:mm DD/MM/YYYY")
-      : selectedStart.format("HH:mm DD/MM/YYYY");
+      ? selectedStart.startOf("day").format("DD/MM/YYYY")
+      : selectedStart.format("DD/MM/YYYY");
 
     const endTime = isToday
-      ? selectedEnd.startOf("day").format("HH:mm DD/MM/YYYY")
-      : selectedEnd.format("HH:mm DD/MM/YYYY");
+      ? selectedEnd.startOf("day").format("DD/MM/YYYY")
+      : selectedEnd.format("DD/MM/YYYY");
 
     setDate({
       from: now.toDate(),
@@ -51,8 +59,8 @@ function DateSelect() {
 
     dispatch(
       setWorkspaceTime({
-        startTime,
-        endTime,
+        startTime: open + " " + startTime,
+        endTime: close + " " + endTime,
         category: "Ngày",
       })
     );
@@ -68,12 +76,12 @@ function DateSelect() {
       const isToday = selectedStart.isSame(now, "day");
 
       const startTime = isToday
-        ? selectedStart.startOf("day").format("HH:mm DD/MM/YYYY")
-        : selectedStart.format("HH:mm DD/MM/YYYY");
+        ? selectedStart.startOf("day").format("DD/MM/YYYY")
+        : selectedStart.format("DD/MM/YYYY");
 
       const endTime = isToday
-        ? selectedEnd.startOf("day").format("HH:mm DD/MM/YYYY")
-        : selectedEnd.format("HH:mm DD/MM/YYYY");
+        ? selectedEnd.startOf("day").format("DD/MM/YYYY")
+        : selectedEnd.format("DD/MM/YYYY");
 
       setDate({
         from: dates[0].toDate(),
@@ -82,8 +90,8 @@ function DateSelect() {
 
       dispatch(
         setWorkspaceTime({
-          startTime,
-          endTime,
+          startTime: open + " " + startTime,
+          endTime: close + " " + endTime,
           category: "Ngày",
         })
       );

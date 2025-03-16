@@ -204,7 +204,12 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
           <RadioGroupItem value="2" id="long-term" />
           <Label htmlFor="long-term">Thuê theo ngày</Label>
         </div>
-        {shortTerm === "2" && <DateSelect />}
+        {shortTerm === "2" && (
+          <DateSelect
+            openTime={workspace.openTime}
+            closeTime={workspace.closeTime}
+          />
+        )}
       </RadioGroup>
       <div className="flex flex-col gap-2 my-4">
         {beverageList.length + amenityList.length > 1 && (
