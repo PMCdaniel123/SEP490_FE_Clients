@@ -24,6 +24,7 @@ import { paymentMethods } from "@/constants/constant";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
 import { clearBeverageAndAmenity } from "@/stores/slices/cartSlice";
+import dayjs from "dayjs";
 // import { Trash2 } from "lucide-react";
 
 interface CheckoutDiscount {
@@ -35,8 +36,15 @@ export default function Checkout() {
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
-  const { beverageList, amenityList, total, startTime, endTime, workspaceId } =
-    useSelector((state: RootState) => state.cart);
+  const {
+    beverageList,
+    amenityList,
+    total,
+    startTime,
+    endTime,
+    workspaceId,
+    category,
+  } = useSelector((state: RootState) => state.cart);
   const { customer } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -54,7 +62,24 @@ export default function Checkout() {
         throw new Error("Có lỗi xảy ra khi tải thông tin mã giảm giá.");
       }
       const data = await response.json();
-      setPromotions(data.promotions);
+      const now = dayjs();
+      const formattedDate = (
+        Array.isArray(data.promotions) ? data.promotions : []
+      ).filter((item: Promotion) => {
+        const startDate = dayjs(item.startDate);
+        const endDate = dayjs(item.endDate);
+
+        const isValidTime =
+          startDate.isValid() &&
+          endDate.isValid() &&
+          ((startDate.isSameOrBefore(now, "date") &&
+            endDate.isSameOrAfter(now, "date")) ||
+            startDate.isAfter(now, "date")) &&
+          item.status === "Active";
+
+        return isValidTime;
+      });
+      setPromotions(formattedDate);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
@@ -136,6 +161,7 @@ export default function Checkout() {
       beverages: beveragesRequest,
       promotionCode: voucherCode?.code,
       price: total,
+      workspaceTimeCategory: category,
     };
 
     try {
@@ -256,10 +282,16 @@ export default function Checkout() {
               {promotions?.map((promotion) => (
                 <SelectItem
                   key={promotion.id}
-                  className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                  className="rounded-sm flex flex-row items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
                   value={promotion.code + " - " + promotion.discount}
                 >
-                  {promotion.code} - (Giảm giá {promotion.discount}%)
+                  <span>
+                    {promotion.code} - (Giảm giá {promotion.discount}%)
+                  </span>
+                  <span className="text-xs ml-2">
+                    ({dayjs(promotion.startDate).format("HH:mm DD/MM/YYYY")} -{" "}
+                    {dayjs(promotion.endDate).format("HH:mm DD/MM/YYYY")})
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>
