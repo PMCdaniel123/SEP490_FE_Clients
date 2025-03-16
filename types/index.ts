@@ -42,7 +42,9 @@ export interface ReviewItemProps {
   date: string;
   rating: number;
   review: string;
+  images: { url: string }[];
 }
+
 
 export interface LabelIconProps {
   icon: LucideIcon;
