@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
 import { Modal, Rate, Input, Upload, Image } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { Users, Ruler, Bed } from "lucide-react";
+import { Users, Ruler, Sofa } from "lucide-react";
 import type { UploadFile, UploadProps } from "antd";
 import { Button } from "../ui/button";
 
 interface ReviewFormProps {
   isReviewModalOpen: boolean;
   handleReviewCancel: () => void;
-  handleReviewSubmit: (review: { rating: number; comment: string; images: string[] }) => void;
+  handleReviewSubmit: (review: {
+    rating: number;
+    comment: string;
+    images: string[];
+  }) => void;
   workspaceName: string;
   workspaceCategory: string;
   workspaceCapacity: number;
@@ -112,19 +116,23 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
     >
       <div className="space-y-4">
         <div className="flex items-center space-x-4">
-          <img src={workspaceImageUrl} alt="Workspace Image" className="w-16 h-16 object-cover rounded-lg shadow-md" />
+          <img
+            src={workspaceImageUrl}
+            alt="Workspace Image"
+            className="w-16 h-16 object-cover rounded-lg shadow-md"
+          />
           <div>
             <h3 className="font-semibold">{workspaceName}</h3>
             <p className="text-gray-600 text-sm mt-2">{licenseName}</p>
             <div className="flex items-center text-gray-600 text-sm mt-2">
-              <span className="flex items-center mr-2">
-                <Users className="mr-1" size={16} /> {workspaceCapacity}
+              <span className="flex items-center mr-6">
+                <Users className="mr-1" size={16} /> {workspaceCapacity} người
               </span>
-              <span className="flex items-center mr-2">
-                <Ruler className="mr-1" size={16} /> {workspaceArea}
+              <span className="flex items-center mr-6">
+                <Ruler className="mr-1" size={16} /> {workspaceArea} m2
               </span>
               <span className="flex items-center">
-                <Bed className="mr-1" size={16} /> {workspaceCategory}
+                <Sofa className="mr-1" size={16} /> {workspaceCategory}
               </span>
             </div>
           </div>

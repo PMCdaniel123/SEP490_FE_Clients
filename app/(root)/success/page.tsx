@@ -98,7 +98,7 @@ const SuccessPage = () => {
       updateWorkspaceTimeStatus();
     }
 
-    const status = searchParams.get("status");
+    const status = searchParams?.get("status");
     if (status === "PAID") {
       const customerWalletId = localStorage.getItem("customerWalletId");
       const orderCode = localStorage.getItem("orderCode");
