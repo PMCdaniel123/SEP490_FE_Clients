@@ -4,17 +4,17 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Modal } from "antd";
-import { SignUpForm } from "@/components/signup-form/signup-form";
+import BecomeOwnerForm from "@/components/signup-form/become-owner-form";
 
 export default function BecomeOwner() {
-  const [isSignUpModalOpen, setSignUpModalOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const handleOpenSignUpForm = () => {
-    setSignUpModalOpen(true);
+  const handleOpen = () => {
+    setIsOpen(true);
   };
 
-  const handleCloseSignUpForm = () => {
-    setSignUpModalOpen(false);
+  const handleClose = () => {
+    setIsOpen(false);
   };
 
   return (
@@ -38,7 +38,7 @@ export default function BecomeOwner() {
           </p>
           <Button
             className="mt-6 w-48 px-6 py-2 bg-black text-white rounded"
-            onClick={handleOpenSignUpForm}
+            onClick={handleOpen}
           >
             Đăng ký
           </Button>
@@ -73,13 +73,8 @@ export default function BecomeOwner() {
           </p>
         </div>
       </section>
-      <Modal
-        open={isSignUpModalOpen}
-        onCancel={handleCloseSignUpForm}
-        footer={null}
-        width={600}
-      >
-        <SignUpForm onCloseSignUpForm={handleCloseSignUpForm} role="owner" />
+      <Modal open={isOpen} onCancel={handleClose} footer={null}>
+        <BecomeOwnerForm onClose={handleClose} />
       </Modal>
     </div>
   );
