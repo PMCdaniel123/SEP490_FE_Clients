@@ -12,7 +12,7 @@ import Amenity from "@/components/amenities-list/amenity";
 import { Label } from "@/components/ui/label";
 import Loader from "@/components/loader/Loader";
 import { useRouter } from "next/navigation";
-import { Price, Workspace } from "@/types";
+import { Price, Promotion, Workspace } from "@/types";
 import {
   Select,
   SelectContent,
@@ -20,23 +20,77 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { paymentMethods, promotionList } from "@/constants/constant";
+import { paymentMethods } from "@/constants/constant";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
 import { clearBeverageAndAmenity } from "@/stores/slices/cartSlice";
+import dayjs from "dayjs";
+// import { Trash2 } from "lucide-react";
+
+interface CheckoutDiscount {
+  code: string;
+  discount: number;
+}
 
 export default function Checkout() {
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
-  const { beverageList, amenityList, total, startTime, endTime, workspaceId } =
-    useSelector((state: RootState) => state.cart);
+  const {
+    beverageList,
+    amenityList,
+    total,
+    startTime,
+    endTime,
+    workspaceId,
+    category,
+  } = useSelector((state: RootState) => state.cart);
   const { customer } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const router = useRouter();
-  const [voucherCode, setVoucherCode] = useState("");
+  const [voucherCode, setVoucherCode] = useState<CheckoutDiscount | null>(null);
   const [paymentMethod, setPaymentMethod] = useState("bank");
   const cart =
     typeof window !== "undefined" ? localStorage.getItem("cart") : null;
+
+  const fetchPromotions = async ({ workspaceId }: { workspaceId: string }) => {
+    try {
+      const response = await fetch(
+        `https://localhost:5050/workspaces/${workspaceId}/promotions`
+      );
+      if (!response.ok) {
+        throw new Error("Có lỗi xảy ra khi tải thông tin mã giảm giá.");
+      }
+      const data = await response.json();
+      const now = dayjs();
+      const formattedDate = (
+        Array.isArray(data.promotions) ? data.promotions : []
+      ).filter((item: Promotion) => {
+        const startDate = dayjs(item.startDate);
+        const endDate = dayjs(item.endDate);
+
+        const isValidTime =
+          startDate.isValid() &&
+          endDate.isValid() &&
+          ((startDate.isSameOrBefore(now, "date") &&
+            endDate.isSameOrAfter(now, "date")) ||
+            startDate.isAfter(now, "date")) &&
+          item.status === "Active";
+
+        return isValidTime;
+      });
+      setPromotions(formattedDate);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+    }
+  };
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -64,8 +118,10 @@ export default function Checkout() {
             )?.price || 0,
         });
         setLoading(false);
-      } catch {
-        toast.error("Có lỗi xảy ra khi tải thông tin không gian.", {
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+        toast.error(errorMessage, {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -75,6 +131,7 @@ export default function Checkout() {
     };
 
     fetchWorkspace();
+    fetchPromotions({ workspaceId });
   }, [dispatch, workspaceId]);
 
   useEffect(() => {
@@ -102,8 +159,9 @@ export default function Checkout() {
       endDate: endTime,
       amenities: amenitiesRequest,
       beverages: beveragesRequest,
-      promotionCode: "",
+      promotionCode: voucherCode?.code,
       price: total,
+      workspaceTimeCategory: category,
     };
 
     try {
@@ -114,15 +172,20 @@ export default function Checkout() {
         },
         body: JSON.stringify(request),
       });
+      if (!response.ok) {
+        throw new Error("Có lỗi xảy ra khi thanh toán.");
+      }
       const data = await response.json();
       const bookingData = {
         bookingId: data.bookingId,
-        status: "PAID",
+        orderCode: data.orderCode,
       };
       localStorage.setItem("order", JSON.stringify(bookingData));
       router.push(data.checkoutUrl);
-    } catch {
-      toast.error("Có lỗi xảy ra khi thanh toán.", {
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -198,19 +261,37 @@ export default function Checkout() {
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-lg border flex flex-col gap-8">
-          <h3 className="text-lg font-semibold">Mã khuyến mãi</h3>
-          <Select onValueChange={(value) => setVoucherCode(value)}>
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">Mã khuyến mãi</h3>
+            {/* <span className="text-red-500 cursor-pointer hover:text-red-300">
+              <Trash2 />
+            </span> */}
+          </div>
+          <Select
+            onValueChange={(value) =>
+              setVoucherCode({
+                code: value.split(" - ")[0],
+                discount: Number(value.split(" - ")[1]),
+              })
+            }
+          >
             <SelectTrigger className="py-6 px-4 rounded-md">
               <SelectValue placeholder="Chọn mã khuyến mãi" />
             </SelectTrigger>
             <SelectContent>
-              {promotionList.map((promotion) => (
+              {promotions?.map((promotion) => (
                 <SelectItem
                   key={promotion.id}
-                  className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
-                  value={promotion.code}
+                  className="rounded-sm flex flex-row items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                  value={promotion.code + " - " + promotion.discount}
                 >
-                  {promotion.code} - (Giảm giá {promotion.discount}%)
+                  <span>
+                    {promotion.code} - (Giảm giá {promotion.discount}%)
+                  </span>
+                  <span className="text-xs ml-2">
+                    ({dayjs(promotion.startDate).format("HH:mm DD/MM/YYYY")} -{" "}
+                    {dayjs(promotion.endDate).format("HH:mm DD/MM/YYYY")})
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -283,11 +364,17 @@ export default function Checkout() {
           </div>
           <div className="flex justify-between">
             <span>Mã giảm giá:</span>
-            <span className="font-semibold">{voucherCode}</span>
+            {voucherCode && (
+              <span className="font-semibold">
+                {voucherCode?.code} - {voucherCode?.discount}%
+              </span>
+            )}
           </div>
           <div className="flex justify-between text-lg font-bold text-primary">
             <span>Tổng cộng:</span>
-            <span>{formatCurrency(total)}</span>
+            <span>
+              {formatCurrency(total * (1 - (voucherCode?.discount || 0) / 100))}
+            </span>
           </div>
         </div>
         {beverageList.length + amenityList.length > 0 && (

@@ -42,7 +42,9 @@ export interface ReviewItemProps {
   date: string;
   rating: number;
   review: string;
+  images: { url: string }[];
 }
+
 
 export interface LabelIconProps {
   icon: LucideIcon;
@@ -224,4 +226,15 @@ export interface Workspace {
   ownerId: string;
   openTime: string;
   closeTime: string;
+}
+
+export interface Promotion {
+  id: number;
+  code: string;
+  description: string;
+  discount: number;
+  status: string;
+  startDate: string;
+  endDate: string;
+  workspaceID: number;
 }

@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 import { SignInFormProps } from "@/types";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/stores";
-import { login } from "@/stores/slices/authSlice";
+import { login, resetLoginStep } from "@/stores/slices/authSlice";
 import Image from "next/image";
 import { useState } from "react";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -130,7 +130,12 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
         </div>
         <div className="flex flex-col ml-2 gap-1">
           <p className="text-base font-bold text-fourth">Xin chào, {user}</p>
-          <p className="text-sm font-medium text-fifth">Không phải bạn?</p>
+          <p
+            className="text-sm font-medium text-fifth cursor-pointer hover:text-sixth"
+            onClick={() => dispatch(resetLoginStep())}
+          >
+            Không phải bạn?
+          </p>
         </div>
       </div>
       <div className="flex flex-col w-full border rounded-md h-full justify-center px-6 py-3 relative">

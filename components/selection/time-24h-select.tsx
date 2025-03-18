@@ -50,6 +50,7 @@ function Time24hSelect() {
       setWorkspaceTime({
         startTime: formattedStartTime,
         endTime: formattedEndTime,
+        category: "Giờ",
       })
     );
   };

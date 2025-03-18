@@ -30,8 +30,10 @@ function AmenitiesList({ ownerId }: { ownerId: string }) {
         const data = await response.json();
         setAmenityList(Array.isArray(data.amenities) ? data.amenities : []);
         setLoading(false);
-      } catch {
-        toast.error("Có lỗi xảy ra khi tải tiện ích.", {
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+        toast.error(errorMessage, {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
