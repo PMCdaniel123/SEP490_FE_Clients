@@ -1,4 +1,4 @@
-import { Modal, Button } from "antd";
+import { Modal } from "antd";
 import { CheckCircle, Clock, XCircle, MapPin, Coffee } from "lucide-react";
 import dayjs from "dayjs";
 
@@ -47,17 +47,6 @@ const TransactionDetailsModal: React.FC<TransactionDetailsModalProps> = ({
   selectedTransaction,
   renderStatus,
 }) => {
-  const handleCancelTransaction = () => {
-    if (!selectedTransaction) return;
-
-    console.log(
-      "Transaction cancellation requested for:",
-      selectedTransaction.booking_CreatedAt
-    );
-    alert("Giao dịch đã được hủy thành công.");
-    handleCancel();
-  };
-
   return (
     <Modal
       title="Chi tiết giao dịch"
@@ -237,13 +226,6 @@ const TransactionDetailsModal: React.FC<TransactionDetailsModalProps> = ({
               </span>
             </div>
           </div>
-          {selectedTransaction.booking_Status !== "Fail" && (
-            <div className="flex justify-end mt-4">
-              <Button type="primary" danger onClick={handleCancelTransaction}>
-                Hủy giao dịch
-              </Button>
-            </div>
-          )}
         </div>
       )}
     </Modal>

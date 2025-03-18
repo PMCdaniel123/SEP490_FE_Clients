@@ -5,21 +5,28 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
+import { useRouter } from "next/navigation";
 import Loader from "@/components/loader/Loader";
 import Pagination from "@/components/pagination/pagination";
 import dayjs from "dayjs";
 import TransactionDetailsModal from "@/components/transaction-details-modal/transaction-details-modal";
 import ReviewForm from "@/components/review-list/review-form";
+import { Dropdown, Menu, Modal } from "antd";
+import { DownOutlined } from "@ant-design/icons";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ContactChat from "@/components/user-feedback/user-feedback";
+import axios from "axios";
 
 interface Transaction {
-  bookingId: string;
+  booking_Id: number;
   booking_StartDate: string;
   booking_EndDate: string;
   booking_Price: number;
   booking_Status?: string;
   booking_CreatedAt: string;
   payment_Method: string;
-  workspace_Id: string;
+  workspace_Id: number;
   workspace_Name: string;
   workspace_Capacity: number;
   workspace_Category: string;
@@ -33,6 +40,7 @@ interface Transaction {
   bookingHistoryWorkspaceImages: { imageUrl: string }[];
   license_Name: string;
   license_Address: string;
+  isReview: number;
 }
 
 const tabs = [
@@ -41,9 +49,11 @@ const tabs = [
 ];
 
 export default function PurchaseHistoryPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("success");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<null | Transaction>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,19 +61,22 @@ export default function PurchaseHistoryPage() {
   const [transactionsPerPage] = useState(5);
   const { customer } = useSelector((state: RootState) => state.auth);
 
-  useEffect(() => {
-    if (customer) {
-      fetch(`https://localhost:5050/users/booking/historybookings?UserId=${customer.id}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setTransactions(data.bookingHistories);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-          setLoading(false);
-        });
+  const fetchTransactionHistory = async () => {
+    if (!customer) return;
+
+    try {
+      const response = await axios.get("https://localhost:5050/users/booking/historybookings", {
+        params: { UserId: customer.id },
+      });
+      setTransactions(response.data.bookingHistories);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchTransactionHistory();
   }, [customer]);
 
   const showModal = (transaction: Transaction) => {
@@ -84,33 +97,41 @@ export default function PurchaseHistoryPage() {
     setIsReviewModalOpen(false);
   };
 
+  const handleContactModal = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setIsContactModalOpen(true);
+  };
+
+  const handleContactCancel = () => {
+    setIsContactModalOpen(false);
+  };
+
   const handleReviewSubmit = async (review: { rating: number; comment: string; images: string[] }) => {
     if (!selectedTransaction) return;
 
     const reviewData = {
-      bookingId: selectedTransaction.workspace_Id,
+      bookingId: selectedTransaction.booking_Id,
       rate: review.rating,
       comment: review.comment,
       images: review.images.map((url) => ({ url })),
     };
 
     try {
-      const response = await fetch("https://localhost:5050/users/booking/rating", {
-        method: "POST",
+      const response = await axios.post("https://localhost:5050/users/booking/rating", reviewData, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(reviewData),
       });
 
-      if (!response.ok) {
-        throw new Error("Có lỗi xảy ra khi gửi đánh giá.");
+      if (response.status !== 200) {
+        throw new Error(response.data.notification || "Có lỗi xảy ra khi gửi đánh giá.");
       }
 
-      console.log("Review submitted:", reviewData);
       setIsReviewModalOpen(false);
-    } catch (error) {
-      console.error("Error submitting review:", error);
+      toast.success(response.data.notification || "Đánh giá đã được gửi thành công!");
+      await fetchTransactionHistory();
+    } catch (error: any) {
+      toast.error(error.response?.data?.notification || "Có lỗi xảy ra khi gửi đánh giá.");
     }
   };
 
@@ -123,6 +144,22 @@ export default function PurchaseHistoryPage() {
       default:
         return status;
     }
+  };
+
+  const handleRebook = (transaction: Transaction) => {
+    if (!transaction.workspace_Id) return;
+    console.log("Rebook:", transaction);
+    router.push(`/workspace/${transaction.workspace_Id}`);
+  };
+
+  const handleContact = (transaction: Transaction) => {
+    console.log("Contact:", transaction);
+    handleContactModal(transaction);
+  };
+
+  const handleCancelTransaction = (transaction: Transaction) => {
+    console.log("Transaction cancellation requested for:", transaction.booking_CreatedAt);
+    alert("Giao dịch đã được hủy thành công.");
   };
 
   const filteredTransactions = transactions
@@ -145,9 +182,8 @@ export default function PurchaseHistoryPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-36">
-      <h2 className="text-2xl font-bold text-[#8B5E3C] mb-4">
-        Lịch sử thanh toán
-      </h2>
+      <ToastContainer />
+      <h2 className="text-2xl font-bold text-[#8B5E3C] mb-4">Lịch sử thanh toán</h2>
 
       <div className="flex space-x-6 border-b">
         {tabs.map((tab) => (
@@ -174,7 +210,11 @@ export default function PurchaseHistoryPage() {
             >
               <div className="flex items-center space-x-4">
                 {tx.bookingHistoryWorkspaceImages.length > 0 && (
-                  <img src={tx.bookingHistoryWorkspaceImages[0].imageUrl} alt="Workspace Image" className="w-16 h-16 object-cover rounded-lg shadow-md" />
+                  <img
+                    src={tx.bookingHistoryWorkspaceImages[0].imageUrl}
+                    alt="Workspace Image"
+                    className="w-16 h-16 object-cover rounded-lg shadow-md"
+                  />
                 )}
                 <div>
                   <h3 className="font-semibold">{tx.workspace_Name}</h3>
@@ -184,17 +224,86 @@ export default function PurchaseHistoryPage() {
                 </div>
               </div>
               <div className="flex items-center space-x-4">
-                <p className="font-bold">{new Intl.NumberFormat("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                }).format(tx.booking_Price)}</p>
+                <p className="font-bold">
+                  {new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(tx.booking_Price)}
+                </p>
                 {tx.booking_Status === "Success" && (
-                  <Button className="text-white" onClick={(e) => { e.stopPropagation(); showReviewModal(tx); }}>
-                    Đánh giá
-                  </Button>
+                  <>
+                    {tx.isReview === 1 ? (
+                      <Button
+                        className="text-white px-4 py-2 text-sm font-medium rounded-md min-w-[100px]"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRebook(tx);
+                        }}
+                      >
+                        Đặt lại
+                      </Button>
+                    ) : (
+                      <Button
+                        className="text-white px-4 py-2 text-sm font-medium rounded-md min-w-[100px]"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          showReviewModal(tx);
+                        }}
+                      >
+                        Đánh giá
+                      </Button>
+                    )}
+                    <Dropdown
+                      overlay={
+                        <Menu>
+                          <Menu.Item
+                            key="rebook"
+                            onClick={(e) => {
+                              e.domEvent.stopPropagation();
+                              handleRebook(tx);
+                            }}
+                          >
+                            Đặt lại
+                          </Menu.Item>
+                          <Menu.Item
+                            key="contact"
+                            onClick={(e) => {
+                              e.domEvent.stopPropagation();
+                              handleContact(tx);
+                            }}
+                          >
+                            Liên hệ
+                          </Menu.Item>
+                          <Menu.Item
+                            key="cancel"
+                            onClick={(e) => {
+                              e.domEvent.stopPropagation();
+                              handleCancelTransaction(tx);
+                            }}
+                          >
+                            Hủy giao dịch
+                          </Menu.Item>
+                        </Menu>
+                      }
+                      trigger={["click"]}
+                    >
+                      <Button
+                        className="text-black hover:text-white bg-white"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <DownOutlined />
+                      </Button>
+                    </Dropdown>
+                  </>
                 )}
                 {tx.booking_Status === "Fail" && (
-                  <Button className="text-white" onClick={(e) => { e.stopPropagation(); showModal(tx); }}>
+                  <Button
+                    className="text-white"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      showModal(tx);
+                    }}
+                  >
                     Xem chi tiết
                   </Button>
                 )}
@@ -230,8 +339,21 @@ export default function PurchaseHistoryPage() {
           workspaceArea={selectedTransaction.workspace_Area}
           licenseName={selectedTransaction.license_Name}
           workspaceImageUrl={selectedTransaction.bookingHistoryWorkspaceImages[0]?.imageUrl || ""}
+          booking_Id={selectedTransaction.booking_Id}
         />
       )}
+
+      <Modal
+        title="Liên hệ"
+        open={isContactModalOpen}
+        onCancel={handleContactCancel}
+        footer={null}
+        width={600}
+      >
+        {selectedTransaction && customer && customer.id && (
+          <ContactChat userId={customer.id.toString()} ownerId={selectedTransaction.workspace_Id} />
+        )}
+      </Modal>
     </div>
   );
 }

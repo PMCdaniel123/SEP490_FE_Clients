@@ -9,6 +9,7 @@ interface ReviewFormProps {
   isReviewModalOpen: boolean;
   handleReviewCancel: () => void;
   handleReviewSubmit: (review: {
+    booking_Id: number;
     rating: number;
     comment: string;
     images: string[];
@@ -19,6 +20,7 @@ interface ReviewFormProps {
   workspaceImageUrl: string;
   workspaceArea: number;
   licenseName: string;
+  booking_Id: number;
 }
 
 const getBase64 = (file: File): Promise<string> =>
@@ -56,12 +58,14 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   workspaceImageUrl,
   workspaceArea,
   licenseName,
+  booking_Id,
 }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!isReviewModalOpen) {
@@ -69,10 +73,12 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
       setComment("");
       setFileList([]);
       setPreviewImage("");
+      setLoading(false);
     }
   }, [isReviewModalOpen]);
 
   const onSubmit = async () => {
+    setLoading(true);
     const imageUrls = [];
     for (const file of fileList) {
       try {
@@ -80,12 +86,25 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
         imageUrls.push(imageUrl);
       } catch (error) {
         console.error("Image upload failed:", error);
+        setLoading(false);
         return;
       }
     }
 
-    const reviewData = { rating, comment, images: imageUrls };
-    handleReviewSubmit(reviewData);
+    const reviewData = {
+      booking_Id,
+      rating,
+      comment,
+      images: imageUrls,
+    };
+
+    try {
+      await handleReviewSubmit(reviewData);
+    } catch (error) {
+      console.error("Error submitting review:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePreview = async (file: UploadFile) => {
@@ -166,8 +185,8 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
           />
         )}
         <div className="flex justify-end">
-          <Button className="text-white" onClick={onSubmit}>
-            Gửi đánh giá
+          <Button className="text-white" onClick={onSubmit} disabled={loading}>
+            {loading ? "Đang gửi..." : "Gửi đánh giá"}
           </Button>
         </div>
       </div>
