@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
+import { useRouter } from "next/navigation";
 import Loader from "@/components/loader/Loader";
 import Pagination from "@/components/pagination/pagination";
 import dayjs from "dayjs";
@@ -48,6 +49,7 @@ const tabs = [
 ];
 
 export default function PurchaseHistoryPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("success");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -145,7 +147,9 @@ export default function PurchaseHistoryPage() {
   };
 
   const handleRebook = (transaction: Transaction) => {
+    if (!transaction.workspace_Id) return;
     console.log("Rebook:", transaction);
+    router.push(`/workspace/${transaction.workspace_Id}`);
   };
 
   const handleContact = (transaction: Transaction) => {
@@ -230,7 +234,7 @@ export default function PurchaseHistoryPage() {
                   <>
                     {tx.isReview === 1 ? (
                       <Button
-                        className="text-white px-4 py-2 text-sm font-medium  rounded-md min-w-[100px]"
+                        className="text-white px-4 py-2 text-sm font-medium rounded-md min-w-[100px]"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleRebook(tx);
