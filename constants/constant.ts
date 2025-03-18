@@ -5,7 +5,6 @@ import {
   MenuItemProps,
   NewCustomerItemProps,
   PromotionProps,
-  ReviewItemProps,
   TimeItemProps,
   TopWorkspace,
   WithdrawalProps,
@@ -128,55 +127,6 @@ export const newCustomers: NewCustomerItemProps[] = [
     avatar: "/logo.png",
     name: "Nguyễn Văn C",
     location: "Hà Nội, Việt Nam",
-  },
-];
-
-export const reviews: ReviewItemProps[] = [
-  {
-    avatar: "/logo.png",
-    name: "Nguyễn Văn A",
-    date: "14/02/2025",
-    rating: 5,
-    review:
-      "Không gian làm việc rất chuyên nghiệp và yên tĩnh, phù hợp để tập trung hoàn toàn vào công việc",
-  },
-  {
-    avatar: "/logo.png",
-    name: "Nguyễn Văn B",
-    date: "14/02/2025",
-    rating: 4,
-    review:
-      "Không gian làm việc rất chuyên nghiệp và yên tĩnh, phù hợp để tập trung hoàn toàn vào công việc",
-  },
-  {
-    avatar: "/logo.png",
-    name: "Nguyễn Văn C",
-    date: "14/02/2025",
-    rating: 3,
-    review:
-      "Không gian làm việc rất chuyên nghiệp và yên tĩnh, phù hợp để tập trung hoàn toàn vào công việc",
-  },
-  {
-    avatar: "/logo.png",
-    name: "Nguyễn Văn D",
-    date: "14/02/2025",
-    rating: 5,
-    review:
-      "Không gian làm việc rất chuyên nghiệp và yên tĩnh, phù hợp để tập trung hoàn toàn vào công việc",
-  },
-  {
-    avatar: "/logo.png",
-    name: "Nguyễn Văn E",
-    date: "14/02/2025",
-    rating: 4,
-    review: "Một nơi làm việc đáng trải nghiệm với môi trường chuyên nghiệp",
-  },
-  {
-    avatar: "/logo.png",
-    name: "Nguyễn Văn F",
-    date: "14/02/2025",
-    rating: 5,
-    review: "Tuyệt vời! Không gian thoải mái và tiện ích đầy đủ",
   },
 ];
 
