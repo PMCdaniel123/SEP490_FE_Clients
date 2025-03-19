@@ -11,7 +11,7 @@ import Pagination from "@/components/pagination/pagination";
 import dayjs from "dayjs";
 import TransactionDetailsModal from "@/components/transaction-details-modal/transaction-details-modal";
 import ReviewForm from "@/components/review-list/review-form";
-import { Dropdown, Menu, Modal } from "antd";
+import { Dropdown, Modal } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -35,8 +35,18 @@ interface Transaction {
   workspace_CleanTime: number;
   promotion_Code: string;
   discount: number;
-  bookingHistoryAmenities: { name: string; quantity: number; unitPrice: number; imageUrl: string }[];
-  bookingHistoryBeverages: { name: string; quantity: number; unitPrice: number; imageUrl: string }[];
+  bookingHistoryAmenities: {
+    name: string;
+    quantity: number;
+    unitPrice: number;
+    imageUrl: string;
+  }[];
+  bookingHistoryBeverages: {
+    name: string;
+    quantity: number;
+    unitPrice: number;
+    imageUrl: string;
+  }[];
   bookingHistoryWorkspaceImages: { imageUrl: string }[];
   license_Name: string;
   license_Address: string;
@@ -54,28 +64,31 @@ export default function PurchaseHistoryPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState<null | Transaction>(null);
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<null | Transaction>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [transactionsPerPage] = useState(5);
   const { customer } = useSelector((state: RootState) => state.auth);
 
-  const fetchTransactionHistory = async () => {
-    if (!customer) return;
-
-    try {
-      const response = await axios.get("https://localhost:5050/users/booking/historybookings", {
-        params: { UserId: customer.id },
-      });
-      setTransactions(response.data.bookingHistories);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchTransactionHistory = async () => {
+      if (!customer) return;
+
+      try {
+        const response = await axios.get(
+          "https://localhost:5050/users/booking/historybookings",
+          {
+            params: { UserId: customer.id },
+          }
+        );
+        setTransactions(response.data.bookingHistories);
+        setLoading(false);
+      } catch {
+        setLoading(false);
+      }
+    };
     fetchTransactionHistory();
   }, [customer]);
 
@@ -106,7 +119,11 @@ export default function PurchaseHistoryPage() {
     setIsContactModalOpen(false);
   };
 
-  const handleReviewSubmit = async (review: { rating: number; comment: string; images: string[] }) => {
+  const handleReviewSubmit = async (review: {
+    rating: number;
+    comment: string;
+    images: string[];
+  }) => {
     if (!selectedTransaction) return;
 
     const reviewData = {
@@ -117,21 +134,48 @@ export default function PurchaseHistoryPage() {
     };
 
     try {
-      const response = await axios.post("https://localhost:5050/users/booking/rating", reviewData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(
+        "https://localhost:5050/users/booking/rating",
+        reviewData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.status !== 200) {
-        throw new Error(response.data.notification || "Có lỗi xảy ra khi gửi đánh giá.");
+        throw new Error(
+          response.data.notification || "Có lỗi xảy ra khi gửi đánh giá."
+        );
       }
 
       setIsReviewModalOpen(false);
-      toast.success(response.data.notification || "Đánh giá đã được gửi thành công!");
-      await fetchTransactionHistory();
-    } catch (error: any) {
-      toast.error(error.response?.data?.notification || "Có lỗi xảy ra khi gửi đánh giá.");
+      toast.success(
+        response.data.notification || "Đánh giá đã được gửi thành công!"
+      );
+
+      const fetchTransactionHistory = async () => {
+        if (!customer) return;
+
+        try {
+          const response = await axios.get(
+            "https://localhost:5050/users/booking/historybookings",
+            {
+              params: { UserId: customer.id },
+            }
+          );
+          setTransactions(response.data.bookingHistories);
+          setLoading(false);
+        } catch {
+          setLoading(false);
+        }
+      };
+      fetchTransactionHistory();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+      toast.error(errorMessage || "Có lỗi xảy ra khi gửi đánh giá.");
     }
   };
 
@@ -158,17 +202,27 @@ export default function PurchaseHistoryPage() {
   };
 
   const handleCancelTransaction = (transaction: Transaction) => {
-    console.log("Transaction cancellation requested for:", transaction.booking_CreatedAt);
+    console.log(
+      "Transaction cancellation requested for:",
+      transaction.booking_CreatedAt
+    );
     alert("Giao dịch đã được hủy thành công.");
   };
 
   const filteredTransactions = transactions
     .filter((tx) => tx.booking_Status?.toLowerCase() === activeTab)
-    .sort((a, b) => new Date(b.booking_CreatedAt).getTime() - new Date(a.booking_CreatedAt).getTime());
+    .sort(
+      (a, b) =>
+        new Date(b.booking_CreatedAt).getTime() -
+        new Date(a.booking_CreatedAt).getTime()
+    );
 
   const indexOfLastTransaction = currentPage * transactionsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
-  const currentTransactions = filteredTransactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
+  const currentTransactions = filteredTransactions.slice(
+    indexOfFirstTransaction,
+    indexOfLastTransaction
+  );
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
@@ -183,7 +237,9 @@ export default function PurchaseHistoryPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-36">
       <ToastContainer />
-      <h2 className="text-2xl font-bold text-[#8B5E3C] mb-4">Lịch sử thanh toán</h2>
+      <h2 className="text-2xl font-bold text-[#8B5E3C] mb-4">
+        Lịch sử thanh toán
+      </h2>
 
       <div className="flex space-x-6 border-b">
         {tabs.map((tab) => (
@@ -192,7 +248,8 @@ export default function PurchaseHistoryPage() {
             onClick={() => setActiveTab(tab.key.toLowerCase())}
             className={cn(
               "py-2 font-medium text-gray-600",
-              activeTab === tab.key.toLowerCase() && "border-b-2 border-black text-black"
+              activeTab === tab.key.toLowerCase() &&
+                "border-b-2 border-black text-black"
             )}
           >
             {tab.label}
@@ -268,7 +325,11 @@ export default function PurchaseHistoryPage() {
                           },
                           {
                             key: "cancel",
-                            label: <span className="text-red-500">Hủy giao dịch</span>,
+                            label: (
+                              <span className="text-red-500">
+                                Hủy giao dịch
+                              </span>
+                            ),
                             onClick: () => handleCancelTransaction(tx),
                           },
                         ],
@@ -305,7 +366,9 @@ export default function PurchaseHistoryPage() {
 
       <Pagination
         currentPage={currentPage}
-        totalPages={Math.ceil(filteredTransactions.length / transactionsPerPage)}
+        totalPages={Math.ceil(
+          filteredTransactions.length / transactionsPerPage
+        )}
         onPageChange={paginate}
       />
 
@@ -326,7 +389,9 @@ export default function PurchaseHistoryPage() {
           workspaceCapacity={selectedTransaction.workspace_Capacity}
           workspaceArea={selectedTransaction.workspace_Area}
           licenseName={selectedTransaction.license_Name}
-          workspaceImageUrl={selectedTransaction.bookingHistoryWorkspaceImages[0]?.imageUrl || ""}
+          workspaceImageUrl={
+            selectedTransaction.bookingHistoryWorkspaceImages[0]?.imageUrl || ""
+          }
           booking_Id={selectedTransaction.booking_Id}
         />
       )}
@@ -339,7 +404,10 @@ export default function PurchaseHistoryPage() {
         width={600}
       >
         {selectedTransaction && customer && customer.id && (
-          <ContactChat userId={customer.id.toString()} ownerId={selectedTransaction.workspace_Id} />
+          <ContactChat
+            userId={customer.id.toString()}
+            ownerId={selectedTransaction.workspace_Id}
+          />
         )}
       </Modal>
     </div>
