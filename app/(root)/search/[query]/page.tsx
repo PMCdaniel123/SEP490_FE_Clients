@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Users, Ruler, Briefcase } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Users, Ruler, Briefcase, MousePointerClick } from "lucide-react";
 import Loader from "@/components/loader/Loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
+  const router = useRouter();
   const [decodedQuery, setDecodedQuery] = useState<string | null>(null);
-  const [selectedResult, setSelectedResult] = useState<SearchResult | null>(null);
+  const [selectedResult, setSelectedResult] = useState<number | null>(null);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -72,7 +74,7 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
 
         setResults(mappedResults);
         if (mappedResults.length > 0) {
-          setSelectedResult(mappedResults[0]);
+          setSelectedResult(mappedResults[0].id);
         }
       } catch (error) {
         console.error("Error fetching search results:", error);
@@ -92,13 +94,12 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
     }).format(price);
   };
 
-  const extractIframeDimensions = (iframeHtml: string) => {
-    const widthMatch = iframeHtml.match(/width="(\d+)"/);
-    const heightMatch = iframeHtml.match(/height="(\d+)"/);
-    return {
-      width: widthMatch ? parseInt(widthMatch[1], 10) : 600,
-      height: heightMatch ? parseInt(heightMatch[1], 10) : 450,
-    };
+  const handleDoubleClick = (workspaceId: number) => {
+    router.push(`/workspace/${workspaceId}`);
+  };
+
+  const handleClick = (workspaceId: number) => {
+    setSelectedResult(workspaceId);
   };
 
   if (loading) {
@@ -108,10 +109,6 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
       </div>
     );
   }
-
-  const mapDimensions = selectedResult
-    ? extractIframeDimensions(selectedResult.googleMapUrl)
-    : { width: 600, height: 450 };
 
   return (
     <div className="flex flex-col md:flex-row gap-6 p-6">
@@ -137,8 +134,10 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
             results.map((result) => (
               <div
                 key={result.id}
-                className="bg-white p-4 rounded-lg shadow-md flex gap-4 cursor-pointer hover:shadow-lg transition"
-                onClick={() => setSelectedResult(result)}
+                className={`bg-white p-4 rounded-lg shadow-md flex gap-4 cursor-pointer hover:shadow-lg transition relative group ${selectedResult === result.id ? "ring-2 ring-yellow-500" : ""
+                  }`}
+                onClick={() => handleClick(result.id)}
+                onDoubleClick={() => handleDoubleClick(result.id)}
               >
                 <img
                   src={result.images[0] || "no-image"}
@@ -166,6 +165,10 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
                     </p>
                   </div>
                 </div>
+                <div className="absolute bottom-2 right-2 bg-gray-800 text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                  <MousePointerClick size={14} />
+                  <span>Nhấn đúp để xem chi tiết</span>
+                </div>
               </div>
             ))
           ) : (
@@ -174,18 +177,22 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
         </div>
       </div>
 
-      <div className="w-full md:w-2/4 bg-white p-4 rounded-lg shadow-md sticky top-6">
+      <div className="w-full md:w-2/4 bg-white p-4 rounded-lg shadow-md sticky top-6 h-fit">
         <h2 className="text-xl font-bold mb-4">Bản đồ</h2>
         <div
           className="relative overflow-hidden rounded-lg"
           style={{
             width: "100%",
-            paddingTop: `${(mapDimensions.height / mapDimensions.width) * 100}%`,
+            paddingTop: "56.25%",
           }}
         >
           {selectedResult ? (
             <iframe
-              src={selectedResult.googleMapUrl.match(/src="([^"]+)"/)?.[1] || ""}
+              src={
+                results.find((r) => r.id === selectedResult)?.googleMapUrl.match(
+                  /src="([^"]+)"/
+                )?.[1] || ""
+              }
               width="100%"
               height="100%"
               style={{
