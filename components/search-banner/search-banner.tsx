@@ -1,52 +1,70 @@
 import Image from "next/image";
-import {
-  Clock,
-  LucideIcon,
-  MapPin,
-  Search,
-  Sofa,
-  UsersRound,
-} from "lucide-react";
+import { Clock, LucideIcon, MapPin, Search, Sofa, UsersRound, AlertCircle } from "lucide-react";
 import * as Select from "@radix-ui/react-select";
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { fakeData } from "@/constants/fakeData";
+import { useRouter } from "next/navigation";
 
 export default function SearchBanner() {
+  const router = useRouter();
   const [location, setLocation] = useState("");
   const [time, setTime] = useState("");
   const [space, setSpace] = useState("");
   const [people, setPeople] = useState("");
+
   const [locations, setLocations] = useState<string[]>([]);
-  const [times, setTimes] = useState<string[]>([]);
+  const [times] = useState<{ label: string; value: string }[]>([
+    { label: "Mở cửa 24h", value: "1" },
+    { label: "Linh hoạt", value: "0" },
+  ]);
   const [spaces, setSpaces] = useState<string[]>([]);
   const [capacities, setCapacities] = useState<string[]>([]);
 
-  useEffect(() => {
-    const uniqueLocations = Array.from(
-      new Set(fakeData.map((item) => item.address))
-    );
-    const uniqueTimes = ["Sáng", "Chiều", "Cả ngày"];
-    const uniqueSpaces = Array.from(
-      new Set(fakeData.map((item) => item.roomType))
-    );
-    const uniqueCapacities = Array.from(
-      new Set(fakeData.map((item) => item.roomCapacity))
-    );
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    setLocations(uniqueLocations);
-    setTimes(uniqueTimes);
-    setSpaces(uniqueSpaces);
-    setCapacities(uniqueCapacities);
+  useEffect(() => {
+    const fetchDropdownData = async () => {
+      try {
+        const response = await fetch("https://localhost:5050/workspaces");
+        if (!response.ok) {
+          throw new Error("Failed to fetch workspace data.");
+        }
+        const data: { workspaces: { address: string; category: string; capacity: number }[] } =
+          await response.json();
+
+        const uniqueLocations = Array.from(new Set(data.workspaces.map((ws: any) => ws.address)));
+        const uniqueSpaces = Array.from(new Set(data.workspaces.map((ws: any) => ws.category)));
+        const uniqueCapacities = Array.from(
+          new Set(data.workspaces.map((ws: any) => ws.capacity.toString()))
+        );
+
+        setLocations(uniqueLocations);
+        setSpaces(uniqueSpaces);
+        setCapacities(uniqueCapacities);
+      } catch (error) {
+        console.error("Error fetching dropdown data:", error);
+      }
+    };
+
+    fetchDropdownData();
   }, []);
 
-  const buildQuery = () => {
-    return new URLSearchParams({
-      location,
-      time,
-      space,
-      people,
-    }).toString();
+  const handleSearch = () => {
+
+    const queryParams: Record<string, string> = {};
+    if (location) queryParams.Address = location;
+    if (space) queryParams.Category = space;
+    if (time) queryParams.Is24h = time;
+    if (people) queryParams.Capacity = people;
+
+    if (Object.keys(queryParams).length === 0) {
+      setErrorMessage("Vui lòng chọn ít nhất một tiêu chí tìm kiếm!");
+      return;
+    }
+
+    setErrorMessage(null);
+    const query = new URLSearchParams(queryParams).toString();
+
+    router.push(`/search/${encodeURIComponent(query)}`);
   };
 
   return (
@@ -87,8 +105,8 @@ export default function SearchBanner() {
             hasBorder
           >
             {times.map((t) => (
-              <DropdownItem key={t} value={t}>
-                {t}
+              <DropdownItem key={t.value} value={t.value}>
+                {t.label}
               </DropdownItem>
             ))}
           </Dropdown>
@@ -123,12 +141,21 @@ export default function SearchBanner() {
             ))}
           </Dropdown>
 
-          <Link href={`/search/${buildQuery()}`}>
-            <div className="ml-2 bg-gray-800 text-white p-4 rounded-full shadow-md transition-transform transform hover:scale-105 active:scale-95">
-              <Search size={22} />
-            </div>
-          </Link>
+          <div
+            onClick={handleSearch}
+            className="ml-2 bg-gray-800 text-white p-4 rounded-full shadow-md transition-transform transform hover:scale-105 active:scale-95 cursor-pointer"
+          >
+            <Search size={22} />
+          </div>
         </div>
+
+
+        {errorMessage && (
+          <div className="mt-4 bg-red-100 text-red-700 p-4 rounded-lg flex items-center gap-2 shadow-md">
+            <AlertCircle size={20} />
+            <span>{errorMessage}</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -161,9 +188,8 @@ function Dropdown({
       </p>
       <Select.Root value={value} onValueChange={setValue}>
         <Select.Trigger
-          className={`w-full flex justify-between items-center bg-transparent text-sm outline-none p-2 cursor-pointer font-semibold ${
-            value ? "text-black" : "text-sixth"
-          }`}
+          className={`w-full flex justify-between items-center bg-transparent text-sm outline-none p-2 cursor-pointer font-semibold ${value ? "text-black" : "text-sixth"
+            }`}
         >
           <Select.Value placeholder={placeholder} />
         </Select.Trigger>

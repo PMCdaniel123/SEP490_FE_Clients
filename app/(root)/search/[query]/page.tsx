@@ -1,70 +1,105 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fakeData } from "@/constants/fakeData";
-import { Users, Ruler, Star, Briefcase } from "lucide-react";
+import { Users, Ruler, Briefcase } from "lucide-react";
 import Loader from "@/components/loader/Loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-const SearchPage = ({ params }: { params: { query: string } }) => {
+const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
   const [decodedQuery, setDecodedQuery] = useState<string | null>(null);
-  const [selectedResult, setSelectedResult] = useState<SearchResult | null>(
-    null
-  );
-
-  useEffect(() => {
-    const unwrapParams = async () => {
-      const unwrappedParams = await params;
-      setDecodedQuery(decodeURIComponent(unwrappedParams.query));
-    };
-
-    unwrapParams();
-  }, [params]);
-
-  const searchParams = decodedQuery ? new URLSearchParams(decodedQuery) : null;
-  const location = searchParams?.get("location");
-  const time = searchParams?.get("time");
-  const space = searchParams?.get("space");
-  const people = searchParams?.get("people");
-
-  interface SearchResult {
-    id: string;
-    title: string;
-    description: string;
-    image: string;
-    price: string;
-    address: string;
-    roomCapacity: string;
-    roomType: string;
-    roomSize: string;
-    rating: number;
-    time: string;
-    latitude: number;
-    longitude: number;
-    mapUrl: string;
-  }
-
+  const [selectedResult, setSelectedResult] = useState<SearchResult | null>(null);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(true);
 
+  interface SearchResult {
+    id: number;
+    name: string;
+    address: string;
+    googleMapUrl: string;
+    description: string;
+    capacity: number;
+    category: string;
+    area: number;
+    is24h: number;
+    shortTermPrice: number | null;
+    longTermPrice: number | null;
+    images: string[];
+    facilities: string[];
+    policies: string[];
+  }
+
   useEffect(() => {
-    if (decodedQuery) {
-      const filteredResults = fakeData.filter((item) => {
-        return (
-          (!location || item.address.includes(location)) &&
-          (!time || item.time.includes(time)) &&
-          (!space || item.roomType.includes(space)) &&
-          (!people || item.roomCapacity.includes(people))
-        );
-      });
-      setResults(filteredResults as SearchResult[]);
-      setLoading(false);
-      if (filteredResults.length > 0 && !selectedResult) {
-        setSelectedResult(filteredResults[0]);
+    const fetchSearchResults = async () => {
+      try {
+        const resolvedParams = await params;
+        const unwrappedQuery = resolvedParams.query
+          ? decodeURIComponent(resolvedParams.query)
+          : "";
+
+        setDecodedQuery(unwrappedQuery);
+
+        const endpoint = unwrappedQuery
+          ? `https://localhost:5050/users/searchbyfourcriteria?${unwrappedQuery}`
+          : `https://localhost:5050/users/searchbyfourcriteria`;
+
+        const response = await fetch(endpoint);
+        if (!response.ok) {
+          throw new Error("Failed to fetch search results.");
+        }
+        const data = await response.json();
+
+        const mappedResults = data.workspaces.map((workspace: any) => ({
+          id: workspace.id,
+          name: workspace.name,
+          address: workspace.address,
+          googleMapUrl: workspace.googleMapUrl,
+          description: workspace.description,
+          capacity: workspace.capacity,
+          category: workspace.category,
+          area: workspace.area,
+          is24h: workspace.is24h,
+          shortTermPrice:
+            workspace.prices.find((price: any) => price.category === "Giờ")
+              ?.price || null,
+          longTermPrice:
+            workspace.prices.find((price: any) => price.category === "Ngày")
+              ?.price || null,
+          images: workspace.images.map((image: any) => image.imgUrl),
+          facilities: workspace.facilities.map((facility: any) => facility.facilityName),
+          policies: workspace.policies.map((policy: any) => policy.policyName),
+        }));
+
+        setResults(mappedResults);
+        if (mappedResults.length > 0) {
+          setSelectedResult(mappedResults[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+      } finally {
+        setLoading(false);
       }
-    }
-  }, [decodedQuery, location, time, space, people, selectedResult]);
+    };
+
+    fetchSearchResults();
+  }, [params]);
+
+  const formatPrice = (price: number | null) => {
+    if (price === null) return "Liên hệ";
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(price);
+  };
+
+  const extractIframeDimensions = (iframeHtml: string) => {
+    const widthMatch = iframeHtml.match(/width="(\d+)"/);
+    const heightMatch = iframeHtml.match(/height="(\d+)"/);
+    return {
+      width: widthMatch ? parseInt(widthMatch[1], 10) : 600,
+      height: heightMatch ? parseInt(heightMatch[1], 10) : 450,
+    };
+  };
 
   if (loading) {
     return (
@@ -73,6 +108,10 @@ const SearchPage = ({ params }: { params: { query: string } }) => {
       </div>
     );
   }
+
+  const mapDimensions = selectedResult
+    ? extractIframeDimensions(selectedResult.googleMapUrl)
+    : { width: 600, height: 450 };
 
   return (
     <div className="flex flex-col md:flex-row gap-6 p-6">
@@ -83,7 +122,7 @@ const SearchPage = ({ params }: { params: { query: string } }) => {
             placeholder="Tìm kiếm..."
             className="border p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-yellow-500"
           />
-          <Button className="ml-2  text-white px-4 py-2 rounded-md  transition">
+          <Button className="ml-2 text-white px-4 py-2 rounded-md transition">
             Lọc
           </Button>
         </div>
@@ -102,29 +141,29 @@ const SearchPage = ({ params }: { params: { query: string } }) => {
                 onClick={() => setSelectedResult(result)}
               >
                 <img
-                  src={result.image}
-                  alt={result.title}
+                  src={result.images[0] || "no-image"}
+                  alt={result.name}
                   className="w-1/3 h-40 object-cover rounded-lg"
                 />
                 <div className="flex flex-col justify-between w-2/3">
-                  <h2 className="text-xl font-bold">{result.title}</h2>
+                  <h2 className="text-xl font-bold">{result.name}</h2>
                   <p className="text-gray-600 text-sm">{result.address}</p>
                   <div className="flex items-center gap-4 text-gray-500 text-sm mt-2">
                     <div className="flex items-center">
-                      <Briefcase size={16} className="mr-1" /> {result.roomType}
+                      <Briefcase size={16} className="mr-1" /> {result.category}
                     </div>
                     <div className="flex items-center">
-                      <Users size={16} className="mr-1" /> {result.roomCapacity}
+                      <Users size={16} className="mr-1" /> {result.capacity} người
                     </div>
                     <div className="flex items-center">
-                      <Ruler size={16} className="mr-1" /> {result.roomSize}
+                      <Ruler size={16} className="mr-1" /> {result.area} m²
                     </div>
                   </div>
-                  <div className="flex justify-between items-center mt-4">
-                    <div className="flex items-center text-yellow-500 font-semibold">
-                      <Star size={16} className="mr-1" /> {result.rating}
-                    </div>
-                    <p className="text-lg font-bold">{result.price}</p>
+                  <div className="flex justify-end items-center mt-4">
+                    <p className="text-lg font-bold">
+                      {formatPrice(result.shortTermPrice)} -{" "}
+                      {formatPrice(result.longTermPrice)}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -135,16 +174,27 @@ const SearchPage = ({ params }: { params: { query: string } }) => {
         </div>
       </div>
 
-      <div className="w-full md:w-2/4 bg-white p-4 rounded-lg shadow-md h-fit sticky top-6">
+      <div className="w-full md:w-2/4 bg-white p-4 rounded-lg shadow-md sticky top-6">
         <h2 className="text-xl font-bold mb-4">Bản đồ</h2>
-        <div className="h-96">
+        <div
+          className="relative overflow-hidden rounded-lg"
+          style={{
+            width: "100%",
+            paddingTop: `${(mapDimensions.height / mapDimensions.width) * 100}%`,
+          }}
+        >
           {selectedResult ? (
             <iframe
-              src={selectedResult.mapUrl}
+              src={selectedResult.googleMapUrl.match(/src="([^"]+)"/)?.[1] || ""}
               width="100%"
               height="100%"
-              style={{ border: 0 }}
-              allowFullScreen={false}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                border: 0,
+              }}
+              allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             ></iframe>

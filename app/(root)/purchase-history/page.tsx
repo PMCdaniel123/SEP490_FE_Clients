@@ -268,7 +268,7 @@ export default function PurchaseHistoryPage() {
                           },
                           {
                             key: "cancel",
-                            label: "Hủy giao dịch",
+                            label: <span className="text-red-500">Hủy giao dịch</span>,
                             onClick: () => handleCancelTransaction(tx),
                           },
                         ],
