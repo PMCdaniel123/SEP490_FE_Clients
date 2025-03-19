@@ -37,6 +37,7 @@ import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import WorkspaceDetailSidebar from "@/components/layout/workspace-detail-sidebar";
 import { Price, Workspace } from "@/types";
+import SimilarSpace from "@/components/similar-space/similar-space";
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams() as { workspaceId: string };
@@ -191,15 +192,9 @@ const WorkspaceDetail = () => {
           </div>
 
           <GoogleMap url={workspace.googleMapUrl} />
-
-          {/* <div className="flex flex-col gap-6">
-            <h2 className="text-xl font-bold text-primary">
-              Các không gian tương tự
-            </h2>
-            <div>
-              <HighRatingSpace />
-            </div>
-          </div> */}
+          <div className="flex flex-col gap-6">
+            <SimilarSpace category={workspace.category} />
+          </div>
 
           <div className="flex flex-col gap-6">
             <h2 className="text-xl font-bold text-primary">
