@@ -1,12 +1,19 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Users, Ruler, Briefcase, MousePointerClick, FilterIcon } from "lucide-react";
+import {
+  Users,
+  Ruler,
+  Briefcase,
+  MousePointerClick,
+  FilterIcon,
+} from "lucide-react";
 import Loader from "@/components/loader/Loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Slider, Checkbox } from "antd";
+import { Slider, Checkbox, ConfigProvider } from "antd";
 
 const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
   const router = useRouter();
@@ -48,7 +55,6 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
           ? decodeURIComponent(resolvedParams.query)
           : "";
 
-
         const endpoint = unwrappedQuery
           ? `https://localhost:5050/users/searchbyfourcriteria?${unwrappedQuery}`
           : `https://localhost:5050/users/searchbyfourcriteria`;
@@ -64,52 +70,63 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
           price: number;
         }
 
-        const mappedResults = data.workspaces.map((workspace: {
-          id: number;
-          name: string;
-          address: string;
-          googleMapUrl: string;
-          description: string;
-          capacity: number;
-          category: string;
-          area: number;
-          is24h: number;
-          prices: { category: string; price: number }[];
-          images: { imgUrl: string }[];
-          facilities: { facilityName: string }[];
-          policies: { policyName: string }[];
-        }) => ({
-          id: workspace.id,
-          name: workspace.name,
-          address: workspace.address,
-          googleMapUrl: workspace.googleMapUrl,
-          description: workspace.description,
-          capacity: workspace.capacity,
-          category: workspace.category,
-          area: workspace.area,
-          is24h: workspace.is24h,
-          shortTermPrice:
-            workspace.prices.find((price: Price) => price.category === "Giờ")
-              ?.price || null,
-          longTermPrice:
-            workspace.prices.find((price: Price) => price.category === "Ngày")
-              ?.price || null,
-          images: workspace.images.map((image: { imgUrl: string }) => image.imgUrl),
-          facilities: workspace.facilities.map((facility: { facilityName: string }) => facility.facilityName),
-          policies: workspace.policies.map((policy: { policyName: string }) => policy.policyName),
-        }));
+        const mappedResults = data.workspaces.map(
+          (workspace: {
+            id: number;
+            name: string;
+            address: string;
+            googleMapUrl: string;
+            description: string;
+            capacity: number;
+            category: string;
+            area: number;
+            is24h: number;
+            prices: { category: string; price: number }[];
+            images: { imgUrl: string }[];
+            facilities: { facilityName: string }[];
+            policies: { policyName: string }[];
+          }) => ({
+            id: workspace.id,
+            name: workspace.name,
+            address: workspace.address,
+            googleMapUrl: workspace.googleMapUrl,
+            description: workspace.description,
+            capacity: workspace.capacity,
+            category: workspace.category,
+            area: workspace.area,
+            is24h: workspace.is24h,
+            shortTermPrice:
+              workspace.prices.find((price: Price) => price.category === "Giờ")
+                ?.price || null,
+            longTermPrice:
+              workspace.prices.find((price: Price) => price.category === "Ngày")
+                ?.price || null,
+            images: workspace.images.map(
+              (image: { imgUrl: string }) => image.imgUrl
+            ),
+            facilities: workspace.facilities.map(
+              (facility: { facilityName: string }) => facility.facilityName
+            ),
+            policies: workspace.policies.map(
+              (policy: { policyName: string }) => policy.policyName
+            ),
+          })
+        );
 
         setResults(mappedResults);
         setFilteredResults(mappedResults);
 
         const uniqueFacilities = Array.from(
           new Set(
-            data.workspaces.flatMap((workspace: { facilities: { facilityName: string }[] }) =>
-              workspace.facilities.map((facility: { facilityName: string }) => facility.facilityName)
+            data.workspaces.flatMap(
+              (workspace: { facilities: { facilityName: string }[] }) =>
+                workspace.facilities.map(
+                  (facility: { facilityName: string }) => facility.facilityName
+                )
             )
           )
         );
-        setFacilityOptions(uniqueFacilities as string[]); 
+        setFacilityOptions(uniqueFacilities as string[]);
 
         if (mappedResults.length > 0) {
           setSelectedResult(mappedResults[0].id);
@@ -146,9 +163,12 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
 
   const applyFilters = () => {
     const filtered = results.filter((workspace) => {
-      const workspacePrice = workspace.shortTermPrice || workspace.longTermPrice || 0;
-      const priceMatch = workspacePrice >= priceRange[0] && workspacePrice <= priceRange[1];
-      const areaMatch = workspace.area >= areaRange[0] && workspace.area <= areaRange[1];
+      const workspacePrice =
+        workspace.shortTermPrice || workspace.longTermPrice || 0;
+      const priceMatch =
+        workspacePrice >= priceRange[0] && workspacePrice <= priceRange[1];
+      const areaMatch =
+        workspace.area >= areaRange[0] && workspace.area <= areaRange[1];
       const facilitiesMatch =
         selectedFacilities.length === 0 ||
         selectedFacilities.every((facility) =>
@@ -199,14 +219,22 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
 
             <div className="mb-4">
               <p className="font-medium">Giá (VND):</p>
-              <Slider
-                range
-                min={0}
-                max={1000000}
-                step={50000}
-                value={priceRange}
-                onChange={(value) => setPriceRange(value as [number, number])}
-              />
+              <ConfigProvider
+                theme={{
+                  token: {
+                    colorPrimary: "#835101",
+                  },
+                }}
+              >
+                <Slider
+                  range
+                  min={0}
+                  max={1000000}
+                  step={50000}
+                  value={priceRange}
+                  onChange={(value) => setPriceRange(value as [number, number])}
+                />
+              </ConfigProvider>
               <div className="flex justify-between">
                 <span>{formatPrice(priceRange[0])}</span>
                 <span>{formatPrice(priceRange[1])}</span>
@@ -215,24 +243,40 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
 
             <div className="mb-4">
               <p className="font-medium">Tiện ích:</p>
-              <Checkbox.Group
-                options={facilityOptions}
-                value={selectedFacilities}
-                onChange={(checkedValues) =>
-                  setSelectedFacilities(checkedValues as string[])
-                }
-              />
+              <ConfigProvider
+                theme={{
+                  token: {
+                    colorPrimary: "#835101",
+                  },
+                }}
+              >
+                <Checkbox.Group
+                  options={facilityOptions}
+                  value={selectedFacilities}
+                  onChange={(checkedValues) =>
+                    setSelectedFacilities(checkedValues as string[])
+                  }
+                />
+              </ConfigProvider>
             </div>
 
             <div className="mb-4">
               <p className="font-medium">Diện tích (m²):</p>
-              <Slider
-                range
-                min={0}
-                max={500}
-                value={areaRange}
-                onChange={(value) => setAreaRange(value as [number, number])}
-              />
+              <ConfigProvider
+                theme={{
+                  token: {
+                    colorPrimary: "#835101",
+                  },
+                }}
+              >
+                <Slider
+                  range
+                  min={0}
+                  max={500}
+                  value={areaRange}
+                  onChange={(value) => setAreaRange(value as [number, number])}
+                />
+              </ConfigProvider>
               <div className="flex justify-between">
                 <span>{areaRange[0]} m²</span>
                 <span>{areaRange[1]} m²</span>
@@ -260,8 +304,9 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
             filteredResults.map((result) => (
               <div
                 key={result.id}
-                className={`bg-white p-4 rounded-lg shadow-md flex gap-4 cursor-pointer hover:shadow-lg transition relative group ${selectedResult === result.id ? "ring-2 ring-primary" : ""
-                  }`}
+                className={`bg-white p-4 rounded-lg shadow-md flex gap-4 cursor-pointer hover:shadow-lg transition relative group ${
+                  selectedResult === result.id ? "ring-2 ring-primary" : ""
+                }`}
                 onClick={() => handleClick(result.id)}
                 onDoubleClick={() => handleDoubleClick(result.id)}
               >
@@ -278,7 +323,8 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
                       <Briefcase size={16} className="mr-1" /> {result.category}
                     </div>
                     <div className="flex items-center">
-                      <Users size={16} className="mr-1" /> {result.capacity} người
+                      <Users size={16} className="mr-1" /> {result.capacity}{" "}
+                      người
                     </div>
                     <div className="flex items-center">
                       <Ruler size={16} className="mr-1" /> {result.area} m²
@@ -306,7 +352,7 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
                     </p>
                   </div>
                 </div>
-                <div className="absolute bottom-2 right-2 bg-gray-800 text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                <div className="absolute bottom-2 right-2 bg-primary text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
                   <MousePointerClick size={14} />
                   <span>Nhấn đúp để xem chi tiết</span>
                 </div>
@@ -330,9 +376,9 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
           {selectedResult ? (
             <iframe
               src={
-                filteredResults.find((r) => r.id === selectedResult)?.googleMapUrl.match(
-                  /src="([^"]+)"/
-                )?.[1] || ""
+                filteredResults
+                  .find((r) => r.id === selectedResult)
+                  ?.googleMapUrl.match(/src="([^"]+)"/)?.[1] || ""
               }
               width="100%"
               height="100%"

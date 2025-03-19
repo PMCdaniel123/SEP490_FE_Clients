@@ -103,7 +103,7 @@ function ImageGallery({ workspace }: { workspace: Workspace }) {
         </div>
       )}
 
-      <Modal open={selectedImageIndex !== null} footer={null} onCancel={() => setSelectedImageIndex(null)} centered>
+      <Modal width={650} open={selectedImageIndex !== null} footer={null} onCancel={() => setSelectedImageIndex(null)} centered>
         <div className="relative">
           <Slider ref={sliderRef} {...settings}>
             {images.map((image, index) => (
