@@ -340,7 +340,7 @@ export default function Checkout() {
           <div>
             <p className="text-fourth text-sm">Loại: {workspace?.category}</p>
             <p className="text-fourth text-sm">
-              Diện tích: {workspace?.area} m2
+              Diện tích: {workspace?.area} m²
             </p>
             <p className="text-fourth text-sm">
               Sức chứa: {workspace?.capacity} người
