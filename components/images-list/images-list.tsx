@@ -86,6 +86,20 @@ function ImageGallery({ workspace }: { workspace: Workspace }) {
               <span className="text-white font-medium relative z-10">Xem thêm +</span>
             </div>
           )}
+          {images.length === 4 && (
+            <div
+              className="w-full h-[195px] flex items-center justify-center bg-gray-200 rounded-lg cursor-pointer relative"
+              onClick={() => handleImageClick(3)}
+              style={{
+                backgroundImage: `url(${images[3].imgUrl})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <div className="absolute inset-0 bg-black opacity-50 rounded-lg"></div>
+              <span className="text-white font-medium relative z-10">Xem tất cả +</span>
+            </div>
+          )}
         </div>
       )}
 
