@@ -9,6 +9,8 @@ import { toast } from "react-toastify";
 function BeveragesList({ ownerId }: { ownerId: string }) {
   const [loading, setLoading] = useState(false);
   const [beverageList, setBeverageList] = useState<BeverageProps[]>([]);
+  const [drinkList, setDrinkList] = useState<BeverageProps[]>([]);
+  const [foodList, setFoodList] = useState<BeverageProps[]>([]);
 
   useEffect(() => {
     if (!ownerId) return;
@@ -26,6 +28,20 @@ function BeveragesList({ ownerId }: { ownerId: string }) {
 
         const data = await response.json();
         setBeverageList(Array.isArray(data.beverages) ? data.beverages : []);
+        setDrinkList(
+          Array.isArray(data.beverages)
+            ? data.beverages.filter(
+                (item: BeverageProps) => item.category === "Thức uống"
+              )
+            : []
+        );
+        setFoodList(
+          Array.isArray(data.beverages)
+            ? data.beverages.filter(
+                (item: BeverageProps) => item.category === "Đồ ăn"
+              )
+            : []
+        );
         setLoading(false);
       } catch (error) {
         const errorMessage =
@@ -37,6 +53,8 @@ function BeveragesList({ ownerId }: { ownerId: string }) {
           theme: "light",
         });
         setBeverageList([]);
+        setDrinkList([]);
+        setFoodList([]);
         setLoading(false);
       }
     };
@@ -52,12 +70,14 @@ function BeveragesList({ ownerId }: { ownerId: string }) {
     );
   }
 
+  console.log(drinkList, foodList);
+
   return (
     <div className="mx-auto w-full flex flex-col gap-4 mt-8">
       <p className="text-base font-semibold leading-none text-black">
         1. Thức uống
       </p>
-      {beverageList.length > 0 ? (
+      {beverageList.length > 0 && drinkList.length > 0 ? (
         <div>
           {beverageList.map(
             (beverage) =>
@@ -74,7 +94,7 @@ function BeveragesList({ ownerId }: { ownerId: string }) {
       <p className="text-base font-semibold leading-none text-black">
         2. Đồ ăn
       </p>
-      {beverageList.length > 0 ? (
+      {beverageList.length > 0 && foodList.length > 0 ? (
         <div>
           {beverageList.map(
             (beverage) =>

@@ -36,7 +36,7 @@ export const workspaceSchema = z.object({
     required_error: "Vui lòng loại không gian hợp lệ",
   }),
   area: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-    message: "Diện tích phải lớn hơn 0 m2",
+    message: "Diện tích phải lớn hơn 0 m²",
   }),
   capacity: z
     .string()

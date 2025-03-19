@@ -155,7 +155,7 @@ export default function PropertyGrid() {
                   người
                 </span>
                 <span className="flex items-center mr-2">
-                  <Ruler className="mr-1" size={16} /> {workspace.area} m2
+                  <Ruler className="mr-1" size={16} /> {workspace.area} m²
                 </span>
                 <span className="flex items-center">
                   <Sofa className="mr-1" size={16} /> {workspace.category}
