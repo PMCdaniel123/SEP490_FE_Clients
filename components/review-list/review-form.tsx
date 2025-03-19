@@ -148,7 +148,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
                 <Users className="mr-1" size={16} /> {workspaceCapacity} người
               </span>
               <span className="flex items-center mr-6">
-                <Ruler className="mr-1" size={16} /> {workspaceArea} m2
+                <Ruler className="mr-1" size={16} /> {workspaceArea} m²
               </span>
               <span className="flex items-center">
                 <Sofa className="mr-1" size={16} /> {workspaceCategory}
