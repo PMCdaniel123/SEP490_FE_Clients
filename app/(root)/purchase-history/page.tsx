@@ -254,37 +254,25 @@ export default function PurchaseHistoryPage() {
                       </Button>
                     )}
                     <Dropdown
-                      overlay={
-                        <Menu>
-                          <Menu.Item
-                            key="rebook"
-                            onClick={(e) => {
-                              e.domEvent.stopPropagation();
-                              handleRebook(tx);
-                            }}
-                          >
-                            Đặt lại
-                          </Menu.Item>
-                          <Menu.Item
-                            key="contact"
-                            onClick={(e) => {
-                              e.domEvent.stopPropagation();
-                              handleContact(tx);
-                            }}
-                          >
-                            Liên hệ
-                          </Menu.Item>
-                          <Menu.Item
-                            key="cancel"
-                            onClick={(e) => {
-                              e.domEvent.stopPropagation();
-                              handleCancelTransaction(tx);
-                            }}
-                          >
-                            Hủy giao dịch
-                          </Menu.Item>
-                        </Menu>
-                      }
+                      menu={{
+                        items: [
+                          {
+                            key: "rebook",
+                            label: "Đặt lại",
+                            onClick: () => handleRebook(tx),
+                          },
+                          {
+                            key: "contact",
+                            label: "Liên hệ",
+                            onClick: () => handleContact(tx),
+                          },
+                          {
+                            key: "cancel",
+                            label: <span className="text-red-500">Hủy giao dịch</span>,
+                            onClick: () => handleCancelTransaction(tx),
+                          },
+                        ],
+                      }}
                       trigger={["click"]}
                     >
                       <Button
