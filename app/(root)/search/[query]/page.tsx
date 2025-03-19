@@ -2,17 +2,26 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Users, Ruler, Briefcase, MousePointerClick } from "lucide-react";
+import { Users, Ruler, Briefcase, MousePointerClick, FilterIcon } from "lucide-react";
 import Loader from "@/components/loader/Loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Slider, Checkbox } from "antd";
 
 const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
   const router = useRouter();
-  const [decodedQuery, setDecodedQuery] = useState<string | null>(null);
+
   const [selectedResult, setSelectedResult] = useState<number | null>(null);
   const [results, setResults] = useState<SearchResult[]>([]);
+  const [filteredResults, setFilteredResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Bộ lọc
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000000]);
+  const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
+  const [areaRange, setAreaRange] = useState<[number, number]>([0, 500]);
+  const [showFilters, setShowFilters] = useState(false);
+  const [facilityOptions, setFacilityOptions] = useState<string[]>([]); // State for dynamic options
 
   interface SearchResult {
     id: number;
@@ -39,7 +48,6 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
           ? decodeURIComponent(resolvedParams.query)
           : "";
 
-        setDecodedQuery(unwrappedQuery);
 
         const endpoint = unwrappedQuery
           ? `https://localhost:5050/users/searchbyfourcriteria?${unwrappedQuery}`
@@ -51,7 +59,26 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
         }
         const data = await response.json();
 
-        const mappedResults = data.workspaces.map((workspace: any) => ({
+        interface Price {
+          category: string;
+          price: number;
+        }
+
+        const mappedResults = data.workspaces.map((workspace: {
+          id: number;
+          name: string;
+          address: string;
+          googleMapUrl: string;
+          description: string;
+          capacity: number;
+          category: string;
+          area: number;
+          is24h: number;
+          prices: { category: string; price: number }[];
+          images: { imgUrl: string }[];
+          facilities: { facilityName: string }[];
+          policies: { policyName: string }[];
+        }) => ({
           id: workspace.id,
           name: workspace.name,
           address: workspace.address,
@@ -62,17 +89,28 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
           area: workspace.area,
           is24h: workspace.is24h,
           shortTermPrice:
-            workspace.prices.find((price: any) => price.category === "Giờ")
+            workspace.prices.find((price: Price) => price.category === "Giờ")
               ?.price || null,
           longTermPrice:
-            workspace.prices.find((price: any) => price.category === "Ngày")
+            workspace.prices.find((price: Price) => price.category === "Ngày")
               ?.price || null,
-          images: workspace.images.map((image: any) => image.imgUrl),
-          facilities: workspace.facilities.map((facility: any) => facility.facilityName),
-          policies: workspace.policies.map((policy: any) => policy.policyName),
+          images: workspace.images.map((image: { imgUrl: string }) => image.imgUrl),
+          facilities: workspace.facilities.map((facility: { facilityName: string }) => facility.facilityName),
+          policies: workspace.policies.map((policy: { policyName: string }) => policy.policyName),
         }));
 
         setResults(mappedResults);
+        setFilteredResults(mappedResults);
+
+        const uniqueFacilities = Array.from(
+          new Set(
+            data.workspaces.flatMap((workspace: { facilities: { facilityName: string }[] }) =>
+              workspace.facilities.map((facility: { facilityName: string }) => facility.facilityName)
+            )
+          )
+        );
+        setFacilityOptions(uniqueFacilities as string[]); 
+
         if (mappedResults.length > 0) {
           setSelectedResult(mappedResults[0].id);
         }
@@ -102,6 +140,34 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
     setSelectedResult(workspaceId);
   };
 
+  const toggleFilters = () => {
+    setShowFilters(!showFilters);
+  };
+
+  const applyFilters = () => {
+    const filtered = results.filter((workspace) => {
+      const workspacePrice = workspace.shortTermPrice || workspace.longTermPrice || 0;
+      const priceMatch = workspacePrice >= priceRange[0] && workspacePrice <= priceRange[1];
+      const areaMatch = workspace.area >= areaRange[0] && workspace.area <= areaRange[1];
+      const facilitiesMatch =
+        selectedFacilities.length === 0 ||
+        selectedFacilities.every((facility) =>
+          workspace.facilities.includes(facility)
+        );
+
+      return priceMatch && areaMatch && facilitiesMatch;
+    });
+
+    setFilteredResults(filtered);
+  };
+
+  const resetFilters = () => {
+    setPriceRange([0, 1000000]);
+    setSelectedFacilities([]);
+    setAreaRange([0, 500]);
+    setFilteredResults(results);
+  };
+
   if (loading) {
     return (
       <div className="text-center">
@@ -119,22 +185,82 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
             placeholder="Tìm kiếm..."
             className="border p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-yellow-500"
           />
-          <Button className="ml-2 text-white px-4 py-2 rounded-md transition">
-            Lọc
+          <Button
+            className="ml-2 text-white px-4 py-2 rounded-md transition"
+            onClick={toggleFilters}
+          >
+            <FilterIcon size={16} />
           </Button>
         </div>
 
+        {showFilters && (
+          <div className="bg-white p-4 rounded-lg shadow-md mb-4">
+            <h2 className="text-lg font-bold mb-4">Bộ lọc</h2>
+
+            <div className="mb-4">
+              <p className="font-medium">Giá (VND):</p>
+              <Slider
+                range
+                min={0}
+                max={1000000}
+                step={50000}
+                value={priceRange}
+                onChange={(value) => setPriceRange(value as [number, number])}
+              />
+              <div className="flex justify-between">
+                <span>{formatPrice(priceRange[0])}</span>
+                <span>{formatPrice(priceRange[1])}</span>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <p className="font-medium">Tiện ích:</p>
+              <Checkbox.Group
+                options={facilityOptions}
+                value={selectedFacilities}
+                onChange={(checkedValues) =>
+                  setSelectedFacilities(checkedValues as string[])
+                }
+              />
+            </div>
+
+            <div className="mb-4">
+              <p className="font-medium">Diện tích (m²):</p>
+              <Slider
+                range
+                min={0}
+                max={500}
+                value={areaRange}
+                onChange={(value) => setAreaRange(value as [number, number])}
+              />
+              <div className="flex justify-between">
+                <span>{areaRange[0]} m²</span>
+                <span>{areaRange[1]} m²</span>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <Button onClick={applyFilters} className="text-white">
+                Áp dụng
+              </Button>
+              <Button onClick={resetFilters} variant="outline">
+                Đặt lại
+              </Button>
+            </div>
+          </div>
+        )}
+
         <h1 className="text-2xl font-bold mb-4">Kết quả tìm kiếm</h1>
         <p className="text-gray-500 mb-4">
-          {results.length} kết quả được tìm thấy
+          {filteredResults.length} kết quả được tìm thấy
         </p>
 
         <div className="grid grid-cols-1 gap-6">
-          {results.length > 0 ? (
-            results.map((result) => (
+          {filteredResults.length > 0 ? (
+            filteredResults.map((result) => (
               <div
                 key={result.id}
-                className={`bg-white p-4 rounded-lg shadow-md flex gap-4 cursor-pointer hover:shadow-lg transition relative group ${selectedResult === result.id ? "ring-2 ring-yellow-500" : ""
+                className={`bg-white p-4 rounded-lg shadow-md flex gap-4 cursor-pointer hover:shadow-lg transition relative group ${selectedResult === result.id ? "ring-2 ring-primary" : ""
                   }`}
                 onClick={() => handleClick(result.id)}
                 onDoubleClick={() => handleDoubleClick(result.id)}
@@ -157,6 +283,21 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
                     <div className="flex items-center">
                       <Ruler size={16} className="mr-1" /> {result.area} m²
                     </div>
+                  </div>
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {result.facilities.slice(0, 3).map((facility, index) => (
+                      <span
+                        key={index}
+                        className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full"
+                      >
+                        {facility}
+                      </span>
+                    ))}
+                    {result.facilities.length > 3 && (
+                      <span className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">
+                        +{result.facilities.length - 3}
+                      </span>
+                    )}
                   </div>
                   <div className="flex justify-end items-center mt-4">
                     <p className="text-lg font-bold">
@@ -189,7 +330,7 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
           {selectedResult ? (
             <iframe
               src={
-                results.find((r) => r.id === selectedResult)?.googleMapUrl.match(
+                filteredResults.find((r) => r.id === selectedResult)?.googleMapUrl.match(
                   /src="([^"]+)"/
                 )?.[1] || ""
               }

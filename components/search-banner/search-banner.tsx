@@ -22,31 +22,33 @@ export default function SearchBanner() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchDropdownData = async () => {
-      try {
-        const response = await fetch("https://localhost:5050/workspaces");
-        if (!response.ok) {
-          throw new Error("Failed to fetch workspace data.");
-        }
-        const data: { workspaces: { address: string; category: string; capacity: number }[] } =
-          await response.json();
-
-        const uniqueLocations = Array.from(new Set(data.workspaces.map((ws: any) => ws.address)));
-        const uniqueSpaces = Array.from(new Set(data.workspaces.map((ws: any) => ws.category)));
-        const uniqueCapacities = Array.from(
-          new Set(data.workspaces.map((ws: any) => ws.capacity.toString()))
-        );
-
-        setLocations(uniqueLocations);
-        setSpaces(uniqueSpaces);
-        setCapacities(uniqueCapacities);
-      } catch (error) {
-        console.error("Error fetching dropdown data:", error);
+  const fetchDropdownData = async () => {
+    try {
+      const response = await fetch("https://localhost:5050/workspaces");
+      if (!response.ok) {
+        throw new Error("Failed to fetch workspace data.");
       }
-    };
+      const data: { workspaces: { address: string; category: string; capacity: number }[] } =
+        await response.json();
 
-    fetchDropdownData();
-  }, []);
+      type Workspace = { address: string; category: string; capacity: number };
+
+      const uniqueLocations = Array.from(new Set(data.workspaces.map((ws: Workspace) => ws.address)));
+      const uniqueSpaces = Array.from(new Set(data.workspaces.map((ws: Workspace) => ws.category)));
+      const uniqueCapacities = Array.from(
+        new Set(data.workspaces.map((ws: Workspace) => ws.capacity.toString()))
+      ).sort((a, b) => Number(a) - Number(b));
+
+      setLocations(uniqueLocations);
+      setSpaces(uniqueSpaces);
+      setCapacities(uniqueCapacities);
+    } catch (error) {
+      console.error("Error fetching dropdown data:", error);
+    }
+  };
+
+  fetchDropdownData();
+}, []);
 
   const handleSearch = () => {
 
@@ -136,7 +138,7 @@ export default function SearchBanner() {
           >
             {capacities.map((cap) => (
               <DropdownItem key={cap} value={cap}>
-                {cap}
+                {cap} người
               </DropdownItem>
             ))}
           </Dropdown>
