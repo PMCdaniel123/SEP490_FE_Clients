@@ -55,7 +55,7 @@ function AmenitiesItem({
           </div>
         </div>
         <CardContent className="p-4 flex flex-col gap-2">
-          <p className="text-base font-semibold">{name}</p>
+          <p className="text-base font-semibold line-clamp-1">{name}</p>
           <p className="text-gray-600 text-sm">Số lượng: {quantity}</p>
           <p className="text-gray-600 text-sm">Loại: {category}</p>
         </CardContent>
@@ -72,22 +72,31 @@ function AmenitiesItem({
         width={640}
       >
         <div className="md:flex gap-10 mt-10 mb-6 mx-auto items-center justify-center">
-          <div className="relative">
+          <div className="relative w-1/2">
             <img
               src={imgUrl}
               alt={name}
-              className="w-72 h-72 object-cover rounded-lg"
+              className="w-72 h-72 object-cover rounded-lg border"
             />
             <div className="absolute top-2 left-2 bg-primary text-white px-3 py-2 rounded-lg text-base flex gap-2 items-center justify-center">
               <Banknote /> {formatCurrency(Number(price))}
             </div>
           </div>
 
-          <div className="flex flex-col justify-center gap-2">
+          <div className="flex flex-col justify-center gap-4 w-1/2">
             <p className="text-lg font-semibold">{name}</p>
-            <p className="text-gray-600 text-base">Số lượng: {quantity}</p>
-            <p className="text-gray-600 text-base">Loại: {category}</p>
-            <p className="text-gray-600 text-base">Mô tả: {description}</p>
+            <p className="text-gray-800 text-sm">
+              <span className="font-semibold">Số lượng: </span>
+              {quantity}
+            </p>
+            <p className="text-gray-800 text-sm">
+              <span className="font-semibold">Loại: </span>
+              {category}
+            </p>
+            <p className="text-gray-800 text-sm">
+              <span className="font-semibold">Mô tả: </span>
+              {description}
+            </p>
             <Button
               className="text-white flex gap-2 items-center text-base hover:bg-secondary transition py-6"
               onClick={handleAddToCart}

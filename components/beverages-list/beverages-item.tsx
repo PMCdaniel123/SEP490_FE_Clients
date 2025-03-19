@@ -9,8 +9,15 @@ import { addBeverage } from "@/stores/slices/cartSlice";
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { Tooltip } from "antd";
 
-function BeveragesItem({ id, name, price, imgUrl, description }: BeverageProps) {
+function BeveragesItem({
+  id,
+  name,
+  price,
+  imgUrl,
+  description,
+}: BeverageProps) {
   const dispatch = useDispatch();
   const [animate, setAnimate] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -62,15 +69,21 @@ function BeveragesItem({ id, name, price, imgUrl, description }: BeverageProps) 
               <img
                 src={imgUrl}
                 alt={name}
-                className="w-full h-36 object-cover rounded-t-lg"
+                className="w-full h-full object-cover rounded-t-lg"
               />
               <div className="bg-primary text-white px-3 py-1 rounded-b-lg text-base flex gap-2 items-center justify-center">
                 <Banknote /> {formatCurrency(Number(price))}
               </div>
             </div>
-            <div className="col-span-2 p-4 flex flex-col gap-2 items-start justify-center">
-              <h3 className="text-base font-semibold">{name}</h3>
-              <p className="text-gray-600 text-sm">{description}</p>
+            <div className="col-span-2 p-4 flex flex-col gap-4 items-start justify-center">
+              <Tooltip title={name} color="#835101">
+                <h3 className="text-base font-semibold line-clamp-1">{name}</h3>
+              </Tooltip>
+              <Tooltip title={description} color="#835101">
+                <p className="text-gray-600 text-sm line-clamp-2">
+                  {description}
+                </p>
+              </Tooltip>
               <Button
                 className="text-white flex gap-2 items-center"
                 onClick={handleAddToCart}
