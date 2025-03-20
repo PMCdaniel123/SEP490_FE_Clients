@@ -24,6 +24,18 @@ function ReviewList({ workspaceId }: ReviewListProps) {
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [hasImages, setHasImages] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -72,9 +84,9 @@ function ReviewList({ workspaceId }: ReviewListProps) {
         </div>
       ) : (
         <>
-          <div className="flex items-center mb-4 space-x-4">
-            <div className="text-lg font-semibold text-primary flex items-center">
-              <span className="text-2xl">{averageRating}</span>
+          <div className="flex flex-col sm:flex-row sm:items-center mb-4 sm:space-x-4">
+            <div className="text-lg font-semibold text-primary flex items-center mb-2 sm:mb-0">
+              <span className="text-xl sm:text-2xl">{averageRating}</span>
               <span className="ml-1">trên 5</span>
             </div>
             <div className="text-yellow-500 flex">
@@ -82,9 +94,9 @@ function ReviewList({ workspaceId }: ReviewListProps) {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-4 overflow-x-auto pb-2 -mx-2 px-2">
             <button
-              className={`px-4 py-2 rounded-lg border ${selectedRating === null ? "bg-primary text-white" : "border-gray-300"}`}
+              className={`px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base rounded-lg border whitespace-nowrap ${selectedRating === null ? "bg-primary text-white" : "border-gray-300"}`}
               onClick={() => setSelectedRating(null)}
             >
               Tất Cả
@@ -92,22 +104,22 @@ function ReviewList({ workspaceId }: ReviewListProps) {
             {[5, 4, 3, 2, 1].map((star) => (
               <button
                 key={star}
-                className={`px-4 py-2 rounded-lg border ${selectedRating === star ? "bg-primary text-white" : "border-gray-300"}`}
+                className={`px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base rounded-lg border whitespace-nowrap ${selectedRating === star ? "bg-primary text-white" : "border-gray-300"}`}
                 onClick={() => setSelectedRating(star)}
               >
                 {star} Sao ({reviews.filter((r) => r.rate === star).length})
               </button>
             ))}
             <button
-              className={`px-4 py-2 rounded-lg border ${hasImages ? "bg-gray-500 text-white" : "border-gray-300"}`}
+              className={`px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base rounded-lg border whitespace-nowrap ${hasImages ? "bg-gray-500 text-white" : "border-gray-300"}`}
               onClick={() => setHasImages(!hasImages)}
             >
               Có Hình Ảnh ({reviews.filter((r) => r.images.length > 0).length})
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            {(showAll ? filteredReviews : filteredReviews.slice(0, 4)).map((review, index) => (
+          <div className={`grid ${isSmallScreen ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'} gap-4 mb-4`}>
+            {(showAll ? filteredReviews : filteredReviews.slice(0, isSmallScreen ? 2 : 4)).map((review, index) => (
               <ReviewItem
                 key={index}
                 avatar={review.user_Avatar}
@@ -120,12 +132,16 @@ function ReviewList({ workspaceId }: ReviewListProps) {
             ))}
           </div>
 
-          <button
-            className="text-primary border border-primary rounded-xl p-4 font-semibold md:max-w-[250px] hover:bg-primary hover:text-white transition-colors duration-300"
-            onClick={() => setShowAll(!showAll)}
-          >
-            {showAll ? "Rút gọn các đánh giá" : "Hiển thị thêm đánh giá"}
-          </button>
+          {filteredReviews.length > (isSmallScreen ? 2 : 4) && (
+            <div className="flex-start w-full">
+              <button
+                className="text-primary border border-primary rounded-xl p-3 sm:p-4 text-sm sm:text-base font-semibold w-full sm:w-auto sm:min-w-[200px] hover:bg-primary hover:text-white transition-colors duration-300"
+                onClick={() => setShowAll(!showAll)}
+              >
+                {showAll ? "Rút gọn các đánh giá" : "Hiển thị thêm đánh giá"}
+              </button>
+            </div>
+          )}
         </>
       )}
     </div>

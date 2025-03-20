@@ -9,11 +9,10 @@ import {
   Boxes,
   Archive,
   HandPlatter,
+  Delete,
 } from "lucide-react";
 import Loader from "@/components/loader/Loader";
 import { useParams } from "next/navigation";
-// import HighRatingSpace from "@/components/high-rating-space/high-rating-space";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Modal } from "antd";
 import "react-datepicker/dist/react-datepicker.css";
@@ -210,52 +209,116 @@ const WorkspaceDetail = () => {
       </div>
 
       <Modal
-        title={
-          <p className="text-xl font-bold text-primary">Chia sẻ liên kết</p>
-        }
+        title={null}
         open={isShareModalOpen}
         onCancel={() => setIsShareModalOpen(false)}
         footer={null}
+        width={500}
+        centered
+        closeIcon={
+          <Delete className="text-gray-500 hover:text-primary transition-colors" />
+        }
+        className="share-modal-custom"
       >
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-full p-4 border rounded-lg shadow-md">
+        <div className="flex flex-col items-center gap-6 py-2">
+          <h3 className="text-xl font-bold text-primary self-start">
+            Chia sẻ liên kết
+          </h3>
+
+          <div className="w-full p-4 border rounded-lg bg-gray-50 shadow-sm">
             <img
               src={workspace.images[0].imgUrl}
               alt={workspace.name}
-              className="w-full h-48 object-cover rounded-lg mb-4"
+              className="w-full h-40 object-cover rounded-lg mb-4"
             />
-            <h3 className="text-lg font-bold">{workspace.name}</h3>
-            <p className="text-sm text-gray-500">{workspace.address}</p>
-            <p className="text-sm text-gray-500">
+            <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">
+              {workspace.name}
+            </h3>
+            <p className="text-sm text-gray-500 line-clamp-1 mb-2">
+              {workspace.address}
+            </p>
+            <p className="text-sm font-medium text-primary">
               {formatCurrency(Number(workspace.shortTermPrice))} -{" "}
               {formatCurrency(Number(workspace.longTermPrice))}
             </p>
           </div>
-          <Button
-            onClick={handleCopyUrl}
-            className=" text-white px-4 py-2 rounded-lg flex items-center gap-2"
-          >
-            <Share2 size={20} />
-            Sao chép liên kết
-          </Button>
-          <div className="flex items-center gap-2">
-            <Separator className="w-10" />
-            <span className="text-gray-500">HOẶC</span>
-            <Separator className="w-10" />
-          </div>
-          <div className="flex gap-4">
-            <FacebookShareButton url={window.location.href}>
-              <FacebookIcon size={40} round />
-            </FacebookShareButton>
-            <TwitterShareButton url={window.location.href}>
-              <TwitterIcon size={40} round />
-            </TwitterShareButton>
-            <LinkedinShareButton url={window.location.href}>
-              <LinkedinIcon size={40} round />
-            </LinkedinShareButton>
+
+          <div className="w-full">
+            <p className="text-sm font-medium text-gray-600 mb-2">
+              Chia sẻ qua
+            </p>
+
+            <div className="grid grid-cols-3 gap-3 mb-6">
+              <FacebookShareButton
+                url={window.location.href}
+                className="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <FacebookIcon size={40} round />
+                <span className="text-xs text-gray-600">Facebook</span>
+              </FacebookShareButton>
+
+              <TwitterShareButton
+                url={window.location.href}
+                className="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <TwitterIcon size={40} round />
+                <span className="text-xs text-gray-600">Twitter</span>
+              </TwitterShareButton>
+
+              <LinkedinShareButton
+                url={window.location.href}
+                className="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <LinkedinIcon size={40} round />
+                <span className="text-xs text-gray-600">LinkedIn</span>
+              </LinkedinShareButton>
+            </div>
+
+            <p className="text-sm font-medium text-gray-600 mb-2">
+              Hoặc sao chép liên kết
+            </p>
+            <div className="flex items-center gap-2 p-2 border rounded-lg bg-white focus-within:ring-2 focus-within:ring-primary focus-within:ring-opacity-50">
+              <Share2 size={16} className="text-gray-400" />
+              <input
+                type="text"
+                readOnly
+                value={
+                  typeof window !== "undefined" ? window.location.href : ""
+                }
+                className="flex-1 text-sm border-none outline-none bg-transparent"
+              />
+              <Button
+                onClick={handleCopyUrl}
+                className="bg-primary hover:bg-primary/90 text-white text-xs px-3 py-1 h-8 rounded-md"
+              >
+                Sao chép
+              </Button>
+            </div>
           </div>
         </div>
       </Modal>
+
+      <style jsx global>{`
+        .share-modal-custom .ant-modal-content {
+          padding: 20px;
+          border-radius: 12px;
+        }
+        .share-modal-custom .ant-modal-close {
+          top: 16px;
+          right: 16px;
+        }
+      `}</style>
+
+      <style jsx global>{`
+        .share-modal-custom .ant-modal-content {
+          padding: 20px;
+          border-radius: 12px;
+        }
+        .share-modal-custom .ant-modal-close {
+          top: 16px;
+          right: 16px;
+        }
+      `}</style>
 
       <Modal
         title={<p className="text-xl font-bold text-primary">Thực đơn</p>}
