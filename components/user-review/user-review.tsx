@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Modal, Rate } from "antd";
 import { Button } from "../ui/button";
+import Pagination from "../pagination/pagination";
 
 interface Review {
   id: number;
@@ -19,6 +20,8 @@ interface ReviewListProps {
 
 const UserReview: React.FC<ReviewListProps> = ({ reviews }) => {
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 3;
 
   const handleReviewClick = (review: Review) => {
     setSelectedReview(review);
@@ -28,26 +31,46 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews }) => {
     setSelectedReview(null);
   };
 
+
+  const sortedReviews = [...reviews].sort(
+    (a, b) => new Date(b.created_At).getTime() - new Date(a.created_At).getTime()
+  );
+
+
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+  const currentReviews = sortedReviews.slice(indexOfFirstReview, indexOfLastReview);
+
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
       <h2 className="text-xl font-bold mb-4">⭐ {reviews.length} Đánh giá của bạn</h2>
       <div className="text-gray-600">
         {reviews.length > 0 ? (
-          <ul className="space-y-4">
-            {reviews.map((review) => (
-              <li
-                key={review.id}
-                className="p-4 border rounded-lg cursor-pointer hover:bg-gray-100 transition duration-200 ease-in-out"
-                onClick={() => handleReviewClick(review)}
-              >
-                <div className="flex items-center space-x-2">
-                  <Rate disabled defaultValue={review.rating} />
-                  <span className="text-gray-700 font-medium">{review.rating}/5</span>
-                </div>
-                <p className="mt-2 text-gray-800">{review.content}</p>
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul className="space-y-4">
+              {currentReviews.map((review) => (
+                <li
+                  key={review.id}
+                  className="p-4 border rounded-lg cursor-pointer hover:bg-gray-100 transition duration-200 ease-in-out"
+                  onClick={() => handleReviewClick(review)}
+                >
+                  <div className="flex items-center space-x-2">
+                    <Rate disabled defaultValue={review.rating} />
+                    <span className="text-gray-700 font-medium">{review.rating}/5</span>
+                  </div>
+                  <p className="mt-2 text-gray-800">{review.content}</p>
+                  <p className="text-sm text-gray-500">
+                    {new Date(review.created_At).toLocaleString()}
+                  </p>
+                </li>
+              ))}
+            </ul>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(reviews.length / reviewsPerPage)}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+          </>
         ) : (
           <p className="text-center text-gray-500">Bạn chưa có đánh giá nào</p>
         )}

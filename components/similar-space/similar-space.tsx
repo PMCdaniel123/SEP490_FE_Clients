@@ -1,42 +1,72 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
-import { Heart, Users, Ruler, Clock, Calendar, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "../ui/card";
-import { CardContent } from "../ui/card-content";
-import Loader from "../loader/Loader";
-import { Workspace } from "@/types";
 import { useRouter } from "next/navigation";
-import { Badge } from "../ui/badge";
+import { Users, Ruler, Clock, Calendar } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card-content";
+import Loader from "@/components/loader/Loader";
+import { Badge } from "@/components/ui/badge";
 
-export default function SpaceList() {
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+interface SimilarWorkspace {
+  id: number;
+  name: string;
+  address: string;
+  category: string;
+  capacity: number;
+  area: number;
+  prices: { price: number; category: string }[];
+  images: { imgUrl: string }[];
+  shortTermPrice?: number;
+  longTermPrice?: number;
+}
+
+interface SimilarSpaceProps {
+  category: string;
+}
+
+export default function SimilarSpace({ category }: SimilarSpaceProps) {
+  const [workspaces, setWorkspaces] = useState<SimilarWorkspace[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    fetch("https://localhost:5050/workspaces")
-      .then((response) => response.json())
-      .then((data: { workspaces: Workspace[] }) => {
-        const formattedWorkspaces = data.workspaces.map((workspace) => ({
-          ...workspace,
-          shortTermPrice:
-            workspace.prices.find((price) => price.category === "Giờ")?.price ||
-            0,
-          longTermPrice:
-            workspace.prices.find((price) => price.category === "Ngày")
-              ?.price || 0,
-        }));
+    if (!category) return;
+
+    const fetchSimilarSpaces = async () => {
+      try {
+        const response = await fetch(
+          `https://localhost:5050/users/searchbycategory${encodeURIComponent(
+            category
+          )}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch similar spaces.");
+        }
+
+        const data = await response.json();
+        const formattedWorkspaces = data.workspaceSearchByCategoryDTOs.map(
+          (workspace: SimilarWorkspace) => ({
+            ...workspace,
+            shortTermPrice:
+              workspace.prices.find((price) => price.category === "Giờ")
+                ?.price || 0,
+            longTermPrice:
+              workspace.prices.find((price) => price.category === "Ngày")
+                ?.price || 0,
+          })
+        );
         setWorkspaces(formattedWorkspaces);
         setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
+      } catch (error) {
+        console.error("Error fetching similar spaces:", error);
         setLoading(false);
-      });
-  }, []);
+      }
+    };
+
+    fetchSimilarSpaces();
+  }, [category]);
 
   if (loading) {
     return (
@@ -48,19 +78,20 @@ export default function SpaceList() {
 
   if (workspaces.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto p-6 text-center">
-        <p className="text-gray-600 text-lg">Không có dữ liệu để hiển thị.</p>
+      <div className="text-center">
+        <p className="text-gray-600 text-lg">Không có không gian tương tự.</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {workspaces.slice(0, 6).map((workspace) => (
+    <div className="flex flex-col gap-6">
+      <h2 className="text-xl font-bold text-primary">Các không gian tương tự</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {workspaces.map((workspace) => (
           <Card
             key={workspace.id}
-            className="relative overflow-hidden rounded-lg shadow-lg border border-gray-100 hover:scale-105 transition-transform duration-300 cursor-pointer"
+            className="relative overflow-hidden rounded-lg shadow-md transition-transform transform hover:scale-105 cursor-pointer"
             onClick={() => router.push(`/workspace/${workspace.id}`)}
           >
             <div className="relative group">
@@ -72,21 +103,11 @@ export default function SpaceList() {
                 />
               </div>
 
-              <div className="absolute top-3 left-3">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="bg-white/80 hover:bg-white rounded-full h-8 w-8 shadow-md"
-                >
-                  <Heart className="text-gray-500" size={18} />
-                </Button>
-              </div>
-
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                 <div className="flex justify-between items-end">
-                 <Badge className="bg-primary hover:bg-secondary text-white">
-                          {workspace.category}
-                        </Badge>
+                  <Badge className="bg-primary hover:bg-secondary text-white">
+                    {workspace.category}
+                  </Badge>
                 </div>
               </div>
             </div>
@@ -96,7 +117,6 @@ export default function SpaceList() {
                 {workspace.name}
               </h3>
               <p className="text-gray-600 text-sm mb-3 flex items-center">
-                <MapPin className="mr-1 text-gray-400" size={14} />
                 <span className="truncate">{workspace.address}</span>
               </p>
 
@@ -113,7 +133,7 @@ export default function SpaceList() {
 
               <div className="border-t border-gray-100 pt-3">
                 <div className="flex flex-col gap-1">
-                  {workspace.shortTermPrice > 0 && (
+                  {workspace.shortTermPrice !== undefined && workspace.shortTermPrice > 0 && (
                     <div className="flex justify-between items-center">
                       <div className="flex items-center text-gray-700 text-sm">
                         <Clock className="mr-1 text-orange-500" size={16} />
@@ -128,7 +148,7 @@ export default function SpaceList() {
                     </div>
                   )}
 
-                  {workspace.longTermPrice > 0 && (
+                  {workspace.longTermPrice !== undefined && workspace.longTermPrice > 0 && (
                     <div className="flex justify-between items-center">
                       <div className="flex items-center text-gray-700 text-sm">
                         <Calendar className="mr-1 text-purple-500" size={16} />
@@ -144,16 +164,9 @@ export default function SpaceList() {
                   )}
                 </div>
               </div>
-
-              <Button className="w-full mt-4 text-white">Xem chi tiết</Button>
             </CardContent>
           </Card>
         ))}
-      </div>
-      <div className="flex justify-center mt-6">
-        <Button className="px-6 py-2 bg-black text-white rounded">
-          Xem tất cả
-        </Button>
       </div>
     </div>
   );

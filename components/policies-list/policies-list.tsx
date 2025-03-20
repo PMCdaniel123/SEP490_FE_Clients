@@ -5,13 +5,13 @@ function PoliciesList({ policies }: { policies: Policies[] }) {
     <div>
       {policies.length > 0 ? (
         <div className="grid grid-cols-1 gap-2 md:max-w-4xl text-fourth font-semibold items-center">
-          {policies.map((policy) => (
+          {policies.map((policy, index) => (
             <div
               className="flex items-center gap-4 mb-2 col-span-1"
-              key={policy.id}
+              key={index}
             >
               <span>
-                {policy.id}. {policy.policyName}
+                {index + 1}. {policy.policyName}
               </span>
             </div>
           ))}
