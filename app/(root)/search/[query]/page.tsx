@@ -9,6 +9,7 @@ import {
   Briefcase,
   MousePointerClick,
   FilterIcon,
+  Search,
 } from "lucide-react";
 import Loader from "@/components/loader/Loader";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,10 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
   const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
   const [areaRange, setAreaRange] = useState<[number, number]>([0, 500]);
   const [showFilters, setShowFilters] = useState(false);
-  const [facilityOptions, setFacilityOptions] = useState<string[]>([]); // State for dynamic options
+  const [facilityOptions, setFacilityOptions] = useState<string[]>([]);
+
+  // State cho tìm kiếm theo tên
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   interface SearchResult {
     id: number;
@@ -161,8 +165,20 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
     setShowFilters(!showFilters);
   };
 
-  const applyFilters = () => {
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+
+    if (!value.trim()) {
+      applyFilters();
+      return;
+    }
+
+    const searchTermLower = value.toLowerCase();
     const filtered = results.filter((workspace) => {
+      const nameMatch =
+        workspace.name.toLowerCase().includes(searchTermLower) ||
+        workspace.address.toLowerCase().includes(searchTermLower);
+
       const workspacePrice =
         workspace.shortTermPrice || workspace.longTermPrice || 0;
       const priceMatch =
@@ -175,13 +191,40 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
           workspace.facilities.includes(facility)
         );
 
-      return priceMatch && areaMatch && facilitiesMatch;
+      return nameMatch && priceMatch && areaMatch && facilitiesMatch;
     });
 
     setFilteredResults(filtered);
   };
 
+  const applyFilters = () => {
+    const filtered = results.filter((workspace) => {
+      const nameMatch = searchQuery
+        ? workspace.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          workspace.address.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+
+      const workspacePrice =
+        workspace.shortTermPrice || workspace.longTermPrice || 0;
+      const priceMatch =
+        workspacePrice >= priceRange[0] && workspacePrice <= priceRange[1];
+      const areaMatch =
+        workspace.area >= areaRange[0] && workspace.area <= areaRange[1];
+      const facilitiesMatch =
+        selectedFacilities.length === 0 ||
+        selectedFacilities.every((facility) =>
+          workspace.facilities.includes(facility)
+        );
+
+      return nameMatch && priceMatch && areaMatch && facilitiesMatch;
+    });
+
+    setFilteredResults(filtered);
+    setShowFilters(false);
+  };
+
   const resetFilters = () => {
+    setSearchQuery("");
     setPriceRange([0, 1000000]);
     setSelectedFacilities([]);
     setAreaRange([0, 500]);
@@ -200,11 +243,19 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
     <div className="flex flex-col md:flex-row gap-6 p-6">
       <div className="w-full md:w-2/4">
         <div className="flex items-center justify-between bg-white p-4 rounded-lg shadow-md mb-4">
-          <Input
-            type="text"
-            placeholder="Tìm kiếm..."
-            className="border p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-yellow-500"
-          />
+          <div className="relative w-full">
+            <Input
+              type="text"
+              placeholder="Tìm kiếm theo tên..."
+              className="border p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-yellow-500 pl-10"
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+            />
+            <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              size={16}
+            />
+          </div>
           <Button
             className="ml-2 text-white px-4 py-2 rounded-md transition"
             onClick={toggleFilters}
