@@ -20,38 +20,47 @@ export default function SearchBanner() {
   const [capacities, setCapacities] = useState<string[]>([]);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
-  const fetchDropdownData = async () => {
-    try {
-      const response = await fetch("https://localhost:5050/workspaces");
-      if (!response.ok) {
-        throw new Error("Failed to fetch workspace data.");
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const fetchDropdownData = async () => {
+      try {
+        const response = await fetch("https://localhost:5050/workspaces");
+        if (!response.ok) {
+          throw new Error("Failed to fetch workspace data.");
+        }
+        const data: { workspaces: { address: string; category: string; capacity: number }[] } =
+          await response.json();
+
+        type Workspace = { address: string; category: string; capacity: number };
+
+        const uniqueLocations = Array.from(new Set(data.workspaces.map((ws: Workspace) => ws.address)));
+        const uniqueSpaces = Array.from(new Set(data.workspaces.map((ws: Workspace) => ws.category)));
+        const uniqueCapacities = Array.from(
+          new Set(data.workspaces.map((ws: Workspace) => ws.capacity.toString()))
+        ).sort((a, b) => Number(a) - Number(b));
+
+        setLocations(uniqueLocations);
+        setSpaces(uniqueSpaces);
+        setCapacities(uniqueCapacities);
+      } catch (error) {
+        console.error("Error fetching dropdown data:", error);
       }
-      const data: { workspaces: { address: string; category: string; capacity: number }[] } =
-        await response.json();
+    };
 
-      type Workspace = { address: string; category: string; capacity: number };
-
-      const uniqueLocations = Array.from(new Set(data.workspaces.map((ws: Workspace) => ws.address)));
-      const uniqueSpaces = Array.from(new Set(data.workspaces.map((ws: Workspace) => ws.category)));
-      const uniqueCapacities = Array.from(
-        new Set(data.workspaces.map((ws: Workspace) => ws.capacity.toString()))
-      ).sort((a, b) => Number(a) - Number(b));
-
-      setLocations(uniqueLocations);
-      setSpaces(uniqueSpaces);
-      setCapacities(uniqueCapacities);
-    } catch (error) {
-      console.error("Error fetching dropdown data:", error);
-    }
-  };
-
-  fetchDropdownData();
-}, []);
+    fetchDropdownData();
+  }, []);
 
   const handleSearch = () => {
-
     const queryParams: Record<string, string> = {};
     if (location) queryParams.Address = location;
     if (space) queryParams.Category = space;
@@ -70,7 +79,7 @@ export default function SearchBanner() {
   };
 
   return (
-    <div className="relative w-full h-[500px]">
+    <div className="relative w-full h-[400px] md:h-[500px]">
       <Image
         src="/banner.png"
         alt="Banner"
@@ -80,16 +89,17 @@ export default function SearchBanner() {
       />
 
       <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
-        <h2 className="text-6xl font-extrabold tracking-wide">WorkHive</h2>
+        <h2 className="text-3xl md:text-4xl lg:text-6xl font-extrabold tracking-wide">WorkHive</h2>
 
-        <div className="mt-8 bg-white text-black rounded-full flex items-center justify-center shadow-lg p-2 w-[72%]">
+        <div className={`mt-4 md:mt-8 bg-white text-black rounded-full flex ${isSmallScreen ? 'flex-col' : 'flex-row'} items-center justify-center shadow-lg p-2 w-full md:w-[90%] lg:w-[80%] xl:w-[72%] ${isSmallScreen ? 'rounded-xl' : 'rounded-full'}`}>
           <Dropdown
             label="Địa điểm"
             icon={MapPin}
             value={location}
             setValue={setLocation}
             placeholder="Bạn muốn làm việc ở đâu?"
-            hasBorder
+            hasBorder={!isSmallScreen}
+            isSmallScreen={isSmallScreen}
           >
             {locations.map((loc) => (
               <DropdownItem key={loc} value={loc}>
@@ -104,7 +114,8 @@ export default function SearchBanner() {
             value={time}
             setValue={setTime}
             placeholder="Chọn thời gian"
-            hasBorder
+            hasBorder={!isSmallScreen}
+            isSmallScreen={isSmallScreen}
           >
             {times.map((t) => (
               <DropdownItem key={t.value} value={t.value}>
@@ -119,7 +130,8 @@ export default function SearchBanner() {
             value={space}
             setValue={setSpace}
             placeholder="Chọn loại không gian"
-            hasBorder
+            hasBorder={!isSmallScreen}
+            isSmallScreen={isSmallScreen}
           >
             {spaces.map((sp) => (
               <DropdownItem key={sp} value={sp}>
@@ -134,7 +146,8 @@ export default function SearchBanner() {
             value={people}
             setValue={setPeople}
             placeholder="Chọn sức chứa"
-            hasBorder
+            hasBorder={false}
+            isSmallScreen={isSmallScreen}
           >
             {capacities.map((cap) => (
               <DropdownItem key={cap} value={cap}>
@@ -145,17 +158,16 @@ export default function SearchBanner() {
 
           <div
             onClick={handleSearch}
-            className="ml-2 bg-gray-800 text-white p-4 rounded-full shadow-md transition-transform transform hover:scale-105 active:scale-95 cursor-pointer"
+            className={`${isSmallScreen ? 'w-full mt-2' : 'ml-2'} bg-gray-800 text-white p-4 rounded-full shadow-md transition-transform transform hover:scale-105 active:scale-95 cursor-pointer flex justify-center`}
           >
             <Search size={22} />
           </div>
         </div>
 
-
         {errorMessage && (
-          <div className="mt-4 bg-red-100 text-red-700 p-4 rounded-lg flex items-center gap-2 shadow-md">
+          <div className="mt-4 bg-red-100 text-red-700 p-3 md:p-4 rounded-lg flex items-center gap-2 shadow-md max-w-full md:max-w-[80%]">
             <AlertCircle size={20} />
-            <span>{errorMessage}</span>
+            <span className="text-sm md:text-base">{errorMessage}</span>
           </div>
         )}
       </div>
@@ -171,6 +183,7 @@ interface DropdownProps {
   placeholder: string;
   children: React.ReactNode;
   hasBorder: boolean;
+  isSmallScreen: boolean;
 }
 
 function Dropdown({
@@ -181,23 +194,24 @@ function Dropdown({
   placeholder,
   children,
   hasBorder,
+  isSmallScreen,
 }: DropdownProps) {
   return (
-    <div className={`flex-1 p-4 ${hasBorder ? "border-r" : ""}`}>
-      <p className="text-sm font-semibold mb-2 items-center justify-start flex px-2 gap-2">
-        <Icon size={20} />
+    <div className={`${isSmallScreen ? 'w-full' : 'flex-1'} p-2 md:p-4 ${!isSmallScreen && hasBorder ? "border-r" : ""} ${isSmallScreen ? 'border-b border-gray-200 last:border-b-0' : ''}`}>
+      <p className="text-xs md:text-sm font-semibold mb-1 md:mb-2 items-center justify-start flex px-2 gap-1 md:gap-2">
+        <Icon size={isSmallScreen ? 16 : 20} />
         <span>{label}</span>
       </p>
       <Select.Root value={value} onValueChange={setValue}>
         <Select.Trigger
-          className={`w-full flex justify-between items-center bg-transparent text-sm outline-none p-2 cursor-pointer font-semibold ${value ? "text-black" : "text-sixth"
+          className={`w-full flex justify-between items-center bg-transparent text-xs md:text-sm outline-none p-1 md:p-2 cursor-pointer font-semibold ${value ? "text-black" : "text-sixth"
             }`}
         >
           <Select.Value placeholder={placeholder} />
         </Select.Trigger>
         <Select.Portal>
           <Select.Content
-            className="bg-white rounded-xl shadow-xl p-2 z-50 overflow-hidden border border-black"
+            className="bg-white rounded-xl shadow-xl p-2 z-50 overflow-hidden border border-black max-h-[200px] overflow-y-auto"
             position="popper"
           >
             <Select.Viewport>{children}</Select.Viewport>
@@ -217,7 +231,7 @@ function DropdownItem({ value, children }: DropdownItemProps) {
   return (
     <Select.Item
       value={value}
-      className="p-2 hover:bg-gray-100 cursor-pointer rounded-md focus:bg-gray-200 focus:outline-none"
+      className="p-2 hover:bg-gray-100 cursor-pointer rounded-md focus:bg-gray-200 focus:outline-none text-sm"
     >
       <Select.ItemText>{children}</Select.ItemText>
     </Select.Item>
