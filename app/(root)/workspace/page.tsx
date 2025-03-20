@@ -86,14 +86,14 @@ export default function PropertyGrid() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
-      <div className="flex items-center justify-between">
-        <div className="flex space-x-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap gap-4">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`text-lg font-medium ${
+              className={`text-sm sm:text-lg font-medium ${
                 selectedCategory === category
                   ? "border-b-2 border-black"
                   : "text-gray-500"
@@ -104,7 +104,7 @@ export default function PropertyGrid() {
           ))}
         </div>
 
-        <button className="flex items-center space-x-2 px-4 py-2 border rounded-full">
+        <button className="flex items-center space-x-2 px-4 py-2 border rounded-full text-sm sm:text-base">
           <Filter size={18} />
           <span>Bộ lọc</span>
         </button>
@@ -132,15 +132,15 @@ export default function PropertyGrid() {
 
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                 <div className="flex justify-between items-end">
-                <Badge className="bg-primary hover:bg-secondary text-white">
-                          {workspace.category}
-                        </Badge>
+                  <Badge className="bg-primary hover:bg-secondary text-white">
+                    {workspace.category}
+                  </Badge>
                 </div>
               </div>
             </div>
 
             <CardContent className="p-5">
-              <h3 className="text-xl font-bold text-gray-800 mb-1 line-clamp-1">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 line-clamp-1">
                 {workspace.name}
               </h3>
               <p className="text-gray-600 text-sm mb-3 flex items-center">

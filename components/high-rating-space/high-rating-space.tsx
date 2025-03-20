@@ -66,6 +66,14 @@ export default function HighRatingSpace() {
     );
   }
 
+  if (workspaces.length === 0) {
+    return (
+      <div className="text-center">
+        <p className="text-gray-600 text-lg">Không có dữ liệu để hiển thị.</p>
+      </div>
+    );
+  }
+
   const settings = {
     dots: true,
     infinite: true,
@@ -233,7 +241,7 @@ export default function HighRatingSpace() {
                       </div>
                     </div>
 
-                    <Button className="w-full mt-4  text-white">
+                    <Button className="w-full mt-4 text-white">
                       Xem chi tiết
                     </Button>
                   </CardContent>
