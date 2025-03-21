@@ -24,6 +24,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [transactionsPerPage] = useState(5);
+
   const sortedTransactions = [...transactions].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
@@ -39,7 +40,6 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-2">Lịch sử giao dịch</h2>
       <div className="bg-gray-100 p-4 rounded-lg">
         {transactions.length > 0 ? (
           <>
@@ -52,14 +52,15 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       {tx.type === "Nạp tiền" ? (
-                        <ArrowDownCircle className="text-green-500" />
+                        <ArrowUpCircle className="text-green-500" />
                       ) : (
-                        <ArrowUpCircle className="text-red-500" />
+                        <ArrowDownCircle className="text-red-500" />
                       )}
                       <span>{tx.type}</span>
                     </div>
                     <span>{formatCurrency(tx.amount)}</span>
                   </div>
+
                   <div className="flex justify-between items-center mt-2">
                     <span className="text-gray-500 text-sm">
                       {dayjs(tx.date).format("DD/MM/YYYY - HH:mm")}
@@ -68,6 +69,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                       {tx.paymentMethod}
                     </span>
                   </div>
+                  
                   <div className="flex justify-between items-center mt-2">
                     <span className="text-gray-500 text-sm">
                       {tx.description}
@@ -85,6 +87,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                 </li>
               ))}
             </ul>
+
             <Pagination
               currentPage={currentPage}
               totalPages={Math.ceil(transactions.length / transactionsPerPage)}
