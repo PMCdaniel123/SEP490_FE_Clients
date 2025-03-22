@@ -26,6 +26,14 @@ import Image from "next/image";
 import { clearBeverageAndAmenity } from "@/stores/slices/cartSlice";
 import dayjs from "dayjs";
 // import { Trash2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { LoadingOutlined } from "@ant-design/icons";
 
 interface CheckoutDiscount {
   code: string;
@@ -36,6 +44,8 @@ export default function Checkout() {
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const {
     beverageList,
     amenityList,
@@ -50,6 +60,7 @@ export default function Checkout() {
   const router = useRouter();
   const [voucherCode, setVoucherCode] = useState<CheckoutDiscount | null>(null);
   const [paymentMethod, setPaymentMethod] = useState("bank");
+  const [isProcessing, setIsProcessing] = useState(false);
   const cart =
     typeof window !== "undefined" ? localStorage.getItem("cart") : null;
 
@@ -144,6 +155,17 @@ export default function Checkout() {
   }, [customer, cart, router]);
 
   const onCheckout = async () => {
+    if (paymentMethod === "2") {
+      setIsConfirmationOpen(true);
+      return;
+    }
+
+    setIsProcessing(true);
+    await proceedCheckout();
+  };
+
+  const proceedCheckout = async () => {
+    setIsProcessing(true);
     const amenitiesRequest = amenityList.map((amenity) => ({
       id: amenity.id,
       quantity: amenity.quantity,
@@ -165,23 +187,41 @@ export default function Checkout() {
     };
 
     try {
-      const response = await fetch("https://localhost:5050/users/booking", {
+      const apiUrl =
+        paymentMethod === "2"
+          ? "https://localhost:5050/users/bookingbyworkhivewallet"
+          : "https://localhost:5050/users/booking";
+
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(request),
       });
+
       if (!response.ok) {
         throw new Error("Có lỗi xảy ra khi thanh toán.");
       }
+
       const data = await response.json();
-      const bookingData = {
-        bookingId: data.bookingId,
-        orderCode: data.orderCode,
-      };
-      localStorage.setItem("order", JSON.stringify(bookingData));
-      router.push(data.checkoutUrl);
+
+      if (paymentMethod === "2") {
+        toast.success("Thanh toán thành công bằng WorkHive Wallet!", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          theme: "light",
+        });
+        router.push("/success");
+      } else {
+        const bookingData = {
+          bookingId: data.bookingId,
+          orderCode: data.orderCode,
+        };
+        localStorage.setItem("order", JSON.stringify(bookingData));
+        router.push(data.checkoutUrl);
+      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
@@ -191,9 +231,10 @@ export default function Checkout() {
         hideProgressBar: false,
         theme: "light",
       });
+    } finally {
+      setIsProcessing(false);
     }
   };
-
   const handleClearBeverageAndAmenity = () => {
     dispatch(clearBeverageAndAmenity());
   };
@@ -310,14 +351,19 @@ export default function Checkout() {
           >
             {paymentMethods.map((method, index) => (
               <div className="flex items-center space-x-2 gap-2" key={index}>
-                <RadioGroupItem value={method.value} id="long-term" />
+                <RadioGroupItem
+                  value={method.value}
+                  id={`payment-method-${index}`}
+                />
                 <Image
                   src={method.image}
                   width={100}
                   height={100}
                   alt={method.label}
                 />
-                <Label htmlFor="long-term">{method.label}</Label>
+                <Label htmlFor={`payment-method-${index}`}>
+                  {method.label}
+                </Label>
               </div>
             ))}
           </RadioGroup>
@@ -408,9 +454,60 @@ export default function Checkout() {
         <Button
           onClick={onCheckout}
           className="w-full bg-primary hover:bg-secondary text-white py-5 mt-5 rounded-lg font-semibold"
+          disabled={isProcessing}
         >
-          THANH TOÁN
+          {isProcessing ? (
+            <LoadingOutlined style={{ color: "white" }} />
+          ) : (
+            "THANH TOÁN"
+          )}
         </Button>
+        <Dialog open={isConfirmationOpen} onOpenChange={setIsConfirmationOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-primary">
+                Xác nhận thanh toán
+              </DialogTitle>
+            </DialogHeader>
+            <div className="my-6">
+              <p className="text-center mb-4 font-medium">
+                Bạn có chắc chắn muốn thanh toán bằng{" "}
+                <span className="text-primary font-bold">WorkHive Wallet</span>?
+              </p>
+              <p className="text-center text-sm text-gray-500">
+                Số tiền thanh toán:{" "}
+                <span className="text-primary font-bold">
+                  {formatCurrency(
+                    total * (1 - (voucherCode?.discount || 0) / 100)
+                  )}
+                </span>
+              </p>
+            </div>
+            <DialogFooter className="flex gap-2">
+              <Button
+                className="flex-1 text-white"
+                onClick={async () => {
+                  setIsConfirmationOpen(false);
+                  await proceedCheckout();
+                }}
+                disabled={isProcessing}
+              >
+                {isProcessing ? (
+                  <LoadingOutlined style={{ color: "white" }} />
+                ) : (
+                  "Xác nhận"
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setIsConfirmationOpen(false)}
+                className="flex-1"
+              >
+                Hủy
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <ToastContainer />
