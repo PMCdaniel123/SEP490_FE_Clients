@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowUp, ArrowDown, HelpCircle, Wallet } from "lucide-react";
+import { ArrowUp, ArrowDown, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -208,15 +208,7 @@ const WalletPage = () => {
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg my-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-primary">Ví WorkHive</h1>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="flex items-center gap-1"
-          onClick={() => setIsHelpModalOpen(true)}
-        >
-          <HelpCircle size={16} />
-          Trợ giúp
-        </Button>
+      
       </div>
   
       {isLoading ? (
