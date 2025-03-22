@@ -161,24 +161,24 @@ function Header() {
         {isToken && <Notification />}
         {!isToken ? (
           <div className="flex flex-col md:flex-row items-center border rounded-xl bg-secondary/60 h-full w-full md:w-auto">
-          <p
-            onClick={() => {
-              setSignInModalOpen(true);
-              handleCloseSignUpForm();
-            }}
-            className="font-medium flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-4 px-4 md:px-5 rounded-t-xl md:rounded-l-xl md:rounded-t-none border-b md:border-b-0 md:border-r transition-colors duration-200 cursor-pointer w-full md:w-auto"
-          >
-            <span>Đăng nhập</span>
-          </p>
-          <p
-            onClick={() => {
-              setSignUpModalOpen(true);
-            }}
-            className="font-medium flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-4 px-4 md:px-5 rounded-b-xl md:rounded-r-xl md:rounded-b-none border-t md:border-t-0 md:border-l transition-colors duration-200 cursor-pointer w-full md:w-auto"
-          >
-            <span>Đăng ký</span>
-          </p>
-        </div>
+            <p
+              onClick={() => {
+                setSignInModalOpen(true);
+                handleCloseSignUpForm();
+              }}
+              className="font-medium flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-4 px-4 md:px-5 rounded-t-xl md:rounded-l-xl md:rounded-t-none md:rounded-tl-xl border-b md:border-b-0 md:border-r transition-colors duration-200 cursor-pointer w-full md:w-auto"
+            >
+              <span>Đăng nhập</span>
+            </p>
+            <p
+              onClick={() => {
+                setSignUpModalOpen(true);
+              }}
+              className="font-medium flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-4 px-4 md:px-5 rounded-b-xl md:rounded-r-xl md:rounded-b-none border-t md:border-t-0 md:border-l transition-colors duration-200 cursor-pointer w-full md:w-auto"
+            >
+              <span>Đăng ký</span>
+            </p>
+          </div>
         ) : (
           <div ref={dropdownRef} className="relative h-full">
             <div

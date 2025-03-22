@@ -23,7 +23,7 @@ import {
 import { paymentMethods } from "@/constants/constant";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
-import { clearBeverageAndAmenity } from "@/stores/slices/cartSlice";
+import { clearBeverageAndAmenity, clearCart } from "@/stores/slices/cartSlice";
 import dayjs from "dayjs";
 // import { Trash2 } from "lucide-react";
 import {
@@ -205,7 +205,7 @@ export default function Checkout() {
       }
 
       const data = await response.json();
-
+      dispatch(clearCart());
       if (paymentMethod === "2") {
         toast.success("Thanh toán thành công bằng WorkHive Wallet!", {
           position: "top-right",
@@ -304,9 +304,6 @@ export default function Checkout() {
         <div className="bg-white p-6 rounded-lg shadow-lg border flex flex-col gap-8">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Mã khuyến mãi</h3>
-            {/* <span className="text-red-500 cursor-pointer hover:text-red-300">
-              <Trash2 />
-            </span> */}
           </div>
           <Select
             onValueChange={(value) =>
@@ -320,21 +317,27 @@ export default function Checkout() {
               <SelectValue placeholder="Chọn mã khuyến mãi" />
             </SelectTrigger>
             <SelectContent>
-              {promotions?.map((promotion) => (
-                <SelectItem
-                  key={promotion.id}
-                  className="rounded-sm flex flex-row items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
-                  value={promotion.code + " - " + promotion.discount}
-                >
-                  <span>
-                    {promotion.code} - (Giảm giá {promotion.discount}%)
-                  </span>
-                  <span className="text-xs ml-2">
-                    ({dayjs(promotion.startDate).format("HH:mm DD/MM/YYYY")} -{" "}
-                    {dayjs(promotion.endDate).format("HH:mm DD/MM/YYYY")})
-                  </span>
-                </SelectItem>
-              ))}
+              {promotions?.length > 0 ? (
+                promotions?.map((promotion) => (
+                  <SelectItem
+                    key={promotion.id}
+                    className="rounded-sm flex flex-row items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                    value={promotion.code + " - " + promotion.discount}
+                  >
+                    <span>
+                      {promotion.code} - (Giảm giá {promotion.discount}%)
+                    </span>
+                    <span className="text-xs ml-2">
+                      ({dayjs(promotion.startDate).format("HH:mm DD/MM/YYYY")} -{" "}
+                      {dayjs(promotion.endDate).format("HH:mm DD/MM/YYYY")})
+                    </span>
+                  </SelectItem>
+                ))
+              ) : (
+                <div className="p-2 text-gray-500 text-sm text-center">
+                  Không có mã khuyến mãi nào
+                </div>
+              )}
             </SelectContent>
           </Select>
         </div>

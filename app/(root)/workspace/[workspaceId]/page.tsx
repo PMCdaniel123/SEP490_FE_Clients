@@ -37,6 +37,7 @@ import { toast } from "react-toastify";
 import WorkspaceDetailSidebar from "@/components/layout/workspace-detail-sidebar";
 import { Price, Workspace } from "@/types";
 import SimilarSpace from "@/components/similar-space/similar-space";
+import { clearCart } from "@/stores/slices/cartSlice";
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams() as { workspaceId: string };
@@ -48,6 +49,7 @@ const WorkspaceDetail = () => {
 
   useEffect(() => {
     if (!workspaceId) return;
+    dispatch(clearCart())
     localStorage.removeItem("cart");
     const fetchWorkspace = async () => {
       try {
