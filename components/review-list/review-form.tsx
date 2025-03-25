@@ -1,9 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 import { useState, useEffect } from "react";
 import { Modal, Rate, Input, Upload, Image } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { Users, Ruler, Sofa } from "lucide-react";
 import type { UploadFile, UploadProps } from "antd";
 import { Button } from "../ui/button";
+import { BASE_URL } from "@/constants/environments";
 
 interface ReviewFormProps {
   isReviewModalOpen: boolean;
@@ -35,7 +37,7 @@ const uploadImage = async (image: File): Promise<string> => {
   const formData = new FormData();
   formData.append("image", image);
 
-  const response = await fetch("https://localhost:5050/files/upload", {
+  const response = await fetch(`${BASE_URL}/files/upload`, {
     method: "POST",
     body: formData,
   });
@@ -182,6 +184,7 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
               afterOpenChange: (visible) => !visible && setPreviewImage(""),
             }}
             src={previewImage}
+            alt="Preview"
           />
         )}
         <div className="flex justify-end">

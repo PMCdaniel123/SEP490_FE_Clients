@@ -8,6 +8,7 @@ import { AmenityProps } from "@/types";
 import { toast } from "react-toastify";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { BASE_URL } from "@/constants/environments";
 
 function AmenitiesList({ ownerId }: { ownerId: string }) {
   const [loading, setLoading] = useState(false);
@@ -19,9 +20,7 @@ function AmenitiesList({ ownerId }: { ownerId: string }) {
 
     const fetchAmenityList = async () => {
       try {
-        const response = await fetch(
-          `https://localhost:5050/amenities/Owner/${ownerId}`
-        );
+        const response = await fetch(`${BASE_URL}/amenities/Owner/${ownerId}`);
 
         if (!response.ok) {
           throw new Error("Có lỗi xảy ra khi tải tiện ích.");

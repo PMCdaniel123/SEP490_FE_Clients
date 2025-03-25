@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { CardContent } from "@/components/ui/card-content";
 import Loader from "@/components/loader/Loader";
 import { Badge } from "@/components/ui/badge";
+import { BASE_URL } from "@/constants/environments";
 
 interface SimilarWorkspace {
   id: number;
@@ -36,9 +38,7 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
     const fetchSimilarSpaces = async () => {
       try {
         const response = await fetch(
-          `https://localhost:5050/users/searchbycategory${encodeURIComponent(
-            category
-          )}`
+          `${BASE_URL}/users/searchbycategory${encodeURIComponent(category)}`
         );
 
         if (!response.ok) {
@@ -86,7 +86,9 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="text-xl font-bold text-primary">Các không gian tương tự</h2>
+      <h2 className="text-xl font-bold text-primary">
+        Các không gian tương tự
+      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {workspaces.map((workspace) => (
           <Card
@@ -133,35 +135,40 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
 
               <div className="border-t border-gray-100 pt-3">
                 <div className="flex flex-col gap-1">
-                  {workspace.shortTermPrice !== undefined && workspace.shortTermPrice > 0 && (
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center text-gray-700 text-sm">
-                        <Clock className="mr-1 text-orange-500" size={16} />
-                        <span>Theo giờ</span>
+                  {workspace.shortTermPrice !== undefined &&
+                    workspace.shortTermPrice > 0 && (
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center text-gray-700 text-sm">
+                          <Clock className="mr-1 text-orange-500" size={16} />
+                          <span>Theo giờ</span>
+                        </div>
+                        <span className="font-semibold text-gray-900">
+                          {new Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(workspace.shortTermPrice)}
+                        </span>
                       </div>
-                      <span className="font-semibold text-gray-900">
-                        {new Intl.NumberFormat("vi-VN", {
-                          style: "currency",
-                          currency: "VND",
-                        }).format(workspace.shortTermPrice)}
-                      </span>
-                    </div>
-                  )}
+                    )}
 
-                  {workspace.longTermPrice !== undefined && workspace.longTermPrice > 0 && (
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center text-gray-700 text-sm">
-                        <Calendar className="mr-1 text-purple-500" size={16} />
-                        <span>Theo ngày</span>
+                  {workspace.longTermPrice !== undefined &&
+                    workspace.longTermPrice > 0 && (
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center text-gray-700 text-sm">
+                          <Calendar
+                            className="mr-1 text-purple-500"
+                            size={16}
+                          />
+                          <span>Theo ngày</span>
+                        </div>
+                        <span className="font-semibold text-gray-900">
+                          {new Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(workspace.longTermPrice)}
+                        </span>
                       </div>
-                      <span className="font-semibold text-gray-900">
-                        {new Intl.NumberFormat("vi-VN", {
-                          style: "currency",
-                          currency: "VND",
-                        }).format(workspace.longTermPrice)}
-                      </span>
-                    </div>
-                  )}
+                    )}
                 </div>
               </div>
             </CardContent>

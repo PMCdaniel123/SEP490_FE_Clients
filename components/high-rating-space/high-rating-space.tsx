@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -19,6 +20,7 @@ import Loader from "../loader/Loader";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
+import { BASE_URL } from "@/constants/environments";
 
 export interface Workspace {
   id: number;
@@ -38,7 +40,7 @@ export default function HighRatingSpace() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch("https://localhost:5050/users/searchbyrate")
+    fetch(`${BASE_URL}/users/searchbyrate`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch data");
