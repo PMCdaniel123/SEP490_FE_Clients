@@ -5,6 +5,7 @@ import Loader from "../loader/Loader";
 import { useEffect, useState } from "react";
 import { BeverageProps } from "@/types";
 import { toast } from "react-toastify";
+import { BASE_URL } from "@/constants/environments";
 
 function BeveragesList({ ownerId }: { ownerId: string }) {
   const [loading, setLoading] = useState(false);
@@ -18,9 +19,7 @@ function BeveragesList({ ownerId }: { ownerId: string }) {
 
     const fetchBeverageList = async () => {
       try {
-        const response = await fetch(
-          `https://localhost:5050/beverages/Owner/${ownerId}`
-        );
+        const response = await fetch(`${BASE_URL}/beverages/Owner/${ownerId}`);
 
         if (!response.ok) {
           throw new Error("Có lỗi xảy ra khi tải thực đơn.");

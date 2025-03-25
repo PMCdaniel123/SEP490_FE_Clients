@@ -4,7 +4,9 @@
 import Loader from "@/components/loader/Loader";
 import EditProfileForm from "@/components/profile-form/profile-form";
 import UserReview from "@/components/user-review/user-review";
+import { BASE_URL } from "@/constants/environments";
 import { RootState } from "@/stores";
+import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -34,7 +36,7 @@ function Profile() {
         try {
           setLoading(true);
           const profileResponse = await fetch(
-            `https://localhost:5050/users/${customer?.id}`
+            `${BASE_URL}/users/${customer?.id}`
           );
 
           if (!profileResponse.ok) {
@@ -76,7 +78,7 @@ function Profile() {
       const fetchReviews = async () => {
         try {
           const reviewsResponse = await fetch(
-            `https://localhost:5050/users/rating/getallratingbyuserid/${customer?.id}`
+            `${BASE_URL}/users/rating/getallratingbyuserid/${customer?.id}`
           );
 
           if (!reviewsResponse.ok) {
@@ -85,7 +87,17 @@ function Profile() {
 
           const reviewsData = await reviewsResponse.json();
           const formattedReviews = reviewsData.ratingByUserIdDTOs.map(
-            (review: { comment: string; rate: number; created_At: string; workspace_Name: string; owner_Name: string; images: string[] }, index: number) => ({
+            (
+              review: {
+                comment: string;
+                rate: number;
+                created_At: string;
+                workspace_Name: string;
+                owner_Name: string;
+                images: string[];
+              },
+              index: number
+            ) => ({
               id: index + 1,
               content: review.comment,
               rating: review.rate,
@@ -176,7 +188,8 @@ function Profile() {
             {formData.phoneNumber}
           </p>
           <p className="text-gray-600">
-            <span className="font-semibold">Ngày sinh:</span> {formData.dob}
+            <span className="font-semibold">Ngày sinh:</span>{" "}
+            {dayjs(formData.dob).format("DD/MM/YYYY")}
           </p>
           <p className="text-gray-600">
             <span className="font-semibold">Giới tính:</span> {formData.gender}

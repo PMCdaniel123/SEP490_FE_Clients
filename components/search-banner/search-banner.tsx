@@ -1,8 +1,17 @@
 import Image from "next/image";
-import { Clock, LucideIcon, MapPin, Search, Sofa, UsersRound, AlertCircle } from "lucide-react";
+import {
+  Clock,
+  LucideIcon,
+  MapPin,
+  Search,
+  Sofa,
+  UsersRound,
+  AlertCircle,
+} from "lucide-react";
 import * as Select from "@radix-ui/react-select";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/constants/environments";
 
 export default function SearchBanner() {
   const router = useRouter();
@@ -27,26 +36,37 @@ export default function SearchBanner() {
       setIsSmallScreen(window.innerWidth < 768);
     };
     handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
     const fetchDropdownData = async () => {
       try {
-        const response = await fetch("https://localhost:5050/workspaces");
+        const response = await fetch(`${BASE_URL}/workspaces`);
         if (!response.ok) {
           throw new Error("Failed to fetch workspace data.");
         }
-        const data: { workspaces: { address: string; category: string; capacity: number }[] } =
-          await response.json();
+        const data: {
+          workspaces: { address: string; category: string; capacity: number }[];
+        } = await response.json();
 
-        type Workspace = { address: string; category: string; capacity: number };
+        type Workspace = {
+          address: string;
+          category: string;
+          capacity: number;
+        };
 
-        const uniqueLocations = Array.from(new Set(data.workspaces.map((ws: Workspace) => ws.address)));
-        const uniqueSpaces = Array.from(new Set(data.workspaces.map((ws: Workspace) => ws.category)));
+        const uniqueLocations = Array.from(
+          new Set(data.workspaces.map((ws: Workspace) => ws.address))
+        );
+        const uniqueSpaces = Array.from(
+          new Set(data.workspaces.map((ws: Workspace) => ws.category))
+        );
         const uniqueCapacities = Array.from(
-          new Set(data.workspaces.map((ws: Workspace) => ws.capacity.toString()))
+          new Set(
+            data.workspaces.map((ws: Workspace) => ws.capacity.toString())
+          )
         ).sort((a, b) => Number(a) - Number(b));
 
         setLocations(uniqueLocations);
@@ -89,9 +109,17 @@ export default function SearchBanner() {
       />
 
       <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
-        <h2 className="text-3xl md:text-4xl lg:text-6xl font-extrabold tracking-wide">WorkHive</h2>
+        <h2 className="text-3xl md:text-4xl lg:text-6xl font-extrabold tracking-wide">
+          WorkHive
+        </h2>
 
-        <div className={`mt-4 md:mt-8 bg-white text-black rounded-full flex ${isSmallScreen ? 'flex-col' : 'flex-row'} items-center justify-center shadow-lg p-2 w-full md:w-[90%] lg:w-[80%] xl:w-[72%] ${isSmallScreen ? 'rounded-xl' : 'rounded-full'}`}>
+        <div
+          className={`mt-4 md:mt-8 bg-white text-black rounded-full flex ${
+            isSmallScreen ? "flex-col" : "flex-row"
+          } items-center justify-center shadow-lg p-2 w-full md:w-[90%] lg:w-[80%] xl:w-[72%] ${
+            isSmallScreen ? "rounded-xl" : "rounded-full"
+          }`}
+        >
           <Dropdown
             label="Địa điểm"
             icon={MapPin}
@@ -158,7 +186,9 @@ export default function SearchBanner() {
 
           <div
             onClick={handleSearch}
-            className={`${isSmallScreen ? 'w-full mt-2' : 'ml-2'} bg-gray-800 text-white p-4 rounded-full shadow-md transition-transform transform hover:scale-105 active:scale-95 cursor-pointer flex justify-center`}
+            className={`${
+              isSmallScreen ? "w-full mt-2" : "ml-2"
+            } bg-gray-800 text-white p-4 rounded-full shadow-md transition-transform transform hover:scale-105 active:scale-95 cursor-pointer flex justify-center`}
           >
             <Search size={22} />
           </div>
@@ -197,15 +227,20 @@ function Dropdown({
   isSmallScreen,
 }: DropdownProps) {
   return (
-    <div className={`${isSmallScreen ? 'w-full' : 'flex-1'} p-2 md:p-4 ${!isSmallScreen && hasBorder ? "border-r" : ""} ${isSmallScreen ? 'border-b border-gray-200 last:border-b-0' : ''}`}>
+    <div
+      className={`${isSmallScreen ? "w-full" : "flex-1"} p-2 md:p-4 ${
+        !isSmallScreen && hasBorder ? "border-r" : ""
+      } ${isSmallScreen ? "border-b border-gray-200 last:border-b-0" : ""}`}
+    >
       <p className="text-xs md:text-sm font-semibold mb-1 md:mb-2 items-center justify-start flex px-2 gap-1 md:gap-2">
         <Icon size={isSmallScreen ? 16 : 20} />
         <span>{label}</span>
       </p>
       <Select.Root value={value} onValueChange={setValue}>
         <Select.Trigger
-          className={`w-full flex justify-between items-center bg-transparent text-xs md:text-sm outline-none p-1 md:p-2 cursor-pointer font-semibold ${value ? "text-black" : "text-sixth"
-            }`}
+          className={`w-full flex justify-between items-center bg-transparent text-xs md:text-sm outline-none p-1 md:p-2 cursor-pointer font-semibold ${
+            value ? "text-black" : "text-sixth"
+          }`}
         >
           <Select.Value placeholder={placeholder} />
         </Select.Trigger>

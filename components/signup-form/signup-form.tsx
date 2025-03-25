@@ -18,6 +18,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/stores";
 import { login } from "@/stores/slices/authSlice";
+import { BASE_URL } from "@/constants/environments";
 
 export type FormInputs = z.infer<typeof signupSchema>;
 
@@ -44,10 +45,7 @@ export function SignUpForm({
   const handleSignUp = async (data: FormInputs) => {
     setIsLoading(true);
     try {
-      const response = await axios.post(
-        "https://localhost:5050/users/register",
-        data
-      );
+      const response = await axios.post(`${BASE_URL}/users/register`, data);
       console.log("Sign up successful:", response.data);
       toast.success("Đăng ký thành công!", {
         position: "top-right",
@@ -71,18 +69,15 @@ export function SignUpForm({
       localStorage.setItem("token", token);
 
       try {
-        const decodeResponse = await fetch(
-          "https://localhost:5050/users/decodejwttoken",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              token: token,
-            }),
-          }
-        );
+        const decodeResponse = await fetch(`${BASE_URL}/users/decodejwttoken`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            token: token,
+          }),
+        });
         const decoded = await decodeResponse.json();
         const customerData = {
           id: decoded.claims.sub,
@@ -90,6 +85,7 @@ export function SignUpForm({
           email: decoded.claims.email,
           phone: decoded.claims.Phone,
           roleId: decoded.claims.RoleId,
+          avatar: decoded.avatarUrl,
         };
         toast.success("Đăng nhập thành công!", {
           position: "top-right",

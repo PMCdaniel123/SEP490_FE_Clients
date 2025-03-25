@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CreditCard } from "lucide-react";
+import { ArrowUp, ArrowDown, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -19,6 +19,11 @@ import { RootState } from "@/stores";
 import { toast } from "react-toastify";
 import Loader from "@/components/loader/Loader";
 
+import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card-content";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
+import { BASE_URL } from "@/constants/environments";
 
 const WalletPage = () => {
   const { customer } = useSelector((state: RootState) => state.auth);
@@ -42,13 +47,15 @@ const WalletPage = () => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
+  const predefinedAmounts = [100000, 200000, 500000, 1000000];
+
   useEffect(() => {
     const fetchBalance = async () => {
       if (!customer?.id) return;
       setIsLoading(true);
       try {
         const response = await fetch(
-          `https://localhost:5050/users/wallet/getamountwalletbyuserid?UserId=${customer.id}`
+          `${BASE_URL}/users/wallet/getamountwalletbyuserid?UserId=${customer.id}`
         );
         if (!response.ok) {
           throw new Error("Có lỗi xảy ra khi tải số dư ví.");
@@ -72,7 +79,7 @@ const WalletPage = () => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `https://localhost:5050/users/wallet/getalltransactionhistorybyuserid/${customer.id}`
+          `${BASE_URL}/users/wallet/getalltransactionhistorybyuserid/${customer.id}`
         );
         if (!response.ok) {
           throw new Error("Có lỗi xảy ra khi tải lịch sử giao dịch.");
@@ -87,9 +94,12 @@ const WalletPage = () => {
 
         const formattedTransactions = data.userTransactionHistoryDTOs.map(
           (tx: TransactionDTO, index: number) => {
+            const isPayment = tx.description
+              .toLowerCase()
+              .includes("thanh toán");
             return {
               id: index + 1,
-              type: tx.amount > 0 ? "Nạp tiền" : "Thanh toán",
+              type: isPayment ? "Thanh toán" : "Nạp tiền",
               amount: tx.amount,
               date: tx.created_At,
               paymentMethod: "Chuyển khoản ngân hàng",
@@ -135,7 +145,7 @@ const WalletPage = () => {
 
     try {
       const response = await fetch(
-        "https://localhost:5050/users/wallet/createrequestdeposit",
+        `${BASE_URL}/users/wallet/createrequestdeposit`,
         {
           method: "POST",
           headers: {
@@ -191,104 +201,219 @@ const WalletPage = () => {
     }
   };
 
+  const selectPredefinedAmount = (value: number) => {
+    setRawAmount(value);
+    setAmount(formatNumber(value));
+    setError("");
+  };
+
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg my-8 border">
-      <h1 className="text-2xl font-bold mb-4">Ví WorkHive</h1>
-  
+    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg my-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-primary">Ví WorkHive</h1>
+      </div>
+
       {isLoading ? (
-        <div className="flex justify-center items-center">
-       <Loader />
+        <div className="flex justify-center items-center h-60">
+          <Loader />
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between p-4 bg-gray-100 rounded-lg mb-6">
-            <div className="flex items-center gap-3">
-              <CreditCard size={32} className="text-primary" />
-              <div>
-                <p className="text-gray-600">Số dư ví</p>
-                <p className="text-xl font-semibold">{formatCurrency(balance)}</p>
+          <Card className="mb-6 bg-gradient-to-r from-primary to-secondary text-white">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Wallet size={40} />
+                  <div>
+                    <p className="text-white/80">Số dư ví</p>
+                    <p className="text-3xl font-bold">
+                      {formatCurrency(balance)}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    className="bg-white text-primary hover:bg-white/90"
+                    onClick={handleDeposit}
+                  >
+                    <ArrowUp size={16} className="mr-1" />
+                    Nạp tiền
+                  </Button>
+                </div>
               </div>
-            </div>
-          </div>
-  
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold mb-2">Nạp tiền</h2>
-            <div className="flex gap-2">
-              <Input
-                type="text"
-                placeholder="Nhập số tiền"
-                value={amount}
-                onChange={handleAmountChange}
-              />
-              <Button className="text-white" onClick={handleDeposit}>
-                Nạp
-              </Button>
-            </div>
-            {error && <p className="text-red-500 mt-2">{error}</p>}
-          </div>
-          <TransactionHistory
-            transactions={transactions}
-            formatCurrency={formatCurrency}
-          />
+            </CardContent>
+          </Card>
+
+          <Tabs defaultValue="deposit" className="mb-6">
+            <TabsList className="grid grid-cols-2 mb-4">
+              <TabsTrigger value="deposit">Nạp tiền</TabsTrigger>
+              <TabsTrigger value="history">Lịch sử giao dịch</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="deposit">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Nạp tiền vào ví</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-500 mb-2">Chọn số tiền</p>
+                    <div className="grid grid-cols-4 gap-2 mb-4">
+                      {predefinedAmounts.map((preAmount) => (
+                        <Button
+                          key={preAmount}
+                          variant="outline"
+                          className={`${
+                            rawAmount === preAmount
+                              ? "bg-primary text-white"
+                              : ""
+                          }`}
+                          onClick={() => selectPredefinedAmount(preAmount)}
+                        >
+                          {formatCurrency(preAmount)}
+                        </Button>
+                      ))}
+                    </div>
+
+                    <p className="text-sm text-gray-500 mb-2">
+                      Hoặc nhập số tiền khác
+                    </p>
+                    <div className="flex gap-2">
+                      <Input
+                        type="text"
+                        placeholder="Nhập số tiền"
+                        value={amount}
+                        onChange={handleAmountChange}
+                        className="text-lg"
+                      />
+                      <Button
+                        className="min-w-[100px] text-white"
+                        onClick={handleDeposit}
+                      >
+                        Tiếp tục
+                      </Button>
+                    </div>
+                    {error && (
+                      <p className="text-red-500 mt-2 text-sm">{error}</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="history">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex justify-between items-center">
+                    <span>Lịch sử giao dịch</span>
+                    <div className="flex gap-2">
+                      <Badge
+                        variant="outline"
+                        className="flex items-center gap-1"
+                      >
+                        <ArrowUp size={12} className="text-green-500" />
+                        Nạp tiền
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className="flex items-center gap-1"
+                      >
+                        <ArrowDown size={12} className="text-red-500" />
+                        Thanh toán
+                      </Badge>
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <TransactionHistory
+                    transactions={transactions}
+                    formatCurrency={formatCurrency}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+
           <HelpSection
             isHelpModalOpen={isHelpModalOpen}
             setIsHelpModalOpen={setIsHelpModalOpen}
           />
+
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogContent>
+            <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold text-primary">
                   Chọn phương thức thanh toán
                 </DialogTitle>
               </DialogHeader>
-              <div className="grid grid-cols-2 gap-4 my-8">
-                <Button
-                  variant={
-                    selectedPaymentMethod === "Chuyển khoản ngân hàng"
-                      ? "default"
-                      : "outline"
-                  }
-                  className={`flex flex-col items-center justify-center gap-2 py-8 ${
-                    selectedPaymentMethod === "Chuyển khoản ngân hàng"
-                      ? "text-white"
-                      : ""
-                  }`}
-                  onClick={() =>
-                    setSelectedPaymentMethod("Chuyển khoản ngân hàng")
-                  }
-                >
-                  <Image
-                    src="/vietqr.png"
-                    alt="Bank Transfer"
-                    width={60}
-                    height={60}
-                  />
-                  Chuyển khoản ngân hàng
-                </Button>
-                <Button
-                  variant={
-                    selectedPaymentMethod === "Ví điện tử" ? "default" : "outline"
-                  }
-                  className={`flex flex-col items-center justify-center py-8 ${
-                    selectedPaymentMethod === "Ví điện tử" ? "text-white" : ""
-                  }`}
-                  onClick={() => setSelectedPaymentMethod("Ví điện tử")}
-                >
-                  <Image
-                    src="/zalopay.png"
-                    alt="E-Wallet"
-                    width={40}
-                    height={20}
-                    className="object-cover"
-                  />
-                  Ví điện tử
-                </Button>
+              <div className="my-6">
+                <p className="text-center mb-4 font-medium">
+                  Số tiền nạp:{" "}
+                  <span className="text-primary font-bold">
+                    {formatCurrency(rawAmount)}
+                  </span>
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <Button
+                    variant={
+                      selectedPaymentMethod === "Chuyển khoản ngân hàng"
+                        ? "default"
+                        : "outline"
+                    }
+                    className={`flex flex-col items-center justify-center gap-2 p-6 h-auto ${
+                      selectedPaymentMethod === "Chuyển khoản ngân hàng"
+                        ? "border-2 border-primary"
+                        : ""
+                    }`}
+                    onClick={() =>
+                      setSelectedPaymentMethod("Chuyển khoản ngân hàng")
+                    }
+                  >
+                    <Image
+                      src="/vietqr.png"
+                      alt="Bank Transfer"
+                      width={60}
+                      height={60}
+                    />
+                    <span className="text-sm">Chuyển khoản ngân hàng</span>
+                  </Button>
+                  <Button
+                    variant={
+                      selectedPaymentMethod === "Ví điện tử"
+                        ? "default"
+                        : "outline"
+                    }
+                    className={`flex flex-col items-center justify-center gap-2 p-6 h-auto ${
+                      selectedPaymentMethod === "Ví điện tử"
+                        ? "border-2 border-primary"
+                        : ""
+                    }`}
+                    onClick={() => setSelectedPaymentMethod("Ví điện tử")}
+                  >
+                    <Image
+                      src="/zalopay.png"
+                      alt="E-Wallet"
+                      width={60}
+                      height={60}
+                      className="object-contain"
+                    />
+                    <span className="text-sm">Ví điện tử</span>
+                  </Button>
+                </div>
               </div>
-              <DialogFooter>
-                <Button className="text-white" onClick={confirmDeposit}>
-                  Xác nhận
+              <DialogFooter className="flex gap-2">
+                <Button
+                  className="flex-1"
+                  onClick={confirmDeposit}
+                  disabled={!selectedPaymentMethod}
+                >
+                  Xác nhận thanh toán
                 </Button>
-                <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsModalOpen(false)}
+                  className="flex-1"
+                >
                   Hủy
                 </Button>
               </DialogFooter>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Input, message as antdMessage, Upload, Image } from "antd";
 import { PlusOutlined, SendOutlined } from "@ant-design/icons";
 import type { UploadFile, UploadProps } from "antd";
+import { BASE_URL } from "@/constants/environments";
 
 const { TextArea } = Input;
 
@@ -28,7 +29,7 @@ const uploadImage = async (image: File): Promise<string> => {
   const formData = new FormData();
   formData.append("image", image);
 
-  const response = await fetch("https://localhost:5050/images/upload", {
+  const response = await fetch(`${BASE_URL}/images/upload`, {
     method: "POST",
     body: formData,
   });
@@ -79,7 +80,7 @@ const ContactChat: React.FC<ContactChatProps> = ({ userId, ownerId }) => {
     };
 
     try {
-      const response = await fetch("https://localhost:5050/feedbacks", {
+      const response = await fetch(`${BASE_URL}/feedbacks`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(feedbackData),

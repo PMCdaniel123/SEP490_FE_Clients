@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -17,6 +18,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ContactChat from "@/components/user-feedback/user-feedback";
 import axios from "axios";
+import { BASE_URL } from "@/constants/environments";
 
 interface Transaction {
   booking_Id: number;
@@ -78,7 +80,7 @@ export default function PurchaseHistoryPage() {
 
       try {
         const response = await axios.get(
-          "https://localhost:5050/users/booking/historybookings",
+          `${BASE_URL}/users/booking/historybookings`,
           {
             params: { UserId: customer.id },
           }
@@ -135,7 +137,7 @@ export default function PurchaseHistoryPage() {
 
     try {
       const response = await axios.post(
-        "https://localhost:5050/users/booking/rating",
+        `${BASE_URL}/users/booking/rating`,
         reviewData,
         {
           headers: {
@@ -160,7 +162,7 @@ export default function PurchaseHistoryPage() {
 
         try {
           const response = await axios.get(
-            "https://localhost:5050/users/booking/historybookings",
+            `${BASE_URL}/users/booking/historybookings`,
             {
               params: { UserId: customer.id },
             }

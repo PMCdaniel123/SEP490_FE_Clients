@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { ValidatePayload } from "@/types";
 import { toast } from "react-toastify";
+import { BASE_URL } from "@/constants/environments";
 
 interface Customer {
   id: string | null;
@@ -8,6 +9,7 @@ interface Customer {
   email: string | null;
   phone: string | null;
   roleId: string | null;
+  avatar: string | null;
 }
 
 interface AuthState {
@@ -34,14 +36,11 @@ export const validatePhone = createAsyncThunk<
   }
 >("auth/validatePhone", async ({ input }, { rejectWithValue }) => {
   try {
-    const response = await fetch(
-      "https://localhost:5050/users/checkuserphone",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: input }),
-      }
-    );
+    const response = await fetch(`${BASE_URL}/users/checkuserphone`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone: input }),
+    });
     if (!response.ok) {
       toast.error("Số điện thoại không hợp lệ!", {
         position: "top-right",
@@ -67,14 +66,11 @@ export const validateEmail = createAsyncThunk<
   }
 >("auth/validateEmail", async ({ input }, { rejectWithValue }) => {
   try {
-    const response = await fetch(
-      "https://localhost:5050/users/checkuseremail",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: input }),
-      }
-    );
+    const response = await fetch(`${BASE_URL}/users/checkuseremail`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: input }),
+    });
     if (!response.ok) {
       toast.error("Email không hợp lệ!", {
         position: "top-right",
