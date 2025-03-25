@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { changePasswordSchema } from "@/lib/zod/schema";
 import { z } from "zod";
 import { Eye, EyeOff } from "lucide-react";
+import { BASE_URL } from "@/constants/environments";
 
 interface ChangePasswordFormProps {
   isModalOpen: boolean;
@@ -63,16 +64,13 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
     };
 
     try {
-      const response = await fetch(
-        "https://localhost:5050/users/updatepassword",
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
-        }
-      );
+      const response = await fetch(`${BASE_URL}/users/updatepassword`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
 
       if (!response.ok) {
         throw new Error("Cập nhật mật khẩu không thành công.");

@@ -4,6 +4,7 @@
 import Loader from "@/components/loader/Loader";
 import EditProfileForm from "@/components/profile-form/profile-form";
 import UserReview from "@/components/user-review/user-review";
+import { BASE_URL } from "@/constants/environments";
 import { RootState } from "@/stores";
 import dayjs from "dayjs";
 import { useState, useEffect } from "react";
@@ -35,7 +36,7 @@ function Profile() {
         try {
           setLoading(true);
           const profileResponse = await fetch(
-            `https://localhost:5050/users/${customer?.id}`
+            `${BASE_URL}/users/${customer?.id}`
           );
 
           if (!profileResponse.ok) {
@@ -77,7 +78,7 @@ function Profile() {
       const fetchReviews = async () => {
         try {
           const reviewsResponse = await fetch(
-            `https://localhost:5050/users/rating/getallratingbyuserid/${customer?.id}`
+            `${BASE_URL}/users/rating/getallratingbyuserid/${customer?.id}`
           );
 
           if (!reviewsResponse.ok) {

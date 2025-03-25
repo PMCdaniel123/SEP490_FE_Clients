@@ -34,6 +34,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { LoadingOutlined } from "@ant-design/icons";
+import { BASE_URL } from "@/constants/environments";
 
 interface CheckoutDiscount {
   code: string;
@@ -67,7 +68,7 @@ export default function Checkout() {
   const fetchPromotions = async ({ workspaceId }: { workspaceId: string }) => {
     try {
       const response = await fetch(
-        `https://localhost:5050/workspaces/${workspaceId}/promotions`
+        `${BASE_URL}/workspaces/${workspaceId}/promotions`
       );
       if (!response.ok) {
         throw new Error("Có lỗi xảy ra khi tải thông tin mã giảm giá.");
@@ -108,9 +109,7 @@ export default function Checkout() {
 
     const fetchWorkspace = async () => {
       try {
-        const response = await fetch(
-          `https://localhost:5050/workspaces/${workspaceId}`
-        );
+        const response = await fetch(`${BASE_URL}/workspaces/${workspaceId}`);
 
         if (!response.ok) {
           throw new Error("Có lỗi xảy ra khi tải thông tin không gian.");
@@ -189,8 +188,8 @@ export default function Checkout() {
     try {
       const apiUrl =
         paymentMethod === "2"
-          ? "https://localhost:5050/users/bookingbyworkhivewallet"
-          : "https://localhost:5050/users/booking";
+          ? `${BASE_URL}/users/bookingbyworkhivewallet`
+          : `${BASE_URL}/users/booking`;
 
       const response = await fetch(apiUrl, {
         method: "POST",

@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { CardContent } from "@/components/ui/card-content";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
+import { BASE_URL } from "@/constants/environments";
 
 const WalletPage = () => {
   const { customer } = useSelector((state: RootState) => state.auth);
@@ -54,7 +55,7 @@ const WalletPage = () => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `https://localhost:5050/users/wallet/getamountwalletbyuserid?UserId=${customer.id}`
+          `${BASE_URL}/users/wallet/getamountwalletbyuserid?UserId=${customer.id}`
         );
         if (!response.ok) {
           throw new Error("Có lỗi xảy ra khi tải số dư ví.");
@@ -78,7 +79,7 @@ const WalletPage = () => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `https://localhost:5050/users/wallet/getalltransactionhistorybyuserid/${customer.id}`
+          `${BASE_URL}/users/wallet/getalltransactionhistorybyuserid/${customer.id}`
         );
         if (!response.ok) {
           throw new Error("Có lỗi xảy ra khi tải lịch sử giao dịch.");
@@ -90,10 +91,12 @@ const WalletPage = () => {
           description: string;
           status: string;
         }
-    
+
         const formattedTransactions = data.userTransactionHistoryDTOs.map(
           (tx: TransactionDTO, index: number) => {
-            const isPayment = tx.description.toLowerCase().includes("thanh toán");
+            const isPayment = tx.description
+              .toLowerCase()
+              .includes("thanh toán");
             return {
               id: index + 1,
               type: isPayment ? "Thanh toán" : "Nạp tiền",
@@ -142,7 +145,7 @@ const WalletPage = () => {
 
     try {
       const response = await fetch(
-        "https://localhost:5050/users/wallet/createrequestdeposit",
+        `${BASE_URL}/users/wallet/createrequestdeposit`,
         {
           method: "POST",
           headers: {
@@ -208,9 +211,8 @@ const WalletPage = () => {
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg my-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-primary">Ví WorkHive</h1>
-      
       </div>
-  
+
       {isLoading ? (
         <div className="flex justify-center items-center h-60">
           <Loader />
@@ -224,12 +226,14 @@ const WalletPage = () => {
                   <Wallet size={40} />
                   <div>
                     <p className="text-white/80">Số dư ví</p>
-                    <p className="text-3xl font-bold">{formatCurrency(balance)}</p>
+                    <p className="text-3xl font-bold">
+                      {formatCurrency(balance)}
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button 
-                    className="bg-white text-primary hover:bg-white/90" 
+                  <Button
+                    className="bg-white text-primary hover:bg-white/90"
                     onClick={handleDeposit}
                   >
                     <ArrowUp size={16} className="mr-1" />
@@ -239,13 +243,13 @@ const WalletPage = () => {
               </div>
             </CardContent>
           </Card>
-  
+
           <Tabs defaultValue="deposit" className="mb-6">
             <TabsList className="grid grid-cols-2 mb-4">
               <TabsTrigger value="deposit">Nạp tiền</TabsTrigger>
               <TabsTrigger value="history">Lịch sử giao dịch</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="deposit">
               <Card>
                 <CardHeader>
@@ -259,15 +263,21 @@ const WalletPage = () => {
                         <Button
                           key={preAmount}
                           variant="outline"
-                          className={`${rawAmount === preAmount ? 'bg-primary text-white' : ''}`}
+                          className={`${
+                            rawAmount === preAmount
+                              ? "bg-primary text-white"
+                              : ""
+                          }`}
                           onClick={() => selectPredefinedAmount(preAmount)}
                         >
                           {formatCurrency(preAmount)}
                         </Button>
                       ))}
                     </div>
-                    
-                    <p className="text-sm text-gray-500 mb-2">Hoặc nhập số tiền khác</p>
+
+                    <p className="text-sm text-gray-500 mb-2">
+                      Hoặc nhập số tiền khác
+                    </p>
                     <div className="flex gap-2">
                       <Input
                         type="text"
@@ -276,30 +286,38 @@ const WalletPage = () => {
                         onChange={handleAmountChange}
                         className="text-lg"
                       />
-                      <Button 
-                        className="min-w-[100px] text-white" 
+                      <Button
+                        className="min-w-[100px] text-white"
                         onClick={handleDeposit}
                       >
                         Tiếp tục
                       </Button>
                     </div>
-                    {error && <p className="text-red-500 mt-2 text-sm">{error}</p>}
+                    {error && (
+                      <p className="text-red-500 mt-2 text-sm">{error}</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="history">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex justify-between items-center">
                     <span>Lịch sử giao dịch</span>
                     <div className="flex gap-2">
-                      <Badge variant="outline" className="flex items-center gap-1">
+                      <Badge
+                        variant="outline"
+                        className="flex items-center gap-1"
+                      >
                         <ArrowUp size={12} className="text-green-500" />
                         Nạp tiền
                       </Badge>
-                      <Badge variant="outline" className="flex items-center gap-1">
+                      <Badge
+                        variant="outline"
+                        className="flex items-center gap-1"
+                      >
                         <ArrowDown size={12} className="text-red-500" />
                         Thanh toán
                       </Badge>
@@ -315,12 +333,12 @@ const WalletPage = () => {
               </Card>
             </TabsContent>
           </Tabs>
-          
+
           <HelpSection
             isHelpModalOpen={isHelpModalOpen}
             setIsHelpModalOpen={setIsHelpModalOpen}
           />
-          
+
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogContent className="max-w-md">
               <DialogHeader>
@@ -330,7 +348,10 @@ const WalletPage = () => {
               </DialogHeader>
               <div className="my-6">
                 <p className="text-center mb-4 font-medium">
-                  Số tiền nạp: <span className="text-primary font-bold">{formatCurrency(rawAmount)}</span>
+                  Số tiền nạp:{" "}
+                  <span className="text-primary font-bold">
+                    {formatCurrency(rawAmount)}
+                  </span>
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   <Button
@@ -358,7 +379,9 @@ const WalletPage = () => {
                   </Button>
                   <Button
                     variant={
-                      selectedPaymentMethod === "Ví điện tử" ? "default" : "outline"
+                      selectedPaymentMethod === "Ví điện tử"
+                        ? "default"
+                        : "outline"
                     }
                     className={`flex flex-col items-center justify-center gap-2 p-6 h-auto ${
                       selectedPaymentMethod === "Ví điện tử"
@@ -379,15 +402,15 @@ const WalletPage = () => {
                 </div>
               </div>
               <DialogFooter className="flex gap-2">
-                <Button 
-                  className="flex-1" 
+                <Button
+                  className="flex-1"
                   onClick={confirmDeposit}
                   disabled={!selectedPaymentMethod}
                 >
                   Xác nhận thanh toán
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setIsModalOpen(false)}
                   className="flex-1"
                 >

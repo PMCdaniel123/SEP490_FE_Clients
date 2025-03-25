@@ -15,6 +15,7 @@ import Loader from "@/components/loader/Loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider, Checkbox, ConfigProvider } from "antd";
+import { BASE_URL } from "@/constants/environments";
 
 const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
   const router = useRouter();
@@ -60,8 +61,8 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
           : "";
 
         const endpoint = unwrappedQuery
-          ? `https://localhost:5050/users/searchbyfourcriteria?${unwrappedQuery}`
-          : `https://localhost:5050/users/searchbyfourcriteria`;
+          ? `${BASE_URL}/users/searchbyfourcriteria?${unwrappedQuery}`
+          : `${BASE_URL}/users/searchbyfourcriteria`;
 
         const response = await fetch(endpoint);
         if (!response.ok) {

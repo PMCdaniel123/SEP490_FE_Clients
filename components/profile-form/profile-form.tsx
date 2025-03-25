@@ -8,6 +8,7 @@ import ChangePasswordForm from "../change-password-form/change-password-form";
 import { Upload } from "lucide-react";
 import { Button, Upload as AntUpload } from "antd";
 import ImgCrop from "antd-img-crop";
+import { BASE_URL } from "@/constants/environments";
 
 interface EditProfileFormProps {
   formData: {
@@ -50,7 +51,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
     const formData = new FormData();
     formData.append("image", image);
 
-    const response = await fetch("https://localhost:5050/images/upload", {
+    const response = await fetch(`${BASE_URL}/images/upload`, {
       method: "POST",
       body: formData,
     });
@@ -106,7 +107,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
     };
 
     try {
-      const response = await fetch("https://localhost:5050/users/update", {
+      const response = await fetch(`${BASE_URL}/users/update`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

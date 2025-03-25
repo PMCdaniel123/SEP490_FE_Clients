@@ -12,6 +12,7 @@ import { login, resetLoginStep } from "@/stores/slices/authSlice";
 import Image from "next/image";
 import { useState } from "react";
 import { LoadingOutlined } from "@ant-design/icons";
+import { BASE_URL } from "@/constants/environments";
 
 export type FormInputs = z.infer<typeof passwordSchema>;
 
@@ -32,7 +33,7 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
   const handleSignIn: SubmitHandler<FormInputs> = async (data) => {
     setIsLoading(true);
     try {
-      const response = await fetch("https://localhost:5050/users/login", {
+      const response = await fetch(`${BASE_URL}/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,18 +61,15 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
       onClose();
 
       try {
-        const decodeResponse = await fetch(
-          "https://localhost:5050/users/decodejwttoken",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              token: token,
-            }),
-          }
-        );
+        const decodeResponse = await fetch(`${BASE_URL}/users/decodejwttoken`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            token: token,
+          }),
+        });
         const decoded = await decodeResponse.json();
         const customerData = {
           id: decoded.claims.sub,
@@ -79,6 +77,7 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
           email: decoded.claims.email,
           phone: decoded.claims.Phone,
           roleId: decoded.claims.RoleId,
+          avatar: decoded.avatarUrl,
         };
         toast.success("Đăng nhập thành công!", {
           position: "top-right",

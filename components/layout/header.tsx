@@ -26,6 +26,7 @@ import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
 import { toast } from "react-toastify";
+import { BASE_URL } from "@/constants/environments";
 
 function Header() {
   const pathname = usePathname();
@@ -47,7 +48,7 @@ function Header() {
       const getCustomerData = async () => {
         try {
           const decodeResponse = await fetch(
-            "https://localhost:5050/users/decodejwttoken",
+            `${BASE_URL}/users/decodejwttoken`,
             {
               method: "POST",
               headers: {
@@ -70,6 +71,7 @@ function Header() {
             email: decoded.claims.email,
             phone: decoded.claims.Phone,
             roleId: decoded.claims.RoleId,
+            avatar: decoded.avatarUrl,
           };
 
           setIsToken(true);
@@ -186,7 +188,7 @@ function Header() {
               onClick={() => setOpenAccount(!openAccount)}
             >
               <Image
-                src="/logo.png"
+                src={customer?.avatar || "/logo.png"}
                 alt="Logo"
                 width={40}
                 height={40}
@@ -207,7 +209,7 @@ function Header() {
               >
                 <div className="flex items-center justify-center py-2 px-4 gap-4 bg-primary rounded-t-xl">
                   <Image
-                    src="/logo.png"
+                    src={customer?.avatar || "/logo.png"}
                     alt="Logo"
                     width={40}
                     height={40}

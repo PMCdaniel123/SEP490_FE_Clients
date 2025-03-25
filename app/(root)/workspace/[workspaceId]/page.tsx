@@ -38,6 +38,7 @@ import WorkspaceDetailSidebar from "@/components/layout/workspace-detail-sidebar
 import { Price, Workspace } from "@/types";
 import SimilarSpace from "@/components/similar-space/similar-space";
 import { clearCart } from "@/stores/slices/cartSlice";
+import { BASE_URL } from "@/constants/environments";
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams() as { workspaceId: string };
@@ -49,13 +50,11 @@ const WorkspaceDetail = () => {
 
   useEffect(() => {
     if (!workspaceId) return;
-    dispatch(clearCart())
+    dispatch(clearCart());
     localStorage.removeItem("cart");
     const fetchWorkspace = async () => {
       try {
-        const response = await fetch(
-          `https://localhost:5050/workspaces/${workspaceId}`
-        );
+        const response = await fetch(`${BASE_URL}/workspaces/${workspaceId}`);
 
         if (!response.ok) {
           throw new Error("Có lỗi xảy ra khi tải thông tin không gian.");
