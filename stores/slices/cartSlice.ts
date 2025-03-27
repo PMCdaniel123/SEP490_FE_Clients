@@ -30,7 +30,7 @@ const initialState: CartState = {
   beverageList: [],
   amenityList: [],
   total: 0,
-  category: ""
+  category: "",
 };
 
 const cartSlice = createSlice({
@@ -48,11 +48,15 @@ const cartSlice = createSlice({
     },
     setWorkspaceTime: (
       state,
-      action: PayloadAction<{ startTime: string; endTime: string; category: string }>
+      action: PayloadAction<{
+        startTime: string;
+        endTime: string;
+        category: string;
+      }>
     ) => {
       state.startTime = action.payload.startTime;
       state.endTime = action.payload.endTime;
-      state.category = action.payload.category
+      state.category = action.payload.category;
       cartSlice.caseReducers.calculateTotal(state);
     },
     clearWorkspaceTime: (state) => {
@@ -153,7 +157,7 @@ const cartSlice = createSlice({
         const start = dayjs(state.startTime, "HH:mm DD/MM/YYYY").startOf("day");
         const end = dayjs(state.endTime, "HH:mm DD/MM/YYYY").startOf("day");
         const result = end.diff(start, "day");
-        duration = result === 0 ? 1 : result;
+        duration = result + 1;
       }
 
       console.log(state.price, state.priceType, duration);
