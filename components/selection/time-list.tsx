@@ -26,8 +26,6 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
   const [loading, setLoading] = useState(false);
   const [timeList, setTimeList] = useState<Time[]>([]);
 
-  console.log(timeList);
-
   useEffect(() => {
     if (!workspaceId) return;
     setLoading(true);
