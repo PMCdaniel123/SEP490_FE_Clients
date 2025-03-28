@@ -7,7 +7,7 @@ import UserReview from "@/components/user-review/user-review";
 import { BASE_URL } from "@/constants/environments";
 import { RootState } from "@/stores";
 import dayjs from "dayjs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -28,6 +28,51 @@ function Profile() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const { customer } = useSelector((state: RootState) => state.auth);
+
+  const fetchReviews = useCallback(async () => {
+    try {
+      if (!customer?.id) return;
+      
+      const reviewsResponse = await fetch(
+        `${BASE_URL}/users/rating/getallratingbyuserid/${customer.id}`
+      );
+
+      if (!reviewsResponse.ok) {
+        throw new Error("Có lỗi xảy ra khi tải đánh giá.");
+      }
+
+      const reviewsData = await reviewsResponse.json();
+      const formattedReviews = reviewsData.ratingByUserIdDTOs.map(
+        (review: {
+          ratingId: number;
+          comment: string;
+          rate: number;
+          created_At: string;
+          workspace_Name: string;
+          owner_Name: string;
+          images: { url: string }[];
+        }) => ({
+          id: review.ratingId,
+          content: review.comment,
+          rating: review.rate,
+          created_At: review.created_At,
+          workspace_Name: review.workspace_Name,
+          owner_Name: review.owner_Name,
+          images: review.images,
+        })
+      );
+      setReviews(formattedReviews);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+    }
+  }, [customer?.id]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -75,55 +120,10 @@ function Profile() {
         }
       };
 
-      const fetchReviews = async () => {
-        try {
-          const reviewsResponse = await fetch(
-            `${BASE_URL}/users/rating/getallratingbyuserid/${customer?.id}`
-          );
-
-          if (!reviewsResponse.ok) {
-            throw new Error("Có lỗi xảy ra khi tải đánh giá.");
-          }
-
-          const reviewsData = await reviewsResponse.json();
-          const formattedReviews = reviewsData.ratingByUserIdDTOs.map(
-            (
-              review: {
-                comment: string;
-                rate: number;
-                created_At: string;
-                workspace_Name: string;
-                owner_Name: string;
-                images: string[];
-              },
-              index: number
-            ) => ({
-              id: index + 1,
-              content: review.comment,
-              rating: review.rate,
-              created_At: review.created_At,
-              workspace_Name: review.workspace_Name,
-              owner_Name: review.owner_Name,
-              images: review.images,
-            })
-          );
-          setReviews(formattedReviews);
-        } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : "Đã xảy ra lỗi!";
-          toast.error(errorMessage, {
-            position: "top-right",
-            autoClose: 2000,
-            hideProgressBar: false,
-            theme: "light",
-          });
-        }
-      };
-
       fetchProfile();
       fetchReviews();
     }
-  }, [customer]);
+  }, [customer, fetchReviews]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -207,7 +207,11 @@ function Profile() {
             >
               Chỉnh sửa hồ sơ
             </button>
-            <UserReview reviews={reviews} />
+            <UserReview 
+              reviews={reviews} 
+              userId={customer?.id ? Number(customer.id) : 0} 
+              onReviewUpdated={fetchReviews}
+            />
           </div>
         ) : (
           <EditProfileForm

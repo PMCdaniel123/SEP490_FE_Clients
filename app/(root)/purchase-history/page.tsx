@@ -312,39 +312,50 @@ export default function PurchaseHistoryPage() {
                         Đánh giá
                       </Button>
                     )}
-                    <Dropdown
-                      menu={{
-                        items: [
-                          {
-                            key: "rebook",
-                            label: "Đặt lại",
-                            onClick: () => handleRebook(tx),
-                          },
-                          {
-                            key: "contact",
-                            label: "Liên hệ",
-                            onClick: () => handleContact(tx),
-                          },
-                          {
-                            key: "cancel",
-                            label: (
-                              <span className="text-red-500">
-                                Hủy giao dịch
-                              </span>
-                            ),
-                            onClick: () => handleCancelTransaction(tx),
-                          },
-                        ],
-                      }}
-                      trigger={["click"]}
-                    >
-                      <Button
-                        className="text-black hover:text-white bg-white"
-                        onClick={(e) => e.stopPropagation()}
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Dropdown
+                        menu={{
+                          items: [
+                            {
+                              key: "rebook",
+                              label: "Đặt lại",
+                              onClick: (e) => {
+                                e.domEvent.stopPropagation();
+                                handleRebook(tx);
+                              },
+                            },
+                            {
+                              key: "contact",
+                              label: "Liên hệ",
+                              onClick: (e) => {
+                                e.domEvent.stopPropagation();
+                                handleContact(tx);
+                              },
+                            },
+                            {
+                              key: "cancel",
+                              label: (
+                                <span className="text-red-500">
+                                  Hủy giao dịch
+                                </span>
+                              ),
+                              onClick: (e) => {
+                                e.domEvent.stopPropagation();
+                                handleCancelTransaction(tx);
+                              },
+                            },
+                          ],
+                        }}
+                        trigger={["click"]}
                       >
-                        <DownOutlined />
-                      </Button>
-                    </Dropdown>
+                        <Button
+                          className="text-black hover:text-white bg-white"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <DownOutlined />
+                        </Button>
+                      </Dropdown>
+                    </div>
                   </>
                 )}
                 {tx.booking_Status === "Fail" && (

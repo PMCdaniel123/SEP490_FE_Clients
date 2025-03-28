@@ -60,15 +60,19 @@ function ReviewList({ workspaceId }: ReviewListProps) {
 
   const filterReviews = () => {
     let filtered = reviews;
-
+  
     if (selectedRating) {
       filtered = filtered.filter((review) => review.rate === selectedRating);
     }
-
+  
     if (hasImages) {
       filtered = filtered.filter((review) => review.images.length > 0);
     }
 
+    filtered = filtered.sort(
+      (a, b) => new Date(b.created_At).getTime() - new Date(a.created_At).getTime()
+    );
+  
     return filtered;
   };
 
