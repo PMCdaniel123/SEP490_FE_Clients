@@ -49,7 +49,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
     const formData = new FormData();
     formData.append("image", image);
 
-    const response = await fetch("https://localhost:5050/images/upload", {
+    const response = await fetch("https://localhost:5050/files/upload", {
       method: "POST",
       body: formData,
     });
