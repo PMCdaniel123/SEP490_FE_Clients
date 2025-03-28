@@ -10,6 +10,7 @@ import Loader from "../loader/Loader";
 import { Workspace } from "@/types";
 import { useRouter } from "next/navigation";
 import { Badge } from "../ui/badge";
+import { BASE_URL } from "@/constants/environments";
 
 export default function SpaceList() {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
@@ -17,7 +18,7 @@ export default function SpaceList() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("https://localhost:5050/workspaces")
+    fetch(`${BASE_URL}/workspaces`)
       .then((response) => response.json())
       .then((data: { workspaces: Workspace[] }) => {
         const formattedWorkspaces = data.workspaces.map((workspace) => ({
@@ -84,9 +85,9 @@ export default function SpaceList() {
 
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                 <div className="flex justify-between items-end">
-                 <Badge className="bg-primary hover:bg-secondary text-white">
-                          {workspace.category}
-                        </Badge>
+                  <Badge className="bg-primary hover:bg-secondary text-white">
+                    {workspace.category}
+                  </Badge>
                 </div>
               </div>
             </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import ReviewItem from "./review-item";
 import Loader from "../loader/Loader";
+import { BASE_URL } from "@/constants/environments";
 
 interface Review {
   rate: number;
@@ -41,7 +42,7 @@ function ReviewList({ workspaceId }: ReviewListProps) {
     const fetchReviews = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`https://localhost:5050/users/rating/getallratingbyworkspaceid/${workspaceId}`);
+        const response = await fetch(`${BASE_URL}/users/rating/getallratingbyworkspaceid/${workspaceId}`);
         if (!response.ok) {
           throw new Error("Có lỗi xảy ra khi tải đánh giá.");
         }

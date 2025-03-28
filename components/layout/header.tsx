@@ -26,6 +26,7 @@ import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
 import { toast } from "react-toastify";
+import { BASE_URL } from "@/constants/environments";
 
 function Header() {
   const pathname = usePathname();
@@ -47,7 +48,7 @@ function Header() {
       const getCustomerData = async () => {
         try {
           const decodeResponse = await fetch(
-            "https://localhost:5050/users/decodejwttoken",
+            `${BASE_URL}/users/decodejwttoken`,
             {
               method: "POST",
               headers: {
@@ -70,6 +71,7 @@ function Header() {
             email: decoded.claims.email,
             phone: decoded.claims.Phone,
             roleId: decoded.claims.RoleId,
+            avatar: decoded.avatarUrl,
           };
 
           setIsToken(true);
@@ -161,24 +163,24 @@ function Header() {
         {isToken && <Notification />}
         {!isToken ? (
           <div className="flex flex-col md:flex-row items-center border rounded-xl bg-secondary/60 h-full w-full md:w-auto">
-          <p
-            onClick={() => {
-              setSignInModalOpen(true);
-              handleCloseSignUpForm();
-            }}
-            className="font-medium flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-4 px-4 md:px-5 rounded-t-xl md:rounded-l-xl md:rounded-t-none border-b md:border-b-0 md:border-r transition-colors duration-200 cursor-pointer w-full md:w-auto"
-          >
-            <span>Đăng nhập</span>
-          </p>
-          <p
-            onClick={() => {
-              setSignUpModalOpen(true);
-            }}
-            className="font-medium flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-4 px-4 md:px-5 rounded-b-xl md:rounded-r-xl md:rounded-b-none border-t md:border-t-0 md:border-l transition-colors duration-200 cursor-pointer w-full md:w-auto"
-          >
-            <span>Đăng ký</span>
-          </p>
-        </div>
+            <p
+              onClick={() => {
+                setSignInModalOpen(true);
+                handleCloseSignUpForm();
+              }}
+              className="font-medium flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-4 px-4 md:px-5 rounded-t-xl md:rounded-l-xl md:rounded-t-none md:rounded-tl-xl border-b md:border-b-0 md:border-r transition-colors duration-200 cursor-pointer w-full md:w-auto"
+            >
+              <span>Đăng nhập</span>
+            </p>
+            <p
+              onClick={() => {
+                setSignUpModalOpen(true);
+              }}
+              className="font-medium flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-4 px-4 md:px-5 rounded-b-xl md:rounded-r-xl md:rounded-b-none border-t md:border-t-0 md:border-l transition-colors duration-200 cursor-pointer w-full md:w-auto"
+            >
+              <span>Đăng ký</span>
+            </p>
+          </div>
         ) : (
           <div ref={dropdownRef} className="relative h-full">
             <div
@@ -186,7 +188,7 @@ function Header() {
               onClick={() => setOpenAccount(!openAccount)}
             >
               <Image
-                src="/logo.png"
+                src={customer?.avatar || "/logo.png"}
                 alt="Logo"
                 width={40}
                 height={40}
@@ -207,7 +209,7 @@ function Header() {
               >
                 <div className="flex items-center justify-center py-2 px-4 gap-4 bg-primary rounded-t-xl">
                   <Image
-                    src="/logo.png"
+                    src={customer?.avatar || "/logo.png"}
                     alt="Logo"
                     width={40}
                     height={40}

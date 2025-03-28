@@ -10,6 +10,7 @@ import { z } from "zod";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { LoadingOutlined } from "@ant-design/icons";
+import { BASE_URL } from "@/constants/environments";
 
 export type FormInputs = z.infer<typeof signupOwnerSchema>;
 
@@ -27,7 +28,7 @@ export default function BecomeOwnerForm({ onClose }: { onClose: () => void }) {
   const handleSignUp = async (data: FormInputs) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`https://localhost:5050/owners/register`, {
+      const response = await fetch(`${BASE_URL}/owners/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

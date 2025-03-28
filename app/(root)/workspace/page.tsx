@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Slider, ConfigProvider } from "antd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { BASE_URL } from "@/constants/environments";
 
 
 interface Workspace {
@@ -43,7 +44,7 @@ export default function PropertyGrid() {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    fetch("https://localhost:5050/workspaces")
+    fetch(`${BASE_URL}/workspaces`)
       .then((response) => response.json())
       .then((data: { workspaces: Workspace[] }) => {
         const formattedWorkspaces = data.workspaces.map((workspace) => ({

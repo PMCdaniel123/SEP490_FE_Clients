@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import Loader from "../loader/Loader";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import { BASE_URL } from "@/constants/environments";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
@@ -25,8 +26,6 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
   const [loading, setLoading] = useState(false);
   const [timeList, setTimeList] = useState<Time[]>([]);
 
-  console.log(timeList);
-
   useEffect(() => {
     if (!workspaceId) return;
     setLoading(true);
@@ -34,7 +33,7 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
     const fetchTimeList = async () => {
       try {
         const response = await fetch(
-          `https://localhost:5050/users/booking/workspacetimes?WorkspaceId=${workspaceId}`
+          `${BASE_URL}/users/booking/workspacetimes?WorkspaceId=${workspaceId}`
         );
 
         if (!response.ok) {

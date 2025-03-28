@@ -3,13 +3,28 @@ import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   clearWorkspaceTime,
   setWorkspaceTime,
 } from "@/stores/slices/cartSlice";
+import { toast } from "react-toastify";
+import { RootState } from "@/stores";
+import Loader from "../loader/Loader";
+import { BASE_URL } from "@/constants/environments";
+import isBetween from "dayjs/plugin/isBetween";
+
+dayjs.extend(isBetween);
 
 const { RangePicker } = DatePicker;
+
+interface Time {
+  id: string;
+  startDate: string;
+  endDate: string;
+  status: string;
+  workspaceTimeCategory: string;
+}
 
 function DateSelect({
   openTime,
@@ -30,12 +45,59 @@ function DateSelect({
   const dispatch = useDispatch();
   const open = openTime.substring(0, 5);
   const close = closeTime.substring(0, 5);
+  const [timeList, setTimeList] = useState<Time[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { workspaceId } = useSelector((state: RootState) => state.cart);
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    setLoading(true);
+
+    const fetchTimeList = async () => {
+      try {
+        const response = await fetch(
+          `${BASE_URL}/users/booking/workspacetimes?WorkspaceId=${workspaceId}`
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Có lỗi xảy ra khi tải các thời gian không khả dụng."
+          );
+        }
+
+        const data = await response.json();
+        setTimeList(
+          Array.isArray(data.workspaceTimes) ? data.workspaceTimes : []
+        );
+        setLoading(false);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+        toast.error(errorMessage, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          theme: "light",
+        });
+      }
+    };
+
+    fetchTimeList();
+  }, [workspaceId]);
 
   useEffect(() => {
     if (!isDatePickerOpen) {
       dispatch(clearWorkspaceTime());
     }
   }, [isDatePickerOpen, dispatch]);
+
+  if (loading) {
+    return (
+      <div className="text-center">
+        <Loader />
+      </div>
+    );
+  }
 
   const getNowTime = () => {
     const now = dayjs();
@@ -83,6 +145,32 @@ function DateSelect({
         ? selectedEnd.startOf("day").format("DD/MM/YYYY")
         : selectedEnd.format("DD/MM/YYYY");
 
+      const hasOverlap = timeList.some(({ startDate, endDate }) => {
+        const bookedStart = dayjs(startDate, "YYYY-MM-DD");
+        const bookedEnd = dayjs(endDate, "YYYY-MM-DD");
+
+        return (
+          selectedStart.isBetween(bookedStart, bookedEnd, "day", "[]") ||
+          selectedEnd.isBetween(bookedStart, bookedEnd, "day", "[]") ||
+          (selectedStart.isSameOrBefore(bookedStart) &&
+            selectedEnd.isSameOrAfter(bookedEnd))
+        );
+      });
+
+      if (hasOverlap) {
+        toast.error(
+          "Khoảng thời gian đã bị đặt trước. Vui lòng chọn ngày khác!",
+          {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            theme: "light",
+          }
+        );
+        dispatch(clearWorkspaceTime());
+        return;
+      }
+
       setDate({
         from: dates[0].toDate(),
         to: dates[1].toDate(),
@@ -122,19 +210,26 @@ function DateSelect({
               date?.to ? dayjs(date.to) : undefined,
             ]}
             disabledDate={(current) =>
-              current && current < dayjs().startOf("day")
+              // current && current < dayjs().startOf("day")
+              {
+                if (!current) return false;
+
+                // Disable past dates
+                if (current < dayjs().startOf("day")) {
+                  return true;
+                }
+
+                // Disable dates in timeList
+                return timeList.some(({ startDate, endDate }) => {
+                  const start = dayjs(startDate, "YYYY-MM-DD");
+                  const end = dayjs(endDate, "YYYY-MM-DD");
+                  return current.isBetween(start, end, "day", "[]"); // '[]' includes start and end dates
+                });
+              }
             }
           />
         </div>
       )}
-      {/* <div className="flex flex-col mt-4 ml-4">
-        <p className="text-fifth text-sm font-normal">
-          Bắt đầu {date?.from ? dayjs(date.from).format("DD/MM/YYYY") : ""}
-        </p>
-        <p className="text-sm text-fifth font-normal">
-          Kết thúc {date?.to ? dayjs(date.to).format("DD/MM/YYYY") : ""}
-        </p>
-      </div> */}
     </div>
   );
 }

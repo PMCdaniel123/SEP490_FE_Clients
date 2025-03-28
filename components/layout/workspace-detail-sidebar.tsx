@@ -24,6 +24,7 @@ import TimeList from "../selection/time-list";
 import { Workspace } from "@/types";
 import Time24hSelect from "../selection/time-24h-select";
 import { Clock, Clock10, Clock5 } from "lucide-react";
+import { BASE_URL } from "@/constants/environments";
 
 function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
   const { beverageList, amenityList, total, startTime, endTime } = useSelector(
@@ -63,7 +64,7 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
       setIsButtonLoading(true);
       try {
         const response = await fetch(
-          `https://localhost:5050/users/booking/checktimesoverlap`,
+          `${BASE_URL}/users/booking/checktimesoverlap`,
           {
             method: "POST",
             headers: {
