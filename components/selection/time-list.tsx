@@ -65,7 +65,8 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
   const filterByTime = (date: dayjs.Dayjs) =>
     timeList.filter((item) => {
       const isSameDay =
-        dayjs(item.startDate).isSame(date, "day") &&
+        (dayjs(item.startDate).isSame(date, "day") ||
+          dayjs(item.endDate).isSame(date, "day")) &&
         (item.status === "InUse" || item.status === "Handling") &&
         item.workspaceTimeCategory !== "Ngày";
       return isSameDay;
@@ -132,8 +133,8 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
                 key={item.id}
                 className="p-2 rounded-md bg-fourth text-white font-medium text-sm"
               >
-                {dayjs(item.startDate).format("HH:mm")} -{" "}
-                {dayjs(item.endDate).format("HH:mm")}
+                {dayjs(item.startDate).format("HH:mm DD/MM/YYYY")} -{" "}
+                {dayjs(item.endDate).format("HH:mm DD/MM/YYYY")}
               </div>
             ))
           ) : (
@@ -153,8 +154,8 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
                 key={item.id}
                 className="p-2 rounded-md bg-fourth text-white font-medium text-sm"
               >
-                {dayjs(item.startDate).format("HH:mm")} -{" "}
-                {dayjs(item.endDate).format("HH:mm")}
+                {dayjs(item.startDate).format("HH:mm DD/MM/YYYY")} -{" "}
+                {dayjs(item.endDate).format("HH:mm DD/MM/YYYY")}
               </div>
             ))
           ) : (
@@ -174,8 +175,8 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
                 key={item.id}
                 className="p-2 rounded-md bg-fourth text-white font-medium text-sm"
               >
-                {dayjs(item.startDate).format("HH:mm")} -{" "}
-                {dayjs(item.endDate).format("HH:mm")}
+                {dayjs(item.startDate).format("HH:mm DD/MM/YYYY")} -{" "}
+                {dayjs(item.endDate).format("HH:mm DD/MM/YYYY")}
               </div>
             ))
           ) : (
