@@ -53,6 +53,8 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                     <div className="flex items-center gap-2">
                       {tx.type === "Nạp tiền" ? (
                         <ArrowUpCircle className="text-green-500" />
+                      ) : tx.type === "Hoàn tiền" ? (
+                        <ArrowUpCircle className="text-yellow-500" />
                       ) : (
                         <ArrowDownCircle className="text-red-500" />
                       )}
@@ -69,7 +71,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                       {tx.paymentMethod}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between items-center mt-2">
                     <span className="text-gray-500 text-sm">
                       {tx.description}
@@ -78,6 +80,8 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                       className={`text-sm ${
                         tx.status === "Hoàn thành"
                           ? "text-green-500"
+                          : tx.status === "Hoàn tiền"
+                          ? "text-yellow-500"
                           : "text-red-500"
                       }`}
                     >
