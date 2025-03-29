@@ -5,8 +5,18 @@ import { Button } from "../ui/button";
 import Pagination from "../pagination/pagination";
 import { BASE_URL } from "@/constants/environments";
 import { toast } from "react-toastify";
-import { DeleteOutlined, EditOutlined, PlusOutlined, CloseOutlined, SaveOutlined } from '@ant-design/icons';
-import type { UploadFile, UploadProps, UploadFileStatus } from 'antd/es/upload/interface';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  CloseOutlined,
+  SaveOutlined,
+} from "@ant-design/icons";
+import type {
+  UploadFile,
+  UploadProps,
+  UploadFileStatus,
+} from "antd/es/upload/interface";
 
 interface Review {
   id: number;
@@ -32,7 +42,11 @@ const getBase64 = (file: File): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 
-const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdated }) => {
+const UserReview: React.FC<ReviewListProps> = ({
+  reviews,
+  userId,
+  onReviewUpdated,
+}) => {
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [isEditing, setIsEditing] = useState(false);
@@ -56,9 +70,9 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
   const handleReviewClick = (review: Review) => {
     const reviewCopy = JSON.parse(JSON.stringify(review));
     setSelectedReview(reviewCopy);
-    
+
     setTimeout(() => {
-      const event = new Event('resize');
+      const event = new Event("resize");
       window.dispatchEvent(event);
     }, 0);
   };
@@ -80,19 +94,19 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
       const initialFileList = selectedReview.images.map((image, index) => ({
         uid: `-${index}`,
         name: `image-${index}.png`,
-        status: 'done' as UploadFileStatus,
+        status: "done" as UploadFileStatus,
         url: image.url,
-        type: 'image/jpeg',
-        size: 0, 
+        type: "image/jpeg",
+        size: 0,
       })) as UploadFile[];
-      
+
       setFileList(initialFileList);
       setIsEditing(true);
     }
   };
 
   const handleEditChange = (field: string, value: string | number) => {
-    if (field === 'rating') {
+    if (field === "rating") {
       setEditedReview((prev) => ({
         ...prev,
         [field]: value as number,
@@ -114,7 +128,7 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
     setPreviewOpen(true);
   };
 
-  const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
+  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
     setFileList(newFileList);
   };
 
@@ -122,19 +136,19 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", "workspace_images");
-    
+
     try {
       setUploading(true);
-     
+
       const response = await fetch(`${BASE_URL}/images/upload`, {
-        method: 'POST',
+        method: "POST",
         body: formData,
       });
-      
+
       if (!response.ok) {
         throw new Error("Có lỗi xảy ra khi tải lên ảnh.");
       }
-      
+
       const data = await response.json();
       if (data.data && Array.isArray(data.data) && data.data.length > 0) {
         return data.data[0];
@@ -142,7 +156,7 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
         throw new Error("Invalid response format from server");
       }
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error("Error uploading image:", error);
       throw error;
     } finally {
       setUploading(false);
@@ -154,8 +168,8 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
 
     try {
       setUploading(true);
-      
-      const imageUrls = [];      
+
+      const imageUrls = [];
       for (const file of fileList) {
         if (file.url) {
           console.log("Adding existing image:", file.url);
@@ -174,9 +188,9 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
           }
         }
       }
-      
+
       console.log("Final imageUrls to be sent to server:", imageUrls);
-      
+
       const response = await fetch(`${BASE_URL}/users/updaterating`, {
         method: "PATCH",
         headers: {
@@ -194,18 +208,24 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error("Update failed with response:", response.status, errorData);
-        throw new Error(errorData.message || "Có lỗi xảy ra khi cập nhật đánh giá.");
+        console.error(
+          "Update failed with response:",
+          response.status,
+          errorData
+        );
+        throw new Error(
+          errorData.message || "Có lỗi xảy ra khi cập nhật đánh giá."
+        );
       }
 
       const responseData = await response.json();
       console.log("Update success response:", responseData);
-      
+
       toast.success("Cập nhật đánh giá thành công!", {
         position: "top-right",
         autoClose: 2000,
       });
-      
+
       setIsEditing(false);
       setSelectedReview(null);
       setFileList([]);
@@ -254,7 +274,7 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
         position: "top-right",
         autoClose: 2000,
       });
-      
+
       setIsDeleteModalOpen(false);
       setSelectedReview(null);
       onReviewUpdated();
@@ -269,12 +289,16 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
   };
 
   const sortedReviews = [...reviews].sort(
-    (a, b) => new Date(b.created_At).getTime() - new Date(a.created_At).getTime()
+    (a, b) =>
+      new Date(b.created_At).getTime() - new Date(a.created_At).getTime()
   );
 
   const indexOfLastReview = currentPage * reviewsPerPage;
   const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
-  const currentReviews = sortedReviews.slice(indexOfFirstReview, indexOfLastReview);
+  const currentReviews = sortedReviews.slice(
+    indexOfFirstReview,
+    indexOfLastReview
+  );
 
   const uploadButton = (
     <div>
@@ -285,7 +309,9 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-xl font-bold mb-4">⭐ {reviews.length} Đánh giá của bạn</h2>
+      <h2 className="text-xl font-bold mb-4">
+        ⭐ {reviews.length} Đánh giá của bạn
+      </h2>
       <div className="text-gray-600">
         {reviews.length > 0 ? (
           <>
@@ -297,21 +323,21 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
                   onClick={() => handleReviewClick(review)}
                 >
                   <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500">
                       {review.workspace_Name}
                     </p>
                     <div className="flex items-center space-x-2">
                       <Rate disabled defaultValue={review.rating} />
-                      <span className="text-gray-700 font-medium">{review.rating}/5</span>
+                      <span className="text-gray-700 font-medium">
+                        {review.rating}/5
+                      </span>
                     </div>
-                 
                   </div>
                   <p className="mt-2 text-gray-800">{review.content}</p>
                   <div className="flex justify-between items-center mt-2">
                     <p className="text-sm text-gray-500">
                       {new Date(review.created_At).toLocaleString()}
                     </p>
-                 
                   </div>
                   {review.images.length > 0 && (
                     <div className="mt-2 flex space-x-2 overflow-x-auto">
@@ -355,17 +381,16 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
           className="review-detail-modal"
           footer={
             <div className="flex justify-end space-x-3">
-            
-              <Button 
-                key="edit" 
-                className="bg-primary hover:bg-secondary text-white px-4 py-2 flex items-center" 
+              <Button
+                key="edit"
+                className="bg-primary hover:bg-secondary text-white px-4 py-2 flex items-center"
                 onClick={handleEditClick}
               >
                 <EditOutlined className="mr-1" /> Chỉnh sửa
               </Button>
-              <Button 
-                key="delete" 
-                className="bg-red-400 hover:bg-red-600 text-white px-4 py-2 flex items-center" 
+              <Button
+                key="delete"
+                className="bg-red-400 hover:bg-red-600 text-white px-4 py-2 flex items-center"
                 onClick={handleDeleteClick}
               >
                 <DeleteOutlined className="mr-1" /> Xóa
@@ -375,9 +400,12 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
         >
           <div className="space-y-4">
             <div className="flex items-center space-x-2 text-lg">
-              {selectedReview.rating}/5 <Rate disabled defaultValue={selectedReview.rating} />
+              {selectedReview.rating}/5{" "}
+              <Rate disabled defaultValue={selectedReview.rating} />
             </div>
-            <p className="text-gray-600 text-sm">{new Date(selectedReview.created_At).toLocaleString()}</p>
+            <p className="text-gray-600 text-sm">
+              {new Date(selectedReview.created_At).toLocaleString()}
+            </p>
             <hr />
             <div>
               <span className="font-semibold">Không gian làm việc:</span>
@@ -420,20 +448,20 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
           onCancel={handleCloseModal}
           footer={
             <div className="flex justify-end space-x-3">
-              <Button 
-                key="cancel" 
-                className="bg-white hover:text-white text-black mr-2 flex items-center" 
+              <Button
+                key="cancel"
+                className="bg-white hover:text-white text-black mr-2 flex items-center"
                 onClick={() => setIsEditing(false)}
               >
                 <CloseOutlined className="mr-1" /> Hủy
               </Button>
-              <Button 
-                key="save" 
-                className="bg-primary hover:bg-secondary text-white flex items-center" 
+              <Button
+                key="save"
+                className="bg-primary hover:bg-secondary text-white flex items-center"
                 onClick={handleSaveEdit}
                 disabled={uploading}
               >
-                <SaveOutlined className="mr-1" /> 
+                <SaveOutlined className="mr-1" />
                 {uploading ? "Đang lưu..." : "Lưu"}
               </Button>
             </div>
@@ -467,9 +495,9 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
                   onPreview={handlePreview}
                   onChange={handleChange}
                   beforeUpload={(file) => {
-                    const isImage = file.type.startsWith('image/');
+                    const isImage = file.type.startsWith("image/");
                     if (!isImage) {
-                      toast.error('Chỉ có thể tải lên tệp hình ảnh!');
+                      toast.error("Chỉ có thể tải lên tệp hình ảnh!");
                       return Upload.LIST_IGNORE;
                     }
                     return false;
@@ -487,11 +515,11 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
       {/* Image Preview Modal */}
       {previewImage && (
         <Image
-          wrapperStyle={{ display: 'none' }}
+          wrapperStyle={{ display: "none" }}
           preview={{
             visible: previewOpen,
             onVisibleChange: (visible) => setPreviewOpen(visible),
-            afterOpenChange: (visible) => !visible && setPreviewImage(''),
+            afterOpenChange: (visible) => !visible && setPreviewImage(""),
           }}
           src={previewImage}
           alt="Preview"
@@ -500,20 +528,28 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
 
       {/* Delete Confirmation Modal */}
       <Modal
-        title={<h3 className="text-lg font-bold text-red-500 flex items-center"><DeleteOutlined className="mr-2" /> Xác nhận xóa</h3>}
+        title={
+          <h3 className="text-lg font-bold text-red-500 flex items-center">
+            <DeleteOutlined className="mr-2" /> Xác nhận xóa
+          </h3>
+        }
         open={isDeleteModalOpen}
         onCancel={handleCancelDelete}
-        zIndex={1051}  // Higher than the default 1000 to appear above other modals
-        maskClosable={false}  // Prevent closing when clicking outside
+        zIndex={1051}
+        maskClosable={false}
         className="delete-confirmation-modal"
         footer={
           <div className="flex justify-end space-x-3">
-            <Button className="bg-white hover:text-white text-black" key="cancel" onClick={handleCancelDelete}>
+            <Button
+              className="bg-white hover:text-white text-black"
+              key="cancel"
+              onClick={handleCancelDelete}
+            >
               Hủy
             </Button>
-            <Button 
-              key="delete" 
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 flex items-center" 
+            <Button
+              key="delete"
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 flex items-center"
               onClick={handleConfirmDelete}
             >
               <DeleteOutlined className="mr-1" /> Xóa
@@ -522,16 +558,22 @@ const UserReview: React.FC<ReviewListProps> = ({ reviews, userId, onReviewUpdate
         }
       >
         <div className="py-4">
-          <p className="text-gray-700">Bạn có chắc chắn muốn xóa đánh giá này không?</p>
-          <p className="text-gray-500 text-sm mt-2">Hành động này không thể hoàn tác.</p>
-          
+          <p className="text-gray-700">
+            Bạn có chắc chắn muốn xóa đánh giá này không?
+          </p>
+          <p className="text-gray-500 text-sm mt-2">
+            Hành động này không thể hoàn tác.
+          </p>
+
           {selectedReview && (
             <div className="mt-4 p-3 bg-gray-50 rounded-md">
               <div className="flex items-center space-x-2">
                 <Rate disabled defaultValue={selectedReview.rating} />
                 <span className="text-sm">{selectedReview.rating}/5</span>
               </div>
-              <p className="mt-1 text-sm text-gray-700 line-clamp-2">{selectedReview.content}</p>
+              <p className="mt-1 text-sm text-gray-700 line-clamp-2">
+                {selectedReview.content}
+              </p>
             </div>
           )}
         </div>

@@ -1,42 +1,94 @@
 import { useState, useEffect, useRef } from "react";
 import { Bell, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 interface Notification {
   id: number;
   message: string;
   read: boolean;
   time: string;
+  createdAt: number;
 }
 
-const Notification = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: 1,
-      message: "Đặt của bạn đã thanh toán thành công!",
-      read: false,
-      time: "10:30 AM",
-    },
-    {
-      id: 2,
-      message: "Đặt chỗ của bạn đã hủy!",
-      read: false,
-      time: "11:00 AM",
-    },
-    { id: 3, message: "Xem ưu đãi mới", read: true, time: "12:00 PM" },
-  ]);
+interface Customer {
+  id: string | null;
+  fullName?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  roleId?: string | null;
+  avatar?: string | null;
+}
+
+const Notification = ({ customer }: { customer: Customer }) => {
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const markAsRead = (id: number) => {
+  const fetchNotifications = async () => {
+    if (!customer.id) return;
+
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/users/usernotification/${customer.id}`
+      );
+      const fetchedNotifications = response.data.customerNotificationDTOs
+        .map(
+          (notification: {
+            userNotificationId: number;
+            description: string;
+            isRead: number;
+            createAt: string;
+          }) => ({
+            id: notification.userNotificationId,
+            message: notification.description,
+            read: notification.isRead === 1,
+            time: new Date(notification.createAt).toLocaleString(),
+            createdAt: new Date(notification.createAt).getTime(),
+          })
+        )
+        .sort((a: Notification, b: Notification) => b.createdAt - a.createdAt);
+
+      setNotifications(fetchedNotifications);
+    } catch {
+      toast.error("Có lỗi xảy ra khi tải thông báo!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+    }
+  };
+
+  const markAsRead = async (id: number) => {
     setNotifications((prev) =>
       prev.map((notification) =>
         notification.id === id ? { ...notification, read: true } : notification
       )
     );
+
+    try {
+      await axios.get(
+        `http://localhost:5000/users/updateusernotification/${id}`
+      );
+    } catch {
+      toast.error("Có lỗi xảy ra khi đánh dấu thông báo đã đọc!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+    }
   };
+
+  useEffect(() => {
+    if (customer?.id) {
+      fetchNotifications();
+    }
+  }, [customer]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -56,6 +108,8 @@ const Notification = () => {
 
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
+
+  const MAX_DISPLAY = 5;
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -80,28 +134,51 @@ const Notification = () => {
         >
           <div className="p-4 font-semibold border-b text-white">Thông báo</div>
           {notifications.length > 0 ? (
-            notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className={`p-4 flex items-center justify-between cursor-pointer transition-all hover:bg-gray-100 ${
-                  notification.read ? "bg-gray-50" : "bg-white"
-                }`}
-                onClick={() => markAsRead(notification.id)}
-              >
-                <div>
-                  <span className="text-black">{notification.message}</span>
-                  <div className="text-xs text-gray-500">
-                    {notification.time}
+            <>
+              {notifications.slice(0, MAX_DISPLAY).map((notification) => (
+                <div
+                  key={notification.id}
+                  className={`p-4 flex items-center justify-between cursor-pointer transition-all hover:bg-gray-100 ${
+                    notification.read ? "bg-gray-50" : "bg-white"
+                  }`}
+                  onClick={() => markAsRead(notification.id)}
+                >
+                  <div>
+                    <span className="text-black">
+                      {notification.message.length > 50
+                        ? `${notification.message.slice(0, 50)}...`
+                        : notification.message}
+                    </span>
+                    <div className="text-xs text-gray-500">
+                      {notification.time}
+                    </div>
                   </div>
+                  {notification.read && (
+                    <CheckCircle size={16} className="text-green-500" />
+                  )}
                 </div>
-                {notification.read && (
-                  <CheckCircle size={16} className="text-green-500" />
-                )}
-              </div>
-            ))
+              ))}
+              {notifications.length > MAX_DISPLAY && (
+                <div className="p-4 text-center">
+                  <button
+                    className="text-blue-500 hover:underline"
+                    onClick={() => {
+                      toast.info("Chuyển đến trang thông báo!", {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        theme: "light",
+                      });
+                    }}
+                  >
+                    Xem tất cả
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="p-4 text-gray-500 text-center">
-              No new notifications
+              Không có thông báo mới
             </div>
           )}
         </motion.div>
