@@ -232,7 +232,7 @@ export default function PurchaseHistoryPage() {
       if (!response.ok) throw new Error("Có lỗi xảy ra khi hủy đơn đặt chỗ.");
       const data = await response.json();
       console.log(data);
-      toast.success("Hủy đơn đặt chỗ thành công!", {
+      toast.success("Hủy đơn đặt chỗ thành công!", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: false,
@@ -240,7 +240,19 @@ export default function PurchaseHistoryPage() {
       });
       setIsCancelBookingModal(false);
       setIsLoading(false);
-      router.refresh();
+      if (customer) {
+        try {
+          const response = await axios.get(
+            `${BASE_URL}/users/booking/historybookings`,
+            {
+              params: { UserId: customer.id },
+            }
+          );
+          setTransactions(response.data.bookingHistories);
+        } catch (error) {
+          console.error("Error fetching updated transaction history:", error);
+        }
+      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
@@ -387,7 +399,9 @@ export default function PurchaseHistoryPage() {
                                         Hủy giao dịch
                                       </span>
                                     ),
-                                    onClick: (e: { domEvent: { stopPropagation: () => void; }; }) => {
+                                    onClick: (e: {
+                                      domEvent: { stopPropagation: () => void };
+                                    }) => {
                                       e.domEvent.stopPropagation();
                                       handleCancelBookingModal(tx);
                                     },
@@ -502,7 +516,50 @@ export default function PurchaseHistoryPage() {
           </button>,
         ]}
       >
-        <p className="text-gray-700 dark:text-gray-300 py-4">
+        <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            Chính sách hủy đặt chỗ
+          </h3>
+
+          <h4 className="text-md font-medium text-gray-800 mt-3">
+            1. Điều kiện hủy và hoàn tiền
+          </h4>
+          <ul className="list-disc pl-5 space-y-2 text-gray-700">
+            <li>
+              <span className="font-medium">Hủy trước ít nhất 8 giờ</span> so
+              với thời gian đặt chỗ bắt đầu: Hoàn 100% giá trị đặt chỗ.
+            </li>
+            <li>
+              <span className="font-medium">Hủy sau thời hạn 8 giờ:</span> Không
+              hỗ trợ hoàn tiền.
+            </li>
+          </ul>
+
+          <h4 className="text-md font-medium text-gray-800 mt-4">
+            2. Quy trình hoàn tiền
+          </h4>
+          <ul className="list-disc pl-5 space-y-2 text-gray-700">
+            <li>
+              Tiền hoàn trả sẽ được chuyển về{" "}
+              <span className="font-medium">Ví WorkHive</span> trong vòng{" "}
+              <span className="font-medium">7 ngày làm việc</span>.
+            </li>
+            <li>
+              Thời gian hoàn tiền có thể thay đổi tùy theo quy trình xử lý nhà
+              cung cấp dịch vụ thanh toán.
+            </li>
+          </ul>
+
+          <h4 className="text-md font-medium text-gray-800 mt-4">
+            3. Lưu ý quan trọng
+          </h4>
+          <p className="text-gray-700">
+            Thời gian hủy được tính dựa trên thời điểm bắt đầu sử dụng dịch vụ,
+            không phải thời điểm đặt chỗ.
+          </p>
+        </div>
+
+        <p className="text-gray-700 dark:text-gray-300 py-2 font-medium">
           Bạn có xác nhận hủy đơn đặt chỗ này không?
         </p>
       </Modal>
