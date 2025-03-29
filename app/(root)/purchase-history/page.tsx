@@ -355,46 +355,57 @@ export default function PurchaseHistoryPage() {
                         Đánh giá
                       </Button>
                     )}
-                    <Dropdown
-                      menu={{
-                        items: [
-                          {
-                            key: "rebook",
-                            label: "Đặt lại",
-                            onClick: () => handleRebook(tx),
-                          },
-                          {
-                            key: "contact",
-                            label: "Liên hệ",
-                            onClick: () => handleContact(tx),
-                          },
-                          ...(dayjs(tx.booking_StartDate).diff(
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Dropdown
+                        menu={{
+                          items: [
+                            {
+                              key: "rebook",
+                              label: "Đặt lại",
+                              onClick: (e) => {
+                                e.domEvent.stopPropagation();
+                                handleRebook(tx);
+                              },
+                            },
+                            {
+                              key: "contact",
+                              label: "Liên hệ",
+                              onClick: (e) => {
+                                e.domEvent.stopPropagation();
+                                handleContact(tx);
+                              },
+                            },
+                            ...(dayjs(tx.booking_StartDate).diff(
                             dayjs(),
                             "hour"
                           ) > 8
                             ? [
                                 {
-                                  key: "cancel",
-                                  label: (
-                                    <span className="text-red-500">
-                                      Hủy giao dịch
-                                    </span>
-                                  ),
-                                  onClick: () => handleCancelBookingModal(tx),
-                                },
-                              ]
+                                    key: "cancel",
+                                    label: (
+                                      <span className="text-red-500">
+                                        Hủy giao dịch
+                                      </span>
+                                    ),
+                                    onClick: (e) => {
+                                e.domEvent.stopPropagation();
+                                handleCancelBookingModal(tx);
+                              },
+                                  },
+                                ]
                             : []),
                         ],
-                      }}
-                      trigger={["click"]}
-                    >
-                      <Button
-                        className="text-black hover:text-white bg-white"
-                        onClick={(e) => e.stopPropagation()}
+                        }}
+                        trigger={["click"]}
                       >
-                        <DownOutlined />
-                      </Button>
-                    </Dropdown>
+                        <Button
+                          className="text-black hover:text-white bg-white"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <DownOutlined />
+                        </Button>
+                      </Dropdown>
+                    </div>
                   </>
                 )}
                 {tx.booking_Status === "Fail" && (
