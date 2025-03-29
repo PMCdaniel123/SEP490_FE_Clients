@@ -1,8 +1,11 @@
+"use client"
 import { useState, useEffect, useRef } from "react";
 import { Bell, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/constants/environments";
 
 interface Notification {
   id: number;
@@ -22,6 +25,7 @@ interface Customer {
 }
 
 const Notification = ({ customer }: { customer: Customer }) => {
+  const router = useRouter(); 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -33,7 +37,7 @@ const Notification = ({ customer }: { customer: Customer }) => {
 
     try {
       const response = await axios.get(
-        `http://localhost:5000/users/usernotification/${customer.id}`
+        `${BASE_URL}/users/usernotification/${customer.id}`
       );
       const fetchedNotifications = response.data.customerNotificationDTOs
         .map(
@@ -72,7 +76,7 @@ const Notification = ({ customer }: { customer: Customer }) => {
 
     try {
       await axios.get(
-        `http://localhost:5000/users/updateusernotification/${id}`
+        `${BASE_URL}/users/updateusernotification/${id}`
       );
     } catch {
       toast.error("Có lỗi xảy ra khi đánh dấu thông báo đã đọc!", {
@@ -158,18 +162,10 @@ const Notification = ({ customer }: { customer: Customer }) => {
                   )}
                 </div>
               ))}
-              {notifications.length > MAX_DISPLAY && (
+               {notifications.length > MAX_DISPLAY && (
                 <div className="p-4 text-center">
                   <button
-                    className="text-blue-500 hover:underline"
-                    onClick={() => {
-                      toast.info("Chuyển đến trang thông báo!", {
-                        position: "top-right",
-                        autoClose: 2000,
-                        hideProgressBar: false,
-                        theme: "light",
-                      });
-                    }}
+                    onClick={() => router.push("/thong-bao")}
                   >
                     Xem tất cả
                   </button>
