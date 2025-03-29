@@ -376,25 +376,25 @@ export default function PurchaseHistoryPage() {
                               },
                             },
                             ...(dayjs(tx.booking_StartDate).diff(
-                            dayjs(),
-                            "hour"
-                          ) > 8
-                            ? [
-                                {
+                              dayjs(),
+                              "hour"
+                            ) > 0
+                              ? [
+                                  {
                                     key: "cancel",
                                     label: (
                                       <span className="text-red-500">
                                         Hủy giao dịch
                                       </span>
                                     ),
-                                    onClick: (e) => {
-                                e.domEvent.stopPropagation();
-                                handleCancelBookingModal(tx);
-                              },
+                                    onClick: (e: { domEvent: { stopPropagation: () => void; }; }) => {
+                                      e.domEvent.stopPropagation();
+                                      handleCancelBookingModal(tx);
+                                    },
                                   },
                                 ]
-                            : []),
-                        ],
+                              : []),
+                          ],
                         }}
                         trigger={["click"]}
                       >
