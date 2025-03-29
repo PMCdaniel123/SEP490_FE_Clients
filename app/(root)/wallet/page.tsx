@@ -94,17 +94,23 @@ const WalletPage = () => {
 
         const formattedTransactions = data.userTransactionHistoryDTOs.map(
           (tx: TransactionDTO, index: number) => {
-            const isPayment = tx.description
-              .toLowerCase()
-              .includes("thanh toán");
             return {
               id: index + 1,
-              type: isPayment ? "Thanh toán" : "Nạp tiền",
+              type: tx.description.toLowerCase().includes("thanh toán")
+                ? "Thanh toán"
+                : tx.description.toLowerCase().includes("hoàn")
+                ? "Hoàn tiền"
+                : "Nạp tiền",
               amount: tx.amount,
               date: tx.created_At,
               paymentMethod: "Chuyển khoản ngân hàng",
               description: tx.description,
-              status: tx.status === "PAID" ? "Hoàn thành" : "Thất bại",
+              status:
+                tx.status === "PAID"
+                  ? "Hoàn thành"
+                  : tx.status === "Active"
+                  ? "Hoàn tiền"
+                  : "Thất bại",
             };
           }
         );
@@ -313,6 +319,13 @@ const WalletPage = () => {
                       >
                         <ArrowUp size={12} className="text-green-500" />
                         Nạp tiền
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className="flex items-center gap-1"
+                      >
+                        <ArrowUp size={12} className="text-yellow-500" />
+                        Hoàn tiền
                       </Badge>
                       <Badge
                         variant="outline"

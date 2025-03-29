@@ -13,12 +13,13 @@ import dayjs from "dayjs";
 import TransactionDetailsModal from "@/components/transaction-details-modal/transaction-details-modal";
 import ReviewForm from "@/components/review-list/review-form";
 import { Dropdown, Modal } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import { DownOutlined, LoadingOutlined } from "@ant-design/icons";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ContactChat from "@/components/user-feedback/user-feedback";
 import axios from "axios";
 import { BASE_URL } from "@/constants/environments";
+import { TriangleAlert } from "lucide-react";
 
 interface Transaction {
   booking_Id: number;
@@ -73,6 +74,8 @@ export default function PurchaseHistoryPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [transactionsPerPage] = useState(5);
   const { customer } = useSelector((state: RootState) => state.auth);
+  const [isCancelBookingModal, setIsCancelBookingModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchTransactionHistory = async () => {
@@ -119,6 +122,16 @@ export default function PurchaseHistoryPage() {
 
   const handleContactCancel = () => {
     setIsContactModalOpen(false);
+  };
+
+  const handleCancelBookingModal = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setIsCancelBookingModal(true);
+    setIsModalOpen(false);
+  };
+
+  const handleCancelBookingCancel = () => {
+    setIsCancelBookingModal(false);
   };
 
   const handleReviewSubmit = async (review: {
@@ -203,12 +216,42 @@ export default function PurchaseHistoryPage() {
     handleContactModal(transaction);
   };
 
-  const handleCancelTransaction = (transaction: Transaction) => {
-    console.log(
-      "Transaction cancellation requested for:",
-      transaction.booking_CreatedAt
-    );
-    alert("Giao dịch đã được hủy thành công.");
+  const handleCancelTransaction = async (transaction: Transaction | null) => {
+    if (transaction === null) return;
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${BASE_URL}/users/cancelbooking`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          bookingId: transaction.booking_Id,
+        }),
+      });
+      if (!response.ok) throw new Error("Có lỗi xảy ra khi hủy đơn đặt chỗ.");
+      const data = await response.json();
+      console.log(data);
+      toast.success("Hủy đơn đặt chỗ thành công!", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+      setIsCancelBookingModal(false);
+      setIsLoading(false);
+      router.refresh();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+      setIsLoading(false);
+    }
   };
 
   const filteredTransactions = transactions
@@ -325,15 +368,22 @@ export default function PurchaseHistoryPage() {
                             label: "Liên hệ",
                             onClick: () => handleContact(tx),
                           },
-                          {
-                            key: "cancel",
-                            label: (
-                              <span className="text-red-500">
-                                Hủy giao dịch
-                              </span>
-                            ),
-                            onClick: () => handleCancelTransaction(tx),
-                          },
+                          ...(dayjs(tx.booking_StartDate).diff(
+                            dayjs(),
+                            "hour"
+                          ) > 8
+                            ? [
+                                {
+                                  key: "cancel",
+                                  label: (
+                                    <span className="text-red-500">
+                                      Hủy giao dịch
+                                    </span>
+                                  ),
+                                  onClick: () => handleCancelBookingModal(tx),
+                                },
+                              ]
+                            : []),
                         ],
                       }}
                       trigger={["click"]}
@@ -374,12 +424,14 @@ export default function PurchaseHistoryPage() {
         onPageChange={paginate}
       />
 
-      <TransactionDetailsModal
-        isModalOpen={isModalOpen}
-        handleCancel={handleCancel}
-        selectedTransaction={selectedTransaction}
-        renderStatus={renderStatus}
-      />
+      {!isCancelBookingModal && (
+        <TransactionDetailsModal
+          isModalOpen={isModalOpen}
+          handleCancel={handleCancel}
+          selectedTransaction={selectedTransaction}
+          renderStatus={renderStatus}
+        />
+      )}
 
       {selectedTransaction && (
         <ReviewForm
@@ -411,6 +463,37 @@ export default function PurchaseHistoryPage() {
             ownerId={selectedTransaction.workspace_Id}
           />
         )}
+      </Modal>
+
+      <Modal
+        title={
+          <p className="text-xl font-bold text-primary flex items-center gap-2">
+            <span className="text-yellow-400">
+              <TriangleAlert />
+            </span>{" "}
+            <span>Lưu ý</span>
+          </p>
+        }
+        open={isCancelBookingModal}
+        onCancel={handleCancelBookingCancel}
+        footer={[
+          <button
+            key="accept"
+            disabled={isLoading}
+            onClick={() => handleCancelTransaction(selectedTransaction)}
+            className="px-4 py-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors duration-300"
+          >
+            {isLoading ? (
+              <LoadingOutlined style={{ color: "red" }} />
+            ) : (
+              <span>Xác nhận</span>
+            )}
+          </button>,
+        ]}
+      >
+        <p className="text-gray-700 dark:text-gray-300 py-4">
+          Bạn có xác nhận hủy đơn đặt chỗ này không?
+        </p>
       </Modal>
     </div>
   );

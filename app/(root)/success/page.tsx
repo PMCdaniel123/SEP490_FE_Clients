@@ -20,12 +20,6 @@ const SuccessComponent = () => {
     amount: string
   ) => {
     try {
-      console.log("Calling updateWalletAmount with:", {
-        customerWalletId,
-        orderCode,
-        amount,
-      });
-
       const updateResponse = await fetch(
         `${BASE_URL}/users/wallet/updatewalletamount`,
         {
