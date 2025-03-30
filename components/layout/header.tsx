@@ -160,7 +160,7 @@ function Header() {
             <BriefcaseBusiness /> Trở thành doanh nghiệp
           </button>
         </Link>
-        {isToken && <Notification />}
+        {isToken && customer && <Notification customer={customer} />}
         {!isToken ? (
           <div className="flex flex-col md:flex-row items-center border rounded-xl bg-secondary/60 h-full w-full md:w-auto">
             <p

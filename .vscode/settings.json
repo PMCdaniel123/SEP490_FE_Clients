@@ -17,6 +17,7 @@
     "fail&success-page",
     "login and decode token",
     "userReview",
-    "ImageGallery"
+    "ImageGallery",
+    "notificationFunction"
   ]
 }
