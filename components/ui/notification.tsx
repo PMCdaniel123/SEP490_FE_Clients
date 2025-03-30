@@ -165,7 +165,7 @@ const Notification = ({ customer }: { customer: Customer }) => {
                {notifications.length > MAX_DISPLAY && (
                 <div className="p-4 text-center">
                   <button
-                    onClick={() => router.push("/thong-bao")}
+                    onClick={() => router.push("/notification")}
                   >
                     Xem tất cả
                   </button>
