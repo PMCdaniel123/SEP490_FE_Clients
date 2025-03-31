@@ -8,6 +8,7 @@ import { RootState } from "@/stores";
 import { Separator } from "@/components/ui/separator";
 import { BASE_URL } from "@/constants/environments";
 import Loader from "@/components/loader/Loader";
+import { notificationEvents } from "@/components/ui/notification";
 
 interface Notification {
   id: number;
@@ -85,6 +86,10 @@ export default function NotificationPage() {
       if (!response.ok) {
         throw new Error("Có lỗi xảy ra khi đánh dấu thông báo đã đọc.");
       }
+      
+      // Dispatch custom event to notify other components
+      const event = new CustomEvent(notificationEvents.MARKED_READ, { detail: { id } });
+      window.dispatchEvent(event);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
@@ -103,6 +108,33 @@ export default function NotificationPage() {
       fetchNotifications();
     }
   }, [customer, fetchNotifications]);
+  
+  // Listen for notification updates from other components
+  useEffect(() => {
+    const handleNotificationMarkedRead = (event: CustomEvent) => {
+      const { id } = event.detail;
+      setNotifications((prev) =>
+        prev.map((notification) =>
+          notification.id === id ? { ...notification, read: true } : notification
+        )
+      );
+    };
+    
+    window.addEventListener(notificationEvents.MARKED_READ, handleNotificationMarkedRead as EventListener);
+    
+    const notifyLoaded = () => {
+      const event = new CustomEvent(notificationEvents.UPDATED);
+      window.dispatchEvent(event);
+    };
+    
+    if (!loading && notifications.length > 0) {
+      notifyLoaded();
+    }
+    
+    return () => {
+      window.removeEventListener(notificationEvents.MARKED_READ, handleNotificationMarkedRead as EventListener);
+    };
+  }, [loading, notifications]);
 
   const filteredNotifications =
     filter === "unread"

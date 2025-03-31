@@ -8,6 +8,7 @@ import { useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { BASE_URL } from "@/constants/environments";
+import { notificationEvents } from "@/components/ui/notification";
 
 const SuccessComponent = () => {
   const order =
@@ -48,6 +49,10 @@ const SuccessComponent = () => {
         theme: "light",
       });
 
+      // Trigger notification fetch after successful wallet update
+      const event = new CustomEvent(notificationEvents.BOOKING_SUCCESS);
+      window.dispatchEvent(event);
+
       localStorage.removeItem("customerWalletId");
       localStorage.removeItem("orderCode");
       localStorage.removeItem("amount");
@@ -82,6 +87,11 @@ const SuccessComponent = () => {
           );
           const data = await response.json();
           console.log(data);
+          
+          // Trigger notification fetch after successful booking status update
+          const event = new CustomEvent(notificationEvents.BOOKING_SUCCESS);
+          window.dispatchEvent(event);
+          
           localStorage.removeItem("order");
         } catch (error) {
           console.error("Error updating workspace time status:", error);
