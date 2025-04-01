@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider, Checkbox, ConfigProvider } from "antd";
 import { BASE_URL } from "@/constants/environments";
+import GoogleMap from "@/components/google-map/google-map";
 
 const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
   const router = useRouter();
@@ -426,24 +427,17 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
           }}
         >
           {selectedResult ? (
-            <iframe
-              src={
-                filteredResults
-                  .find((r) => r.id === selectedResult)
-                  ?.googleMapUrl.match(/src="([^"]+)"/)?.[1] || ""
-              }
-              width="100%"
-              height="100%"
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                border: 0,
-              }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            ></iframe>
+            <div style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+            }}>
+              <GoogleMap 
+                url={filteredResults.find((r) => r.id === selectedResult)?.googleMapUrl || ""} 
+              />
+            </div>
           ) : (
             <img
               src="https://img.freepik.com/free-vector/no-data-concept-illustration_114360-2506.jpg?t=st=1740509479~exp=1740513079~hmac=fb9232accc15d60c89c3ff49d0501d052507d8d41e7f29e996ddb4a42ad3fabf&w=1380"

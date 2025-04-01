@@ -19,6 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ContactChat from "@/components/user-feedback/user-feedback";
 import axios from "axios";
 import { BASE_URL } from "@/constants/environments";
+import { notificationEvents } from "@/components/ui/notification";
 import { TriangleAlert } from "lucide-react";
 
 interface Transaction {
@@ -253,6 +254,8 @@ export default function PurchaseHistoryPage() {
           console.error("Error fetching updated transaction history:", error);
         }
       }
+      const event = new CustomEvent(notificationEvents.BOOKING_CANCELED);
+      window.dispatchEvent(event);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";

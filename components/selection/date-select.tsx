@@ -1,7 +1,7 @@
-import { ChevronDown } from "lucide-react";
+import { Calendar, ChevronDown, AlertCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
-import { DatePicker } from "antd";
+import { DatePicker, ConfigProvider } from "antd";
 import dayjs from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -13,8 +13,11 @@ import { RootState } from "@/stores";
 import Loader from "../loader/Loader";
 import { BASE_URL } from "@/constants/environments";
 import isBetween from "dayjs/plugin/isBetween";
+import { Badge } from "@/components/ui/badge";
+import 'dayjs/locale/vi';
 
 dayjs.extend(isBetween);
+dayjs.locale('vi');
 
 const { RangePicker } = DatePicker;
 
@@ -93,7 +96,7 @@ function DateSelect({
 
   if (loading) {
     return (
-      <div className="text-center">
+      <div className="text-center py-4">
         <Loader />
       </div>
     );
@@ -186,48 +189,123 @@ function DateSelect({
     }
   };
 
+  // Calculate duration in days
+  const calculateDuration = () => {
+    if (!date?.from || !date?.to) return 0;
+    return dayjs(date.to).diff(dayjs(date.from), 'day') + 1;
+  };
+
+  const duration = calculateDuration();
+
+  // Format date range for display
+  const formatDateRange = () => {
+    if (!date?.from || !date?.to) return "";
+    
+    if (dayjs(date.from).isSame(date.to, 'day')) {
+      return dayjs(date.from).format('DD/MM/YYYY');
+    }
+    
+    return `${dayjs(date.from).format('DD/MM/YYYY')} - ${dayjs(date.to).format('DD/MM/YYYY')}`;
+  };
+
   return (
     <div className="mb-4">
       <div
-        className="flex items-center justify-between px-4 py-3 border rounded-lg cursor-pointer hover:bg-gray-50"
+        className="flex items-center justify-between px-4 py-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
         onClick={toggleDatePicker}
       >
-        <span className="text-black text-sm">Chọn ngày</span>
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-primary" />
+          <span className="text-black text-sm font-medium">Chọn ngày</span>
+          {isDatePickerOpen && (
+            <Badge variant="outline" className="bg-primary/10 text-primary text-xs">
+              Đã chọn
+            </Badge>
+          )}
+        </div>
         <ChevronDown
-          className={`transition-transform ${
+          className={`transition-transform text-primary ${
             isDatePickerOpen ? "rotate-180" : ""
           }`}
+          size={18}
         />
       </div>
+      
       {isDatePickerOpen && (
-        <div className="mt-2 border rounded-lg p-3 bg-gray-50">
-          <RangePicker
-            className="py-2"
-            onChange={handleDateChange}
-            format="DD/MM/YYYY"
-            defaultValue={[
-              date?.from ? dayjs(date.from) : undefined,
-              date?.to ? dayjs(date.to) : undefined,
-            ]}
-            disabledDate={(current) =>
-              // current && current < dayjs().startOf("day")
-              {
-                if (!current) return false;
+        <div className="mt-2 border rounded-lg shadow-sm overflow-hidden">
+          <div className="bg-primary text-white px-4 py-2 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <span className="font-medium">Chọn khoảng thời gian</span>
+            </div>
+            {duration > 0 && (
+              <Badge className="bg-white text-primary">
+                {duration} ngày
+              </Badge>
+            )}
+          </div>
+          
+          <div className="p-4 bg-white">
+            <ConfigProvider
+              theme={{
+                token: {
+                  colorPrimary: "#835101",
+                },
+              }}
+            >
+              <div className="space-y-4">
+                <div className="flex flex-col space-y-2">
+                  <div className="flex items-center gap-2 text-primary font-medium">
+                    <Calendar className="h-4 w-4" />
+                    <span>Khoảng thời gian</span>
+                  </div>
+                  
+                  <RangePicker
+                    className="w-full py-2"
+                    onChange={handleDateChange}
+                    format="DD/MM/YYYY"
+                    defaultValue={[
+                      date?.from ? dayjs(date.from) : undefined,
+                      date?.to ? dayjs(date.to) : undefined,
+                    ]}
+                    placeholder={['Ngày bắt đầu', 'Ngày kết thúc']}
+                    disabledDate={(current) => {
+                      if (!current) return false;
 
-                // Disable past dates
-                if (current < dayjs().startOf("day")) {
-                  return true;
-                }
+                      // Disable past dates
+                      if (current < dayjs().startOf("day")) {
+                        return true;
+                      }
 
-                // Disable dates in timeList
-                return timeList.some(({ startDate, endDate }) => {
-                  const start = dayjs(startDate, "YYYY-MM-DD");
-                  const end = dayjs(endDate, "YYYY-MM-DD");
-                  return current.isBetween(start, end, "day", "[]"); // '[]' includes start and end dates
-                });
-              }
-            }
-          />
+                      // Disable dates in timeList
+                      return timeList.some(({ startDate, endDate }) => {
+                        const start = dayjs(startDate, "YYYY-MM-DD");
+                        const end = dayjs(endDate, "YYYY-MM-DD");
+                        return current.isBetween(start, end, "day", "[]"); // '[]' includes start and end dates
+                      });
+                    }}
+                  />
+                </div>
+                
+                {date?.from && date?.to && (
+                  <div className="flex items-center justify-between bg-gray-50 p-3 rounded-md">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium">{formatDateRange()}</span>
+                    </div>
+                    <Badge variant="outline" className="text-primary">
+                      {duration} ngày
+                    </Badge>
+                  </div>
+                )}
+                
+                <div className="flex items-center gap-2 text-amber-600 bg-amber-50 p-3 rounded-md">
+                  <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                  <p className="text-sm">Các ngày đã được đặt sẽ không thể chọn. Thời gian hoạt động: {open} - {close}.</p>
+                </div>
+              </div>
+            </ConfigProvider>
+          </div>
         </div>
       )}
     </div>
