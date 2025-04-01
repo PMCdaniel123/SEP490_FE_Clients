@@ -8,7 +8,6 @@ function FacilitiesList({ facilities }: { facilities: Facilities[] }) {
         <div className="grid grid-cols-2 gap-2 md:max-w-4xl text-fourth font-semibold">
           {facilities.map((facility, index) => (
             <FacilitiesItem
-              index={index + 1}
               label={facility.facilityName}
               key={index}
             />
