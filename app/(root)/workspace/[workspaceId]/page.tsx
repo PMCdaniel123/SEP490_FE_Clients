@@ -199,24 +199,24 @@ const WorkspaceDetail = () => {
                 <p>Chủ doanh nghiệp</p>
               </div>
             </div>
-            <p className="flex flex-col items-center gap-2 font-bold text-primary">
+            <div className="flex flex-col items-center gap-2 font-bold text-primary">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <p className="flex flex-col items-center gap-2 font-bold text-primary cursor-pointer">
+                    <button className="flex flex-col items-center gap-2 font-bold text-primary cursor-pointer">
                       <Phone /> Liên hệ ngay
-                    </p>
+                    </button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p className="text-white text-xl font-semibold">
+                    <span className="text-white text-xl font-semibold">
                       {ownerData?.phone
                         ? ownerData.phone
                         : "Không có số điện thoại"}
-                    </p>
+                    </span>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            </p>
+            </div>
           </div>
 
           <DetailsList
