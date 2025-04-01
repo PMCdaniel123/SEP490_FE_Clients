@@ -186,7 +186,7 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
       return (
         <div className="flex items-center justify-center py-6 text-gray-500">
           <AlertCircle className="w-4 h-4 mr-2" />
-          <span className="italic">Không có thời gian bị khóa</span>
+          <span className="italic">Trống</span>
         </div>
       );
     }
@@ -340,7 +340,7 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
                 ) : (
                   <div className="flex items-center justify-center py-6 text-gray-500">
                     <AlertCircle className="w-4 h-4 mr-2" />
-                    <span className="italic">Không có ngày nào bị khóa</span>
+                    <span className="italic">Trống</span>
                   </div>
                 )}
               </div>
