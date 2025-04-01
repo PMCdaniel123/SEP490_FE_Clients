@@ -7,9 +7,16 @@ import Loader from "../loader/Loader";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import { BASE_URL } from "@/constants/environments";
+import { Calendar, Clock, CalendarDays, AlertCircle } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import 'dayjs/locale/vi';
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
+dayjs.locale('vi'); // Set Vietnamese locale
 
 interface Time {
   id: string;
@@ -111,98 +118,167 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
 
   if (loading) {
     return (
-      <div className="text-center">
+      <div className="text-center py-8">
         <Loader />
       </div>
     );
   }
 
-  return (
-    <div className="flex flex-col gap-6 mt-8">
-      <h1 className="text-base font-medium text-white border border-primary bg-primary rounded-md py-2 px-4">
-        1. Đặt theo giờ
-      </h1>
-      <div className="flex flex-col gap-4">
-        <h1 className="text-base font-medium leading-none text-primary">
-          {today.format("DD/MM/YYYY")}:
-        </h1>
-        <div className="flex flex-row flex-wrap gap-2">
-          {todayList.length > 0 ? (
-            todayList.map((item) => (
-              <div
-                key={item.id}
-                className="p-2 rounded-md bg-fourth text-white font-medium text-sm"
-              >
-                {dayjs(item.startDate).format("HH:mm DD/MM/YYYY")} -{" "}
-                {dayjs(item.endDate).format("HH:mm DD/MM/YYYY")}
-              </div>
-            ))
-          ) : (
-            <p className="text-sm text-sixth italic flex items-center">Trống</p>
-          )}
-        </div>
-      </div>
+  const formatTimeRange = (start: string, end: string) => {
+    return (
+      <>
+        <span className="font-medium">{dayjs(start).format("HH:mm")}</span> - 
+        <span className="font-medium">{dayjs(end).format("HH:mm")}</span>
+        <span className="text-xs ml-2 text-gray-500">
+          {dayjs(start).format("DD/MM/YYYY")}
+        </span>
+      </>
+    );
+  };
 
-      <div className="flex flex-col gap-4">
-        <h1 className="text-base font-medium leading-none text-primary">
-          {tomorrow.format("DD/MM/YYYY")}:
-        </h1>
-        <div className="flex flex-row flex-wrap gap-2">
-          {tomorrowList.length > 0 ? (
-            tomorrowList.map((item) => (
-              <div
-                key={item.id}
-                className="p-2 rounded-md bg-fourth text-white font-medium text-sm"
-              >
-                {dayjs(item.startDate).format("HH:mm DD/MM/YYYY")} -{" "}
-                {dayjs(item.endDate).format("HH:mm DD/MM/YYYY")}
-              </div>
-            ))
-          ) : (
-            <p className="text-sm text-sixth italic flex items-center">Trống</p>
-          )}
+  const renderTimeSlots = (timeSlots: Time[]) => {
+    if (timeSlots.length === 0) {
+      return (
+        <div className="flex items-center justify-center py-6 text-gray-500">
+          <AlertCircle className="w-4 h-4 mr-2" />
+          <span className="italic">Không có thời gian bị khóa</span>
         </div>
-      </div>
+      );
+    }
 
-      <div className="flex flex-col gap-4">
-        <h1 className="text-base font-medium leading-none text-primary">
-          {nextDay.format("DD/MM/YYYY")}:
-        </h1>
-        <div className="flex flex-row flex-wrap gap-2">
-          {nextDayList.length > 0 ? (
-            nextDayList.map((item) => (
-              <div
-                key={item.id}
-                className="p-2 rounded-md bg-fourth text-white font-medium text-sm"
-              >
-                {dayjs(item.startDate).format("HH:mm DD/MM/YYYY")} -{" "}
-                {dayjs(item.endDate).format("HH:mm DD/MM/YYYY")}
-              </div>
-            ))
-          ) : (
-            <p className="text-sm text-sixth italic flex items-center">Trống</p>
-          )}
-        </div>
-      </div>
-
-      <h1 className="text-base font-medium text-white border border-primary bg-primary rounded-md py-2 px-4">
-        2. Đặt theo ngày
-      </h1>
-      <div className="flex flex-row flex-wrap gap-2">
-        {dateList.length > 0 ? (
-          dateList.map((item) => (
+    return (
+      <ScrollArea className="h-[200px] pr-4">
+        <div className="space-y-2">
+          {timeSlots.map((item) => (
             <div
               key={item.id}
-              className="p-2 rounded-md bg-fourth text-white font-medium text-sm"
+              className="flex items-center p-3 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
             >
-              {dayjs(item.startDate).format("HH:mm DD/MM/YYYY")} -{" "}
-              {dayjs(item.endDate).format("HH:mm DD/MM/YYYY")}
+              <Clock className="w-4 h-4 mr-3 text-primary flex-shrink-0" />
+              <span>{formatTimeRange(item.startDate, item.endDate)}</span>
             </div>
-          ))
-        ) : (
-          <p className="text-sm text-sixth italic flex items-center">Trống</p>
-        )}
+          ))}
+        </div>
+      </ScrollArea>
+    );
+  };
+
+  return (
+    <div className="mt-4">
+      <div className="flex items-center mb-4 text-primary">
+        <AlertCircle className="w-5 h-5 mr-2" />
+        <p className="text-sm">
+          Các khung giờ dưới đây đã được đặt và không khả dụng
+        </p>
       </div>
+      
+      <Tabs defaultValue="hourly" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-4">
+          <TabsTrigger value="hourly" className="flex items-center">
+            <Clock className="w-4 h-4 mr-2" />
+            <span>Đặt theo giờ</span>
+          </TabsTrigger>
+          <TabsTrigger value="daily" className="flex items-center">
+            <CalendarDays className="w-4 h-4 mr-2" />
+            <span>Đặt theo ngày</span>
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="hourly" className="space-y-4">
+          <div className="space-y-4">
+            <div>
+              <div className="flex items-center mb-2">
+                <Calendar className="w-4 h-4 mr-2 text-primary" />
+                <h3 className="font-medium text-primary">
+                  {today.format("dddd, DD/MM/YYYY").charAt(0).toUpperCase() + today.format("dddd, DD/MM/YYYY").slice(1)}
+                </h3>
+                {todayList.length > 0 && (
+                  <Badge variant="outline" className="ml-2">
+                    {todayList.length} khung giờ
+                  </Badge>
+                )}
+              </div>
+              {renderTimeSlots(todayList)}
+              <Separator className="my-4" />
+            </div>
+            
+            <div>
+              <div className="flex items-center mb-2">
+                <Calendar className="w-4 h-4 mr-2 text-primary" />
+                <h3 className="font-medium text-primary">
+                  {tomorrow.format("dddd, DD/MM/YYYY").charAt(0).toUpperCase() + tomorrow.format("dddd, DD/MM/YYYY").slice(1)}
+                </h3>
+                {tomorrowList.length > 0 && (
+                  <Badge variant="outline" className="ml-2">
+                    {tomorrowList.length} khung giờ
+                  </Badge>
+                )}
+              </div>
+              {renderTimeSlots(tomorrowList)}
+              <Separator className="my-4" />
+            </div>
+            
+            <div>
+              <div className="flex items-center mb-2">
+                <Calendar className="w-4 h-4 mr-2 text-primary" />
+                <h3 className="font-medium text-primary">
+                  {nextDay.format("dddd, DD/MM/YYYY").charAt(0).toUpperCase() + nextDay.format("dddd, DD/MM/YYYY").slice(1)}
+                </h3>
+                {nextDayList.length > 0 && (
+                  <Badge variant="outline" className="ml-2">
+                    {nextDayList.length} khung giờ
+                  </Badge>
+                )}
+              </div>
+              {renderTimeSlots(nextDayList)}
+            </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="daily">
+          <div>
+            <div className="flex items-center mb-2">
+              <CalendarDays className="w-4 h-4 mr-2 text-primary" />
+              <h3 className="font-medium text-primary">
+                Các ngày đã được đặt
+              </h3>
+              {dateList.length > 0 && (
+                <Badge variant="outline" className="ml-2">
+                  {dateList.length} ngày
+                </Badge>
+              )}
+            </div>
+            
+            <ScrollArea className="h-[250px] pr-4">
+              <div className="space-y-2">
+                {dateList.length > 0 ? (
+                  dateList.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center p-3 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
+                    >
+                      <CalendarDays className="w-4 h-4 mr-3 text-primary flex-shrink-0" />
+                      <div>
+                        <div className="font-medium">
+                          {dayjs(item.startDate).format("DD/MM/YYYY")} - {dayjs(item.endDate).format("DD/MM/YYYY")}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {dayjs(item.startDate).format("HH:mm")} - {dayjs(item.endDate).format("HH:mm")}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex items-center justify-center py-6 text-gray-500">
+                    <AlertCircle className="w-4 h-4 mr-2" />
+                    <span className="italic">Không có ngày nào bị khóa</span>
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
