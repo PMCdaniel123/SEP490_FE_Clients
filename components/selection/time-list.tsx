@@ -24,6 +24,9 @@ interface Time {
   endDate: string;
   status: string;
   workspaceTimeCategory: string;
+  isFullDay?: boolean;
+  originalStartDate?: string;
+  originalEndDate?: string;
 }
 
 function TimeList({ workspaceId }: { workspaceId: string }) {
@@ -54,7 +57,7 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
           Array.isArray(data.workspaceTimes) ? data.workspaceTimes : []
         );
         setLoading(false);
-      } catch (error) {
+      } catch (error: unknown) {
         const errorMessage =
           error instanceof Error ? error.message : "Đã xảy ra lỗi!";
         toast.error(errorMessage, {
@@ -69,8 +72,9 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
     fetchTimeList();
   }, [workspaceId]);
 
-  const filterByTime = (date: dayjs.Dayjs) =>
-    timeList.filter((item) => {
+  const filterByTime = (date: dayjs.Dayjs) => {
+    // Get hourly bookings for the specific day
+    const hourlyBookings = timeList.filter((item: Time) => {
       const isSameDay =
         (dayjs(item.startDate).isSame(date, "day") ||
           dayjs(item.endDate).isSame(date, "day")) &&
@@ -79,10 +83,40 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
       return isSameDay;
     });
 
+    // Check for daily bookings that affect this day
+    const dailyBookings = timeList.filter((item: Time) => {
+      const startDate = dayjs(item.startDate);
+      const endDate = dayjs(item.endDate);
+      
+      return (
+        (item.status === "InUse" || item.status === "Handling") &&
+        item.workspaceTimeCategory === "Ngày" &&
+        date.isSameOrAfter(startDate, "day") &&
+        date.isSameOrBefore(endDate, "day")
+      );
+    });
+
+    // If there are daily bookings affecting this day, add a special "full-day" item
+    if (dailyBookings.length > 0) {
+      const fullDayItems = dailyBookings.map((booking: Time) => ({
+        ...booking,
+        isFullDay: true,
+        originalStartDate: booking.startDate,
+        originalEndDate: booking.endDate,
+        startDate: date.startOf('day').format(),
+        endDate: date.endOf('day').format()
+      }));
+      
+      return [...hourlyBookings, ...fullDayItems];
+    }
+
+    return hourlyBookings;
+  };
+
   const filterByDate = () => {
     const now = dayjs();
 
-    return timeList.filter((item) => {
+    return timeList.filter((item: Time) => {
       const startDate = dayjs(item.startDate);
       const endDate = dayjs(item.endDate);
 
@@ -124,7 +158,18 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
     );
   }
 
-  const formatTimeRange = (start: string, end: string) => {
+  const formatTimeRange = (start: string, end: string, isFullDay: boolean = false) => {
+    if (isFullDay) {
+      return (
+        <div className="flex flex-col">
+          <span className="font-medium text-amber-700">Đã được đặt cả ngày</span>
+          <span className="text-xs text-gray-500">
+            Thuộc lịch đặt: {dayjs(start).format("DD/MM/YYYY")} - {dayjs(end).format("DD/MM/YYYY")}
+          </span>
+        </div>
+      );
+    }
+    
     return (
       <>
         <span className="font-medium">{dayjs(start).format("HH:mm")}</span> - 
@@ -146,10 +191,27 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
       );
     }
 
+    const fullDayBookings = timeSlots.filter((item: Time) => item.isFullDay);
+    const hourlyBookings = timeSlots.filter((item: Time) => !item.isFullDay);
+
     return (
       <ScrollArea className="h-[200px] pr-4">
         <div className="space-y-2">
-          {timeSlots.map((item) => (
+          {fullDayBookings.length > 0 && (
+            <div className="mb-3">
+              {fullDayBookings.map((item: Time) => (
+                <div
+                  key={`fullday-${item.id}`}
+                  className="flex items-center p-3 rounded-lg bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-colors mb-2"
+                >
+                  <CalendarDays className="w-4 h-4 mr-3 text-amber-700 flex-shrink-0" />
+                  <span>{formatTimeRange(item.originalStartDate || item.startDate, item.originalEndDate || item.endDate, true)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {hourlyBookings.map((item: Time) => (
             <div
               key={item.id}
               className="flex items-center p-3 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
@@ -158,6 +220,13 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
               <span>{formatTimeRange(item.startDate, item.endDate)}</span>
             </div>
           ))}
+          
+          {hourlyBookings.length === 0 && fullDayBookings.length > 0 && (
+            <div className="flex items-center justify-center py-2 text-gray-500">
+              <AlertCircle className="w-4 h-4 mr-2" />
+              <span className="italic">Bạn không thể đặt trong thời gian này</span>
+            </div>
+          )}
         </div>
       </ScrollArea>
     );
@@ -252,7 +321,7 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
             <ScrollArea className="h-[250px] pr-4">
               <div className="space-y-2">
                 {dateList.length > 0 ? (
-                  dateList.map((item) => (
+                  dateList.map((item: Time) => (
                     <div
                       key={item.id}
                       className="flex items-center p-3 rounded-lg bg-gray-50 border border-gray-200 hover:bg-gray-100 transition-colors"
