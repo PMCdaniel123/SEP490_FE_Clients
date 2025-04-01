@@ -6,12 +6,12 @@ import {
   Search,
   Sofa,
   UsersRound,
-  AlertCircle,
 } from "lucide-react";
 import * as Select from "@radix-ui/react-select";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/constants/environments";
+import { searchAddress, workspaceCategory } from "@/constants/constant";
 
 export default function SearchBanner() {
   const router = useRouter();
@@ -22,13 +22,12 @@ export default function SearchBanner() {
 
   const [locations, setLocations] = useState<string[]>([]);
   const [times] = useState<{ label: string; value: string }[]>([
-    { label: "Mở cửa 24h", value: "1" },
-    { label: "Linh hoạt", value: "0" },
+    { label: "Thời gian linh hoạt", value: "1" },
+    { label: "Thời gian cố định", value: "0" },
   ]);
   const [spaces, setSpaces] = useState<string[]>([]);
   const [capacities, setCapacities] = useState<string[]>([]);
 
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
@@ -45,7 +44,7 @@ export default function SearchBanner() {
       try {
         const response = await fetch(`${BASE_URL}/workspaces`);
         if (!response.ok) {
-          throw new Error("Failed to fetch workspace data.");
+          throw new Error("Có lỗi khi tải danh sách không gian.");
         }
         const data: {
           workspaces: { address: string; category: string; capacity: number }[];
@@ -57,20 +56,14 @@ export default function SearchBanner() {
           capacity: number;
         };
 
-        const uniqueLocations = Array.from(
-          new Set(data.workspaces.map((ws: Workspace) => ws.address))
-        );
-        const uniqueSpaces = Array.from(
-          new Set(data.workspaces.map((ws: Workspace) => ws.category))
-        );
         const uniqueCapacities = Array.from(
           new Set(
             data.workspaces.map((ws: Workspace) => ws.capacity.toString())
           )
         ).sort((a, b) => Number(a) - Number(b));
 
-        setLocations(uniqueLocations);
-        setSpaces(uniqueSpaces);
+        setLocations(searchAddress);
+        setSpaces(workspaceCategory);
         setCapacities(uniqueCapacities);
       } catch (error) {
         console.error("Error fetching dropdown data:", error);
@@ -88,13 +81,11 @@ export default function SearchBanner() {
     if (people) queryParams.Capacity = people;
 
     if (Object.keys(queryParams).length === 0) {
-      setErrorMessage("Vui lòng chọn ít nhất một tiêu chí tìm kiếm!");
+      router.push(`/search/Address`);
       return;
     }
 
-    setErrorMessage(null);
     const query = new URLSearchParams(queryParams).toString();
-
     router.push(`/search/${encodeURIComponent(query)}`);
   };
 
@@ -193,13 +184,6 @@ export default function SearchBanner() {
             <Search size={22} />
           </div>
         </div>
-
-        {errorMessage && (
-          <div className="mt-4 bg-red-100 text-red-700 p-3 md:p-4 rounded-lg flex items-center gap-2 shadow-md max-w-full md:max-w-[80%]">
-            <AlertCircle size={20} />
-            <span className="text-sm md:text-base">{errorMessage}</span>
-          </div>
-        )}
       </div>
     </div>
   );
