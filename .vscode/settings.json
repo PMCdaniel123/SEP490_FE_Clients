@@ -18,6 +18,7 @@
     "login and decode token",
     "userReview",
     "ImageGallery",
-    "notificationFunction"
+    "notificationFunction",
+    "feedBack function"
   ]
 }
