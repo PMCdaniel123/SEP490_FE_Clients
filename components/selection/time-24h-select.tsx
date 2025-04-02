@@ -11,9 +11,9 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import 'dayjs/locale/vi';
+import "dayjs/locale/vi";
 
-dayjs.locale('vi');
+dayjs.locale("vi");
 
 function Time24hSelect() {
   const [startDate, setStartDate] = useState(dayjs());
@@ -200,21 +200,39 @@ function Time24hSelect() {
     );
   };
 
+  console.log(
+    dayjs(startDate)
+      .hour(startTime.hours)
+      .minute(startTime.minutes)
+      .format("HH:mm:ss DD/MM/YYYY")
+  );
+
+  console.log(
+    dayjs(endDate)
+      .hour(endTime.hours)
+      .minute(endTime.minutes)
+      .format("HH:mm:ss DD/MM/YYYY")
+  );
+
   // Calculate duration between start and end times
   const calculateDuration = () => {
     const start = dayjs(startDate)
       .hour(startTime.hours)
       .minute(startTime.minutes);
-    const end = dayjs(endDate)
-      .hour(endTime.hours)
-      .minute(endTime.minutes);
-    
-    const diffHours = end.diff(start, 'hour');
-    const diffMinutes = end.diff(start, 'minute') % 60;
-    
+    const end = dayjs(endDate).hour(endTime.hours).minute(endTime.minutes);
+
+    const diffHours =
+      end.diff(start, "minute") % 60 === 59
+        ? end.diff(start, "hour") + 1
+        : end.diff(start, "hour");
+    const diffMinutes =
+      end.diff(start, "minute") % 60 === 59
+        ? 0
+        : end.diff(start, "minute") % 60;
+
     return {
       hours: diffHours,
-      minutes: diffMinutes
+      minutes: diffMinutes,
     };
   };
 
@@ -230,7 +248,10 @@ function Time24hSelect() {
           <Clock className="h-4 w-4 text-primary" />
           <span className="text-black text-sm font-medium">Chọn thời gian</span>
           {isTimePickerOpen && (
-            <Badge variant="outline" className="bg-primary/10 text-primary text-xs">
+            <Badge
+              variant="outline"
+              className="bg-primary/10 text-primary text-xs"
+            >
               Đã chọn
             </Badge>
           )}
@@ -242,7 +263,7 @@ function Time24hSelect() {
           size={18}
         />
       </div>
-      
+
       {isTimePickerOpen && (
         <div className="mt-2 border rounded-lg shadow-sm overflow-hidden">
           <div className="bg-primary text-white px-4 py-2 flex items-center justify-between">
@@ -252,12 +273,12 @@ function Time24hSelect() {
             </div>
             {duration.hours > 0 || duration.minutes > 0 ? (
               <Badge className="bg-white text-primary">
-                {duration.hours > 0 ? `${duration.hours} giờ ` : ''}
-                {duration.minutes > 0 ? `${duration.minutes} phút` : ''}
+                {duration.hours > 0 ? `${duration.hours} giờ ` : ""}
+                {duration.minutes > 0 ? `${duration.minutes} phút` : ""}
               </Badge>
             ) : null}
           </div>
-          
+
           <div className="p-4 bg-white">
             <ConfigProvider
               theme={{
@@ -273,7 +294,7 @@ function Time24hSelect() {
                     <Calendar className="h-4 w-4" />
                     <span>Thời gian bắt đầu</span>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex flex-col">
                       <label className="text-xs text-gray-500 mb-1">Ngày</label>
@@ -290,7 +311,7 @@ function Time24hSelect() {
                         placeholder="Chọn ngày"
                       />
                     </div>
-                    
+
                     <div className="flex flex-col">
                       <label className="text-xs text-gray-500 mb-1">Giờ</label>
                       <div className="flex items-center border rounded-md overflow-hidden">
@@ -325,16 +346,16 @@ function Time24hSelect() {
                     </div>
                   </div>
                 </div>
-                
+
                 <Separator />
-                
+
                 {/* End time section */}
                 <div className="flex flex-col space-y-2">
                   <div className="flex items-center gap-2 text-primary font-medium">
                     <Calendar className="h-4 w-4" />
                     <span>Thời gian kết thúc</span>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex flex-col">
                       <label className="text-xs text-gray-500 mb-1">Ngày</label>
@@ -346,12 +367,12 @@ function Time24hSelect() {
                         disabledDate={(current) =>
                           current &&
                           (current < startDate.startOf("day") ||
-                            current > dayjs().add(1, "day"))
+                            current >= dayjs().add(1, "day"))
                         }
                         placeholder="Chọn ngày"
                       />
                     </div>
-                    
+
                     <div className="flex flex-col">
                       <label className="text-xs text-gray-500 mb-1">Giờ</label>
                       <div className="flex items-center border rounded-md overflow-hidden">
@@ -384,10 +405,13 @@ function Time24hSelect() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2 text-amber-600 bg-amber-50 p-3 rounded-md mt-4">
                   <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                  <p className="text-sm">Thời gian đặt phải trong cùng một ngày hoặc kéo dài đến ngày hôm sau.</p>
+                  <p className="text-sm">
+                    Thời gian đặt phải trong cùng một ngày hoặc kéo dài đến ngày
+                    hôm sau.
+                  </p>
                 </div>
               </div>
             </ConfigProvider>

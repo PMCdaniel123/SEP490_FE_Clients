@@ -249,7 +249,7 @@ function TimeSelect() {
                   <div className="flex flex-col space-y-2">
                     <div className="flex items-center gap-2 text-primary font-medium">
                       <Clock className="h-4 w-4" />
-                      <span>Thời gian bắt đầu</span>
+                      <span>Bắt đầu</span>
                     </div>
 
                     <div className="flex items-center border rounded-md overflow-hidden">
@@ -286,7 +286,7 @@ function TimeSelect() {
                   <div className="flex flex-col space-y-2">
                     <div className="flex items-center gap-2 text-primary font-medium">
                       <Clock className="h-4 w-4" />
-                      <span>Thời gian kết thúc</span>
+                      <span>Kết thúc</span>
                     </div>
 
                     <div className="flex items-center border rounded-md overflow-hidden">
@@ -321,19 +321,36 @@ function TimeSelect() {
                     </div>
                   </div>
                 </div>
-                  {/* tinh thoi gian */}
+                {/* tinh thoi gian */}
                 <div className="flex items-center justify-between bg-gray-50 p-3 rounded-md">
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-medium">
-                      {date.format("DD/MM/YYYY")} |{" "}
-                      {String(startTime.hours).padStart(2, "0")}:
-                      {String(startTime.minutes).padStart(2, "0")} -{" "}
-                      {String(
-                        endTime.hours === 24 ? 0 : endTime.hours
-                      ).padStart(2, "0")}
-                      :{String(endTime.minutes).padStart(2, "0")}
-                    </span>
+                    {startTime.hours !== 23 ? (
+                      <span className="text-sm font-medium">
+                        {date.format("DD/MM/YYYY")} |{" "}
+                        {String(startTime.hours).padStart(2, "0")}:
+                        {String(startTime.minutes).padStart(2, "0")} -{" "}
+                        {String(
+                          endTime.hours === 24 ? 0 : endTime.hours
+                        ).padStart(2, "0")}
+                        :{String(endTime.minutes).padStart(2, "0")}
+                      </span>
+                    ) : (
+                      <div className="text-sm font-medium">
+                        <p>
+                          {date.format("DD/MM/YYYY")} |{" "}
+                          {String(startTime.hours).padStart(2, "0")}:
+                          {String(startTime.minutes).padStart(2, "0")}
+                        </p>
+                        <p>
+                          {date.add(1, "day").format("DD/MM/YYYY")} |{" "}
+                          {String(
+                            endTime.hours === 24 ? 0 : endTime.hours
+                          ).padStart(2, "0")}
+                          :{String(endTime.minutes).padStart(2, "0")}
+                        </p>
+                      </div>
+                    )}
                   </div>
                   <Badge variant="outline" className="text-primary">
                     {duration.hours > 0 ? `${duration.hours} giờ ` : ""}
