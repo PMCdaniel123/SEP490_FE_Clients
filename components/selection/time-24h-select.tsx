@@ -345,7 +345,7 @@ function Time24hSelect() {
                         onChange={(date) => handleDateChange(date, "end")}
                         disabledDate={(current) =>
                           current &&
-                          (current < dayjs().startOf("day") ||
+                          (current < startDate.startOf("day") ||
                             current > dayjs().add(1, "day"))
                         }
                         placeholder="Chọn ngày"
