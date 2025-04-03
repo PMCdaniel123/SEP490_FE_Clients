@@ -248,7 +248,7 @@ function Header() {
                   className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
                 >
                   <MessageCircle size={16} />
-                  <span>Phản hồi</span>
+                  <span>Trung tâm hỗ trợ</span>
                 </Link>
                 <Link
                   onClick={() => setOpenAccount(!openAccount)}

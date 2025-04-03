@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import ContactChat from "@/components/user-feedback/user-feedback";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
 import Link from "next/link";
-import { Spin, Alert } from "antd";
+import { Alert } from "antd";
+import UserFeedbackDetail from "@/components/user-feedback/user-feedback";
+import Loader from "@/components/loader/Loader";
 
 export default function FeedbackPage() {
   const searchParams = useSearchParams();
@@ -16,7 +17,6 @@ export default function FeedbackPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Simple check to ensure we have the necessary data
     if (customer) {
       setLoading(false);
     }
@@ -25,7 +25,7 @@ export default function FeedbackPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Spin size="large" />
+        <Loader />
       </div>
     );
   }
@@ -40,7 +40,10 @@ export default function FeedbackPage() {
           <p className="mb-4">
             Không tìm thấy thông tin đặt chỗ hoặc bạn chưa đăng nhập.
           </p>
-          <Link href="/purchase-history" className="text-primary hover:underline">
+          <Link
+            href="/purchase-history"
+            className="text-primary hover:underline"
+          >
             Quay lại lịch sử thanh toán
           </Link>
         </div>
@@ -51,11 +54,10 @@ export default function FeedbackPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-36">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-[#8B5E3C] mb-2">
-          Phản hồi
-        </h2>
+        <h2 className="text-2xl font-bold text-[#8B5E3C] mb-2">Phản hồi</h2>
         <p className="text-gray-600">
-          Hãy chia sẻ ý kiến của bạn về trải nghiệm đặt chỗ. Phản hồi của bạn giúp chúng tôi cải thiện dịch vụ.
+          Hãy chia sẻ ý kiến của bạn về trải nghiệm đặt chỗ. Phản hồi của bạn
+          giúp chúng tôi cải thiện dịch vụ.
         </p>
       </div>
 
@@ -71,9 +73,9 @@ export default function FeedbackPage() {
         />
       )}
 
-      <div >
+      <div>
         {customer && customer.id && (
-          <ContactChat
+          <UserFeedbackDetail
             userId={customer.id.toString()}
             bookingId={parseInt(bookingId)}
           />
