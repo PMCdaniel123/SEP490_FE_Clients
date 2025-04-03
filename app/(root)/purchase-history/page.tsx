@@ -16,7 +16,6 @@ import { Dropdown, Modal } from "antd";
 import { DownOutlined, LoadingOutlined } from "@ant-design/icons";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ContactChat from "@/components/user-feedback/user-feedback";
 import axios from "axios";
 import { BASE_URL } from "@/constants/environments";
 import { notificationEvents } from "@/components/ui/notification";
@@ -67,7 +66,6 @@ export default function PurchaseHistoryPage() {
   const [activeTab, setActiveTab] = useState("success");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
     useState<null | Transaction>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -114,15 +112,6 @@ export default function PurchaseHistoryPage() {
 
   const handleReviewCancel = () => {
     setIsReviewModalOpen(false);
-  };
-
-  const handleContactModal = (transaction: Transaction) => {
-    setSelectedTransaction(transaction);
-    setIsContactModalOpen(true);
-  };
-
-  const handleContactCancel = () => {
-    setIsContactModalOpen(false);
   };
 
   const handleCancelBookingModal = (transaction: Transaction) => {
@@ -214,7 +203,7 @@ export default function PurchaseHistoryPage() {
 
   const handleContact = (transaction: Transaction) => {
     console.log("Contact:", transaction);
-    handleContactModal(transaction);
+    router.push(`/feedback?bookingId=${transaction.booking_Id}`);
   };
 
   const handleCancelTransaction = async (transaction: Transaction | null) => {
@@ -452,14 +441,12 @@ export default function PurchaseHistoryPage() {
         onPageChange={paginate}
       />
 
-      {!isCancelBookingModal && (
-        <TransactionDetailsModal
-          isModalOpen={isModalOpen}
-          handleCancel={handleCancel}
-          selectedTransaction={selectedTransaction}
-          renderStatus={renderStatus}
-        />
-      )}
+      <TransactionDetailsModal
+        isModalOpen={isModalOpen}
+        handleCancel={handleCancel}
+        selectedTransaction={selectedTransaction}
+        renderStatus={renderStatus}
+      />
 
       {selectedTransaction && (
         <ReviewForm
@@ -477,21 +464,6 @@ export default function PurchaseHistoryPage() {
           booking_Id={selectedTransaction.booking_Id}
         />
       )}
-
-      <Modal
-        title="Liên hệ"
-        open={isContactModalOpen}
-        onCancel={handleContactCancel}
-        footer={null}
-        width={600}
-      >
-        {selectedTransaction && customer && customer.id && (
-          <ContactChat
-            userId={customer.id.toString()}
-            ownerId={selectedTransaction.workspace_Id}
-          />
-        )}
-      </Modal>
 
       <Modal
         title={
