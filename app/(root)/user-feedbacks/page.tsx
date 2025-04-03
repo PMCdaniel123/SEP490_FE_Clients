@@ -46,10 +46,42 @@ export default function UserFeedbacksPage() {
   );
   const [feedbackIds, setFeedbackIds] = useState<FeedbackId[]>([]);
 
+  const fetchFeedbackDetails = async (feedbackId: number) => {
+    try {
+      const response = await fetch(`${BASE_URL}/feedbacks/${feedbackId}`);
+      if (response.ok) {
+        return await response.json();
+      }
+    } catch (error) {
+      console.error(
+        `Error fetching feedback details for ID ${feedbackId}:`,
+        error
+      );
+    }
+    return null;
+  };
+
+  const checkOwnerResponse = async (feedbackId: number) => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/response-feedbacks/feedback/${feedbackId}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        return data && data.id !== 0;
+      }
+    } catch (error) {
+      console.error(
+        `Error checking owner response for feedback ${feedbackId}:`,
+        error
+      );
+    }
+    return false;
+  };
+
   useEffect(() => {
-    //get list booking have feedback
     const fetchFeedbackBookings = async () => {
-      if (!customer || !customer.id) return;
+      if (!customer?.id) return;
 
       try {
         setLoading(true);
@@ -57,106 +89,55 @@ export default function UserFeedbacksPage() {
           `${BASE_URL}/user-feedback-bookings/${customer.id}`
         );
 
-        if (response.ok) {
-          const data = await response.json();
-          const sortedData = [...data].sort((a, b) => {
-            return (
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-            );
-          });
-
-          const bookingsWithResponseInfo = await Promise.all(
-            sortedData.map(async (booking: Booking) => {
-              if (booking.feedbackIds && booking.feedbackIds.length > 0) {
-                // Check if any feedback has an owner response
-                const feedbacksWithResponseInfo = await Promise.all(
-                  booking.feedbackIds.map(async (feedbackId: number) => {
-                    try {
-                      const responseData = await fetch(
-                        `${BASE_URL}/response-feedbacks/feedback/${feedbackId}`
-                      );
-                      if (responseData.ok) {
-                        const responseJson = await responseData.json();
-                        return {
-                          id: feedbackId,
-                          bookingId: booking.id,
-                          hasResponse: responseJson && responseJson.id !== 0,
-                        };
-                      }
-                    } catch (error) {
-                      console.error(
-                        `Error fetching response for feedback ${feedbackId}:`,
-                        error
-                      );
-                    }
-                    return {
-                      id: feedbackId,
-                      bookingId: booking.id,
-                      hasResponse: false,
-                    };
-                  })
-                );
-
-                const hasAnyResponse = feedbacksWithResponseInfo.some(
-                  (feedback) => feedback.hasResponse
-                );
-                return { ...booking, hasOwnerResponse: hasAnyResponse };
-              }
-              return { ...booking, hasOwnerResponse: false };
-            })
-          );
-
-          setBookings(bookingsWithResponseInfo);
-
-          // Select the first booking
-          if (bookingsWithResponseInfo.length > 0) {
-            setSelectedBooking(bookingsWithResponseInfo[0]);
-
-            if (
-              bookingsWithResponseInfo[0].feedbackIds &&
-              bookingsWithResponseInfo[0].feedbackIds.length > 0
-            ) {
-              const firstFeedbackId =
-                bookingsWithResponseInfo[0].feedbackIds[0];
-
-              try {
-                const feedbackResponse = await fetch(
-                  `${BASE_URL}/feedbacks/${firstFeedbackId}`
-                );
-                if (feedbackResponse.ok) {
-                  const feedbackData = await feedbackResponse.json();
-
-                  // Create feedback IDs with title for the first feedback
-                  const feedbackIdsWithBooking =
-                    bookingsWithResponseInfo[0].feedbackIds.map((id) => ({
-                      id,
-                      bookingId: bookingsWithResponseInfo[0].id,
-                      title:
-                        id === firstFeedbackId ? feedbackData.title : undefined,
-                    }));
-
-                  setFeedbackIds(feedbackIdsWithBooking);
-                  setSelectedFeedbackId(firstFeedbackId);
-                }
-              } catch (error) {
-                console.error(
-                  `Error fetching initial feedback details:`,
-                  error
-                );
-
-                // Fallback if fetching details fails
-                const feedbackIdsWithBooking =
-                  bookingsWithResponseInfo[0].feedbackIds.map((id) => ({
-                    id,
-                    bookingId: bookingsWithResponseInfo[0].id,
-                  }));
-                setFeedbackIds(feedbackIdsWithBooking);
-                setSelectedFeedbackId(firstFeedbackId);
-              }
-            }
-          }
-        } else {
+        if (!response.ok) {
           console.error("Failed to fetch feedback bookings");
+          return;
+        }
+
+        const data = await response.json();
+        const sortedData = [...data].sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+
+        const bookingsWithResponseInfo = await Promise.all(
+          sortedData.map(async (booking: Booking) => {
+            if (!booking.feedbackIds?.length) {
+              return { ...booking, hasOwnerResponse: false };
+            }
+
+            const hasAnyResponse = await Promise.any(
+              booking.feedbackIds.map(
+                async (feedbackId) => await checkOwnerResponse(feedbackId)
+              )
+            ).catch(() => false);
+
+            return { ...booking, hasOwnerResponse: hasAnyResponse };
+          })
+        );
+
+        setBookings(bookingsWithResponseInfo);
+
+        if (bookingsWithResponseInfo.length > 0) {
+          const firstBooking = bookingsWithResponseInfo[0];
+          setSelectedBooking(firstBooking);
+
+          if (firstBooking.feedbackIds?.length) {
+            const firstFeedbackId = firstBooking.feedbackIds[0];
+            const feedbackData = await fetchFeedbackDetails(firstFeedbackId);
+
+            const feedbackIdsWithData = firstBooking.feedbackIds.map((id) => ({
+              id,
+              bookingId: firstBooking.id,
+              title:
+                id === firstFeedbackId && feedbackData
+                  ? feedbackData.title
+                  : undefined,
+            }));
+
+            setFeedbackIds(feedbackIdsWithData);
+            setSelectedFeedbackId(firstFeedbackId);
+          }
         }
       } catch (error) {
         console.error("Error fetching feedback bookings:", error);
@@ -168,73 +149,49 @@ export default function UserFeedbacksPage() {
     fetchFeedbackBookings();
   }, [customer]);
 
-  const handleBookingSelect = (booking: Booking) => {
+  const handleBookingSelect = async (booking: Booking) => {
     setSelectedBooking(booking);
 
-    if (booking.feedbackIds && booking.feedbackIds.length > 0) {
-      const feedbackIdsWithBooking = booking.feedbackIds.map((id) => ({
-        id,
-        bookingId: booking.id,
-      }));
-      setFeedbackIds(feedbackIdsWithBooking);
-
-      setSelectedFeedbackId(booking.feedbackIds[0]);
-
-      const fetchFirstFeedbackDetails = async () => {
-        try {
-          const response = await fetch(
-            `${BASE_URL}/feedbacks/${booking.feedbackIds[0]}`
-          );
-          if (response.ok) {
-            const data = await response.json();
-            setFeedbackIds((prevFeedbacks) =>
-              prevFeedbacks.map((feedback) =>
-                feedback.id === booking.feedbackIds[0]
-                  ? { ...feedback, title: data.title }
-                  : feedback
-              )
-            );
-          }
-        } catch (error) {
-          console.error(
-            `Error fetching feedback details for ID ${booking.feedbackIds[0]}:`,
-            error
-          );
-        }
-      };
-
-      fetchFirstFeedbackDetails();
-    } else {
+    if (!booking.feedbackIds?.length) {
       setFeedbackIds([]);
       setSelectedFeedbackId(null);
+      return;
+    }
+
+    const feedbackIdsWithBooking = booking.feedbackIds.map((id) => ({
+      id,
+      bookingId: booking.id,
+    }));
+    setFeedbackIds(feedbackIdsWithBooking);
+
+    const firstFeedbackId = booking.feedbackIds[0];
+    setSelectedFeedbackId(firstFeedbackId);
+
+    const feedbackData = await fetchFeedbackDetails(firstFeedbackId);
+    if (feedbackData) {
+      setFeedbackIds((prevFeedbacks) =>
+        prevFeedbacks.map((feedback) =>
+          feedback.id === firstFeedbackId
+            ? { ...feedback, title: feedbackData.title }
+            : feedback
+        )
+      );
     }
   };
 
-  const handleFeedbackSelect = (feedbackId: number) => {
+  const handleFeedbackSelect = async (feedbackId: number) => {
     setSelectedFeedbackId(feedbackId);
 
-    const fetchFeedbackDetails = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/feedbacks/${feedbackId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setFeedbackIds((prevFeedbacks) =>
-            prevFeedbacks.map((feedback) =>
-              feedback.id === feedbackId
-                ? { ...feedback, title: data.title }
-                : feedback
-            )
-          );
-        }
-      } catch (error) {
-        console.error(
-          `Error fetching feedback details for ID ${feedbackId}:`,
-          error
-        );
-      }
-    };
-
-    fetchFeedbackDetails();
+    const feedbackData = await fetchFeedbackDetails(feedbackId);
+    if (feedbackData) {
+      setFeedbackIds((prevFeedbacks) =>
+        prevFeedbacks.map((feedback) =>
+          feedback.id === feedbackId
+            ? { ...feedback, title: feedbackData.title }
+            : feedback
+        )
+      );
+    }
   };
 
   if (loading) {
