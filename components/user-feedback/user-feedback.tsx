@@ -18,10 +18,12 @@ interface Message {
 interface ContactChatProps {
   userId: string;
   bookingId: number;
+  feedbackId?: number;
 }
 
 interface FeedbackResponse {
   id: number;
+  title?: string;
   description: string;
   status: string;
   userId: number;
@@ -68,7 +70,7 @@ const uploadImage = async (image: File): Promise<string> => {
   return result.data[0];
 };
 
-const ContactChat: React.FC<ContactChatProps> = ({ userId, bookingId }) => {
+const ContactChat: React.FC<ContactChatProps> = ({ userId, bookingId, feedbackId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -86,15 +88,32 @@ const ContactChat: React.FC<ContactChatProps> = ({ userId, bookingId }) => {
     const fetchExistingFeedback = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${BASE_URL}/feedbacks/booking/${bookingId}`);
         
-        if (response.ok) {
-          const data = await response.json();
-          setExistingFeedback(data);
+        // If feedbackId is provided, fetch that specific feedback directly
+        if (feedbackId) {
+          const response = await fetch(`${BASE_URL}/feedbacks/${feedbackId}`);
           
-          // If feedback exists, fetch owner response
-          if (data && data.id) {
-            await fetchOwnerResponse(data.id);
+          if (response.ok) {
+            const data = await response.json();
+            setExistingFeedback(data);
+            
+            // If feedback exists, fetch owner response
+            if (data && data.id) {
+              await fetchOwnerResponse(data.id);
+            }
+          }
+        } else {
+          // Otherwise, fetch feedback by booking ID (original behavior)
+          const response = await fetch(`${BASE_URL}/feedbacks/booking/${bookingId}`);
+          
+          if (response.ok) {
+            const data = await response.json();
+            setExistingFeedback(data);
+            
+            // If feedback exists, fetch owner response
+            if (data && data.id) {
+              await fetchOwnerResponse(data.id);
+            }
           }
         }
       } catch (error) {
@@ -105,7 +124,7 @@ const ContactChat: React.FC<ContactChatProps> = ({ userId, bookingId }) => {
     };
 
     fetchExistingFeedback();
-  }, [bookingId]);
+  }, [bookingId, feedbackId]);
 
   const fetchOwnerResponse = async (feedbackId: number) => {
     try {
@@ -226,9 +245,14 @@ const ContactChat: React.FC<ContactChatProps> = ({ userId, bookingId }) => {
                 <div className="bg-gray-50 p-4 rounded-lg mb-4">
                   <div className="flex justify-between items-center mb-2">
                     <Text strong>Trạng thái:</Text>
-                    <Tag color={existingFeedback.status === "PENDING" ? "orange" : "green"}>
-                      {existingFeedback.status === "PENDING" ? "Đang xử lý" : existingFeedback.status}
-                    </Tag>
+                    <div>
+                      <Tag color={existingFeedback.status === "PENDING" ? "orange" : "green"}>
+                        {existingFeedback.status === "PENDING" ? "Đang xử lý" : existingFeedback.status}
+                      </Tag>
+                      {!ownerResponse && (
+                        <Tag color="volcano" className="ml-2">Chưa phản hồi</Tag>
+                      )}
+                    </div>
                   </div>
                   <div className="mb-2">
                     <Text strong>Ngày gửi:</Text>
@@ -292,7 +316,20 @@ const ContactChat: React.FC<ContactChatProps> = ({ userId, bookingId }) => {
                   </div>
                 ),
               }
-            ] : [])
+            ] : [
+              {
+                color: 'orange',
+                children: (
+                  <div className="bg-orange-50 p-4 rounded-lg mb-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <Text strong>Trạng thái phản hồi</Text>
+                    </div>
+                    <Divider className="my-3" />
+                    <Paragraph className="whitespace-pre-line">Chưa phản hồi</Paragraph>
+                  </div>
+                ),
+              }
+            ])
           ]}
         />
 

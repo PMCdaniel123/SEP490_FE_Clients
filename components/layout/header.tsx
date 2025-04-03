@@ -8,6 +8,7 @@ import {
   History,
   LogOut,
   Menu,
+  MessageCircle,
   Wallet,
   X,
 } from "lucide-react";
@@ -241,13 +242,14 @@ function Header() {
                   <History size={16} />
                   <span>Lịch sử thanh toán</span>
                 </Link>
-                {/* <Link
+                <Link
                   onClick={() => setOpenAccount(!openAccount)}
-                  href="/your-booking"
+                  href="/user-feedbacks"
                   className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
                 >
-                  <span>Đặt chỗ của bạn</span>
-                </Link> */}
+                  <MessageCircle size={16} />
+                  <span>Phản hồi</span>
+                </Link>
                 <Link
                   onClick={() => setOpenAccount(!openAccount)}
                   href="/wallet"
