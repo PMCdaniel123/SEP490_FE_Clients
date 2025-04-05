@@ -256,7 +256,7 @@ export default function UserFeedbacksPage() {
                   >
                     <div className="w-full">
                       <div className="flex justify-between items-center mb-1">
-                        <Text strong className="text-[#8B5E3C]">
+                        <Text strong className="text-primary">
                           {booking.workspaceName}
                         </Text>
                         {booking.hasOwnerResponse ? (
