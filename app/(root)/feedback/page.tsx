@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
@@ -9,7 +9,7 @@ import { Alert } from "antd";
 import UserFeedbackDetail from "@/components/user-feedback/user-feedback";
 import Loader from "@/components/loader/Loader";
 
-export default function FeedbackPage() {
+function FeedbackContent() {
   const searchParams = useSearchParams();
   const bookingId = searchParams.get("bookingId");
   const { customer } = useSelector((state: RootState) => state.auth);
@@ -82,5 +82,13 @@ export default function FeedbackPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function FeedbackPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader /></div>}>
+      <FeedbackContent />
+    </Suspense>
   );
 }
