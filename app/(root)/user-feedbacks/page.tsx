@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
 import { List, Card, Typography, Empty, Tag, Tabs } from "antd";
-import { MessageOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import UserFeedbackDetail from "@/components/user-feedback/user-feedback";
 import { BASE_URL } from "@/constants/environments";
@@ -204,7 +203,7 @@ export default function UserFeedbacksPage() {
 
   if (!customer) {
     return (
-      <div className="max-w-2xl mx-auto px-6 py-36">
+      <div className="max-w-2xl mx-auto px-6 py-20">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-500 mb-4">
             Bạn chưa đăng nhập
@@ -219,7 +218,7 @@ export default function UserFeedbacksPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-36">
+    <div className="max-w-7xl mx-auto px-6 py-20">
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-[#8B5E3C] mb-2">
           Phản hồi dịch vụ
@@ -254,7 +253,7 @@ export default function UserFeedbacksPage() {
                         : "hover:bg-gray-50"
                     }`}
                   >
-                    <div className="w-full">
+                    <div className="w-full p-2">
                       <div className="flex justify-between items-center mb-1">
                         <Text strong className="text-primary">
                           {booking.workspaceName}
@@ -268,10 +267,6 @@ export default function UserFeedbacksPage() {
                       <div className="flex justify-between items-center text-xs text-gray-500">
                         <span>
                           {dayjs(booking.startDate).format("DD/MM/YYYY")}
-                        </span>
-                        <span>
-                          <MessageOutlined className="mr-1" />
-                          Xem chi tiết
                         </span>
                       </div>
                     </div>

@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { CheckCircle, Bell, Filter, DollarSign, RefreshCw, CheckCheck } from "lucide-react";
+import {
+  CheckCircle,
+  Bell,
+  Filter,
+  DollarSign,
+  RefreshCw,
+  CheckCheck,
+} from "lucide-react";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
@@ -9,6 +16,8 @@ import { Separator } from "@/components/ui/separator";
 import { BASE_URL } from "@/constants/environments";
 import Loader from "@/components/loader/Loader";
 import { notificationEvents } from "@/components/ui/notification";
+import Cookies from "js-cookie";
+import dayjs from "dayjs";
 
 interface Notification {
   id: number;
@@ -63,7 +72,7 @@ export default function NotificationPage() {
             title: notification.title,
             message: notification.description,
             read: notification.isRead === 1,
-            time: new Date(notification.createAt).toLocaleString(),
+            time: dayjs(notification.createAt).format("HH:mm:ss, DD/MM/YYYY"),
             createdAt: new Date(notification.createAt).getTime(),
           })
         )
@@ -117,7 +126,7 @@ export default function NotificationPage() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("token");
     if (token && customer?.id) {
       fetchNotifications();
     }
@@ -189,30 +198,32 @@ export default function NotificationPage() {
       {filteredNotifications.length > 0 ? (
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           {filteredNotifications.map((notification) => (
-  <div
-    key={notification.id}
-    className={`p-4 border-b last:border-b-0 flex flex-col cursor-pointer transition-all hover:bg-gray-100 ${
-      notification.read ? "bg-gray-50" : "bg-white"
-    }`}
-    onClick={() => !notification.read && markAsRead(notification.id)}
-  >
-    <div className="flex flex-col flex-1">
-      <div className="flex items-center gap-2 mb-1">
-        {getIconForTitle(notification.title)} {/* Render the icon */}
-        <h3 className="text-gray-800 text-base font-semibold">
-          {notification.title}
-        </h3>
-      </div>
-      <p className="text-gray-800 text-sm">{notification.message}</p>
-      <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
-    </div>
-    {notification.read && (
-      <div className="flex justify-end mt-4">
-        <CheckCheck size={20} className="text-green-500" />
-      </div>
-    )}
-  </div>
-))}
+            <div
+              key={notification.id}
+              className={`p-4 border-b last:border-b-0 flex flex-col cursor-pointer transition-all hover:bg-gray-100 ${
+                notification.read ? "bg-gray-50" : "bg-white"
+              }`}
+              onClick={() => !notification.read && markAsRead(notification.id)}
+            >
+              <div className="flex flex-col flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  {getIconForTitle(notification.title)} {/* Render the icon */}
+                  <h3 className="text-gray-800 text-base font-semibold">
+                    {notification.title}
+                  </h3>
+                </div>
+                <p className="text-gray-800 text-sm">{notification.message}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {notification.time}
+                </p>
+              </div>
+              {notification.read && (
+                <div className="flex justify-end mt-4">
+                  <CheckCheck size={20} className="text-green-500" />
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center bg-white rounded-lg shadow-md p-8 text-center">

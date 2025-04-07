@@ -362,8 +362,8 @@ export default function Checkout() {
                 />
                 <Image
                   src={method.image}
-                  width={100}
-                  height={100}
+                  width={80}
+                  height={80}
                   alt={method.label}
                 />
                 <Label htmlFor={`payment-method-${index}`}>

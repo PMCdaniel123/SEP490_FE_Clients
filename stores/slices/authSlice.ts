@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { ValidatePayload } from "@/types";
 import { toast } from "react-toastify";
 import { BASE_URL } from "@/constants/environments";
+import Cookies from "js-cookie";
 
 interface Customer {
   id: string | null;
@@ -97,13 +98,14 @@ const authSlice = createSlice({
       state.customer = action.payload;
       state.user = action.payload.fullName;
       state.loginStep = "phone";
+      localStorage.removeItem("auth");
     },
     logout(state) {
       state.isAuthenticated = false;
       state.customer = null;
       state.user = null;
       state.loginStep = "phone";
-      localStorage.removeItem("token");
+      Cookies.remove("token");
     },
     setLoginStep(state, action: PayloadAction<"phone" | "email" | "password">) {
       state.loginStep = action.payload;
