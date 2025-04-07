@@ -16,9 +16,9 @@ import { Dropdown, Modal } from "antd";
 import { DownOutlined, LoadingOutlined } from "@ant-design/icons";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ContactChat from "@/components/user-feedback/user-feedback";
 import axios from "axios";
 import { BASE_URL } from "@/constants/environments";
+import { notificationEvents } from "@/components/ui/notification";
 import { TriangleAlert } from "lucide-react";
 
 interface Transaction {
@@ -66,7 +66,6 @@ export default function PurchaseHistoryPage() {
   const [activeTab, setActiveTab] = useState("success");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
-  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
     useState<null | Transaction>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -113,15 +112,6 @@ export default function PurchaseHistoryPage() {
 
   const handleReviewCancel = () => {
     setIsReviewModalOpen(false);
-  };
-
-  const handleContactModal = (transaction: Transaction) => {
-    setSelectedTransaction(transaction);
-    setIsContactModalOpen(true);
-  };
-
-  const handleContactCancel = () => {
-    setIsContactModalOpen(false);
   };
 
   const handleCancelBookingModal = (transaction: Transaction) => {
@@ -213,7 +203,7 @@ export default function PurchaseHistoryPage() {
 
   const handleContact = (transaction: Transaction) => {
     console.log("Contact:", transaction);
-    handleContactModal(transaction);
+    router.push(`/feedback?bookingId=${transaction.booking_Id}`);
   };
 
   const handleCancelTransaction = async (transaction: Transaction | null) => {
@@ -253,6 +243,8 @@ export default function PurchaseHistoryPage() {
           console.error("Error fetching updated transaction history:", error);
         }
       }
+      const event = new CustomEvent(notificationEvents.BOOKING_CANCELED);
+      window.dispatchEvent(event);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
@@ -292,7 +284,7 @@ export default function PurchaseHistoryPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-36">
+    <div className="max-w-7xl mx-auto px-6 py-20">
       <ToastContainer />
       <h2 className="text-2xl font-bold text-[#8B5E3C] mb-4">
         Lịch sử thanh toán
@@ -449,14 +441,12 @@ export default function PurchaseHistoryPage() {
         onPageChange={paginate}
       />
 
-      {!isCancelBookingModal && (
-        <TransactionDetailsModal
-          isModalOpen={isModalOpen}
-          handleCancel={handleCancel}
-          selectedTransaction={selectedTransaction}
-          renderStatus={renderStatus}
-        />
-      )}
+      <TransactionDetailsModal
+        isModalOpen={isModalOpen}
+        handleCancel={handleCancel}
+        selectedTransaction={selectedTransaction}
+        renderStatus={renderStatus}
+      />
 
       {selectedTransaction && (
         <ReviewForm
@@ -474,21 +464,6 @@ export default function PurchaseHistoryPage() {
           booking_Id={selectedTransaction.booking_Id}
         />
       )}
-
-      <Modal
-        title="Liên hệ"
-        open={isContactModalOpen}
-        onCancel={handleContactCancel}
-        footer={null}
-        width={600}
-      >
-        {selectedTransaction && customer && customer.id && (
-          <ContactChat
-            userId={customer.id.toString()}
-            ownerId={selectedTransaction.workspace_Id}
-          />
-        )}
-      </Modal>
 
       <Modal
         title={

@@ -54,18 +54,17 @@ function Contact() {
             <Phone className="text-brown-700 text-2xl" />
             <h3 className="text-lg font-semibold">Liên hệ qua hotline</h3>
           </div>
-          <p className="text-gray-600 mt-2">We are available 24/7.</p>
-          <p className="text-gray-600 font-semibold">Phone: +0123456789</p>
+          <p className="text-gray-600 mt-2">Chúng tôi phục vụ 24/7.</p>
+          <p className="text-gray-600 font-semibold">Phone: 0867-435-157</p>
           <hr className="my-4" />
           <div className="flex items-center gap-4">
             <Mail className="text-brown-700 text-2xl" />
             <h3 className="text-lg font-semibold">Liên hệ qua Email</h3>
           </div>
           <p className="text-gray-600 mt-2">
-            We will contact you within 24 hours.
-          </p>
-          <p className="text-gray-600 font-semibold">customer@exclusive.com</p>
-          <p className="text-gray-600 font-semibold">support@exclusive.com</p>
+          Chúng tôi sẽ liên hệ với bạn trong vòng 24 giờ.          </p>
+          <p className="text-gray-600 font-semibold">workhive.vn.official@gmail.com</p>
+       
         </div>
 
         {/* Contact Form */}

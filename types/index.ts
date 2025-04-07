@@ -20,22 +20,6 @@ export interface SidebarItemProps {
   href: string;
 }
 
-export interface TopWorkspace {
-  id: string;
-  title: string;
-  booking: string;
-  price: string;
-  image: string;
-  amount: number;
-  roomType: string;
-}
-
-export interface NewCustomerItemProps {
-  avatar: string;
-  name: string;
-  location: string;
-}
-
 export interface ReviewItemProps {
   avatar: string;
   name: string;
@@ -44,7 +28,6 @@ export interface ReviewItemProps {
   review: string;
   images: { url: string }[];
 }
-
 
 export interface LabelIconProps {
   icon: LucideIcon;
@@ -132,48 +115,6 @@ export interface PromotionProps {
   updatedAt: string;
 }
 
-export interface WithdrawalProps {
-  id: string;
-  number: string;
-  bank: string;
-  money: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface IdentifyProps {
-  id: string;
-  name: string;
-  number: string;
-  dateOfBirth: string;
-  gender: string;
-  nationality: string;
-  placeOfOrigin: string;
-  placeOfResidence: string;
-  dateOfExpiry: string;
-  dateOfCreation: string;
-  file: string;
-}
-
-export interface SocialProps {
-  id: string;
-  facebook: string;
-  instagram: string;
-  twitter: string;
-  youtube: string;
-  other: string;
-}
-
-export interface LicenseProps {
-  id: string;
-  name: string;
-  number: string;
-  address: string;
-  charterCapital: string;
-  file: string;
-}
-
 export interface PhoneProps {
   id: string;
   phone: string;
@@ -237,4 +178,33 @@ export interface Promotion {
   startDate: string;
   endDate: string;
   workspaceID: number;
+}
+
+export interface OwnerProps {
+  id: number;
+  email: string;
+  phone: string;
+  identityName: string;
+  identityNumber: string;
+  dateOfBirth: string;
+  sex: string;
+  nationality: string;
+  placeOfOrigin: string;
+  placeOfResidence: string;
+  identityExpiredDate: string;
+  identityCreatedDate: string;
+  identityFile: string;
+  facebook: string;
+  instagram: string;
+  tiktok: string;
+  licenseName: string;
+  licenseNumber: string;
+  licenseAddress: string;
+  googleMapUrl: string;
+  charterCapital: string;
+  licenseFile: string;
+  status: string;
+  updatedAt: string;
+  message: string | null;
+  avatar: string;
 }

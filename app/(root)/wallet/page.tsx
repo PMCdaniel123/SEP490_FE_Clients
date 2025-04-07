@@ -27,7 +27,7 @@ import { BASE_URL } from "@/constants/environments";
 
 const WalletPage = () => {
   const { customer } = useSelector((state: RootState) => state.auth);
-  const [balance, setBalance] = useState(0);
+  const [balance, setBalance] = useState("0");
   const [amount, setAmount] = useState("");
   const [rawAmount, setRawAmount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,9 +50,10 @@ const WalletPage = () => {
   const predefinedAmounts = [100000, 200000, 500000, 1000000];
 
   useEffect(() => {
+    if (!customer?.id) return;
+
+    setIsLoading(true);
     const fetchBalance = async () => {
-      if (!customer?.id) return;
-      setIsLoading(true);
       try {
         const response = await fetch(
           `${BASE_URL}/users/wallet/getamountwalletbyuserid?UserId=${customer.id}`
@@ -61,7 +62,9 @@ const WalletPage = () => {
           throw new Error("Có lỗi xảy ra khi tải số dư ví.");
         }
         const data = await response.json();
-        setBalance(data.amount);
+        const formatted =
+          data === null || data === undefined ? "0" : data.amount;
+        setBalance(formatted);
       } catch {
         toast.error("Có lỗi xảy ra khi tải số dư ví.", {
           position: "top-right",
@@ -69,14 +72,10 @@ const WalletPage = () => {
           hideProgressBar: false,
           theme: "light",
         });
-      } finally {
-        setIsLoading(false);
       }
     };
 
     const fetchTransactions = async () => {
-      if (!customer?.id) return;
-      setIsLoading(true);
       try {
         const response = await fetch(
           `${BASE_URL}/users/wallet/getalltransactionhistorybyuserid/${customer.id}`
@@ -232,9 +231,7 @@ const WalletPage = () => {
                   <Wallet size={40} />
                   <div>
                     <p className="text-white/80">Số dư ví</p>
-                    <p className="text-3xl font-bold">
-                      {formatCurrency(balance)}
-                    </p>
+                    <p className="text-3xl font-bold">{balance}</p>
                   </div>
                 </div>
                 <div className="flex gap-2">

@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/dialog";
 import { LoadingOutlined } from "@ant-design/icons";
 import { BASE_URL } from "@/constants/environments";
+import { notificationEvents } from "@/components/ui/notification";
 
 interface CheckoutDiscount {
   code: string;
@@ -212,6 +213,8 @@ export default function Checkout() {
           hideProgressBar: false,
           theme: "light",
         });
+        const event = new CustomEvent(notificationEvents.BOOKING_SUCCESS);
+        window.dispatchEvent(event);
         router.push("/success");
       } else {
         const bookingData = {
@@ -359,8 +362,8 @@ export default function Checkout() {
                 />
                 <Image
                   src={method.image}
-                  width={100}
-                  height={100}
+                  width={80}
+                  height={80}
                   alt={method.label}
                 />
                 <Label htmlFor={`payment-method-${index}`}>

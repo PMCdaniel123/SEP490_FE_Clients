@@ -8,6 +8,7 @@ import {
   History,
   LogOut,
   Menu,
+  MessageCircle,
   Wallet,
   X,
 } from "lucide-react";
@@ -27,6 +28,12 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
 import { toast } from "react-toastify";
 import { BASE_URL } from "@/constants/environments";
+import Cookies from "js-cookie";
+
+interface WalletHeader {
+  amount: number;
+  notification: string;
+}
 
 function Header() {
   const pathname = usePathname();
@@ -38,9 +45,8 @@ function Header() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { customer } = useSelector((state: RootState) => state.auth);
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
-
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const [userWallet, setUserWallet] = useState<WalletHeader | null>(null);
   const [isToken, setIsToken] = useState(false);
 
   useEffect(() => {
@@ -92,6 +98,44 @@ function Header() {
       getCustomerData();
     }
   }, [dispatch, token]);
+
+  useEffect(() => {
+    if (!customer) return;
+
+    const getUserWallet = async () => {
+      const response = await fetch(
+        `${BASE_URL}/users/wallet/getamountwalletbyuserid?UserId=${customer.id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Có lỗi xảy ra khi lấy thông tin ví khách hàng.");
+      }
+
+      const data = await response.json();
+      setUserWallet(data);
+      try {
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+        toast.error(errorMessage, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          theme: "light",
+        });
+        setUserWallet(null);
+        return;
+      }
+    };
+
+    getUserWallet();
+  }, [customer]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -194,9 +238,13 @@ function Header() {
                 height={40}
                 className="rounded-full border bg-white"
               />
-              <div className="hidden md:flex flex-col justify-center items-start">
-                <p className="text-sm font-semibold">{customer?.fullName}</p>
-                <p className="text-xs font-medium">{customer?.email}</p>
+              <div className="hidden md:flex flex-col justify-center items-start md:w-[160px]">
+                <p className="text-sm font-semibold truncate md:w-[160px]">
+                  {customer?.fullName}
+                </p>
+                <p className="text-xs font-medium truncate md:w-[160px]">
+                  {customer?.email}
+                </p>
               </div>
               <ChevronsUpDown size={20} />
             </div>
@@ -205,9 +253,9 @@ function Header() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute top-full right-0 z-10 mt-2 w-auto gap-3 rounded-xl bg-white shadow-xl pb-4 text-black border"
+                className="absolute top-full right-0 z-10 mt-2 w-auto gap-3 rounded-xl bg-white shadow-xl pb-4 text-black border border-secondary"
               >
-                <div className="flex items-center justify-center py-2 px-4 gap-4 bg-primary rounded-t-xl">
+                <div className="flex items-center justify-center py-3 px-4 gap-4 bg-primary rounded-t-xl">
                   <Image
                     src={customer?.avatar || "/logo.png"}
                     alt="Logo"
@@ -225,10 +273,17 @@ function Header() {
                   </div>
                 </div>
                 <Separator className="mb-2" />
+                <div className="flex items-center justify-between px-4">
+                  <p className="text-sm">Số dư trong ví:</p>
+                  <p className="font-bold text-primary">
+                    {userWallet?.amount || 0}
+                  </p>
+                </div>
+                <Separator className="my-2" />
                 <Link
                   onClick={() => setOpenAccount(!openAccount)}
                   href="/profile"
-                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
+                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-2 transition-colors duration-200 cursor-pointer"
                 >
                   <BookUser size={16} />
                   <span>Hồ sơ</span>
@@ -236,29 +291,30 @@ function Header() {
                 <Link
                   onClick={() => setOpenAccount(!openAccount)}
                   href="/purchase-history"
-                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
+                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-2 transition-colors duration-200 cursor-pointer"
                 >
                   <History size={16} />
                   <span>Lịch sử thanh toán</span>
                 </Link>
-                {/* <Link
+                <Link
                   onClick={() => setOpenAccount(!openAccount)}
-                  href="/your-booking"
-                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
+                  href="/user-feedbacks"
+                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-2 transition-colors duration-200 cursor-pointer"
                 >
-                  <span>Đặt chỗ của bạn</span>
-                </Link> */}
+                  <MessageCircle size={16} />
+                  <span>Trung tâm hỗ trợ</span>
+                </Link>
                 <Link
                   onClick={() => setOpenAccount(!openAccount)}
                   href="/wallet"
-                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
+                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-2 transition-colors duration-200 cursor-pointer"
                 >
                   <Wallet size={16} />
                   <span>Ví WorkHive</span>
                 </Link>
                 <li
                   onClick={handleLogOut}
-                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
+                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-2 transition-colors duration-200 cursor-pointer"
                 >
                   <LogOut size={16} />
                   <span>Đăng xuất</span>

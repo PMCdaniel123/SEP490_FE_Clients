@@ -24,6 +24,7 @@ import TimeList from "../selection/time-list";
 import { Workspace } from "@/types";
 import Time24hSelect from "../selection/time-24h-select";
 import { Clock, Clock10, Clock5 } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import { BASE_URL } from "@/constants/environments";
 
 function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
@@ -257,15 +258,23 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
           "Đặt ngay"
         )}
       </Button>
+      {customer === null && (
+        <p className="text-red-500 mt-2 text-xs">
+          Vui lòng đăng nhập trước khi tiến hành thanh toán
+        </p>
+      )}
       <Modal
         title={
-          <p className="text-xl font-bold text-primary">
-            Danh sách thời gian không khả dụng
-          </p>
+          <div className="flex items-center gap-2 text-primary">
+            <CalendarDays className="h-5 w-5" />
+            <p className="text-xl font-bold">Thời gian không khả dụng</p>
+          </div>
         }
         open={isTimeListOpen}
         onCancel={() => setIsTimeListOpen(false)}
         footer={null}
+        width={600}
+        className="time-unavailable-modal"
       >
         <TimeList workspaceId={workspace.id} />
       </Modal>

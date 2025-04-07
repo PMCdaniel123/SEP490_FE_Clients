@@ -40,11 +40,11 @@ const HelpSection: React.FC<HelpSectionProps> = ({
           <div className="flex flex-col gap-4 my-4">
             <div className="flex items-center gap-3 mb-2">
               <Phone size={24} className="text-primary" />
-              <span className="text-gray-600">Điện thoại: 0123-456-789</span>
+              <span className="text-gray-600">Điện thoại: 0867-435-157</span>
             </div>
             <div className="flex items-center gap-3">
               <Mail size={24} className="text-primary" />
-              <span className="text-gray-600">Email: support@workhive.com</span>
+              <span className="text-gray-600">Email: workhive.vn.official@gmail.com</span>
             </div>
           </div>
           <DialogFooter>

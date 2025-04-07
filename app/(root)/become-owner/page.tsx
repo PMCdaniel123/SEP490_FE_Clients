@@ -20,9 +20,9 @@ export default function BecomeOwner() {
   return (
     <div>
       <section className="relative w-full h-[500px]">
-        <div className="absolute inset-0 bg-black/50 z-10" />
+        <div className="absolute inset-0 bg-black/60 z-10" />
         <Image
-          src="/become-owner.jpg"
+          src="/feauture-section.jpg"
           alt="Office Space"
           layout="fill"
           objectFit="cover"
@@ -37,7 +37,7 @@ export default function BecomeOwner() {
             biến không gian của bạn thành nguồn thu nhập ổn định.
           </p>
           <Button
-            className="mt-6 w-48 px-6 py-2 bg-black text-white rounded"
+            className="mt-6 w-48 px-6 py-4 bg-black text-white border border-white rounded-md"
             onClick={handleOpen}
           >
             Đăng ký

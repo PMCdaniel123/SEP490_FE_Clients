@@ -1,16 +1,27 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { CheckCircle, Bell, Filter } from "lucide-react";
+import {
+  CheckCircle,
+  Bell,
+  Filter,
+  DollarSign,
+  RefreshCw,
+  CheckCheck,
+} from "lucide-react";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
 import { Separator } from "@/components/ui/separator";
 import { BASE_URL } from "@/constants/environments";
 import Loader from "@/components/loader/Loader";
+import { notificationEvents } from "@/components/ui/notification";
+import Cookies from "js-cookie";
+import dayjs from "dayjs";
 
 interface Notification {
   id: number;
+  title: string;
   message: string;
   read: boolean;
   time: string;
@@ -22,7 +33,18 @@ export default function NotificationPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "unread">("all");
   const { customer } = useSelector((state: RootState) => state.auth);
-
+  const getIconForTitle = (title: string) => {
+    switch (title) {
+      case "Đặt chỗ thành công":
+        return <CheckCircle size={20} className="text-green-500" />;
+      case "Nạp tiền thành công":
+        return <DollarSign size={20} className="text-blue-500" />;
+      case "Hoàn tiền thành công":
+        return <RefreshCw size={20} className="text-yellow-500" />;
+      default:
+        return <CheckCircle size={20} className="text-gray-500" />;
+    }
+  };
   const fetchNotifications = useCallback(async () => {
     if (!customer?.id) return;
 
@@ -41,14 +63,16 @@ export default function NotificationPage() {
         .map(
           (notification: {
             userNotificationId: number;
+            title: string;
             description: string;
             isRead: number;
             createAt: string;
           }) => ({
             id: notification.userNotificationId,
+            title: notification.title,
             message: notification.description,
             read: notification.isRead === 1,
-            time: new Date(notification.createAt).toLocaleString(),
+            time: dayjs(notification.createAt).format("HH:mm:ss, DD/MM/YYYY"),
             createdAt: new Date(notification.createAt).getTime(),
           })
         )
@@ -79,12 +103,16 @@ export default function NotificationPage() {
     try {
       const response = await fetch(
         `${BASE_URL}/users/updateusernotification/${id}`,
-        { method: "GET" }
+        { method: "PATCH" }
       );
 
       if (!response.ok) {
         throw new Error("Có lỗi xảy ra khi đánh dấu thông báo đã đọc.");
       }
+      const event = new CustomEvent(notificationEvents.MARKED_READ, {
+        detail: { id },
+      });
+      window.dispatchEvent(event);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
@@ -98,11 +126,45 @@ export default function NotificationPage() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("token");
     if (token && customer?.id) {
       fetchNotifications();
     }
   }, [customer, fetchNotifications]);
+
+  useEffect(() => {
+    const handleNotificationMarkedRead = (event: CustomEvent) => {
+      const { id } = event.detail;
+      setNotifications((prev) =>
+        prev.map((notification) =>
+          notification.id === id
+            ? { ...notification, read: true }
+            : notification
+        )
+      );
+    };
+
+    window.addEventListener(
+      notificationEvents.MARKED_READ,
+      handleNotificationMarkedRead as EventListener
+    );
+
+    const notifyLoaded = () => {
+      const event = new CustomEvent(notificationEvents.UPDATED);
+      window.dispatchEvent(event);
+    };
+
+    if (!loading && notifications.length > 0) {
+      notifyLoaded();
+    }
+
+    return () => {
+      window.removeEventListener(
+        notificationEvents.MARKED_READ,
+        handleNotificationMarkedRead as EventListener
+      );
+    };
+  }, [loading, notifications]);
 
   const filteredNotifications =
     filter === "unread"
@@ -138,22 +200,27 @@ export default function NotificationPage() {
           {filteredNotifications.map((notification) => (
             <div
               key={notification.id}
-              className={`p-4 border-b last:border-b-0 flex items-start justify-between cursor-pointer transition-all hover:bg-gray-100 ${
+              className={`p-4 border-b last:border-b-0 flex flex-col cursor-pointer transition-all hover:bg-gray-100 ${
                 notification.read ? "bg-gray-50" : "bg-white"
               }`}
               onClick={() => !notification.read && markAsRead(notification.id)}
             >
               <div className="flex flex-col flex-1">
-                <p className="text-gray-800 text-base font-medium mb-1">
-                  {notification.message}
+                <div className="flex items-center gap-2 mb-1">
+                  {getIconForTitle(notification.title)} {/* Render the icon */}
+                  <h3 className="text-gray-800 text-base font-semibold">
+                    {notification.title}
+                  </h3>
+                </div>
+                <p className="text-gray-800 text-sm">{notification.message}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {notification.time}
                 </p>
-                <p className="text-xs text-gray-500">{notification.time}</p>
               </div>
               {notification.read && (
-                <CheckCircle
-                  size={20}
-                  className="text-green-500 ml-3 flex-shrink-0"
-                />
+                <div className="flex justify-end mt-4">
+                  <CheckCheck size={20} className="text-green-500" />
+                </div>
               )}
             </div>
           ))}

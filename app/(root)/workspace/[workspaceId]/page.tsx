@@ -3,13 +3,16 @@
 
 import { useEffect, useState } from "react";
 import {
-  Heart,
   Share2,
   ShieldEllipsis,
   Boxes,
   Archive,
   HandPlatter,
   Delete,
+  Phone,
+  Globe,
+  Facebook,
+  Instagram,
 } from "lucide-react";
 import Loader from "@/components/loader/Loader";
 import { useParams } from "next/navigation";
@@ -29,16 +32,25 @@ import {
   TwitterIcon,
   LinkedinIcon,
 } from "react-share";
+import { TikTokOutlined } from "@ant-design/icons";
 import ImageList from "@/components/images-list/images-list";
 import AmenitiesList from "@/components/amenities-list/amenities-list";
 import BeveragesList from "@/components/beverages-list/beverages-list";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import WorkspaceDetailSidebar from "@/components/layout/workspace-detail-sidebar";
-import { Price, Workspace } from "@/types";
+import { OwnerProps, Price, Workspace } from "@/types";
 import SimilarSpace from "@/components/similar-space/similar-space";
 import { clearCart } from "@/stores/slices/cartSlice";
 import { BASE_URL } from "@/constants/environments";
+import Image from "next/image";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import Link from "next/link";
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams() as { workspaceId: string };
@@ -47,6 +59,7 @@ const WorkspaceDetail = () => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isBeverageOpen, setIsBeverageOpen] = useState(false);
   const dispatch = useDispatch();
+  const [ownerData, setOwnerData] = useState<OwnerProps | null>(null);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -82,11 +95,45 @@ const WorkspaceDetail = () => {
           hideProgressBar: false,
           theme: "light",
         });
+        setLoading(false);
       }
     };
 
     fetchWorkspace();
   }, [dispatch, workspaceId]);
+
+  useEffect(() => {
+    if (!workspace) return;
+
+    setLoading(true);
+    const fetchOwner = async () => {
+      try {
+        const response = await fetch(
+          `${BASE_URL}/workspace-owners/${workspace.ownerId}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Có lỗi xảy ra khi tải thông tin chủ doanh nghiệp.");
+        }
+
+        const data = await response.json();
+        setOwnerData(data.owner);
+        setLoading(false);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+        toast.error(errorMessage, {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          theme: "light",
+        });
+        setLoading(false);
+      }
+    };
+
+    fetchOwner();
+  }, [workspace]);
 
   const handleShare = () => {
     setIsShareModalOpen(true);
@@ -136,12 +183,45 @@ const WorkspaceDetail = () => {
               <p className="text-fifth max-w-xl">{workspace.address}</p>
             </div>
             <div className="flex items-center justify-center gap-8 text-primary">
-              <Heart size={32} />
               <Share2
                 size={32}
                 onClick={handleShare}
                 className="cursor-pointer"
               />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Image
+                width={50}
+                height={50}
+                src={ownerData?.avatar || "/owner_icon.png"}
+                alt={ownerData?.licenseName || ""}
+                className="rounded-full"
+              />
+              <div className="flex flex-col gap-1">
+                <p className="font-bold">{ownerData?.licenseName}</p>
+                <p>Chủ doanh nghiệp</p>
+              </div>
+            </div>
+            <div className="flex flex-col items-center gap-2 font-bold text-primary">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="flex flex-col items-center gap-2 font-bold text-primary cursor-pointer">
+                      <Phone /> Liên hệ ngay
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <span className="text-white text-xl font-semibold">
+                      {ownerData?.phone
+                        ? ownerData.phone
+                        : "Không có số điện thoại"}
+                    </span>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
 
@@ -151,11 +231,35 @@ const WorkspaceDetail = () => {
             roomType={workspace.category}
           />
 
-          <div>
-            <h2 className="text-xl font-bold text-primary mb-6">
-              Mô tả chi tiết
-            </h2>
+          <div className="flex flex-col gap-6">
+            <h2 className="text-xl font-bold text-primary">Mô tả chi tiết</h2>
             <p className="text-fifth">{workspace.description}</p>
+          </div>
+
+          <div className="flex flex-col gap-6">
+            <h2 className="text-xl font-bold text-primary flex gap-4">
+              <Globe size={28} /> Mạng xã hội
+            </h2>
+            <div className="flex gap-8 items-center">
+              <Link
+                href={ownerData?.facebook || "https://www.facebook.com/"}
+                className="border border-primary rounded-lg p-2"
+              >
+                <Facebook size={30} />
+              </Link>
+              <Link
+                href={ownerData?.instagram || "https://www.instagram.com/"}
+                className="border border-primary rounded-lg p-2"
+              >
+                <Instagram size={30} />
+              </Link>
+              <Link
+                href={ownerData?.tiktok || "https://www.tiktok.com/vi-VN"}
+                className="border border-primary rounded-lg p-2"
+              >
+                <TikTokOutlined style={{ fontSize: "28px" }} />
+              </Link>
+            </div>
           </div>
 
           <div className="flex flex-col gap-6">

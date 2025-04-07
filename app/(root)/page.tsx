@@ -44,19 +44,6 @@ function HomePage() {
             buttonLink="#"
           />
         </div>
-        {/* <div className="mt-16 -mb-2">
-          <SectionTitle>Workshop nổi bật</SectionTitle>
-        </div>
-        <WorkshopList />
-        <div className="my-12">
-          <Banner
-            imageUrl="/banner2.jpg"
-            title="Tham gia các buổi Workshop"
-            subtitle="Mở rộng kỹ năng, kiến thức với các buổi Workshop đang diễn ra..."
-            buttonText="Tham gia ngay"
-            buttonLink="#"
-          />
-        </div> */}
         <FeatureSection
           title="Khám phá thêm về việc trở thành chủ không gian làm việc"
           description="Tận dụng tối đa tiềm năng không gian của bạn với nền tảng của chúng tôi..."

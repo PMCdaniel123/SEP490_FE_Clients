@@ -17,6 +17,7 @@ import type {
   UploadProps,
   UploadFileStatus,
 } from "antd/es/upload/interface";
+import dayjs from "dayjs";
 
 interface Review {
   id: number;
@@ -336,7 +337,7 @@ const UserReview: React.FC<ReviewListProps> = ({
                   <p className="mt-2 text-gray-800">{review.content}</p>
                   <div className="flex justify-between items-center mt-2">
                     <p className="text-sm text-gray-500">
-                      {new Date(review.created_At).toLocaleString()}
+                      {dayjs(review.created_At).format("HH:mm:ss, DD/MM/YYYY")}
                     </p>
                   </div>
                   {review.images.length > 0 && (
@@ -399,12 +400,12 @@ const UserReview: React.FC<ReviewListProps> = ({
           }
         >
           <div className="space-y-4">
-            <div className="flex items-center space-x-2 text-lg">
-              {selectedReview.rating}/5{" "}
+            <div className="flex items-center space-x-2 text-lg gap-2">
+              {selectedReview.rating}/5
               <Rate disabled defaultValue={selectedReview.rating} />
             </div>
             <p className="text-gray-600 text-sm">
-              {new Date(selectedReview.created_At).toLocaleString()}
+              {dayjs(selectedReview.created_At).format("HH:mm:ss, DD/MM/YYYY")}
             </p>
             <hr />
             <div>
