@@ -258,6 +258,11 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
           "Đặt ngay"
         )}
       </Button>
+      {customer === null && (
+        <p className="text-red-500 mt-2 text-xs">
+          Vui lòng đăng nhập trước khi tiến hành thanh toán
+        </p>
+      )}
       <Modal
         title={
           <div className="flex items-center gap-2 text-primary">

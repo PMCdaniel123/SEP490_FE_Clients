@@ -10,7 +10,6 @@ import {
   Space,
   Spin,
   Divider,
-  Tag,
   Timeline,
 } from "antd";
 import {
@@ -270,27 +269,6 @@ const UserFeedbackDetail: React.FC<UserFeedbackDetailProps> = ({
               dot: <CommentOutlined style={{ fontSize: "16px" }} />,
               children: (
                 <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <Text strong>Trạng thái:</Text>
-                    <div>
-                      <Tag
-                        color={
-                          existingFeedback.status === "PENDING"
-                            ? "orange"
-                            : "green"
-                        }
-                      >
-                        {existingFeedback.status === "PENDING"
-                          ? "Đang xử lý"
-                          : existingFeedback.status}
-                      </Tag>
-                      {!ownerResponse && (
-                        <Tag color="volcano" className="ml-2">
-                          Chưa phản hồi
-                        </Tag>
-                      )}
-                    </div>
-                  </div>
                   <div className="mb-2">
                     <Text strong>Ngày gửi:</Text>
                     <Text className="ml-2">

@@ -10,6 +10,9 @@ import {
   HandPlatter,
   Delete,
   Phone,
+  Globe,
+  Facebook,
+  Instagram,
 } from "lucide-react";
 import Loader from "@/components/loader/Loader";
 import { useParams } from "next/navigation";
@@ -29,6 +32,7 @@ import {
   TwitterIcon,
   LinkedinIcon,
 } from "react-share";
+import { TikTokOutlined } from "@ant-design/icons";
 import ImageList from "@/components/images-list/images-list";
 import AmenitiesList from "@/components/amenities-list/amenities-list";
 import BeveragesList from "@/components/beverages-list/beverages-list";
@@ -46,6 +50,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Link from "next/link";
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams() as { workspaceId: string };
@@ -191,8 +196,9 @@ const WorkspaceDetail = () => {
               <Image
                 width={50}
                 height={50}
-                src={"/owner_icon.png"}
+                src={ownerData?.avatar || "/owner_icon.png"}
                 alt={ownerData?.licenseName || ""}
+                className="rounded-full"
               />
               <div className="flex flex-col gap-1">
                 <p className="font-bold">{ownerData?.licenseName}</p>
@@ -225,11 +231,35 @@ const WorkspaceDetail = () => {
             roomType={workspace.category}
           />
 
-          <div>
-            <h2 className="text-xl font-bold text-primary mb-6">
-              Mô tả chi tiết
-            </h2>
+          <div className="flex flex-col gap-6">
+            <h2 className="text-xl font-bold text-primary">Mô tả chi tiết</h2>
             <p className="text-fifth">{workspace.description}</p>
+          </div>
+
+          <div className="flex flex-col gap-6">
+            <h2 className="text-xl font-bold text-primary flex gap-4">
+              <Globe size={28} /> Mạng xã hội
+            </h2>
+            <div className="flex gap-8 items-center">
+              <Link
+                href={ownerData?.facebook || "https://www.facebook.com/"}
+                className="border border-primary rounded-lg p-2"
+              >
+                <Facebook size={30} />
+              </Link>
+              <Link
+                href={ownerData?.instagram || "https://www.instagram.com/"}
+                className="border border-primary rounded-lg p-2"
+              >
+                <Instagram size={30} />
+              </Link>
+              <Link
+                href={ownerData?.tiktok || "https://www.tiktok.com/vi-VN"}
+                className="border border-primary rounded-lg p-2"
+              >
+                <TikTokOutlined style={{ fontSize: "28px" }} />
+              </Link>
+            </div>
           </div>
 
           <div className="flex flex-col gap-6">

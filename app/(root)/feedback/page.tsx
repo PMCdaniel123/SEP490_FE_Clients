@@ -11,7 +11,7 @@ import Loader from "@/components/loader/Loader";
 
 function FeedbackContent() {
   const searchParams = useSearchParams();
-  const bookingId = searchParams.get("bookingId");
+  const bookingId = searchParams?.get("bookingId");
   const { customer } = useSelector((state: RootState) => state.auth);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +32,7 @@ function FeedbackContent() {
 
   if (!bookingId || !customer) {
     return (
-      <div className="max-w-2xl mx-auto px-6 py-36">
+      <div className="max-w-2xl mx-auto px-6 py-20">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-500 mb-4">
             Thông tin không hợp lệ
@@ -52,7 +52,7 @@ function FeedbackContent() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-36">
+    <div className="max-w-7xl mx-auto px-6 py-20">
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-[#8B5E3C] mb-2">Phản hồi</h2>
         <p className="text-gray-600">
@@ -87,7 +87,13 @@ function FeedbackContent() {
 
 export default function FeedbackPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader /></div>}>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader />
+        </div>
+      }
+    >
       <FeedbackContent />
     </Suspense>
   );

@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/constants/environments";
+import dayjs from "dayjs";
 
 interface Notification {
   id: number;
@@ -100,7 +101,7 @@ const Notification = ({ customer }: { customer: Customer }) => {
               title: notification.title,
               message: notification.description,
               read: notification.isRead === 1,
-              time: new Date(notification.createAt).toLocaleString(),
+              time: dayjs(notification.createAt).format("HH:mm:ss, DD/MM/YYYY"),
               createdAt: new Date(notification.createAt).getTime(),
             })
           )
@@ -362,7 +363,6 @@ const Notification = ({ customer }: { customer: Customer }) => {
                       setIsOpen(false);
                       router.push("/notification");
                     }}
-                    
                   >
                     Xem tất cả
                   </button>

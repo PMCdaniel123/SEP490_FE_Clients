@@ -39,7 +39,12 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
 }) => {
   const { customer } = useSelector((state: RootState) => state.auth);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
-  const { register, handleSubmit, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
     defaultValues: formData,
   });
 
@@ -190,15 +195,28 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
             <label className="block text-sm font-medium">Tên</label>
             <input
               type="text"
-              {...register("name")}
+              {...register("name", {
+                minLength: {
+                  value: 2,
+                  message: "Tên phải có ít nhất 2 ký tự",
+                },
+              })}
               className="w-full p-2 border rounded-lg mt-1"
             />
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium">Email</label>
             <input
               type="email"
-              {...register("email")}
+              {...register("email", {
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Email không hợp lệ",
+                },
+              })}
               className="w-full p-2 border rounded-lg mt-1"
               disabled
             />
@@ -207,25 +225,59 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
             <label className="block text-sm font-medium">Địa chỉ</label>
             <input
               type="text"
-              {...register("address")}
+              {...register("address", {
+                minLength: {
+                  value: 5,
+                  message: "Địa chỉ phải có ít nhất 5 ký tự",
+                },
+              })}
               className="w-full p-2 border rounded-lg mt-1"
             />
+            {errors.address && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.address.message}
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium">Số điện thoại</label>
             <input
               type="text"
-              {...register("phoneNumber")}
+              {...register("phoneNumber", {
+                pattern: {
+                  value: /^[0-9]{10,15}$/,
+                  message: "Số điện thoại không hợp lệ (10–15 chữ số)",
+                },
+              })}
               className="w-full p-2 border rounded-lg mt-1"
+              disabled
             />
           </div>
           <div>
             <label className="block text-sm font-medium">Ngày sinh</label>
             <input
               type="date"
-              {...register("dob")}
+              {...register("dob", {
+                validate: (value) => {
+                  if (!value) return true;
+                  const today = new Date();
+                  const dob = new Date(value);
+                  let age = today.getFullYear() - dob.getFullYear();
+                  const m = today.getMonth() - dob.getMonth();
+                  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                    age--;
+                  }
+                  if (age < 12 || age > 100) {
+                    return "Tuổi phải từ 12 đến 100";
+                  }
+                  return true;
+                },
+              })}
               className="w-full p-2 border rounded-lg mt-1"
             />
+            {errors.dob && (
+              <p className="text-red-500 text-xs mt-1">{errors.dob.message}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium">Giới tính</label>
@@ -233,6 +285,9 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
               {...register("gender")}
               className="w-full p-2 border rounded-lg mt-1"
             >
+              <option value="" disabled>
+                -- Vui lòng chọn giới tính --
+              </option>
               <option value="Nam">Nam</option>
               <option value="Nữ">Nữ</option>
               <option value="Khác">Khác</option>

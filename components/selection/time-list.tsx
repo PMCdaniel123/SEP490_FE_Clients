@@ -12,11 +12,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import 'dayjs/locale/vi';
+import "dayjs/locale/vi";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
-dayjs.locale('vi'); // Set Vietnamese locale
+dayjs.locale("vi"); // Set Vietnamese locale
 
 interface Time {
   id: string;
@@ -87,7 +87,7 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
     const dailyBookings = timeList.filter((item: Time) => {
       const startDate = dayjs(item.startDate);
       const endDate = dayjs(item.endDate);
-      
+
       return (
         (item.status === "InUse" || item.status === "Handling") &&
         item.workspaceTimeCategory === "Ngày" &&
@@ -103,10 +103,10 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
         isFullDay: true,
         originalStartDate: booking.startDate,
         originalEndDate: booking.endDate,
-        startDate: date.startOf('day').format(),
-        endDate: date.endOf('day').format()
+        startDate: date.startOf("day").format(),
+        endDate: date.endOf("day").format(),
       }));
-      
+
       return [...hourlyBookings, ...fullDayItems];
     }
 
@@ -158,21 +158,28 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
     );
   }
 
-  const formatTimeRange = (start: string, end: string, isFullDay: boolean = false) => {
+  const formatTimeRange = (
+    start: string,
+    end: string,
+    isFullDay: boolean = false
+  ) => {
     if (isFullDay) {
       return (
         <div className="flex flex-col">
-          <span className="font-medium text-amber-700">Đã được đặt cả ngày</span>
+          <span className="font-medium text-amber-700">
+            Đã được đặt cả ngày
+          </span>
           <span className="text-xs text-gray-500">
-            Thuộc lịch đặt: {dayjs(start).format("DD/MM/YYYY")} - {dayjs(end).format("DD/MM/YYYY")}
+            Thuộc lịch đặt: {dayjs(start).format("DD/MM/YYYY")} -{" "}
+            {dayjs(end).format("DD/MM/YYYY")}
           </span>
         </div>
       );
     }
-    
+
     return (
       <>
-        <span className="font-medium">{dayjs(start).format("HH:mm")}</span> - 
+        <span className="font-medium">{dayjs(start).format("HH:mm")}</span> -
         <span className="font-medium">{dayjs(end).format("HH:mm")}</span>
         <span className="text-xs ml-2 text-gray-500">
           {dayjs(start).format("DD/MM/YYYY")}
@@ -205,12 +212,18 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
                   className="flex items-center p-3 rounded-lg bg-amber-50 border border-amber-200 hover:bg-amber-100 transition-colors mb-2"
                 >
                   <CalendarDays className="w-4 h-4 mr-3 text-amber-700 flex-shrink-0" />
-                  <span>{formatTimeRange(item.originalStartDate || item.startDate, item.originalEndDate || item.endDate, true)}</span>
+                  <span>
+                    {formatTimeRange(
+                      item.originalStartDate || item.startDate,
+                      item.originalEndDate || item.endDate,
+                      true
+                    )}
+                  </span>
                 </div>
               ))}
             </div>
           )}
-          
+
           {hourlyBookings.map((item: Time) => (
             <div
               key={item.id}
@@ -220,11 +233,13 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
               <span>{formatTimeRange(item.startDate, item.endDate)}</span>
             </div>
           ))}
-          
+
           {hourlyBookings.length === 0 && fullDayBookings.length > 0 && (
             <div className="flex items-center justify-center py-2 text-gray-500">
               <AlertCircle className="w-4 h-4 mr-2" />
-              <span className="italic">Bạn không thể đặt trong thời gian này</span>
+              <span className="italic">
+                Bạn không thể đặt trong thời gian này
+              </span>
             </div>
           )}
         </div>
@@ -240,7 +255,7 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
           Các khung giờ dưới đây đã được đặt và không khả dụng
         </p>
       </div>
-      
+
       <Tabs defaultValue="hourly" className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-4">
           <TabsTrigger value="hourly" className="flex items-center">
@@ -252,14 +267,15 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
             <span>Đặt theo ngày</span>
           </TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="hourly" className="space-y-4">
           <div className="space-y-4">
             <div>
               <div className="flex items-center mb-2">
                 <Calendar className="w-4 h-4 mr-2 text-primary" />
                 <h3 className="font-medium text-primary">
-                  {today.format("dddd, DD/MM/YYYY").charAt(0).toUpperCase() + today.format("dddd, DD/MM/YYYY").slice(1)}
+                  {today.format("dddd, DD/MM/YYYY").charAt(0).toUpperCase() +
+                    today.format("dddd, DD/MM/YYYY").slice(1)}
                 </h3>
                 {todayList.length > 0 && (
                   <Badge variant="outline" className="ml-2">
@@ -270,12 +286,13 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
               {renderTimeSlots(todayList)}
               <Separator className="my-4" />
             </div>
-            
+
             <div>
               <div className="flex items-center mb-2">
                 <Calendar className="w-4 h-4 mr-2 text-primary" />
                 <h3 className="font-medium text-primary">
-                  {tomorrow.format("dddd, DD/MM/YYYY").charAt(0).toUpperCase() + tomorrow.format("dddd, DD/MM/YYYY").slice(1)}
+                  {tomorrow.format("dddd, DD/MM/YYYY").charAt(0).toUpperCase() +
+                    tomorrow.format("dddd, DD/MM/YYYY").slice(1)}
                 </h3>
                 {tomorrowList.length > 0 && (
                   <Badge variant="outline" className="ml-2">
@@ -286,12 +303,13 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
               {renderTimeSlots(tomorrowList)}
               <Separator className="my-4" />
             </div>
-            
+
             <div>
               <div className="flex items-center mb-2">
                 <Calendar className="w-4 h-4 mr-2 text-primary" />
                 <h3 className="font-medium text-primary">
-                  {nextDay.format("dddd, DD/MM/YYYY").charAt(0).toUpperCase() + nextDay.format("dddd, DD/MM/YYYY").slice(1)}
+                  {nextDay.format("dddd, DD/MM/YYYY").charAt(0).toUpperCase() +
+                    nextDay.format("dddd, DD/MM/YYYY").slice(1)}
                 </h3>
                 {nextDayList.length > 0 && (
                   <Badge variant="outline" className="ml-2">
@@ -303,22 +321,20 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
             </div>
           </div>
         </TabsContent>
-        
+
         <TabsContent value="daily">
           <div>
             <div className="flex items-center mb-2">
               <CalendarDays className="w-4 h-4 mr-2 text-primary" />
-              <h3 className="font-medium text-primary">
-                Các ngày đã được đặt
-              </h3>
+              <h3 className="font-medium text-primary">Các ngày đã được đặt</h3>
               {dateList.length > 0 && (
                 <Badge variant="outline" className="ml-2">
                   {dateList.length} ngày
                 </Badge>
               )}
             </div>
-            
-            <ScrollArea className="h-[250px] pr-4">
+
+            <ScrollArea className="h-[360px] pr-4">
               <div className="space-y-2">
                 {dateList.length > 0 ? (
                   dateList.map((item: Time) => (
@@ -329,10 +345,14 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
                       <CalendarDays className="w-4 h-4 mr-3 text-primary flex-shrink-0" />
                       <div>
                         <div className="font-medium">
-                          {dayjs(item.startDate).format("DD/MM/YYYY")} - {dayjs(item.endDate).format("DD/MM/YYYY")}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {dayjs(item.startDate).format("HH:mm")} - {dayjs(item.endDate).format("HH:mm")}
+                          <span className="text-xs text-gray-500">
+                            {dayjs(item.startDate).format("HH:mm")}
+                          </span>{" "}
+                          {dayjs(item.startDate).format("DD/MM/YYYY")} -{" "}
+                          <span className="text-xs text-gray-500">
+                            {dayjs(item.endDate).format("HH:mm")}
+                          </span>{" "}
+                          {dayjs(item.endDate).format("DD/MM/YYYY")}
                         </div>
                       </div>
                     </div>

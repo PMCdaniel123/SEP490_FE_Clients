@@ -1,7 +1,4 @@
-import {
-  MenuItemProps,
-  WorkspaceProps,
-} from "@/types";
+import { MenuItemProps, WorkspaceProps } from "@/types";
 
 export const menuItems: MenuItemProps[] = [
   { name: "Trang chủ", path: "/" },
@@ -82,7 +79,7 @@ export const workspaceList: WorkspaceProps[] = [
 
 export const paymentMethods = [
   { value: "1", label: "Thanh toán bằng ngân hàng", image: "/vietqr.png" },
-  { value: "2", label: "Thanh toán bằng WorkHive Wallet", image: "/logo.png" },
+  { value: "2", label: "Thanh toán bằng ví WorkHive", image: "/logo.png" },
 ];
 
 export const searchAddress: string[] = [

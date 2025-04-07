@@ -19,6 +19,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/stores";
 import { login } from "@/stores/slices/authSlice";
 import { BASE_URL } from "@/constants/environments";
+import Cookies from "js-cookie";
 
 export type FormInputs = z.infer<typeof signupSchema>;
 
@@ -66,13 +67,14 @@ export function SignUpForm({
 
       const token = response.data.token;
 
-      localStorage.setItem("token", token);
+      Cookies.set("token", token, { expires: 3 });
 
       try {
         const decodeResponse = await fetch(`${BASE_URL}/users/decodejwttoken`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             token: token,
@@ -106,17 +108,13 @@ export function SignUpForm({
         return;
       }
 
-      if (role === "owner") {
-        router.push("/owners");
-      } else {
-        router.push("/");
-      }
+      router.push("/");
     } catch {
       toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
         position: "top-right",
         autoClose: 2000,
         hideProgressBar: true,
-        theme: "dark",
+        theme: "light",
       });
     } finally {
       setIsLoading(false);

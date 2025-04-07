@@ -28,6 +28,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
 import { toast } from "react-toastify";
 import { BASE_URL } from "@/constants/environments";
+import Cookies from "js-cookie";
 
 interface WalletHeader {
   amount: number;
@@ -44,8 +45,7 @@ function Header() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { customer } = useSelector((state: RootState) => state.auth);
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
   const [userWallet, setUserWallet] = useState<WalletHeader | null>(null);
   const [isToken, setIsToken] = useState(false);
 
@@ -253,9 +253,9 @@ function Header() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute top-full right-0 z-10 mt-2 w-auto gap-3 rounded-xl bg-white shadow-xl pb-4 text-black border border-primary"
+                className="absolute top-full right-0 z-10 mt-2 w-auto gap-3 rounded-xl bg-white shadow-xl pb-4 text-black border border-secondary"
               >
-                <div className="flex items-center justify-center py-2 px-4 gap-4 bg-primary rounded-t-xl">
+                <div className="flex items-center justify-center py-3 px-4 gap-4 bg-primary rounded-t-xl">
                   <Image
                     src={customer?.avatar || "/logo.png"}
                     alt="Logo"
@@ -299,7 +299,7 @@ function Header() {
                 <Link
                   onClick={() => setOpenAccount(!openAccount)}
                   href="/user-feedbacks"
-                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-1 transition-colors duration-200 cursor-pointer"
+                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-2 transition-colors duration-200 cursor-pointer"
                 >
                   <MessageCircle size={16} />
                   <span>Trung tâm hỗ trợ</span>

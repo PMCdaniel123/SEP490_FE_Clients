@@ -13,6 +13,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { LoadingOutlined } from "@ant-design/icons";
 import { BASE_URL } from "@/constants/environments";
+import Cookies from "js-cookie";
 
 export type FormInputs = z.infer<typeof passwordSchema>;
 
@@ -57,14 +58,14 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
       const result = await response.json();
       const token = result.token;
 
-      localStorage.setItem("token", token);
-      onClose();
+      Cookies.set("token", token, { expires: 3 });
 
       try {
         const decodeResponse = await fetch(`${BASE_URL}/users/decodejwttoken`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             token: token,
@@ -85,7 +86,6 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
           hideProgressBar: false,
           theme: "light",
         });
-        localStorage.setItem("customer", JSON.stringify(customerData));
         dispatch(login(customerData));
         onClose();
       } catch {

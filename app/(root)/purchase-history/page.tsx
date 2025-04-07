@@ -284,7 +284,7 @@ export default function PurchaseHistoryPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-36">
+    <div className="max-w-7xl mx-auto px-6 py-20">
       <ToastContainer />
       <h2 className="text-2xl font-bold text-[#8B5E3C] mb-4">
         Lịch sử thanh toán

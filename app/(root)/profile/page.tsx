@@ -10,6 +10,8 @@ import dayjs from "dayjs";
 import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
+import { Edit } from "lucide-react";
 
 function Profile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -32,7 +34,7 @@ function Profile() {
   const fetchReviews = useCallback(async () => {
     try {
       if (!customer?.id) return;
-      
+
       const reviewsResponse = await fetch(
         `${BASE_URL}/users/rating/getallratingbyuserid/${customer.id}`
       );
@@ -75,7 +77,7 @@ function Profile() {
   }, [customer?.id]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("token");
     if (token && customer) {
       const fetchProfile = async () => {
         try {
@@ -155,7 +157,7 @@ function Profile() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-8">
-      <div className="w-full lg:w-1/3 bg-secondary p-6 rounded-lg text-center text-white">
+      <div className="w-full lg:w-1/3 bg-secondary p-6 rounded-lg text-center text-white sticky top-4 h-fit">
         <div className="w-32 h-32 mx-auto bg-white rounded-full overflow-hidden border">
           {avatar ? (
             <img
@@ -200,16 +202,20 @@ function Profile() {
       <div className="w-full lg:w-2/3">
         {!isEditing ? (
           <div>
-            <h1 className="text-2xl font-bold">Xin chào, {formData.name}</h1>
-            <button
-              className="mt-4 px-4 py-2 rounded-lg bg-white border=black hover:bg-primary hover:text-white hover:border-white border"
-              onClick={() => setIsEditing(true)}
-            >
-              Chỉnh sửa hồ sơ
-            </button>
-            <UserReview 
-              reviews={reviews} 
-              userId={customer?.id ? Number(customer.id) : 0} 
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl font-bold text-primary">
+                Xin chào, {formData.name}
+              </h1>
+              <button
+                className="my-4 px-4 py-2 rounded-lg bg-primary border-black hover:bg-secondary text-white hover:border-primary border font-medium flex gap-2 items-center"
+                onClick={() => setIsEditing(true)}
+              >
+                <Edit size={20} /> Chỉnh sửa hồ sơ
+              </button>
+            </div>
+            <UserReview
+              reviews={reviews}
+              userId={customer?.id ? Number(customer.id) : 0}
               onReviewUpdated={fetchReviews}
             />
           </div>
