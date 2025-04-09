@@ -10,6 +10,7 @@ import {
   MousePointerClick,
   FilterIcon,
   Search,
+  SearchSlash,
 } from "lucide-react";
 import Loader from "@/components/loader/Loader";
 import { Button } from "@/components/ui/button";
@@ -427,23 +428,27 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
           }}
         >
           {selectedResult ? (
-            <div style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-            }}>
-              <GoogleMap 
-                url={filteredResults.find((r) => r.id === selectedResult)?.googleMapUrl || ""} 
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+              }}
+            >
+              <GoogleMap
+                url={
+                  filteredResults.find((r) => r.id === selectedResult)
+                    ?.googleMapUrl || ""
+                }
               />
             </div>
           ) : (
-            <img
-              src="https://img.freepik.com/free-vector/no-data-concept-illustration_114360-2506.jpg?t=st=1740509479~exp=1740513079~hmac=fb9232accc15d60c89c3ff49d0501d052507d8d41e7f29e996ddb4a42ad3fabf&w=1380"
-              alt="No Results Found"
-              className="w-full h-full object-cover rounded-lg"
-            />
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-200 rounded-lg">
+              <p className="text-gray-500">Không tìm thấy kết quả nào </p>
+              <SearchSlash className="ml-2 text-gray-400" size={24} />
+            </div>
           )}
         </div>
       </div>

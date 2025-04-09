@@ -37,7 +37,7 @@ const uploadImage = async (image: File): Promise<string> => {
   const formData = new FormData();
   formData.append("image", image);
 
-  const response = await fetch(`${BASE_URL}/files/upload`, {
+  const response = await fetch(`${BASE_URL}/images/upload`, {
     method: "POST",
     body: formData,
   });

@@ -48,6 +48,22 @@ export function SignUpForm({
     try {
       const response = await axios.post(`${BASE_URL}/users/register`, data);
       console.log("Sign up successful:", response.data);
+
+      if (
+        response.data &&
+        response.data.token === "" &&
+        response.data.notification === "Email và số điện thoại đã được sử dụng"
+      ) {
+        toast.error("Email hoặc số điện thoại đã được sử dụng", {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          theme: "light",
+        });
+        setIsLoading(false);
+        return;
+      }
+
       toast.success("Đăng ký thành công!", {
         position: "top-right",
         autoClose: 2000,
@@ -209,6 +225,26 @@ export function SignUpForm({
             />
             {errors.password && (
               <p className="text-red-500 text-xs">{errors.password.message}</p>
+            )}
+          </div>
+          <div className="grid gap-1">
+            <Label
+              htmlFor="confirmPassword"
+              className="text-fourth font-semibold text-xs"
+            >
+              Nhập lại mật khẩu
+            </Label>
+            <Input
+              className="py-6 px-4 rounded-md bg-white shadow-sm"
+              id="confirmPassword"
+              type="password"
+              placeholder="Nhập lại mật khẩu"
+              {...register("confirmPassword")}
+            />
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-xs">
+                {errors.confirmPassword.message}
+              </p>
             )}
           </div>
           <div className="grid gap-1">

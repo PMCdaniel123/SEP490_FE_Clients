@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/constants/environments";
 import dayjs from "dayjs";
+import Link from "next/link";
 
 interface Notification {
   id: number;
@@ -322,7 +323,11 @@ const Notification = ({ customer }: { customer: Customer }) => {
           exit={{ opacity: 0, y: -10 }}
           className="absolute right-0 mt-4 w-80 bg-[#835101] shadow-lg rounded-lg border overflow-hidden"
         >
-          <div className="p-4 font-semibold border-b text-white">Thông báo</div>
+          <Link href="/notification">
+            <div className="p-4 font-semibold border-b text-white">
+              Thông báo
+            </div>
+          </Link>
           {notifications.length > 0 ? (
             <>
               {notifications.slice(0, MAX_DISPLAY).map((notification) => (
@@ -370,9 +375,7 @@ const Notification = ({ customer }: { customer: Customer }) => {
               )}
             </>
           ) : (
-            <div className="p-4 text-gray-500 text-center">
-              Không có thông báo mới
-            </div>
+            <div className="p-4 text- text-center">Không có thông báo mới</div>
           )}
         </motion.div>
       )}

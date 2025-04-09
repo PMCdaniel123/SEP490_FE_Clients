@@ -33,7 +33,11 @@ export default function BecomeOwnerForm({ onClose }: { onClose: () => void }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          email: data.email,
+          phone: data.phone,
+          password: data.password,
+        }),
       });
 
       if (!response.ok) {
@@ -127,6 +131,26 @@ export default function BecomeOwnerForm({ onClose }: { onClose: () => void }) {
             />
             {errors.password && (
               <p className="text-red-500 text-xs">{errors.password.message}</p>
+            )}
+          </div>
+          <div className="grid gap-1">
+            <Label
+              htmlFor="confirmPassword"
+              className="text-fourth font-semibold text-xs"
+            >
+              Mật khẩu
+            </Label>
+            <Input
+              className="py-6 px-4 rounded-md bg-white shadow-sm"
+              id="confirmPassword"
+              type="password"
+              placeholder="Nhập mật khẩu xác nhận..."
+              {...register("confirmPassword")}
+            />
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-xs">
+                {errors.confirmPassword.message}
+              </p>
             )}
           </div>
           <div className="text-center w-full">

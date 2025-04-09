@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Heart, Users, Ruler, Clock, Calendar, MapPin } from "lucide-react";
+import { Users, Ruler, Clock, Calendar, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "../ui/card";
 import { CardContent } from "../ui/card-content";
@@ -11,17 +11,26 @@ import { Workspace } from "@/types";
 import { useRouter } from "next/navigation";
 import { Badge } from "../ui/badge";
 import { BASE_URL } from "@/constants/environments";
+import Link from "next/link";
+
+interface WorkspaceWithStatus extends Workspace {
+  status?: string;
+}
 
 export default function SpaceList() {
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [workspaces, setWorkspaces] = useState<WorkspaceWithStatus[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     fetch(`${BASE_URL}/workspaces`)
       .then((response) => response.json())
-      .then((data: { workspaces: Workspace[] }) => {
-        const formattedWorkspaces = data.workspaces.map((workspace) => ({
+      .then((data: { workspaces: WorkspaceWithStatus[] }) => {
+        const activeWorkspaces = data.workspaces.filter(
+          (workspace) => workspace.status === "Active"
+        );
+
+        const formattedWorkspaces = activeWorkspaces.map((workspace) => ({
           ...workspace,
           shortTermPrice:
             workspace.prices.find((price) => price.category === "Giờ")?.price ||
@@ -73,7 +82,7 @@ export default function SpaceList() {
                 />
               </div>
 
-              <div className="absolute top-3 left-3">
+              {/* <div className="absolute top-3 left-3">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -81,7 +90,7 @@ export default function SpaceList() {
                 >
                   <Heart className="text-gray-500" size={18} />
                 </Button>
-              </div>
+              </div> */}
 
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                 <div className="flex justify-between items-end">
@@ -152,9 +161,11 @@ export default function SpaceList() {
         ))}
       </div>
       <div className="flex justify-center mt-6">
-        <Button className="px-6 py-2 bg-black text-white rounded">
-          Xem tất cả
-        </Button>
+        <Link href="/workspace">
+          <Button className="px-6 py-2 bg-black text-white rounded">
+            Xem tất cả
+          </Button>
+        </Link>
       </div>
     </div>
   );

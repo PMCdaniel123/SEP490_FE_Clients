@@ -6,6 +6,7 @@ import {
   Search,
   Sofa,
   UsersRound,
+  ChevronDown,
 } from "lucide-react";
 import * as Select from "@radix-ui/react-select";
 import { useState, useEffect } from "react";
@@ -22,7 +23,7 @@ export default function SearchBanner() {
 
   const [locations, setLocations] = useState<string[]>([]);
   const [times] = useState<{ label: string; value: string }[]>([
-    { label: "Thời gian linh hoạt", value: "1" },
+    { label: "Thời gian linh hoạt (24h)", value: "1" },
     { label: "Thời gian cố định", value: "0" },
   ]);
   const [spaces, setSpaces] = useState<string[]>([]);
@@ -96,20 +97,22 @@ export default function SearchBanner() {
         alt="Banner"
         layout="fill"
         objectFit="cover"
-        className="brightness-75"
+        className="brightness-50"
       />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-60" />
 
       <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
-        <h2 className="text-3xl md:text-4xl lg:text-6xl font-extrabold tracking-wide">
+        <h2 className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-wide mb-2 text-shadow">
           WorkHive
         </h2>
+        <p className="text-lg md:text-xl text-white/90 mb-6 max-w-2xl">
+          Tìm không gian làm việc phù hợp với nhu cầu của bạn
+        </p>
 
         <div
-          className={`mt-4 md:mt-8 bg-white text-black rounded-full flex ${
+          className={`mt-4 md:mt-8 bg-white/95 backdrop-blur-sm text-black rounded-xl flex ${
             isSmallScreen ? "flex-col" : "flex-row"
-          } items-center justify-center shadow-lg p-2 w-full md:w-[90%] lg:w-[80%] xl:w-[72%] ${
-            isSmallScreen ? "rounded-xl" : "rounded-full"
-          }`}
+          } items-center justify-center shadow-xl p-3 w-full md:w-[90%] lg:w-[80%] xl:w-[72%] transition-all duration-300 ease-in-out`}
         >
           <Dropdown
             label="Địa điểm"
@@ -175,14 +178,17 @@ export default function SearchBanner() {
             ))}
           </Dropdown>
 
-          <div
+          <button
             onClick={handleSearch}
             className={`${
-              isSmallScreen ? "w-full mt-2" : "ml-2"
-            } bg-gray-800 text-white p-4 rounded-full shadow-md transition-transform transform hover:scale-105 active:scale-95 cursor-pointer flex justify-center`}
+              isSmallScreen ? "w-full mt-3" : "ml-3"
+            } bg-primary hover:bg-primary/80 text-white p-3 rounded-xl shadow-md transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-2`}
           >
             <Search size={22} />
-          </div>
+            <span className={isSmallScreen ? "inline" : "hidden md:inline"}>
+              Tìm kiếm
+            </span>
+          </button>
         </div>
       </div>
     </div>
@@ -212,28 +218,38 @@ function Dropdown({
 }: DropdownProps) {
   return (
     <div
-      className={`${isSmallScreen ? "w-full" : "flex-1"} p-2 md:p-4 ${
-        !isSmallScreen && hasBorder ? "border-r" : ""
-      } ${isSmallScreen ? "border-b border-gray-200 last:border-b-0" : ""}`}
+      className={`${isSmallScreen ? "w-full" : "flex-1"} p-2 md:p-3 ${
+        !isSmallScreen && hasBorder ? "border-r border-gray-200" : ""
+      } ${
+        isSmallScreen ? "border-b border-gray-200 last:border-b-0 pb-3" : ""
+      }`}
     >
-      <p className="text-xs md:text-sm font-semibold mb-1 md:mb-2 items-center justify-start flex px-2 gap-1 md:gap-2">
-        <Icon size={isSmallScreen ? 16 : 20} />
+      <p className="text-xs md:text-sm font-semibold mb-1 md:mb-2 items-center justify-start flex px-2 gap-1 md:gap-2 text-gray-700">
+        <Icon size={isSmallScreen ? 16 : 18} className="text-primary" />
         <span>{label}</span>
       </p>
       <Select.Root value={value} onValueChange={setValue}>
         <Select.Trigger
-          className={`w-full flex justify-between items-center bg-transparent text-xs md:text-sm outline-none p-1 md:p-2 cursor-pointer font-semibold ${
-            value ? "text-black" : "text-sixth"
+          className={`w-full flex justify-between items-center bg-transparent text-xs md:text-sm outline-none p-1 md:p-2 cursor-pointer font-medium rounded-md hover:bg-gray-50 transition-colors ${
+            value ? "text-black" : "text-gray-500"
           }`}
         >
           <Select.Value placeholder={placeholder} />
+          <ChevronDown size={16} className="ml-2 text-gray-400" />
         </Select.Trigger>
         <Select.Portal>
           <Select.Content
-            className="bg-white rounded-xl shadow-xl p-2 z-50 overflow-hidden border border-black max-h-[200px] overflow-y-auto"
+            className="bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden max-h-[250px] overflow-y-auto w-[var(--radix-select-trigger-width)] min-w-[180px]"
             position="popper"
+            sideOffset={5}
           >
-            <Select.Viewport>{children}</Select.Viewport>
+            <Select.ScrollUpButton className="flex items-center justify-center h-6 bg-white text-gray-700 cursor-default">
+              <ChevronDown className="rotate-180" size={16} />
+            </Select.ScrollUpButton>
+            <Select.Viewport className="p-1">{children}</Select.Viewport>
+            <Select.ScrollDownButton className="flex items-center justify-center h-6 bg-white text-gray-700 cursor-default">
+              <ChevronDown size={16} />
+            </Select.ScrollDownButton>
           </Select.Content>
         </Select.Portal>
       </Select.Root>
@@ -250,7 +266,7 @@ function DropdownItem({ value, children }: DropdownItemProps) {
   return (
     <Select.Item
       value={value}
-      className="p-2 hover:bg-gray-100 cursor-pointer rounded-md focus:bg-gray-200 focus:outline-none text-sm"
+      className="p-2.5 hover:bg-gray-50 cursor-pointer rounded-md focus:bg-gray-100 focus:outline-none text-sm flex items-center transition-colors data-[highlighted]:bg-primary/10 data-[highlighted]:text-primary data-[selected]:bg-primary/20 data-[selected]:text-primary"
     >
       <Select.ItemText>{children}</Select.ItemText>
     </Select.Item>
