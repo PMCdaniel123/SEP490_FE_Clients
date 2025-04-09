@@ -198,7 +198,7 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
         {workspace.is24h === 1 && (
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="1" id="short-term" />
-            <Label htmlFor="short-term">Thuê theo 24 giờ</Label>
+            <Label htmlFor="short-term">Thuê theo giờ</Label>
           </div>
         )}
         {workspace.is24h === 1 && shortTerm === "1" && <Time24hSelect />}

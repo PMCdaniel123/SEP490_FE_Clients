@@ -41,7 +41,7 @@ function HomePage() {
             title="Đăng ký dịch vụ của WorkHive ngay"
             subtitle="Tăng thêm thu nhập từ không gian của bạn..."
             buttonText="Trở thành doanh nghiệp ngay"
-            buttonLink="#"
+            buttonLink="/become-owner"
           />
         </div>
         <FeatureSection

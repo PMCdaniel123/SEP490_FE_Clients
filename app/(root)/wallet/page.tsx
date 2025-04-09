@@ -101,7 +101,7 @@ const WalletPage = () => {
                 : "Nạp tiền",
               amount: tx.amount,
               date: tx.created_At,
-              paymentMethod: "Chuyển khoản ngân hàng",
+              paymentMethod: "Giao dịch Ví",
               description: tx.description,
               status:
                 tx.status === "PAID"
@@ -230,7 +230,9 @@ const WalletPage = () => {
                   <Wallet size={40} />
                   <div>
                     <p className="text-white/80">Số dư ví</p>
-                    <p className="text-3xl font-bold">{balance}</p>
+                    <p className="text-3xl font-bold">
+                      {formatCurrency(Number(balance))}
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-2">

@@ -23,7 +23,7 @@ export default function SearchBanner() {
 
   const [locations, setLocations] = useState<string[]>([]);
   const [times] = useState<{ label: string; value: string }[]>([
-    { label: "Thời gian linh hoạt", value: "1" },
+    { label: "Thời gian linh hoạt (24h)", value: "1" },
     { label: "Thời gian cố định", value: "0" },
   ]);
   const [spaces, setSpaces] = useState<string[]>([]);
