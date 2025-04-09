@@ -482,7 +482,20 @@ const UserFeedbackDetail: React.FC<UserFeedbackDetailProps> = ({
             icon={<SendOutlined />}
             onClick={handleSendMessage}
             loading={submitting}
-            className="w-full bg-[#8B5E3C] hover:bg-[#6F4E32] border-0 rounded-md"
+            style={{
+              width: "100%",
+              backgroundColor: "#8B5E3C",
+              borderColor: "#8B5E3C",
+              borderRadius: "0.375rem",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#5A3921";
+              e.currentTarget.style.borderColor = "#5A3921";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "#8B5E3C";
+              e.currentTarget.style.borderColor = "#8B5E3C";
+            }}
           >
             Gửi phản hồi
           </Button>

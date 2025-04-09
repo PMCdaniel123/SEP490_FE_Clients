@@ -44,7 +44,6 @@ const WalletPage = () => {
   >([]);
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   const predefinedAmounts = [100000, 200000, 500000, 1000000];
@@ -102,12 +101,12 @@ const WalletPage = () => {
                 : "Nạp tiền",
               amount: tx.amount,
               date: tx.created_At,
-              paymentMethod: "Chuyển khoản ngân hàng",
+              paymentMethod: "Giao dịch Ví",
               description: tx.description,
               status:
                 tx.status === "PAID"
                   ? "Hoàn thành"
-                  : tx.status === "Active"
+                  : tx.status === "REFUND"
                   ? "Hoàn tiền"
                   : "Thất bại",
             };
@@ -231,7 +230,9 @@ const WalletPage = () => {
                   <Wallet size={40} />
                   <div>
                     <p className="text-white/80">Số dư ví</p>
-                    <p className="text-3xl font-bold">{balance}</p>
+                    <p className="text-3xl font-bold">
+                      {formatCurrency(Number(balance))}
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -351,71 +352,69 @@ const WalletPage = () => {
 
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle className="text-xl font-bold text-primary">
-                  Chọn phương thức thanh toán
+              <DialogHeader className="border-b pb-4">
+                <DialogTitle className="text-xl font-bold text-primary flex items-center gap-2">
+                  <Wallet className="h-5 w-5" />
+                  Thanh toán qua chuyển khoản
                 </DialogTitle>
               </DialogHeader>
-              <div className="my-6">
-                <p className="text-center mb-4 font-medium">
-                  Số tiền nạp:{" "}
-                  <span className="text-primary font-bold">
-                    {formatCurrency(rawAmount)}
-                  </span>
-                </p>
-                <div className="grid grid-cols-2 gap-4">
-                  <Button
-                    variant={
-                      selectedPaymentMethod === "Chuyển khoản ngân hàng"
-                        ? "default"
-                        : "outline"
-                    }
-                    className={`flex flex-col items-center justify-center gap-2 p-6 h-auto ${
-                      selectedPaymentMethod === "Chuyển khoản ngân hàng"
-                        ? "border-2 border-primary"
-                        : ""
-                    }`}
-                    onClick={() =>
-                      setSelectedPaymentMethod("Chuyển khoản ngân hàng")
-                    }
-                  >
-                    <Image
-                      src="/vietqr.png"
-                      alt="Bank Transfer"
-                      width={60}
-                      height={60}
-                    />
-                    <span className="text-sm">Chuyển khoản ngân hàng</span>
-                  </Button>
-                  <Button
-                    variant={
-                      selectedPaymentMethod === "Ví điện tử"
-                        ? "default"
-                        : "outline"
-                    }
-                    className={`flex flex-col items-center justify-center gap-2 p-6 h-auto ${
-                      selectedPaymentMethod === "Ví điện tử"
-                        ? "border-2 border-primary"
-                        : ""
-                    }`}
-                    onClick={() => setSelectedPaymentMethod("Ví điện tử")}
-                  >
-                    <Image
-                      src="/zalopay.png"
-                      alt="E-Wallet"
-                      width={60}
-                      height={60}
-                      className="object-contain"
-                    />
-                    <span className="text-sm">Ví điện tử</span>
-                  </Button>
+              <div className="my-6 space-y-6">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-center font-medium">
+                    Số tiền nạp:{" "}
+                    <span className="text-primary font-bold text-lg">
+                      {formatCurrency(rawAmount)}
+                    </span>
+                  </p>
+                </div>
+
+                <div className="flex justify-center">
+                  <div className="flex flex-col items-center border-2 border-primary rounded-lg p-6 w-full max-w-[280px]">
+                    <div className="bg-white p-3 rounded-full mb-3 shadow-sm">
+                      <Image
+                        src="/vietqr.png"
+                        alt="Bank Transfer"
+                        width={80}
+                        height={80}
+                        className="object-contain"
+                      />
+                    </div>
+                    <span className="font-medium text-center">
+                      Chuyển khoản ngân hàng
+                    </span>
+                    <span className="text-xs text-gray-500 mt-1 text-center">
+                      Thanh toán an toàn và bảo mật
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-third p-4 rounded-lg border border-secondary">
+                  <p className="text-center text-sm text-primary flex items-center justify-center gap-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-info"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <path d="M12 16v-4" />
+                      <path d="M12 8h.01" />
+                    </svg>
+                    Bạn sẽ được chuyển đến trang thanh toán an toàn sau khi xác
+                    nhận
+                  </p>
                 </div>
               </div>
-              <DialogFooter className="flex gap-2">
+              <DialogFooter className="flex gap-2 border-t pt-4">
                 <Button
-                  className="flex-1"
+                  className="flex-1 bg-primary text-white hover:bg-primary/90"
                   onClick={confirmDeposit}
-                  disabled={!selectedPaymentMethod}
                 >
                   Xác nhận thanh toán
                 </Button>

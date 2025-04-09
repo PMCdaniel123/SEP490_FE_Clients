@@ -127,6 +127,20 @@ function Profile() {
     }
   }, [customer, fetchReviews]);
 
+  useEffect(() => {
+    if (customer && customer.fullName) {
+      setFormData((prevData) => ({
+        ...prevData,
+        name: customer.fullName || prevData.name,
+        email: customer.email || prevData.email,
+      }));
+
+      if (customer.avatar) {
+        setAvatar(customer.avatar);
+      }
+    }
+  }, [customer]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -191,7 +205,9 @@ function Profile() {
           </p>
           <p className="text-gray-600">
             <span className="font-semibold">Ngày sinh:</span>{" "}
-            {dayjs(formData.dob).format("DD/MM/YYYY")}
+            {formData.dob === "Chưa cập nhật" || !dayjs(formData.dob).isValid()
+              ? "Chưa cập nhật"
+              : dayjs(formData.dob).format("DD/MM/YYYY")}
           </p>
           <p className="text-gray-600">
             <span className="font-semibold">Giới tính:</span> {formData.gender}

@@ -58,7 +58,7 @@ interface Transaction {
 
 const tabs = [
   { key: "Success", label: "Hoàn thành" },
-  { key: "Fail", label: "Đã hủy" },
+  { key: "Cancelled", label: "Đã hủy" },
 ];
 
 export default function PurchaseHistoryPage() {
@@ -188,7 +188,7 @@ export default function PurchaseHistoryPage() {
     switch (status) {
       case "Success":
         return "Hoàn thành";
-      case "Fail":
+      case "Cancelled":
         return "Đã hủy";
       default:
         return status;
