@@ -2,12 +2,12 @@
 
 import SearchBanner from "@/components/search-banner/search-banner";
 import SpaceList from "@/components/space-list/space-list";
-import NearSpaceList from "@/components/near-space-list/near-space-list";
+// import NearSpaceList from "@/components/near-space-list/near-space-list";
 import HighRatingSpace from "@/components/high-rating-space/high-rating-space";
 import SectionTitle from "@/components/ui/section-tilte";
 import Banner from "@/components/ui/banner";
 import FeatureSection from "@/components/ui/feauture-section";
-import { Send, MapPin } from "lucide-react";
+import { Send } from "lucide-react";
 
 function HomePage() {
   return (
@@ -18,7 +18,7 @@ function HomePage() {
           WorkHive cung cấp đa dạng <br /> giải pháp không gian làm việc
         </SectionTitle>
         <SpaceList />
-        <div className="flex items-center justify-between mb-4 mt-12">
+        {/* <div className="flex items-center justify-between mb-4 mt-12">
           <SectionTitle>Nơi làm việc gần bạn</SectionTitle>
           <div className="flex items-center text-[#835101] cursor-pointer">
             <MapPin className="mr-2 text-black" size={24} />
@@ -27,8 +27,8 @@ function HomePage() {
               trên bản đồ
             </span>
           </div>
-        </div>
-        <NearSpaceList />
+        </div> */}
+        {/* <NearSpaceList /> */}
         <div className="mb-8 mt-16">
           <SectionTitle>
             Không gian làm việc <br /> được đánh giá cao

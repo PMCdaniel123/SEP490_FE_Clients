@@ -370,7 +370,7 @@ const Notification = ({ customer }: { customer: Customer }) => {
               )}
             </>
           ) : (
-            <div className="p-4 text-gray-500 text-center">
+            <div className="p-4 text-white text-center">
               Không có thông báo mới
             </div>
           )}

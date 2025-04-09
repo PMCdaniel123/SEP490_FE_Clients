@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/stores";
 import { toast } from "react-toastify";
 import ChangePasswordForm from "../change-password-form/change-password-form";
@@ -9,6 +9,7 @@ import { Upload } from "lucide-react";
 import { Button, Upload as AntUpload } from "antd";
 import ImgCrop from "antd-img-crop";
 import { BASE_URL } from "@/constants/environments";
+import { login } from "@/stores/slices/authSlice";
 
 interface EditProfileFormProps {
   formData: {
@@ -38,14 +39,42 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
   handleCancel,
 }) => {
   const { customer } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+
+
+  const formatDateForDisplay = (dateString: string) => {
+    if (!dateString || dateString === "Chưa cập nhật") return "";
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
+      return dateString;
+    }
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "";
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    } catch {
+      return "";
+    }
+  };
+
+  const formattedFormData = {
+    ...formData,
+    dob: formData.dob && formData.dob !== "Chưa cập nhật" 
+      ? formatDateForDisplay(formData.dob) 
+      : formData.dob
+  };
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: formData,
+    defaultValues: formattedFormData,
   });
 
   const togglePasswordForm = () => {
@@ -106,7 +135,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       email: data.email,
       location: data.address,
       phone: data.phoneNumber,
-      dateOfBirth: data.dob,
+      dateOfBirth: data.dob ? formatDateForAPI(data.dob) : data.dob,
       sex: data.gender,
       avatar: avatarUrl,
     };
@@ -124,6 +153,18 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
         throw new Error("Cập nhật hồ sơ không thành công.");
       }
 
+      // Update Redux store
+      if (customer) {
+        dispatch(login({
+          id: customer.id,
+          fullName: data.name,
+          email: data.email,
+          phone: customer.phone,
+          roleId: customer.roleId,
+          avatar: typeof avatarUrl === 'string' ? avatarUrl : customer.avatar
+        }));
+      }
+
       toast.success("Cập nhật hồ sơ thành công!", {
         position: "top-right",
         autoClose: 2000,
@@ -133,7 +174,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
 
       reset();
       handleCancel();
-      window.location.reload();
+
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
@@ -144,6 +185,17 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
         theme: "light",
       });
     }
+  };
+
+  const formatDateForAPI = (dateString: string) => {
+    if (!dateString) return dateString;
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+      return dateString;
+    }
+    
+    // Convert from DD/MM/YYYY to YYYY-MM-DD
+    const [day, month, year] = dateString.split('/');
+    return `${year}-${month}-${day}`;
   };
 
   return (
@@ -182,7 +234,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
                 <AntUpload
                   beforeUpload={(file) => {
                     handleAvatarChange(file);
-                    return false; // Prevent automatic upload
+                    return false;
                   }}
                   showUploadList={false}
                 >
@@ -256,20 +308,40 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
           <div>
             <label className="block text-sm font-medium">Ngày sinh</label>
             <input
-              type="date"
+              type="text"
+              placeholder="DD/MM/YYYY"
               {...register("dob", {
                 validate: (value) => {
                   if (!value) return true;
+                  
+                  if (!/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+                    return "Định dạng ngày không hợp lệ (DD/MM/YYYY)";
+                  }
+                  
+                  const [day, month, year] = value.split('/').map(Number);
+                  
+                  const date = new Date(year, month - 1, day);
+                  if (
+                    date.getDate() !== day ||
+                    date.getMonth() + 1 !== month ||
+                    date.getFullYear() !== year
+                  ) {
+                    return "Ngày không hợp lệ";
+                  }
+                  
                   const today = new Date();
-                  const dob = new Date(value);
-                  let age = today.getFullYear() - dob.getFullYear();
-                  const m = today.getMonth() - dob.getMonth();
-                  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                  let age = today.getFullYear() - year;
+                  if (
+                    today.getMonth() < month - 1 ||
+                    (today.getMonth() === month - 1 && today.getDate() < day)
+                  ) {
                     age--;
                   }
+                  
                   if (age < 12 || age > 100) {
                     return "Tuổi phải từ 12 đến 100";
                   }
+                  
                   return true;
                 },
               })}

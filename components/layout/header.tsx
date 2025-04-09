@@ -30,10 +30,10 @@ import { toast } from "react-toastify";
 import { BASE_URL } from "@/constants/environments";
 import Cookies from "js-cookie";
 
-interface WalletHeader {
-  amount: number;
-  notification: string;
-}
+// interface WalletHeader {
+//   amount: number;
+//   notification: string;
+// }
 
 function Header() {
   const pathname = usePathname();
@@ -46,7 +46,7 @@ function Header() {
   const dispatch = useDispatch();
   const { customer } = useSelector((state: RootState) => state.auth);
   const token = typeof window !== "undefined" ? Cookies.get("token") : null;
-  const [userWallet, setUserWallet] = useState<WalletHeader | null>(null);
+  // const [userWallet, setUserWallet] = useState<WalletHeader | null>(null);
   const [isToken, setIsToken] = useState(false);
 
   useEffect(() => {
@@ -99,43 +99,43 @@ function Header() {
     }
   }, [dispatch, token]);
 
-  useEffect(() => {
-    if (!customer) return;
+  // useEffect(() => {
+  //   if (!customer) return;
 
-    const getUserWallet = async () => {
-      const response = await fetch(
-        `${BASE_URL}/users/wallet/getamountwalletbyuserid?UserId=${customer.id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  //   const getUserWallet = async () => {
+  //     const response = await fetch(
+  //       `${BASE_URL}/users/wallet/getamountwalletbyuserid?UserId=${customer.id}`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
 
-      if (!response.ok) {
-        throw new Error("Có lỗi xảy ra khi lấy thông tin ví khách hàng.");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Có lỗi xảy ra khi lấy thông tin ví khách hàng.");
+  //     }
 
-      const data = await response.json();
-      setUserWallet(data);
-      try {
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Đã xảy ra lỗi!";
-        toast.error(errorMessage, {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          theme: "light",
-        });
-        setUserWallet(null);
-        return;
-      }
-    };
+  //     const data = await response.json();
+  //     setUserWallet(data);
+  //     try {
+  //     } catch (error) {
+  //       const errorMessage =
+  //         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+  //       toast.error(errorMessage, {
+  //         position: "top-right",
+  //         autoClose: 2000,
+  //         hideProgressBar: false,
+  //         theme: "light",
+  //       });
+  //       setUserWallet(null);
+  //       return;
+  //     }
+  //   };
 
-    getUserWallet();
-  }, [customer]);
+  //   getUserWallet();
+  // }, [customer]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -273,13 +273,13 @@ function Header() {
                   </div>
                 </div>
                 <Separator className="mb-2" />
-                <div className="flex items-center justify-between px-4">
+                {/* <div className="flex items-center justify-between px-4">
                   <p className="text-sm">Số dư trong ví:</p>
                   <p className="font-bold text-primary">
                     {userWallet?.amount || 0}
                   </p>
                 </div>
-                <Separator className="my-2" />
+                <Separator className="my-2" /> */}
                 <Link
                   onClick={() => setOpenAccount(!openAccount)}
                   href="/profile"
