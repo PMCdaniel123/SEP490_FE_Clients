@@ -61,7 +61,7 @@ function Header() {
           );
 
           if (!decodeResponse.ok) {
-            throw new Error("Có lỗi xảy ra khi giải mã token.");
+            throw new Error("Có lỗi xảy ra khi đăng nhập.");
           }
 
           const decoded = await decodeResponse.json();

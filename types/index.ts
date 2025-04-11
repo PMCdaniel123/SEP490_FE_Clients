@@ -2,7 +2,8 @@ import { LucideIcon } from "lucide-react";
 
 export interface SignInFormProps {
   className?: string;
-  onClose: () => void;
+  onClose?: () => void;
+  onForgotPassword?: () => void;
 }
 
 export interface ValidatePayload {
