@@ -37,10 +37,16 @@ export default function BecomeOwner() {
             biến không gian của bạn thành nguồn thu nhập ổn định.
           </p>
           <Button
-            className="mt-6 w-48 px-6 py-4 bg-black text-white border border-white rounded-md"
+            className="mt-6 w-60 px-6 py-4 bg-black text-white border border-white rounded-md"
             onClick={handleOpen}
           >
-            Đăng ký
+            Đăng ký doanh nghiệp
+          </Button>
+          <Button
+            className="mt-6 w-60 px-6 py-4 bg-gradient-to-r from-primary to-secondary text-white border border-white rounded-md"
+            onClick={handleOpen}
+          >
+            Đăng nhập doanh nghiệp
           </Button>
         </div>
       </section>
