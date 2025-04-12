@@ -14,7 +14,10 @@ import { LoadingOutlined } from "@ant-design/icons";
 
 export type FormInputs = z.infer<typeof phoneSchema>;
 
-export function PhoneForm({ className }: SignInFormProps) {
+export function PhoneForm({ 
+  className,
+  onForgotPassword
+}: SignInFormProps & { onForgotPassword?: () => void }) {
   const dispatch = useDispatch<AppDispatch>();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -62,10 +65,17 @@ export function PhoneForm({ className }: SignInFormProps) {
           )}
         </div>
       </div>
-      <div className="flex items-center w-full mb-4">
+      <div className="flex items-center justify-between w-full mb-4">
         <p className="text-xs text-fourth">
           Nhập số điện thoại bên trên để đăng nhập vào tài khoản WorkHive
         </p>
+        <button
+          type="button"
+          onClick={onForgotPassword}
+          className="text-xs text-primary hover:text-secondary font-medium"
+        >
+          Quên mật khẩu?
+        </button>
       </div>
       <div className="flex items-center w-full sm:gap-10">
         <div className="w-1/3">

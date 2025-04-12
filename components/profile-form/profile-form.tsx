@@ -6,7 +6,7 @@ import { RootState } from "@/stores";
 import { toast } from "react-toastify";
 import ChangePasswordForm from "../change-password-form/change-password-form";
 import { Upload } from "lucide-react";
-import { Button, Upload as AntUpload } from "antd";
+import { Button, Upload as AntUpload, ConfigProvider } from "antd";
 import ImgCrop from "antd-img-crop";
 import { BASE_URL } from "@/constants/environments";
 import { login } from "@/stores/slices/authSlice";
@@ -41,19 +41,19 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
   const { customer } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const [showPasswordForm, setShowPasswordForm] = useState(false);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formatDateForDisplay = (dateString: string) => {
     if (!dateString || dateString === "Chưa cập nhật") return "";
     if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
       return dateString;
     }
-    
+
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return "";
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
       const year = date.getFullYear();
       return `${day}/${month}/${year}`;
     } catch {
@@ -63,9 +63,10 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
 
   const formattedFormData = {
     ...formData,
-    dob: formData.dob && formData.dob !== "Chưa cập nhật" 
-      ? formatDateForDisplay(formData.dob) 
-      : formData.dob
+    dob:
+      formData.dob && formData.dob !== "Chưa cập nhật"
+        ? formatDateForDisplay(formData.dob)
+        : formData.dob,
   };
 
   const {
@@ -109,6 +110,8 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       return;
     }
 
+    setIsSubmitting(true);
+
     let avatarUrl = avatar;
     if (avatar && typeof avatar !== "string") {
       try {
@@ -125,6 +128,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
           hideProgressBar: false,
           theme: "light",
         });
+        setIsSubmitting(false);
         return;
       }
     }
@@ -155,14 +159,16 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
 
       // Update Redux store
       if (customer) {
-        dispatch(login({
-          id: customer.id,
-          fullName: data.name,
-          email: data.email,
-          phone: customer.phone,
-          roleId: customer.roleId,
-          avatar: typeof avatarUrl === 'string' ? avatarUrl : customer.avatar
-        }));
+        dispatch(
+          login({
+            id: customer.id,
+            fullName: data.name,
+            email: data.email,
+            phone: customer.phone,
+            roleId: customer.roleId,
+            avatar: typeof avatarUrl === "string" ? avatarUrl : customer.avatar,
+          })
+        );
       }
 
       toast.success("Cập nhật hồ sơ thành công!", {
@@ -174,7 +180,6 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
 
       reset();
       handleCancel();
-
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
@@ -184,17 +189,19 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
         hideProgressBar: false,
         theme: "light",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const formatDateForAPI = (dateString: string) => {
     if (!dateString) return dateString;
-        if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
       return dateString;
     }
-    
+
     // Convert from DD/MM/YYYY to YYYY-MM-DD
-    const [day, month, year] = dateString.split('/');
+    const [day, month, year] = dateString.split("/");
     return `${year}-${month}-${day}`;
   };
 
@@ -238,7 +245,28 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
                   }}
                   showUploadList={false}
                 >
-                  <Button icon={<Upload className="mr-2" />}>Chọn ảnh</Button>
+                  <ConfigProvider
+                    theme={{
+                      components: {
+                        Button: {
+                          colorBgContainer: "#835101",
+                          colorText: "#fff",
+                          defaultHoverBg: "#B49057",
+                          defaultHoverColor: "#fff",
+                          defaultHoverBorderColor: "#B49057",
+                          paddingBlockLG: 12,
+                          defaultActiveColor: "#fff",
+                        },
+                      },
+                    }}
+                  >
+                    <Button
+                      size="large"
+                      icon={<Upload className="mr-2" size={20} />}
+                    >
+                      Chọn ảnh
+                    </Button>
+                  </ConfigProvider>
                 </AntUpload>
               </ImgCrop>
             </div>
@@ -313,13 +341,13 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
               {...register("dob", {
                 validate: (value) => {
                   if (!value) return true;
-                  
+
                   if (!/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
                     return "Định dạng ngày không hợp lệ (DD/MM/YYYY)";
                   }
-                  
-                  const [day, month, year] = value.split('/').map(Number);
-                  
+
+                  const [day, month, year] = value.split("/").map(Number);
+
                   const date = new Date(year, month - 1, day);
                   if (
                     date.getDate() !== day ||
@@ -328,7 +356,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
                   ) {
                     return "Ngày không hợp lệ";
                   }
-                  
+
                   const today = new Date();
                   let age = today.getFullYear() - year;
                   if (
@@ -337,11 +365,11 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
                   ) {
                     age--;
                   }
-                  
+
                   if (age < 12 || age > 100) {
                     return "Tuổi phải từ 12 đến 100";
                   }
-                  
+
                   return true;
                 },
               })}
@@ -371,14 +399,42 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
             type="button"
             onClick={handleCancel}
             className="px-4 py-2 border rounded-lg hover:bg-gray-200"
+            disabled={isSubmitting}
           >
             Hủy
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-[#8B5D27] text-white rounded-lg hover:bg-[#6b451f]"
+            className="px-4 py-2 bg-[#8B5D27] text-white rounded-lg hover:bg-[#6b451f] flex items-center justify-center min-w-[120px]"
+            disabled={isSubmitting}
           >
-            Lưu thay đổi
+            {isSubmitting ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Đang lưu...
+              </>
+            ) : (
+              "Lưu thay đổi"
+            )}
           </button>
         </div>
       </form>

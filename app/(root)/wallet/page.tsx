@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowUp, ArrowDown, Wallet } from "lucide-react";
+import { ArrowUp, ArrowDown, Wallet, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -212,7 +212,7 @@ const WalletPage = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg my-8">
+    <div className="max-w-4xl mx-auto p-6 bg-gradient-to-b from-white via-white to-gray-50 shadow-lg rounded-lg my-8 border border-gray-100">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-primary">Ví WorkHive</h1>
       </div>
@@ -223,11 +223,13 @@ const WalletPage = () => {
         </div>
       ) : (
         <>
-          <Card className="mb-6 bg-gradient-to-r from-primary to-secondary text-white">
+          <Card className="mb-6 bg-gradient-to-r from-primary via-primary to-secondary text-white shadow-md hover:shadow-lg transition-shadow duration-300">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <Wallet size={40} />
+                  <div className="bg-white/10 p-2 rounded-full backdrop-blur-sm">
+                    <Wallet size={32} />
+                  </div>
                   <div>
                     <p className="text-white/80">Số dư ví</p>
                     <p className="text-3xl font-bold">
@@ -237,7 +239,7 @@ const WalletPage = () => {
                 </div>
                 <div className="flex gap-2">
                   <Button
-                    className="bg-white text-primary hover:bg-white/90"
+                    className="bg-white text-primary hover:bg-white/90 shadow-md"
                     onClick={handleDeposit}
                   >
                     <ArrowUp size={16} className="mr-1" />
@@ -249,85 +251,138 @@ const WalletPage = () => {
           </Card>
 
           <Tabs defaultValue="deposit" className="mb-6">
-            <TabsList className="grid grid-cols-2 mb-4">
-              <TabsTrigger value="deposit">Nạp tiền</TabsTrigger>
-              <TabsTrigger value="history">Lịch sử giao dịch</TabsTrigger>
+            <TabsList className="grid grid-cols-2 mb-4 bg-gray-100/70 rounded-xl overflow-hidden p-1">
+              <TabsTrigger
+                value="deposit"
+                className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary  data-[state=active]:shadow-sm rounded-lg transition-all duration-300 p-4"
+              >
+                Nạp tiền
+              </TabsTrigger>
+              <TabsTrigger
+                value="history"
+                className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
+              >
+                Lịch sử giao dịch
+              </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="deposit">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Nạp tiền vào ví</CardTitle>
+            <TabsContent
+              value="deposit"
+              className="animate-in fade-in-50 duration-300"
+            >
+              <Card className="shadow-sm hover:shadow-md transition-all duration-300 border-gray-100 overflow-hidden">
+                <CardHeader className="bg-gray-50/50 border-b border-gray-100">
+                  <CardTitle className="text-xl text-primary flex items-center gap-2">
+                    <ArrowUp size={18} className="text-green-500" />
+                    Nạp tiền vào ví
+                  </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="mb-4">
-                    <p className="text-sm text-gray-500 mb-2">Chọn số tiền</p>
-                    <div className="grid grid-cols-4 gap-2 mb-4">
-                      {predefinedAmounts.map((preAmount) => (
-                        <Button
-                          key={preAmount}
-                          variant="outline"
-                          className={`${
-                            rawAmount === preAmount
-                              ? "bg-primary text-white"
-                              : ""
-                          }`}
-                          onClick={() => selectPredefinedAmount(preAmount)}
-                        >
-                          {formatCurrency(preAmount)}
-                        </Button>
-                      ))}
+                <CardContent className="pt-6">
+                  <div className="mb-4 space-y-6">
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-3">
+                        Chọn số tiền
+                      </p>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                        {predefinedAmounts.map((preAmount) => (
+                          <Button
+                            key={preAmount}
+                            variant={
+                              rawAmount === preAmount ? "default" : "outline"
+                            }
+                            className={`
+                              ${
+                                rawAmount === preAmount
+                                  ? "bg-primary text-white shadow-md transform scale-105"
+                                  : "hover:border-primary/50 hover:text-primary"
+                              }
+                              transition-all duration-200 border-2 h-14
+                            `}
+                            onClick={() => selectPredefinedAmount(preAmount)}
+                          >
+                            {formatCurrency(preAmount)}
+                          </Button>
+                        ))}
+                      </div>
                     </div>
 
-                    <p className="text-sm text-gray-500 mb-2">
-                      Hoặc nhập số tiền khác
-                    </p>
-                    <div className="flex gap-2">
-                      <Input
-                        type="text"
-                        placeholder="Nhập số tiền"
-                        value={amount}
-                        onChange={handleAmountChange}
-                        className="text-lg"
-                      />
-                      <Button
-                        className="min-w-[100px] text-white"
-                        onClick={handleDeposit}
-                      >
-                        Tiếp tục
-                      </Button>
+                    <div className="border-t border-gray-100 pt-6">
+                      <p className="text-sm font-medium text-gray-700 mb-3">
+                        Hoặc nhập số tiền khác
+                      </p>
+                      <div className="flex gap-3 items-stretch">
+                        <div className="flex-1 relative">
+                          <Input
+                            type="text"
+                            placeholder="Nhập số tiền"
+                            value={amount}
+                            onChange={handleAmountChange}
+                            className="text-lg h-12 pr-16"
+                          />
+                        </div>
+                        <Button
+                          className="min-w-[120px] h-12 bg-primary hover:bg-primary/90 text-white shadow-sm hover:shadow transition-all"
+                          onClick={handleDeposit}
+                        >
+                          <ArrowUp size={16} className="mr-2" />
+                          Tiếp tục
+                        </Button>
+                      </div>
+                      {error && (
+                        <p className="text-red-500 mt-2 text-sm flex items-center gap-1">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                          </svg>
+                          {error}
+                        </p>
+                      )}
                     </div>
-                    {error && (
-                      <p className="text-red-500 mt-2 text-sm">{error}</p>
-                    )}
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="history">
-              <Card>
-                <CardHeader>
+            <TabsContent
+              value="history"
+              className="animate-in fade-in-50 duration-300"
+            >
+              <Card className="shadow-sm hover:shadow-md transition-all duration-300 border-gray-100 overflow-hidden">
+                <CardHeader className="bg-gray-50/50 border-b border-gray-100">
                   <CardTitle className="flex justify-between items-center">
-                    <span>Lịch sử giao dịch</span>
+                    <span className="text-xl text-primary flex items-center gap-2">
+                      <History size={18} />
+                      Lịch sử giao dịch
+                    </span>
                     <div className="flex gap-2">
                       <Badge
                         variant="outline"
-                        className="flex items-center gap-1"
+                        className="flex items-center gap-1 border-green-500 text-green-700 bg-green-50"
                       >
                         <ArrowUp size={12} className="text-green-500" />
                         Nạp tiền
                       </Badge>
                       <Badge
                         variant="outline"
-                        className="flex items-center gap-1"
+                        className="flex items-center gap-1 border-yellow-500 text-yellow-700 bg-yellow-50"
                       >
                         <ArrowUp size={12} className="text-yellow-500" />
                         Hoàn tiền
                       </Badge>
                       <Badge
                         variant="outline"
-                        className="flex items-center gap-1"
+                        className="flex items-center gap-1 border-red-500 text-red-700 bg-red-50"
                       >
                         <ArrowDown size={12} className="text-red-500" />
                         Thanh toán
@@ -335,11 +390,20 @@ const WalletPage = () => {
                     </div>
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <TransactionHistory
-                    transactions={transactions}
-                    formatCurrency={formatCurrency}
-                  />
+                <CardContent className="p-0">
+                  {transactions.length > 0 ? (
+                    <TransactionHistory
+                      transactions={transactions}
+                      formatCurrency={formatCurrency}
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-12">
+                      <div className="bg-gray-100/50 p-4 rounded-full mb-4">
+                        <Wallet size={32} className="text-gray-400" />
+                      </div>
+                      <p className="text-gray-500">Chưa có giao dịch nào</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>

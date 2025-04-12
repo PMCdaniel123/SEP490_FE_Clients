@@ -14,7 +14,10 @@ import { LoadingOutlined } from "@ant-design/icons";
 
 export type FormInputs = z.infer<typeof emailSchema>;
 
-export function EmailForm({ className }: SignInFormProps) {
+export function EmailForm({ 
+  className,
+  onForgotPassword
+}: SignInFormProps & { onForgotPassword?: () => void }) {
   const dispatch = useDispatch<AppDispatch>();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -60,10 +63,17 @@ export function EmailForm({ className }: SignInFormProps) {
           <p className="text-red-500 text-xs">{errors.email.message}</p>
         )}
       </div>
-      <div className="flex items-center w-full mb-4">
+      <div className="flex items-center justify-between w-full mb-4">
         <p className="text-xs text-fourth">
           Nhập email bên trên để đăng nhập vào tài khoản WorkHive
         </p>
+        <button
+          type="button"
+          onClick={onForgotPassword}
+          className="text-xs text-primary hover:text-secondary font-medium"
+        >
+          Quên mật khẩu?
+        </button>
       </div>
       <div className="flex items-center w-full sm:gap-10">
         <div className="w-1/3">
