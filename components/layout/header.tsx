@@ -144,16 +144,18 @@ function Header() {
           WorkHive
         </h1>
       </div>
-      <nav className="hidden md:flex items-center justify-around gap-12">
+      <nav className="hidden md:flex items-center justify-around gap-10">
         {menuItems.map((item) => (
           <li
             key={item.path}
-            className="relative group py-4 pl-6 flex items-center justify-center font-semibold cursor-pointer"
+            className="relative group pl-2 flex items-center justify-center font-semibold cursor-pointer"
           >
             <Link
               href={item.path}
-              className={`font-medium text-base transition-colors duration-200 hover:text-secondary ${
-                pathname === item.path ? "text-secondary" : ""
+              className={`font-medium text-base transition-colors duration-200 py-4 px-4 rounded ${
+                pathname === item.path
+                  ? "bg-gradient-to-r from-primary to-secondary"
+                  : ""
               }`}
             >
               {item.name}
@@ -216,11 +218,11 @@ function Header() {
                 height={40}
                 className="rounded-full border-2 border-white bg-white object-cover"
               />
-              <div className="hidden md:flex flex-col justify-center items-start md:w-[160px]">
-                <p className="text-sm font-semibold truncate md:w-[160px]">
+              <div className="hidden md:flex flex-col justify-center items-start md:w-[120px]">
+                <p className="text-sm font-semibold truncate md:w-[120px]">
                   {customer?.fullName}
                 </p>
-                <p className="text-xs font-medium truncate md:w-[160px] opacity-90">
+                <p className="text-xs font-medium truncate md:w-[120px] opacity-90">
                   {customer?.email}
                 </p>
               </div>
@@ -289,7 +291,7 @@ function Header() {
                 <Separator className="my-1" />
                 <li
                   onClick={handleLogOut}
-                  className="px-4 flex items-center gap-3 hover:bg-red-900 hover:text-white py-2.5 transition-colors duration-200 cursor-pointer"
+                  className="px-4 flex items-center gap-3 hover:bg-red-500 hover:text-white py-2.5 transition-colors duration-200 cursor-pointer"
                 >
                   <LogOut size={16} />
                   <span>Đăng xuất</span>

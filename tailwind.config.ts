@@ -88,11 +88,16 @@ export default {
             boxShadow: "0 0 30px 10px rgba(239, 68, 68, 1)",
           },
         },
+        meteor: {
+          "0%": { transform: "translateY(-20%) translateX(-50%)" },
+          "100%": { transform: "translateY(300%) translateX(-50%)" },
+        },
       },
       animation: {
         "caret-blink": "caret-blink 1.25s ease-out infinite",
         trail: "trail var(--duration) linear infinite",
         "blink-red": "blink-red 2s infinite linear",
+        meteor: "meteor var(--duration) var(--delay) ease-in-out infinite",
       },
     },
   },

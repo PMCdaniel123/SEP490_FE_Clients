@@ -91,6 +91,7 @@ export function PasswordForm({
           theme: "light",
         });
         dispatch(login(customerData));
+        localStorage.removeItem("auth");
         onClose?.();
       } catch {
         toast.error("Có lỗi xảy ra khi đăng nhập.", {
