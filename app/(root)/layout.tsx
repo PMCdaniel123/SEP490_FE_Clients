@@ -24,7 +24,9 @@ export default function RootLayout({
       <body className={montserrat.className}>
         <Providers>
           <div>
-            <Header />
+            <div className="lg:sticky lg:top-0 lg:z-50">
+              <Header />
+            </div>
             {children}
             <Footer />
           </div>

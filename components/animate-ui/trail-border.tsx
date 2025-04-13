@@ -32,7 +32,7 @@ export default function AnimatedBorderTrail({
     <div
       {...props}
       className={cn(
-        "relative h-fit w-fit overflow-hidden rounded-xl bg-primary p-[3px]",
+        "relative h-fit w-full overflow-hidden rounded-xl bg-primary p-[3px]",
         className
       )}
     >
