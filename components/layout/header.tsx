@@ -29,6 +29,8 @@ import { RootState } from "@/stores";
 import { toast } from "react-toastify";
 import { BASE_URL } from "@/constants/environments";
 import Cookies from "js-cookie";
+import SlideArrowButton from "../animate-ui/slide-arrow-button";
+import AnimatedBorderTrail from "../animate-ui/trail-border";
 
 function Header() {
   const pathname = usePathname();
@@ -142,16 +144,18 @@ function Header() {
           WorkHive
         </h1>
       </div>
-      <nav className="hidden md:flex items-center justify-around gap-12">
+      <nav className="hidden md:flex items-center justify-around gap-10">
         {menuItems.map((item) => (
           <li
             key={item.path}
-            className="relative group py-4 pl-6 flex items-center justify-center font-semibold cursor-pointer"
+            className="relative group pl-2 flex items-center justify-center font-semibold cursor-pointer"
           >
             <Link
               href={item.path}
-              className={`font-medium text-base transition-colors duration-200 hover:text-secondary ${
-                pathname === item.path ? "text-secondary" : ""
+              className={`font-medium text-base transition-colors duration-200 py-4 px-4 rounded ${
+                pathname === item.path
+                  ? "bg-gradient-to-r from-primary to-secondary"
+                  : ""
               }`}
             >
               {item.name}
@@ -172,31 +176,35 @@ function Header() {
           href="/become-owner"
           className="font-medium hidden md:block h-full"
         >
-          <button className="flex gap-2 text-base px-5 py-4 rounded-xl shadow border bg-secondary/60 hover:bg-fourth hover:text-white transition-colors duration-200">
-            <BriefcaseBusiness /> Trở thành doanh nghiệp
-          </button>
+          <SlideArrowButton
+            text="Trở thành doanh nghiệp"
+            primaryColor="#B49057"
+            icon={BriefcaseBusiness}
+          />
         </Link>
         {isToken && customer && <Notification customer={customer} />}
         {!isToken ? (
-          <div className="flex flex-col md:flex-row items-center border rounded-xl bg-secondary/70 h-full w-full md:w-auto shadow-md overflow-hidden">
-            <p
-              onClick={() => {
-                setSignInModalOpen(true);
-                handleCloseSignUpForm();
-              }}
-              className="font-medium flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-3 px-4 md:px-5 rounded-t-xl md:rounded-l-xl md:rounded-t-none md:rounded-tl-xl border-b md:border-b-0 md:border-r transition-all duration-300 cursor-pointer w-full md:w-auto"
-            >
-              <span>Đăng nhập</span>
-            </p>
-            <p
-              onClick={() => {
-                setSignUpModalOpen(true);
-              }}
-              className="font-medium flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-3 px-4 md:px-5 rounded-b-xl md:rounded-r-xl md:rounded-b-none border-t md:border-t-0 md:border-l transition-all duration-300 cursor-pointer w-full md:w-auto"
-            >
-              <span>Đăng ký</span>
-            </p>
-          </div>
+          <AnimatedBorderTrail trailSize="sm" trailColor="#D0BEA0">
+            <div className="flex flex-col md:flex-row items-center border rounded-xl text-fourth bg-white h-full w-full md:w-auto shadow-md overflow-hidden">
+              <p
+                onClick={() => {
+                  setSignInModalOpen(true);
+                  handleCloseSignUpForm();
+                }}
+                className="z-50 text-sm font-semibold flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-3 px-4 md:px-5 rounded-t-xl md:rounded-l-xl md:rounded-t-none md:rounded-tl-xl border-b md:border-b-0 md:border-r transition-all duration-300 cursor-pointer w-full md:w-auto"
+              >
+                <span>Đăng nhập</span>
+              </p>
+              <p
+                onClick={() => {
+                  setSignUpModalOpen(true);
+                }}
+                className="z-50 text-sm font-semibold flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-3 px-4 md:px-5 rounded-b-xl md:rounded-r-xl md:rounded-b-none border-t md:border-t-0 md:border-l transition-all duration-300 cursor-pointer w-full md:w-auto"
+              >
+                <span>Đăng ký</span>
+              </p>
+            </div>
+          </AnimatedBorderTrail>
         ) : (
           <div ref={dropdownRef} className="relative h-full">
             <div
@@ -210,11 +218,11 @@ function Header() {
                 height={40}
                 className="rounded-full border-2 border-white bg-white object-cover"
               />
-              <div className="hidden md:flex flex-col justify-center items-start md:w-[160px]">
-                <p className="text-sm font-semibold truncate md:w-[160px]">
+              <div className="hidden md:flex flex-col justify-center items-start md:w-[120px]">
+                <p className="text-sm font-semibold truncate md:w-[120px]">
                   {customer?.fullName}
                 </p>
-                <p className="text-xs font-medium truncate md:w-[160px] opacity-90">
+                <p className="text-xs font-medium truncate md:w-[120px] opacity-90">
                   {customer?.email}
                 </p>
               </div>
@@ -283,7 +291,7 @@ function Header() {
                 <Separator className="my-1" />
                 <li
                   onClick={handleLogOut}
-                  className="px-4 flex items-center gap-3 hover:bg-red-900 hover:text-white py-2.5 transition-colors duration-200 cursor-pointer"
+                  className="px-4 flex items-center gap-3 hover:bg-red-500 hover:text-white py-2.5 transition-colors duration-200 cursor-pointer"
                 >
                   <LogOut size={16} />
                   <span>Đăng xuất</span>

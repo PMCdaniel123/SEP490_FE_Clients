@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Modal } from "antd";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 import { Button } from "@/components/ui/button";
 
 const bookings = [

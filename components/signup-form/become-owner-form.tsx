@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signupOwnerSchema } from "@/lib/zod/schema";
+import { signupOwnerSchema } from "@/libs/zod/schema";
 import { z } from "zod";
 import { useState } from "react";
 import { toast } from "react-toastify";

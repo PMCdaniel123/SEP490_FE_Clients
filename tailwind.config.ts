@@ -65,14 +65,39 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      backgroundImage: {
+        striped:
+          "repeating-linear-gradient(45deg, #835101, #835101 5px, transparent 5px, transparent 20px)",
+      },
       keyframes: {
         "caret-blink": {
           "0%,70%,100%": { opacity: "1" },
           "20%,50%": { opacity: "0" },
         },
+        trail: {
+          "0%": { "--angle": "0deg" },
+          "100%": { "--angle": "360deg" },
+        },
+        "blink-red": {
+          "0%, 100%": {
+            backgroundColor: "rgba(239, 68, 68, 0.7)",
+            boxShadow: "0 0 30px 10px rgba(239, 68, 68, 0.5)",
+          },
+          "50%": {
+            backgroundColor: "rgba(239, 68, 68, 0.5)",
+            boxShadow: "0 0 30px 10px rgba(239, 68, 68, 1)",
+          },
+        },
+        meteor: {
+          "0%": { transform: "translateY(-20%) translateX(-50%)" },
+          "100%": { transform: "translateY(300%) translateX(-50%)" },
+        },
       },
       animation: {
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+        trail: "trail var(--duration) linear infinite",
+        "blink-red": "blink-red 2s infinite linear",
+        meteor: "meteor var(--duration) var(--delay) ease-in-out infinite",
       },
     },
   },

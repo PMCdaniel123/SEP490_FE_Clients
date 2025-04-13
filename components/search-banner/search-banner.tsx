@@ -13,6 +13,9 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/constants/environments";
 import { searchAddress, workspaceCategory } from "@/constants/constant";
+import AnimatedBorderTrail from "../animate-ui/trail-border";
+import StaggeredLetter from "../animate-ui/stagered-text";
+import VerticalTiles from "../animate-ui/vertical-tiles";
 
 export default function SearchBanner() {
   const router = useRouter();
@@ -91,107 +94,119 @@ export default function SearchBanner() {
   };
 
   return (
-    <div className="relative w-full h-[400px] md:h-[500px]">
-      <Image
-        src="/banner.png"
-        alt="Banner"
-        layout="fill"
-        objectFit="cover"
-        className="brightness-50"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-60" />
+    <VerticalTiles
+      animationDelay={0.5}
+      animationDuration={0.5}
+      minTileWidth={32}
+      stagger={0.05}
+      tileClassName="bg-primary"
+    >
+      <div className="relative w-full h-[600px] md:h-[500px]">
+        <Image
+          src="/banner.png"
+          alt="Banner"
+          layout="fill"
+          objectFit="cover"
+          className="brightness-50"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-60" />
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
-        <h2 className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-wide mb-2 text-shadow">
-          WorkHive
-        </h2>
-        <p className="text-lg md:text-xl text-white/90 mb-6 max-w-2xl">
-          Tìm không gian làm việc phù hợp với nhu cầu của bạn
-        </p>
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
+          <StaggeredLetter text="WorkHive" />
+          <p className="text-lg md:text-xl text-white/90 mb-6 max-w-2xl mt-2">
+            Tìm không gian làm việc phù hợp với nhu cầu của bạn
+          </p>
 
-        <div
-          className={`mt-4 md:mt-8 bg-white/95 backdrop-blur-sm text-black rounded-xl flex ${
-            isSmallScreen ? "flex-col" : "flex-row"
-          } items-center justify-center shadow-xl p-3 w-full md:w-[90%] lg:w-[80%] xl:w-[72%] transition-all duration-300 ease-in-out`}
-        >
-          <Dropdown
-            label="Địa điểm"
-            icon={MapPin}
-            value={location}
-            setValue={setLocation}
-            placeholder="Bạn muốn làm việc ở đâu?"
-            hasBorder={!isSmallScreen}
-            isSmallScreen={isSmallScreen}
-          >
-            {locations.map((loc) => (
-              <DropdownItem key={loc} value={loc}>
-                {loc}
-              </DropdownItem>
-            ))}
-          </Dropdown>
+          <div className="w-full md:w-[90%] lg:w-[80%] xl:w-[90%] mx-auto flex items-center justify-center mt-4 md:mt-8">
+            <AnimatedBorderTrail trailSize="sm" trailColor="#D0BEA0">
+              <div
+                className={`bg-white/95 backdrop-blur-sm text-black rounded-xl flex ${
+                  isSmallScreen ? "flex-col" : "flex-row"
+                } items-center justify-center w-full shadow-xl p-3 transition-all duration-300 ease-in-out`}
+              >
+                <Dropdown
+                  label="Địa điểm"
+                  icon={MapPin}
+                  value={location}
+                  setValue={setLocation}
+                  placeholder="Bạn muốn làm việc ở đâu?"
+                  hasBorder={!isSmallScreen}
+                  isSmallScreen={isSmallScreen}
+                >
+                  {locations.map((loc) => (
+                    <DropdownItem key={loc} value={loc}>
+                      {loc}
+                    </DropdownItem>
+                  ))}
+                </Dropdown>
 
-          <Dropdown
-            label="Thời gian"
-            icon={Clock}
-            value={time}
-            setValue={setTime}
-            placeholder="Chọn thời gian"
-            hasBorder={!isSmallScreen}
-            isSmallScreen={isSmallScreen}
-          >
-            {times.map((t) => (
-              <DropdownItem key={t.value} value={t.value}>
-                {t.label}
-              </DropdownItem>
-            ))}
-          </Dropdown>
+                <Dropdown
+                  label="Thời gian"
+                  icon={Clock}
+                  value={time}
+                  setValue={setTime}
+                  placeholder="Chọn thời gian"
+                  hasBorder={!isSmallScreen}
+                  isSmallScreen={isSmallScreen}
+                >
+                  {times.map((t) => (
+                    <DropdownItem key={t.value} value={t.value}>
+                      {t.label}
+                    </DropdownItem>
+                  ))}
+                </Dropdown>
 
-          <Dropdown
-            label="Loại không gian"
-            icon={Sofa}
-            value={space}
-            setValue={setSpace}
-            placeholder="Chọn loại không gian"
-            hasBorder={!isSmallScreen}
-            isSmallScreen={isSmallScreen}
-          >
-            {spaces.map((sp) => (
-              <DropdownItem key={sp} value={sp}>
-                {sp}
-              </DropdownItem>
-            ))}
-          </Dropdown>
+                <Dropdown
+                  label="Loại không gian"
+                  icon={Sofa}
+                  value={space}
+                  setValue={setSpace}
+                  placeholder="Chọn loại không gian"
+                  hasBorder={!isSmallScreen}
+                  isSmallScreen={isSmallScreen}
+                >
+                  {spaces.map((sp) => (
+                    <DropdownItem key={sp} value={sp}>
+                      {sp}
+                    </DropdownItem>
+                  ))}
+                </Dropdown>
 
-          <Dropdown
-            label="Sức chứa"
-            icon={UsersRound}
-            value={people}
-            setValue={setPeople}
-            placeholder="Chọn sức chứa"
-            hasBorder={false}
-            isSmallScreen={isSmallScreen}
-          >
-            {capacities.map((cap) => (
-              <DropdownItem key={cap} value={cap}>
-                {cap} người
-              </DropdownItem>
-            ))}
-          </Dropdown>
+                <Dropdown
+                  label="Sức chứa"
+                  icon={UsersRound}
+                  value={people}
+                  setValue={setPeople}
+                  placeholder="Chọn sức chứa"
+                  hasBorder={false}
+                  isSmallScreen={isSmallScreen}
+                >
+                  {capacities.map((cap) => (
+                    <DropdownItem key={cap} value={cap}>
+                      {cap} người
+                    </DropdownItem>
+                  ))}
+                </Dropdown>
 
-          <button
-            onClick={handleSearch}
-            className={`${
-              isSmallScreen ? "w-full mt-3" : "ml-3"
-            } bg-primary hover:bg-primary/80 text-white p-3 rounded-xl shadow-md transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-2`}
-          >
-            <Search size={22} />
-            <span className={isSmallScreen ? "inline" : "hidden md:inline"}>
-              Tìm kiếm
-            </span>
-          </button>
+                <button
+                  onClick={handleSearch}
+                  className={`${
+                    isSmallScreen ? "w-full mt-3" : "ml-3"
+                  } bg-primary hover:bg-primary/80 text-white p-3 rounded-xl shadow-md transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-2`}
+                >
+                  <Search size={22} />
+                  <span
+                    className={isSmallScreen ? "inline" : "hidden md:inline"}
+                  >
+                    Tìm kiếm
+                  </span>
+                </button>
+              </div>
+            </AnimatedBorderTrail>
+          </div>
         </div>
       </div>
-    </div>
+    </VerticalTiles>
   );
 }
 

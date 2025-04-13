@@ -305,7 +305,7 @@ const Notification = ({ customer }: { customer: Customer }) => {
   return (
     <div className="relative" ref={dropdownRef}>
       <div
-        className="relative cursor-pointer p-3 bg-secondary/60 hover:bg-fourth rounded-full text-white border"
+        className="relative cursor-pointer p-3 bg-secondary hover:bg-fourth rounded-full text-white border"
         onClick={() => setIsOpen(!isOpen)}
       >
         <Bell size={24} />
