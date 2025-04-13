@@ -112,7 +112,7 @@ export default function SearchBanner() {
         <div
           className={`mt-4 md:mt-8 bg-white/95 backdrop-blur-sm text-black rounded-xl flex ${
             isSmallScreen ? "flex-col" : "flex-row"
-          } items-center justify-center shadow-xl p-3 w-full md:w-[90%] lg:w-[80%] xl:w-[72%] transition-all duration-300 ease-in-out`}
+          } items-center justify-center shadow-xl p-3 w-full md:w-[90%] lg:w-[80%] xl:w-[80%] transition-all duration-300 ease-in-out`}
         >
           <Dropdown
             label="Địa điểm"

@@ -7,18 +7,16 @@
 }
 
 
-::-webkit-scrollbar {
-
-}
+::-webkit-scrollbar {}
 
 ::-webkit-scrollbar-track {
-  background: #eae8e6; 
-  border: 2px solid #eae8e6; 
+  background: #eae8e6;
+  border: 2px solid #eae8e6;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #835101; 
-  border-radius: 20px; 
+  background-color: #835101;
+  border-radius: 20px;
   border: 3px solid #eae8e6;
 }
 
@@ -121,7 +119,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
 }

@@ -16,7 +16,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { BASE_URL } from "@/constants/environments";
-import { resetPasswordSchema } from "@/lib/zod/schema";
+import { resetPasswordSchema } from "@/libs/zod/schema";
 import { LoadingOutlined } from "@ant-design/icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft } from "lucide-react";

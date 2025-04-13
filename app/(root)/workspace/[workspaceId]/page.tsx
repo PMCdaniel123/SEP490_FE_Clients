@@ -15,7 +15,7 @@ import {
   Instagram,
 } from "lucide-react";
 import Loader from "@/components/loader/Loader";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Modal } from "antd";
 import "react-datepicker/dist/react-datepicker.css";
@@ -60,6 +60,7 @@ const WorkspaceDetail = () => {
   const [isBeverageOpen, setIsBeverageOpen] = useState(false);
   const dispatch = useDispatch();
   const [ownerData, setOwnerData] = useState<OwnerProps | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -192,7 +193,10 @@ const WorkspaceDetail = () => {
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div
+              className="flex items-center gap-4 cursor-pointer"
+              onClick={() => router.push(`/workspace-owner/${ownerData?.id}`)}
+            >
               <Image
                 width={50}
                 height={50}
@@ -295,7 +299,8 @@ const WorkspaceDetail = () => {
             </button>
           </div>
 
-          <GoogleMap url={workspace.googleMapUrl} />
+          {workspace.googleMapUrl && <GoogleMap url={workspace.googleMapUrl} />}
+
           <div className="flex flex-col gap-6">
             <SimilarSpace category={workspace.category} />
           </div>

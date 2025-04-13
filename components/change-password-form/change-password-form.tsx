@@ -4,7 +4,7 @@ import { RootState } from "@/stores";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { changePasswordSchema } from "@/lib/zod/schema";
+import { changePasswordSchema } from "@/libs/zod/schema";
 import { z } from "zod";
 import { Eye, EyeOff } from "lucide-react";
 import { BASE_URL } from "@/constants/environments";

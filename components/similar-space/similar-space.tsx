@@ -172,7 +172,7 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
                   </div>
                 </div>
 
-                <div className="border-t border-gray-100 pt-3">
+                <div className="border-t border-gray-300 pt-3">
                   <div className="flex flex-col gap-1">
                     {workspace.shortTermPrice !== undefined &&
                       workspace.shortTermPrice > 0 && (

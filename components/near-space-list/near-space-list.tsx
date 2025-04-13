@@ -162,7 +162,7 @@ export default function NearSpaceList() {
                     </div>
                   </div>
 
-                  <div className="border-t border-gray-100 pt-3">
+                  <div className="border-t border-gray-300 pt-3">
                     <div className="flex justify-between items-center">
                       <span className="text-gray-700 text-sm">Giá:</span>
                       <span className="font-semibold text-gray-900">
