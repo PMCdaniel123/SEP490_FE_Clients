@@ -194,7 +194,7 @@ const WorkspaceDetail = () => {
 
           <div className="flex items-center justify-between">
             <div
-              className="flex items-center gap-4 cursor-pointer"
+              className="flex items-center gap-4 cursor-pointer group"
               onClick={() => router.push(`/workspace-owner/${ownerData?.id}`)}
             >
               <Image
@@ -202,10 +202,12 @@ const WorkspaceDetail = () => {
                 height={50}
                 src={ownerData?.avatar || "/owner_icon.png"}
                 alt={ownerData?.licenseName || ""}
-                className="rounded-full"
+                className="rounded-full group-hover:scale-105"
               />
               <div className="flex flex-col gap-1">
-                <p className="font-bold">{ownerData?.licenseName}</p>
+                <p className="font-bold group-hover:underline group-hover:text-primary">
+                  {ownerData?.licenseName}
+                </p>
                 <p>Chủ doanh nghiệp</p>
               </div>
             </div>
