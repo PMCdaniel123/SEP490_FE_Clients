@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import SectionTitle from "@/components/ui/section-tilte";
 import { useState } from "react";
 import { Phone, Mail } from "lucide-react";
+import { BASE_URL } from "@/constants/environments";
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -25,15 +26,12 @@ function Contact() {
     e.preventDefault();
     setLoading(true);
 
-    const response = await fetch("https://api.web3forms.com/submit", {
+    const response = await fetch(`${BASE_URL}/users/supportuser`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        access_key: "08d6dceb-4e8d-44fd-941d-d8a6c301be34",
-        ...formData,
-      }),
+      body: JSON.stringify(formData),
     });
 
     setLoading(false);
@@ -62,9 +60,11 @@ function Contact() {
             <h3 className="text-lg font-semibold">Liên hệ qua Email</h3>
           </div>
           <p className="text-gray-600 mt-2">
-          Chúng tôi sẽ liên hệ với bạn trong vòng 24 giờ.          </p>
-          <p className="text-gray-600 font-semibold">workhive.vn.official@gmail.com</p>
-       
+            Chúng tôi sẽ liên hệ với bạn trong vòng 24 giờ.{" "}
+          </p>
+          <p className="text-gray-600 font-semibold">
+            workhive.vn.official@gmail.com
+          </p>
         </div>
 
         {/* Contact Form */}
