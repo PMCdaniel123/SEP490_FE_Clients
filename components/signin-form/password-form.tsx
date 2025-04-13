@@ -1,7 +1,7 @@
-import { passwordSchema } from "@/lib/zod/schema";
+import { passwordSchema } from "@/libs/zod/schema";
 import { z } from "zod";
 import { toast } from "react-toastify";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../ui/button";

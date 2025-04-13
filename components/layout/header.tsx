@@ -29,6 +29,8 @@ import { RootState } from "@/stores";
 import { toast } from "react-toastify";
 import { BASE_URL } from "@/constants/environments";
 import Cookies from "js-cookie";
+import SlideArrowButton from "../animate-ui/slide-arrow-button";
+import AnimatedBorderTrail from "../animate-ui/trail-border";
 
 function Header() {
   const pathname = usePathname();
@@ -172,31 +174,35 @@ function Header() {
           href="/become-owner"
           className="font-medium hidden md:block h-full"
         >
-          <button className="flex gap-2 text-base px-5 py-4 rounded-xl shadow border bg-secondary/60 hover:bg-fourth hover:text-white transition-colors duration-200">
-            <BriefcaseBusiness /> Trở thành doanh nghiệp
-          </button>
+          <SlideArrowButton
+            text="Trở thành doanh nghiệp"
+            primaryColor="#B49057"
+            icon={BriefcaseBusiness}
+          />
         </Link>
         {isToken && customer && <Notification customer={customer} />}
         {!isToken ? (
-          <div className="flex flex-col md:flex-row items-center border rounded-xl bg-secondary/70 h-full w-full md:w-auto shadow-md overflow-hidden">
-            <p
-              onClick={() => {
-                setSignInModalOpen(true);
-                handleCloseSignUpForm();
-              }}
-              className="font-medium flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-3 px-4 md:px-5 rounded-t-xl md:rounded-l-xl md:rounded-t-none md:rounded-tl-xl border-b md:border-b-0 md:border-r transition-all duration-300 cursor-pointer w-full md:w-auto"
-            >
-              <span>Đăng nhập</span>
-            </p>
-            <p
-              onClick={() => {
-                setSignUpModalOpen(true);
-              }}
-              className="font-medium flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-3 px-4 md:px-5 rounded-b-xl md:rounded-r-xl md:rounded-b-none border-t md:border-t-0 md:border-l transition-all duration-300 cursor-pointer w-full md:w-auto"
-            >
-              <span>Đăng ký</span>
-            </p>
-          </div>
+          <AnimatedBorderTrail trailSize="sm" trailColor="#D0BEA0">
+            <div className="flex flex-col md:flex-row items-center border rounded-xl text-fourth bg-white h-full w-full md:w-auto shadow-md overflow-hidden">
+              <p
+                onClick={() => {
+                  setSignInModalOpen(true);
+                  handleCloseSignUpForm();
+                }}
+                className="z-50 text-sm font-semibold flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-3 px-4 md:px-5 rounded-t-xl md:rounded-l-xl md:rounded-t-none md:rounded-tl-xl border-b md:border-b-0 md:border-r transition-all duration-300 cursor-pointer w-full md:w-auto"
+              >
+                <span>Đăng nhập</span>
+              </p>
+              <p
+                onClick={() => {
+                  setSignUpModalOpen(true);
+                }}
+                className="z-50 text-sm font-semibold flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-3 px-4 md:px-5 rounded-b-xl md:rounded-r-xl md:rounded-b-none border-t md:border-t-0 md:border-l transition-all duration-300 cursor-pointer w-full md:w-auto"
+              >
+                <span>Đăng ký</span>
+              </p>
+            </div>
+          </AnimatedBorderTrail>
         ) : (
           <div ref={dropdownRef} className="relative h-full">
             <div

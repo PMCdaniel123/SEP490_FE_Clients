@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Modal } from "antd";
 import BecomeOwnerForm from "@/components/signup-form/become-owner-form";
+import WorkButton from "@/components/animate-ui/work-button";
 
 export default function BecomeOwner() {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,17 +38,12 @@ export default function BecomeOwner() {
             biến không gian của bạn thành nguồn thu nhập ổn định.
           </p>
           <Button
-            className="mt-6 w-60 px-6 py-4 bg-black text-white border border-white rounded-md"
+            className="mt-6 w-60 px-6 py-4 bg-black text-white border border-white rounded-md mb-4"
             onClick={handleOpen}
           >
             Đăng ký doanh nghiệp
           </Button>
-          <Button
-            className="mt-6 w-60 px-6 py-4 bg-gradient-to-r from-primary to-secondary text-white border border-white rounded-md"
-            onClick={handleOpen}
-          >
-            Đăng nhập doanh nghiệp
-          </Button>
+          <WorkButton />
         </div>
       </section>
       <section className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto py-16 px-6">
