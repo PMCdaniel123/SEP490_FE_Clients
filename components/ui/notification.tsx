@@ -47,6 +47,7 @@ const Notification = ({ customer }: { customer: Customer }) => {
   const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [isMarkingAll, setIsMarkingAll] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const lastFetchTimeRef = useRef<number>(0);
   const isFetchingRef = useRef<boolean>(false);
@@ -188,6 +189,64 @@ const Notification = ({ customer }: { customer: Customer }) => {
     }
   };
 
+  const markAllAsRead = async () => {
+    if (!customer.id || isMarkingAll || unreadCount === 0) return;
+
+    setIsMarkingAll(true);
+
+    try {
+      // Get all unread notification IDs
+      const unreadIds = notifications
+        .filter((notification) => !notification.read)
+        .map((notification) => notification.id);
+
+      // Update local state immediately for better user experience
+      setNotifications((prev) =>
+        prev.map((notification) => ({ ...notification, read: true }))
+      );
+
+      // Make API calls for each unread notification
+      const markPromises = unreadIds.map((id) =>
+        fetch(`${BASE_URL}/users/updateusernotification/${id}`, {
+          method: "PATCH",
+        })
+      );
+
+      await Promise.all(markPromises);
+
+      // Dispatch events for each marked notification
+      unreadIds.forEach((id) => {
+        const event = new CustomEvent(notificationEvents.MARKED_READ, {
+          detail: { id },
+        });
+        window.dispatchEvent(event);
+      });
+
+      toast.success("Tất cả thông báo đã được đánh dấu là đã đọc", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Có lỗi xảy ra khi đánh dấu tất cả thông báo đã đọc!";
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+
+      // Revert to previous state if there was an error
+      fetchNotifications(true);
+    } finally {
+      setIsMarkingAll(false);
+    }
+  };
+
   useEffect(() => {
     if (customer?.id) {
       fetchNotifications(true);
@@ -305,29 +364,63 @@ const Notification = ({ customer }: { customer: Customer }) => {
   return (
     <div className="relative" ref={dropdownRef}>
       <div
-        className="relative cursor-pointer p-3 bg-secondary/60 hover:bg-fourth rounded-full text-white border"
+        className="relative cursor-pointer p-3 bg-gradient-to-br from-primary to-primary/80 hover:from-fourth hover:to-fourth/80 rounded-full text-white border border-white/20 shadow-md transition-all duration-300 transform hover:scale-110"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <Bell size={24} />
+        <Bell size={24} className="animate-pulse" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+          <motion.span
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{
+              type: "spring",
+              stiffness: 500,
+              damping: 15,
+            }}
+            className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg"
+          >
             {unreadCount}
-          </span>
+          </motion.span>
         )}
       </div>
 
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="absolute right-0 mt-4 w-80 bg-[#835101] shadow-lg rounded-lg border overflow-hidden"
+          initial={{ opacity: 0, y: -20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -20, scale: 0.95 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="absolute right-0 mt-4 w-80 bg-gradient-to-br from-[#835101] to-[#bb8e55] shadow-xl rounded-lg border border-white/10 overflow-hidden backdrop-blur-sm z-50"
+          style={{
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3)",
+          }}
         >
-          <Link href="/notification">
-            <div className="p-4 font-semibold border-b text-white">
-              Thông báo
+          <div className="p-4 font-semibold border-b border-white/20 text-white flex items-center justify-between bg-black/10">
+            <Link href="/notification" className="flex items-center gap-2">
+              <Bell size={18} />
+              <span>Thông báo</span>
+            </Link>
+            <div className="flex items-center gap-2">
+              {unreadCount > 0 && (
+                <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                  {unreadCount} mới
+                </span>
+              )}
+              {unreadCount > 0 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    markAllAsRead();
+                  }}
+                  disabled={isMarkingAll}
+                  className="text-xs bg-white/20 hover:bg-white/30 text-white px-2 py-1 rounded transition-all"
+                  title="Đánh dấu tất cả là đã đọc"
+                >
+                  <CheckCheck size={16} />
+                </button>
+              )}
             </div>
-          </Link>
+          </div>
           {notifications.length > 0 ? (
             <>
               {notifications.slice(0, MAX_DISPLAY).map((notification) => (
@@ -336,7 +429,9 @@ const Notification = ({ customer }: { customer: Customer }) => {
                   className={`p-4 flex flex-col cursor-pointer transition-all hover:bg-gray-100 ${
                     notification.read ? "bg-gray-50" : "bg-white"
                   }`}
-                  onClick={() => markAsRead(notification.id)}
+                  onClick={() =>
+                    !notification.read && markAsRead(notification.id)
+                  }
                 >
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-2">
@@ -368,6 +463,7 @@ const Notification = ({ customer }: { customer: Customer }) => {
                       setIsOpen(false);
                       router.push("/notification");
                     }}
+                    className="text-white hover:text-gray-200 transition-colors text-sm font-medium"
                   >
                     Xem tất cả
                   </button>
@@ -375,7 +471,9 @@ const Notification = ({ customer }: { customer: Customer }) => {
               )}
             </>
           ) : (
-            <div className="p-4 text- text-center">Không có thông báo mới</div>
+            <div className="p-4 text-white text-center">
+              Không có thông báo mới
+            </div>
           )}
         </motion.div>
       )}

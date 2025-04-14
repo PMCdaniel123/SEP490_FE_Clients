@@ -250,7 +250,7 @@ const UserFeedbackDetail: React.FC<UserFeedbackDetailProps> = ({
 
   if (existingFeedback) {
     return (
-      <Card className=" border-0 overflow-hidden">
+      <Card className="border-0 overflow-hidden shadow-md bg-gradient-to-b from-white to-gray-50">
         <div className="mb-6">
           <Space direction="vertical" size="small" className="w-full">
             <Title level={4} className="text-gray-800 mb-0">
@@ -373,7 +373,7 @@ const UserFeedbackDetail: React.FC<UserFeedbackDetailProps> = ({
         />
 
         {!ownerResponse && !loadingResponse && (
-          <div className="bg-amber-50 p-4 rounded-lg flex items-start gap-3 mt-4">
+          <div className="bg-amber-50/80 backdrop-blur-sm p-4 rounded-lg flex items-start gap-3 mt-4 border border-amber-100">
             <InfoCircleOutlined className="text-amber-500 mt-1" />
             <div>
               <Text strong className="text-amber-700">
@@ -392,7 +392,7 @@ const UserFeedbackDetail: React.FC<UserFeedbackDetailProps> = ({
   }
 
   return (
-    <Card className="shadow-lg border-0 overflow-hidden">
+    <Card className="shadow-lg border-0 overflow-hidden bg-gradient-to-b from-white to-gray-50">
       <div className="mb-6">
         <Space direction="vertical" size="small" className="w-full">
           <Title level={4} className="text-gray-800 mb-0">

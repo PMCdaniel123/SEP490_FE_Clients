@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores";
@@ -8,7 +8,8 @@ import { PhoneForm } from "./phone-form";
 import { EmailForm } from "./email-form";
 import { PasswordForm } from "./password-form";
 import { resetLoginStep } from "@/stores/slices/authSlice";
-// import { OwnerButton } from "./owner-button";
+import ForgotPasswordForm from "./forgot-password-form";
+import ResetPasswordForm from "./reset-password-form";
 
 interface SignInButtonProps {
   open: boolean;
@@ -24,6 +25,10 @@ export function SignInButton({
 }: SignInButtonProps) {
   const { loginStep } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
+  const [formState, setFormState] = useState<"signin" | "forgot" | "reset">(
+    "signin"
+  );
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     if (open) {
@@ -31,21 +36,91 @@ export function SignInButton({
     }
   }, [open, onCloseSignUpForm]);
 
+  useEffect(() => {
+    // Reset to signin form when modal is closed
+    if (!open) {
+      setFormState("signin");
+    }
+  }, [open]);
+
   const handleCancel = () => {
     onOpenChange(false);
     dispatch(resetLoginStep());
+    setFormState("signin");
+  };
+
+  const handleOpenForgotPassword = () => {
+    setFormState("forgot");
+  };
+
+  const handleBackToSignIn = () => {
+    setFormState("signin");
+  };
+
+  const handleBackToForgot = () => {
+    setFormState("forgot");
+  };
+
+  const handleOpenResetPassword = (email: string) => {
+    setUserEmail(email);
+    setFormState("reset");
   };
 
   return (
     <Modal
-      title={<p className="text-xl font-bold text-primary">Đăng nhập</p>}
+      title={
+        <p className="text-xl font-bold text-primary">
+          {formState === "signin"
+            ? "Đăng nhập"
+            : formState === "forgot"
+            ? "Quên mật khẩu"
+            : "Đặt lại mật khẩu"}
+        </p>
+      }
       open={open}
       onCancel={handleCancel}
       footer={null}
+      width={formState === "reset" ? 600 : undefined}
     >
-      {loginStep === "phone" && <PhoneForm onClose={handleCancel} />}
-      {loginStep === "email" && <EmailForm onClose={handleCancel} />}
-      {loginStep === "password" && <PasswordForm onClose={handleCancel} />}
+      {/* Sign In Forms */}
+      {formState === "signin" && loginStep === "phone" && (
+        <PhoneForm
+          onClose={handleCancel}
+          onForgotPassword={handleOpenForgotPassword}
+        />
+      )}
+      {formState === "signin" && loginStep === "email" && (
+        <EmailForm
+          onClose={handleCancel}
+          onForgotPassword={handleOpenForgotPassword}
+        />
+      )}
+      {formState === "signin" && loginStep === "password" && (
+        <PasswordForm
+          onClose={handleCancel}
+          onForgotPassword={handleOpenForgotPassword}
+        />
+      )}
+
+      {/* Forgot Password Form */}
+      {formState === "forgot" && (
+        <ForgotPasswordForm
+          onBack={handleBackToSignIn}
+          onResetPasswordOpen={handleOpenResetPassword}
+        />
+      )}
+
+      {/* Reset Password Form */}
+      {formState === "reset" && (
+        <ResetPasswordForm
+          email={userEmail}
+          onBack={handleBackToForgot}
+          backToForgot={true}
+          onSuccess={() => {
+            handleCancel();
+          }}
+        />
+      )}
     </Modal>
   );
 }

@@ -15,7 +15,7 @@ import {
   Instagram,
 } from "lucide-react";
 import Loader from "@/components/loader/Loader";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Modal } from "antd";
 import "react-datepicker/dist/react-datepicker.css";
@@ -60,6 +60,7 @@ const WorkspaceDetail = () => {
   const [isBeverageOpen, setIsBeverageOpen] = useState(false);
   const dispatch = useDispatch();
   const [ownerData, setOwnerData] = useState<OwnerProps | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -192,7 +193,11 @@ const WorkspaceDetail = () => {
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div
+              className="flex items-center gap-4 cursor-pointer relative group overflow-hidden rounded-xl p-3 border border-transparent hover:border-primary hover:bg-secondary/20 transition-all duration-300"
+              onClick={() => router.push(`/workspace-owner/${ownerData?.id}`)}
+            >
+              <div className="absolute -left-16 top-0 h-full w-12 rotate-[30deg] scale-y-150 bg-primary/10 transition-all duration-700 group-hover:left-[calc(100%+1rem)]"></div>
               <Image
                 width={50}
                 height={50}
@@ -204,17 +209,37 @@ const WorkspaceDetail = () => {
                 <p className="font-bold">{ownerData?.licenseName}</p>
                 <p>Chủ doanh nghiệp</p>
               </div>
+              <div className="ml-auto flex items-center text-primary opacity-70 group-hover:opacity-100">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="transition-transform group-hover:translate-x-1"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </div>
             </div>
-            <div className="flex flex-col items-center gap-2 font-bold text-primary">
+            <div className="flex items-center gap-2">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <button className="flex flex-col items-center gap-2 font-bold text-primary cursor-pointer">
-                      <Phone /> Liên hệ ngay
+                    <button className="flex items-center gap-3 bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white transition-colors duration-300 px-4 py-2 rounded-lg shadow-md">
+                      <Phone className="w-5 h-5" />
+                      <span className="font-semibold">Liên hệ ngay</span>
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent>
-                    <span className="text-white text-xl font-semibold">
+                  <TooltipContent
+                    side="bottom"
+                    className="font-medium py-2 px-3 text-base"
+                  >
+                    <span className="text-white">
                       {ownerData?.phone
                         ? ownerData.phone
                         : "Không có số điện thoại"}
@@ -295,7 +320,8 @@ const WorkspaceDetail = () => {
             </button>
           </div>
 
-          <GoogleMap url={workspace.googleMapUrl} />
+          {workspace.googleMapUrl && <GoogleMap url={workspace.googleMapUrl} />}
+
           <div className="flex flex-col gap-6">
             <SimilarSpace category={workspace.category} />
           </div>

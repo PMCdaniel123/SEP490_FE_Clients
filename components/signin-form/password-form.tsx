@@ -1,7 +1,7 @@
-import { passwordSchema } from "@/lib/zod/schema";
+import { passwordSchema } from "@/libs/zod/schema";
 import { z } from "zod";
 import { toast } from "react-toastify";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
@@ -17,7 +17,11 @@ import Cookies from "js-cookie";
 
 export type FormInputs = z.infer<typeof passwordSchema>;
 
-export function PasswordForm({ className, onClose }: SignInFormProps) {
+export function PasswordForm({
+  className,
+  onClose,
+  onForgotPassword,
+}: SignInFormProps & { onForgotPassword?: () => void }) {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
   const auth = localStorage.getItem("auth");
@@ -87,9 +91,10 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
           theme: "light",
         });
         dispatch(login(customerData));
-        onClose();
+        localStorage.removeItem("auth");
+        onClose?.();
       } catch {
-        toast.error("Có lỗi xảy ra khi giải mã token.", {
+        toast.error("Có lỗi xảy ra khi đăng nhập.", {
           position: "top-right",
           autoClose: 2000,
           hideProgressBar: false,
@@ -150,6 +155,15 @@ export function PasswordForm({ className, onClose }: SignInFormProps) {
         {errors.password && (
           <p className="text-red-500 text-xs">{errors.password.message}</p>
         )}
+      </div>
+      <div className="flex justify-end w-full">
+        <button
+          type="button"
+          onClick={onForgotPassword}
+          className="text-xs text-primary hover:text-secondary font-medium"
+        >
+          Quên mật khẩu?
+        </button>
       </div>
       <div className="text-center w-full">
         <Button

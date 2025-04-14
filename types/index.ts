@@ -2,7 +2,8 @@ import { LucideIcon } from "lucide-react";
 
 export interface SignInFormProps {
   className?: string;
-  onClose: () => void;
+  onClose?: () => void;
+  onForgotPassword?: () => void;
 }
 
 export interface ValidatePayload {
@@ -178,6 +179,7 @@ export interface Promotion {
   startDate: string;
   endDate: string;
   workspaceID: number;
+  workspaceName?: string; // Optional property for workspace name
 }
 
 export interface OwnerProps {

@@ -3,10 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signupSchema } from "@/lib/zod/schema";
+import { signupSchema } from "@/libs/zod/schema";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

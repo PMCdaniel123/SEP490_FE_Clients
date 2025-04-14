@@ -29,11 +29,8 @@ import { RootState } from "@/stores";
 import { toast } from "react-toastify";
 import { BASE_URL } from "@/constants/environments";
 import Cookies from "js-cookie";
-
-// interface WalletHeader {
-//   amount: number;
-//   notification: string;
-// }
+import SlideArrowButton from "../animate-ui/slide-arrow-button";
+import AnimatedBorderTrail from "../animate-ui/trail-border";
 
 function Header() {
   const pathname = usePathname();
@@ -46,7 +43,6 @@ function Header() {
   const dispatch = useDispatch();
   const { customer } = useSelector((state: RootState) => state.auth);
   const token = typeof window !== "undefined" ? Cookies.get("token") : null;
-  // const [userWallet, setUserWallet] = useState<WalletHeader | null>(null);
   const [isToken, setIsToken] = useState(false);
 
   useEffect(() => {
@@ -67,7 +63,7 @@ function Header() {
           );
 
           if (!decodeResponse.ok) {
-            throw new Error("Có lỗi xảy ra khi giải mã token.");
+            throw new Error("Có lỗi xảy ra khi đăng nhập.");
           }
 
           const decoded = await decodeResponse.json();
@@ -98,44 +94,6 @@ function Header() {
       getCustomerData();
     }
   }, [dispatch, token]);
-
-  // useEffect(() => {
-  //   if (!customer) return;
-
-  //   const getUserWallet = async () => {
-  //     const response = await fetch(
-  //       `${BASE_URL}/users/wallet/getamountwalletbyuserid?UserId=${customer.id}`,
-  //       {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("Có lỗi xảy ra khi lấy thông tin ví khách hàng.");
-  //     }
-
-  //     const data = await response.json();
-  //     setUserWallet(data);
-  //     try {
-  //     } catch (error) {
-  //       const errorMessage =
-  //         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
-  //       toast.error(errorMessage, {
-  //         position: "top-right",
-  //         autoClose: 2000,
-  //         hideProgressBar: false,
-  //         theme: "light",
-  //       });
-  //       setUserWallet(null);
-  //       return;
-  //     }
-  //   };
-
-  //   getUserWallet();
-  // }, [customer]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -168,20 +126,38 @@ function Header() {
   };
 
   return (
-    <header className="bg-primary py-4 px-8 flex items-center justify-between text-white relative z-50">
-      <h1
-        className="text-3xl font-extrabold cursor-pointer"
+    <header className="bg-primary py-4 px-6 md:px-8 flex items-center justify-between text-white relative z-50 shadow-md">
+      <div
+        className="flex items-center gap-3 cursor-pointer group"
         onClick={() => router.push("/")}
       >
-        WorkHive
-      </h1>
+        <div className="w-9 h-9 bg-secondary rounded-md flex items-center justify-center transform group-hover:rotate-12 transition-transform duration-300">
+          <Image
+            src="/WorkHive.svg"
+            alt="WorkHive Logo"
+            width={22}
+            height={22}
+            className="object-contain"
+          />
+        </div>
+        <h1 className="text-3xl font-extrabold bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent drop-shadow-sm hover:drop-shadow-md transition-all duration-300">
+          WorkHive
+        </h1>
+      </div>
       <nav className="hidden md:flex items-center justify-around gap-10">
         {menuItems.map((item) => (
           <li
             key={item.path}
-            className="relative group py-4 pl-6 flex items-center justify-center font-semibold cursor-pointer"
+            className="relative group pl-2 flex items-center justify-center font-semibold cursor-pointer"
           >
-            <Link href={item.path} className="font-medium text-base">
+            <Link
+              href={item.path}
+              className={`font-medium text-base transition-colors duration-200 py-4 px-4 rounded ${
+                pathname === item.path
+                  ? "bg-gradient-to-r from-primary to-secondary"
+                  : ""
+              }`}
+            >
               {item.name}
             </Link>
 
@@ -195,40 +171,44 @@ function Header() {
           </li>
         ))}
       </nav>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 md:gap-4">
         <Link
           href="/become-owner"
           className="font-medium hidden md:block h-full"
         >
-          <button className="flex gap-2 text-base px-5 py-4 rounded-xl shadow border bg-secondary/60 hover:bg-fourth hover:text-white transition-colors duration-200">
-            <BriefcaseBusiness /> Trở thành doanh nghiệp
-          </button>
+          <SlideArrowButton
+            text="Trở thành doanh nghiệp"
+            primaryColor="#B49057"
+            icon={BriefcaseBusiness}
+          />
         </Link>
         {isToken && customer && <Notification customer={customer} />}
         {!isToken ? (
-          <div className="flex flex-col md:flex-row items-center border rounded-xl bg-secondary/60 h-full w-full md:w-auto">
-            <p
-              onClick={() => {
-                setSignInModalOpen(true);
-                handleCloseSignUpForm();
-              }}
-              className="font-medium flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-4 px-4 md:px-5 rounded-t-xl md:rounded-l-xl md:rounded-t-none md:rounded-tl-xl border-b md:border-b-0 md:border-r transition-colors duration-200 cursor-pointer w-full md:w-auto"
-            >
-              <span>Đăng nhập</span>
-            </p>
-            <p
-              onClick={() => {
-                setSignUpModalOpen(true);
-              }}
-              className="font-medium flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-4 px-4 md:px-5 rounded-b-xl md:rounded-r-xl md:rounded-b-none border-t md:border-t-0 md:border-l transition-colors duration-200 cursor-pointer w-full md:w-auto"
-            >
-              <span>Đăng ký</span>
-            </p>
-          </div>
+          <AnimatedBorderTrail trailSize="sm" trailColor="#D0BEA0">
+            <div className="flex flex-col md:flex-row items-center border rounded-xl text-fourth bg-white h-full w-full md:w-auto shadow-md overflow-hidden">
+              <p
+                onClick={() => {
+                  setSignInModalOpen(true);
+                  handleCloseSignUpForm();
+                }}
+                className="z-50 text-sm font-semibold flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-3 px-4 md:px-5 rounded-t-xl md:rounded-l-xl md:rounded-t-none md:rounded-tl-xl border-b md:border-b-0 md:border-r transition-all duration-300 cursor-pointer w-full md:w-auto"
+              >
+                <span>Đăng nhập</span>
+              </p>
+              <p
+                onClick={() => {
+                  setSignUpModalOpen(true);
+                }}
+                className="z-50 text-sm font-semibold flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-3 px-4 md:px-5 rounded-b-xl md:rounded-r-xl md:rounded-b-none border-t md:border-t-0 md:border-l transition-all duration-300 cursor-pointer w-full md:w-auto"
+              >
+                <span>Đăng ký</span>
+              </p>
+            </div>
+          </AnimatedBorderTrail>
         ) : (
           <div ref={dropdownRef} className="relative h-full">
             <div
-              className="group flex items-center justify-center border rounded-xl py-2 px-4 gap-4 group bg-secondary/60 hover:bg-fourth cursor-pointer transition-colors duration-200"
+              className="group flex items-center justify-center border rounded-xl py-2 px-4 gap-3 bg-secondary/70 hover:bg-fourth cursor-pointer transition-all duration-300 shadow-md"
               onClick={() => setOpenAccount(!openAccount)}
             >
               <Image
@@ -236,54 +216,50 @@ function Header() {
                 alt="Logo"
                 width={40}
                 height={40}
-                className="rounded-full border bg-white"
+                className="rounded-full border-2 border-white bg-white object-cover"
               />
-              <div className="hidden md:flex flex-col justify-center items-start md:w-[160px]">
-                <p className="text-sm font-semibold truncate md:w-[160px]">
+              <div className="hidden md:flex flex-col justify-center items-start md:w-[120px]">
+                <p className="text-sm font-semibold truncate md:w-[120px]">
                   {customer?.fullName}
                 </p>
-                <p className="text-xs font-medium truncate md:w-[160px]">
+                <p className="text-xs font-medium truncate md:w-[120px] opacity-90">
                   {customer?.email}
                 </p>
               </div>
-              <ChevronsUpDown size={20} />
+              <ChevronsUpDown
+                size={18}
+                className="transition-transform duration-300 group-hover:rotate-180"
+              />
             </div>
             {openAccount && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute top-full right-0 z-10 mt-2 w-auto gap-3 rounded-xl bg-white shadow-xl pb-4 text-black border border-secondary"
+                className="absolute top-full right-0 z-10 mt-2 w-auto gap-3 rounded-xl bg-white shadow-xl pb-2 text-black border border-secondary overflow-hidden"
               >
-                <div className="flex items-center justify-center py-3 px-4 gap-4 bg-primary rounded-t-xl">
+                <div className="flex items-center justify-center py-3 px-4 gap-4 bg-gradient-to-r from-primary to-fourth">
                   <Image
                     src={customer?.avatar || "/logo.png"}
                     alt="Logo"
-                    width={40}
-                    height={40}
-                    className="rounded-full border bg-white"
+                    width={48}
+                    height={48}
+                    className="rounded-full border-2 border-white bg-white object-cover"
                   />
                   <div className="flex flex-col justify-center items-start">
                     <p className="text-sm font-semibold text-white">
                       {customer?.fullName}
                     </p>
-                    <p className="text-xs font-medium text-white">
+                    <p className="text-xs font-medium text-white/90">
                       {customer?.email}
                     </p>
                   </div>
                 </div>
-                <Separator className="mb-2" />
-                {/* <div className="flex items-center justify-between px-4">
-                  <p className="text-sm">Số dư trong ví:</p>
-                  <p className="font-bold text-primary">
-                    {userWallet?.amount || 0}
-                  </p>
-                </div>
-                <Separator className="my-2" /> */}
+                <Separator className="mb-1" />
                 <Link
                   onClick={() => setOpenAccount(!openAccount)}
                   href="/profile"
-                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-2 transition-colors duration-200 cursor-pointer"
+                  className="px-4 flex items-center gap-3 hover:bg-primary hover:text-white py-2.5 transition-colors duration-200 cursor-pointer"
                 >
                   <BookUser size={16} />
                   <span>Hồ sơ</span>
@@ -291,7 +267,7 @@ function Header() {
                 <Link
                   onClick={() => setOpenAccount(!openAccount)}
                   href="/purchase-history"
-                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-2 transition-colors duration-200 cursor-pointer"
+                  className="px-4 flex items-center gap-3 hover:bg-primary hover:text-white py-2.5 transition-colors duration-200 cursor-pointer"
                 >
                   <History size={16} />
                   <span>Lịch sử thanh toán</span>
@@ -299,7 +275,7 @@ function Header() {
                 <Link
                   onClick={() => setOpenAccount(!openAccount)}
                   href="/user-feedbacks"
-                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-2 transition-colors duration-200 cursor-pointer"
+                  className="px-4 flex items-center gap-3 hover:bg-primary hover:text-white py-2.5 transition-colors duration-200 cursor-pointer"
                 >
                   <MessageCircle size={16} />
                   <span>Trung tâm hỗ trợ</span>
@@ -307,14 +283,15 @@ function Header() {
                 <Link
                   onClick={() => setOpenAccount(!openAccount)}
                   href="/wallet"
-                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-2 transition-colors duration-200 cursor-pointer"
+                  className="px-4 flex items-center gap-3 hover:bg-primary hover:text-white py-2.5 transition-colors duration-200 cursor-pointer"
                 >
                   <Wallet size={16} />
                   <span>Ví WorkHive</span>
                 </Link>
+                <Separator className="my-1" />
                 <li
                   onClick={handleLogOut}
-                  className="px-4 flex items-center gap-2 hover:bg-primary hover:text-white py-2 transition-colors duration-200 cursor-pointer"
+                  className="px-4 flex items-center gap-3 hover:bg-red-500 hover:text-white py-2.5 transition-colors duration-200 cursor-pointer"
                 >
                   <LogOut size={16} />
                   <span>Đăng xuất</span>
@@ -324,7 +301,7 @@ function Header() {
           </div>
         )}
         <button
-          className="md:hidden flex items-center justify-center p-2"
+          className="md:hidden flex items-center justify-center p-2 bg-secondary/70 rounded-xl hover:bg-fourth transition-colors duration-300"
           onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -332,12 +309,21 @@ function Header() {
       </div>
 
       {isMobileMenuOpen && (
-        <nav className="absolute top-full left-0 w-full bg-primary text-white flex flex-col items-center gap-4 py-4 md:hidden">
+        <motion.nav
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="absolute top-full left-0 w-full bg-gradient-to-b from-primary to-primary/95 text-white flex flex-col items-center gap-3 py-4 md:hidden shadow-lg border-t border-white/10"
+        >
           {menuItems.map((item) => (
             <Link
               key={item.path}
               href={item.path}
-              className="font-medium text-base"
+              className={`font-medium text-base py-2 px-4 rounded-lg ${
+                pathname === item.path
+                  ? "bg-secondary/40 text-white"
+                  : "hover:bg-secondary/20"
+              } transition-colors duration-200 w-4/5 text-center`}
               onClick={() => setMobileMenuOpen(false)}
             >
               {item.name}
@@ -345,14 +331,15 @@ function Header() {
           ))}
           <Link
             href="/become-owner"
-            className="font-medium"
+            className="font-medium w-4/5 mt-2"
             onClick={() => setMobileMenuOpen(false)}
           >
-            <button className="text-base px-5 py-3 rounded-xl shadow hover:bg-secondary bg-[#484848]">
-              Trở thành doanh nghiệp
+            <button className="text-base px-5 py-3 rounded-xl shadow-md hover:bg-fourth bg-secondary flex items-center justify-center gap-2 w-full transition-all duration-300">
+              <BriefcaseBusiness size={18} />
+              <span>Trở thành doanh nghiệp</span>
             </button>
           </Link>
-        </nav>
+        </motion.nav>
       )}
 
       <Modal

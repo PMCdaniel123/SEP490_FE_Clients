@@ -50,3 +50,16 @@ export const changePasswordSchema = z
     message: "Mật khẩu xác nhận không khớp.",
     path: ["confirmPassword"],
   });
+
+export const resetPasswordSchema = z.object({
+  email: z.string().email("Email không hợp lệ"),
+  token: z.string().min(6, "Mã xác nhận phải có ít nhất 6 ký tự"),
+  newPassword: z
+    .string()
+    .min(6, "Mật khẩu phải có ít nhất 6 ký tự")
+    .max(100, "Mật khẩu không được vượt quá 100 ký tự"),
+  confirmPassword: z.string(),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Mật khẩu không khớp",
+  path: ["confirmPassword"],
+});

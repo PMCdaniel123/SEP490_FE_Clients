@@ -1,26 +1,30 @@
-import { Mail } from "lucide-react";
+import { ArrowRight, Mail } from "lucide-react";
 import { z } from "zod";
-import { cn } from "@/lib/utils";
+import { cn } from "@/libs/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { SignInFormProps, ValidatePayload } from "@/types";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/stores";
-import { phoneSchema } from "@/lib/zod/schema";
+import { phoneSchema } from "@/libs/zod/schema";
 import { setLoginStep, validatePhone } from "@/stores/slices/authSlice";
 import { useState } from "react";
 import { LoadingOutlined } from "@ant-design/icons";
 
 export type FormInputs = z.infer<typeof phoneSchema>;
 
-export function PhoneForm({ className }: SignInFormProps) {
+export function PhoneForm({
+  className,
+  onForgotPassword,
+}: SignInFormProps & { onForgotPassword?: () => void }) {
   const dispatch = useDispatch<AppDispatch>();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormInputs>({
     resolver: zodResolver(phoneSchema),
@@ -32,6 +36,7 @@ export function PhoneForm({ className }: SignInFormProps) {
       const payload: ValidatePayload = { input: data.phone };
       await dispatch(validatePhone(payload)).unwrap();
     } catch {
+      reset();
       return new Error("Số điện thoại không hợp lệ!");
     } finally {
       setIsLoading(false);
@@ -62,24 +67,39 @@ export function PhoneForm({ className }: SignInFormProps) {
           )}
         </div>
       </div>
-      <div className="flex items-center w-full mb-4">
-        <p className="text-xs text-fourth">
+      <div className="flex items-center justify-between w-full mb-4">
+        <p className="text-xs text-fourth w-3/5">
           Nhập số điện thoại bên trên để đăng nhập vào tài khoản WorkHive
         </p>
+        <button
+          type="button"
+          onClick={onForgotPassword}
+          className="text-xs text-primary hover:text-secondary font-medium"
+        >
+          Quên mật khẩu?
+        </button>
       </div>
-      <div className="flex items-center w-full sm:gap-10">
+      <div className="flex items-center w-full sm:gap-4">
         <div className="w-1/3">
-          <Button
-            className="w-full text-white py-6 font-semibold"
+          <button
             type="submit"
             disabled={isLoading}
+            className="group cursor-pointer rounded-xl border-4 border-primary border-opacity-0 bg-transparent p-1 transition-all duration-500 hover:border-opacity-100"
           >
-            {isLoading ? (
-              <LoadingOutlined style={{ color: "white" }} />
-            ) : (
-              "Tiếp tục"
-            )}
-          </Button>
+            <div className="relative flex items-center justify-center gap-4 overflow-hidden rounded-lg bg-primary px-4 py-4 font-bold text-white">
+              {isLoading ? (
+                <LoadingOutlined style={{ color: "white" }} />
+              ) : (
+                "Tiếp tục"
+              )}
+              <ArrowRight className="transition-all group-hover:translate-x-1 group-hover:scale-105" />
+              <div
+                className={cn(
+                  "absolute -left-16 top-0 h-full w-12 rotate-[30deg] scale-y-150 bg-white/10 transition-all duration-700 group-hover:left-[calc(100%+1rem)]"
+                )}
+              />
+            </div>
+          </button>
         </div>
         <div
           className="flex items-center gap-2 w-2/3 text-fourth hover:text-primary cursor-pointer text-sm"
