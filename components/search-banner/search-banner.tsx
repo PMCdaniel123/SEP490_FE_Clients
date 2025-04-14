@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/constants/environments";
 import { searchAddress, workspaceCategory } from "@/constants/constant";
 import AnimatedBorderTrail from "../animate-ui/trail-border";
+import AnimatedText from "../animate-ui/animated-text";
 
 export default function SearchBanner() {
   const router = useRouter();
@@ -94,7 +95,7 @@ export default function SearchBanner() {
   return (
     <div className="relative w-full h-[600px] md:h-[500px]">
       <Image
-        src="/banner.png"
+        src="/WorkHivebanner.png"
         alt="Banner"
         layout="fill"
         objectFit="cover"
@@ -103,9 +104,15 @@ export default function SearchBanner() {
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-60" />
 
       <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
-        <h2 className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-wide mb-2 text-shadow">
-          WorkHive
-        </h2>
+        <AnimatedText
+          text="WorkHive"
+          animation="wave"
+          delay={0.3}
+          duration={0.08}
+          tag="h2"
+          className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-wide mb-2 text-shadow"
+          highlightColor="#D0BEA0"
+        />
         <p className="text-lg md:text-xl text-white/90 mb-6 max-w-2xl">
           Tìm không gian làm việc phù hợp với nhu cầu của bạn
         </p>

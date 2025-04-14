@@ -5,6 +5,7 @@ import SectionTitle from "@/components/ui/section-tilte";
 import { useState } from "react";
 import { Phone, Mail } from "lucide-react";
 import AnimateInView from "@/components/animate-ui/animate-section";
+import { BASE_URL } from "@/constants/environments";
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -26,15 +27,12 @@ function Contact() {
     e.preventDefault();
     setLoading(true);
 
-    const response = await fetch("https://api.web3forms.com/submit", {
+    const response = await fetch(`${BASE_URL}/users/supportuser`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        access_key: "08d6dceb-4e8d-44fd-941d-d8a6c301be34",
-        ...formData,
-      }),
+      body: JSON.stringify(formData),
     });
 
     setLoading(false);
@@ -46,11 +44,11 @@ function Contact() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
-      <section className="text-center">
+      <section className="">
         <p className="text-4xl font-bold relative inline-block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-sm hover:drop-shadow-md transition-all duration-300">
           Liên hệ
         </p>
-        <p className="text-gray-600 mt-4 max-w-4xl mx-auto">
+        <p className="text-gray-600 mt-4 text-lg">
           Nền tảng của chúng tôi là cầu nối giữa những người đang tìm kiếm không
           gian làm việc linh hoạt và các doanh nghiệp sở hữu co-working space.
           Chúng tôi luôn sẵn sàng hỗ trợ bạn, dù bạn là người thuê đang tìm chỗ

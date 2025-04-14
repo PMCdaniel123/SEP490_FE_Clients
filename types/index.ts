@@ -179,6 +179,7 @@ export interface Promotion {
   startDate: string;
   endDate: string;
   workspaceID: number;
+  workspaceName?: string; // Optional property for workspace name
 }
 
 export interface OwnerProps {
