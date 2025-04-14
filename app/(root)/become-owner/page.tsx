@@ -7,6 +7,16 @@ import { Modal } from "antd";
 import BecomeOwnerForm from "@/components/signup-form/become-owner-form";
 import WorkButton from "@/components/animate-ui/work-button";
 import AnimateInView from "@/components/animate-ui/animate-section";
+import {
+  Cog,
+  Gauge,
+  HandCoins,
+  MessageSquareQuote,
+  NotebookPen,
+  Rocket,
+  SquareCheckBig,
+  Target,
+} from "lucide-react";
 
 export default function BecomeOwner() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +27,10 @@ export default function BecomeOwner() {
 
   const handleClose = () => {
     setIsOpen(false);
+  };
+
+  const handleLoginOwner = () => {
+    window.open("https://sep-490-fe-owners.vercel.app/", "_blank");
   };
 
   return (
@@ -44,7 +58,7 @@ export default function BecomeOwner() {
           >
             Đăng ký doanh nghiệp
           </Button>
-          <WorkButton />
+          <WorkButton onClick={handleLoginOwner} />
         </div>
       </section>
       <AnimateInView>
@@ -86,8 +100,10 @@ export default function BecomeOwner() {
               Quy trình đăng ký đơn giản
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-              <div>
-                <div className="text-5xl mb-4">📋</div>
+              <div className="flex flex-col items-center gap-4">
+                <p className="text-primary">
+                  <NotebookPen size={50} />
+                </p>
                 <h3 className="text-xl font-semibold mb-2">
                   1. Điền thông tin
                 </h3>
@@ -95,8 +111,10 @@ export default function BecomeOwner() {
                   Chia sẻ thông tin không gian và mô hình kinh doanh của bạn.
                 </p>
               </div>
-              <div>
-                <div className="text-5xl mb-4">✅</div>
+              <div className="flex flex-col items-center gap-4">
+                <p className="text-primary">
+                  <SquareCheckBig size={50} />
+                </p>
                 <h3 className="text-xl font-semibold mb-2">
                   2. Xác thực & Duyệt
                 </h3>
@@ -104,8 +122,10 @@ export default function BecomeOwner() {
                   Đội ngũ của chúng tôi sẽ liên hệ và xác minh thông tin.
                 </p>
               </div>
-              <div>
-                <div className="text-5xl mb-4">🚀</div>
+              <div className="flex flex-col items-center gap-4">
+                <p className="text-primary">
+                  <Rocket size={50} />
+                </p>
                 <h3 className="text-xl font-semibold mb-2">
                   3. Bắt đầu cho thuê
                 </h3>
@@ -124,11 +144,36 @@ export default function BecomeOwner() {
             Tại sao nên hợp tác với chúng tôi?
           </h2>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700 text-lg">
-            <li>🔧 Hệ thống quản lý đặt chỗ thông minh</li>
-            <li>📈 Tăng tỉ lệ khai thác không gian trống</li>
-            <li>💬 Hỗ trợ 24/7 từ đội ngũ chuyên môn</li>
-            <li>🎯 Tăng độ phủ thương hiệu trên nền tảng</li>
-            <li>💵 Chính sách hoa hồng rõ ràng, minh bạch</li>
+            <li className="flex items-center gap-2">
+              <span className="text-primary">
+                <Cog size={24} />
+              </span>
+              Hệ thống quản lý đặt chỗ thông minh
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-primary">
+                <Gauge size={24} />
+              </span>
+              Tăng tỉ lệ khai thác không gian trống
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-primary">
+                <MessageSquareQuote size={24} />
+              </span>
+              Hỗ trợ 24/7 từ đội ngũ chuyên môn
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-primary">
+                <Target size={24} />
+              </span>
+              Tăng độ phủ thương hiệu trên nền tảng
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="text-primary">
+                <HandCoins size={24} />
+              </span>
+              Chính sách hoa hồng rõ ràng, minh bạch
+            </li>
           </ul>
         </section>
       </AnimateInView>
