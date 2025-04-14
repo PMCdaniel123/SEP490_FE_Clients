@@ -2,6 +2,8 @@
 
 /* eslint-disable @next/next/no-img-element */
 import ShinyCard from "@/components/animate-ui/shiny-card";
+import FloatingCard from "@/components/animate-ui/floating-card";
+import AnimatedText from "@/components/animate-ui/animated-text";
 import Loader from "@/components/loader/Loader";
 import Pagination from "@/components/pagination/pagination";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +18,7 @@ import { Calendar, Clock, Filter, Ruler, Users, X } from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 
 interface Workspace {
@@ -265,50 +268,97 @@ function WorkspaceOwnerDetail() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-      <div className="relative w-full max-w-7xl mx-auto bg-white rounded-md overflow-hidden">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+      {/* Owner Profile Card */}
+      <ShinyCard className="w-full bg-white rounded-xl overflow-hidden shadow-md mb-12">
         {/* Cover Image */}
-        <div className="relative h-80 w-full">
-          <Image src="/banner.png" alt="Cover" fill className="object-cover" />
+        <div className="relative h-60 md:h-80 w-full">
+          <Image
+            src="/banner.png"
+            alt="Cover"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent"></div>
         </div>
 
-        {/* Avatar + Info */}
-        <div className="relative px-4 pb-4">
+        {/* Profile Info Section */}
+        <div className="relative px-6 pb-6">
           {/* Avatar */}
-          <div className="absolute -top-12 left-6">
-            <div className="relative h-32 w-32 rounded-full ring-4 ring-white overflow-hidden">
+          <motion.div
+            className="absolute -top-16 left-6"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <FloatingCard
+              intensity={10}
+              glareIntensity={0.2}
+              className="relative h-32 w-32 rounded-full ring-4 ring-white overflow-hidden shadow-lg p-0"
+            >
               <Image
                 src={ownerData?.avatar || "/logo.png"}
                 alt="Avatar"
                 fill
-                className="object-cover bg-primary/40"
+                className="object-cover bg-primary/10"
               />
-            </div>
-          </div>
+            </FloatingCard>
+          </motion.div>
 
           {/* Name & Info */}
-          <div className="ml-40 pt-4">
-            <h1 className="text-2xl font-bold">
-              {ownerData?.licenseName || "Doanh nghiệp"}
-            </h1>
-            <p className="text-sm text-gray-600">Chủ doanh nghiệp</p>
-          </div>
+          <motion.div
+            className="ml-40 pt-4"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <AnimatedText
+              text={ownerData?.licenseName || "Doanh nghiệp"}
+              animation="fade"
+              className="text-2xl font-bold text-fourth"
+              delay={0.4}
+            />
+            <div className="flex items-center gap-2 text-sm text-fifth">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 120, delay: 0.5 }}
+              >
+                <Badge className="bg-secondary/80 hover:bg-secondary text-white">
+                  Chủ doanh nghiệp
+                </Badge>
+              </motion.div>
+              {ownerData?.licenseAddress && (
+                <motion.p
+                  className="flex items-center"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.6 }}
+                >
+                  <span className="truncate max-w-md">
+                    {ownerData.licenseAddress}
+                  </span>
+                </motion.p>
+              )}
+            </div>
+          </motion.div>
         </div>
-      </div>
+      </ShinyCard>
 
-      <Separator className="my-10" />
+      <Separator className="my-8" />
 
       <div>
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap gap-8">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+          <div className="flex flex-wrap gap-6 md:gap-8">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => handleCategoryChange(category)}
-                className={`text-sm md:text-base font-medium hover:text-black hover:border-b-2 hover:border-black ${
+                className={`text-sm md:text-base font-medium transition-all duration-200 hover:text-black hover:border-b-2 hover:border-primary py-2 ${
                   selectedCategory === category
-                    ? "border-b-2 border-black text-xl"
-                    : "text-gray-500"
+                    ? "border-b-2 border-primary text-primary font-semibold"
+                    : "text-gray-600"
                 }`}
               >
                 {category}
@@ -317,36 +367,38 @@ function WorkspaceOwnerDetail() {
           </div>
 
           <button
-            className="flex items-center space-x-2 px-4 py-2 border rounded-full text-sm sm:text-base"
+            className="flex items-center space-x-2 px-5 py-2.5 border border-gray-300 rounded-full text-sm bg-white shadow-sm hover:bg-gray-50 transition-all duration-200"
             onClick={toggleFilters}
           >
-            <Filter size={18} />
-            <span>Bộ lọc</span>
+            <Filter size={16} className="text-primary" />
+            <span className="font-medium">Bộ lọc</span>
           </button>
         </div>
 
         {showFilters && (
-          <div className="mt-4 bg-white p-4 rounded-lg shadow-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold">Bộ lọc tìm kiếm</h2>
+          <div className="mb-10 bg-white p-6 rounded-xl shadow-md border border-gray-100">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-lg font-bold text-fourth">
+                Lọc kết quả tìm kiếm
+              </h2>
               <button
                 onClick={toggleFilters}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-primary transition-colors p-1 rounded-full hover:bg-gray-100"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-fourth mb-2">
                     Tìm kiếm theo tên hoặc địa chỉ
                   </label>
                   <Input
                     type="text"
                     placeholder="Nhập từ khóa tìm kiếm..."
-                    className="w-full"
+                    className="w-full focus-visible:ring-primary"
                     value={searchQuery}
                     onChange={(e) => {
                       e.preventDefault();
@@ -355,8 +407,10 @@ function WorkspaceOwnerDetail() {
                   />
                 </div>
 
-                <div className="mb-4">
-                  <p className="font-medium mb-2">Khoảng giá (VND):</p>
+                <div className="mb-6">
+                  <p className="font-medium mb-3 text-fourth">
+                    Khoảng giá (VND):
+                  </p>
                   <ConfigProvider
                     theme={{
                       token: {
@@ -379,7 +433,7 @@ function WorkspaceOwnerDetail() {
                       }
                     />
                   </ConfigProvider>
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-sm text-fifth mt-2">
                     <span>{formatCurrency(priceRange[0])}</span>
                     <span>{formatCurrency(priceRange[1])}</span>
                   </div>
@@ -387,8 +441,10 @@ function WorkspaceOwnerDetail() {
               </div>
 
               <div>
-                <div className="mb-4">
-                  <p className="font-medium mb-2">Diện tích (m²):</p>
+                <div className="mb-6">
+                  <p className="font-medium mb-3 text-fourth">
+                    Diện tích (m²):
+                  </p>
                   <ConfigProvider
                     theme={{
                       token: {
@@ -406,14 +462,16 @@ function WorkspaceOwnerDetail() {
                       }
                     />
                   </ConfigProvider>
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-sm text-fifth mt-2">
                     <span>{areaRange[0]} m²</span>
                     <span>{areaRange[1]} m²</span>
                   </div>
                 </div>
 
-                <div className="mb-4">
-                  <p className="font-medium mb-2">Sức chứa (người):</p>
+                <div className="mb-6">
+                  <p className="font-medium mb-3 text-fourth">
+                    Sức chứa (người):
+                  </p>
                   <ConfigProvider
                     theme={{
                       token: {
@@ -431,7 +489,7 @@ function WorkspaceOwnerDetail() {
                       }
                     />
                   </ConfigProvider>
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-sm text-fifth mt-2">
                     <span>{capacityRange[0]} người</span>
                     <span>{capacityRange[1]} người</span>
                   </div>
@@ -439,14 +497,18 @@ function WorkspaceOwnerDetail() {
               </div>
             </div>
 
-            <div className="flex gap-2 mt-4">
+            <div className="flex gap-3 mt-6">
               <Button
                 onClick={() => applyFilters()}
-                className="bg-primary hover:bg-primary/90 text-white"
+                className="bg-primary hover:bg-primary/90 text-white font-medium px-6"
               >
                 Áp dụng bộ lọc
               </Button>
-              <Button onClick={resetFilters} variant="outline">
+              <Button
+                onClick={resetFilters}
+                variant="outline"
+                className="border-gray-300 hover:bg-gray-50"
+              >
                 Đặt lại
               </Button>
             </div>
@@ -454,11 +516,14 @@ function WorkspaceOwnerDetail() {
         )}
 
         <div className="mt-10">
-          <p className="text-gray-500 mb-4">
-            {filteredWorkspaces.length} kết quả được tìm thấy
+          <h2 className="text-2xl font-bold text-fourth mb-6">
+            Không gian làm việc
+          </h2>
+          <p className="text-gray-500 mb-6">
+            {filteredWorkspaces.length} không gian làm việc được tìm thấy
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {paginatedWorkspaces.map((workspace) => (
               <ShinyCard key={workspace.id}>
                 <div

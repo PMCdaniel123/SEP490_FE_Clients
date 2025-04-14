@@ -116,7 +116,7 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-          dots: false,
+          dots: true,
         },
       },
     ],

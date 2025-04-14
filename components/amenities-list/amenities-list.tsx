@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Slider from "react-slick";
@@ -9,6 +10,62 @@ import { toast } from "react-toastify";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { BASE_URL } from "@/constants/environments";
+
+const PrevArrow = (props: any) => {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={`${className} z-10 `}
+      style={{ ...style, display: "block", left: "-25px" }}
+      onClick={onClick}
+    >
+      <div className="bg-primary hover:bg-gray-50 rounded-full  shadow-lg flex items-center justify-center border border-gray-100">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 32 32"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-white hover:text-primary"
+        >
+          <path d="m15 18-6-6 6-6" />
+        </svg>
+      </div>
+    </div>
+  );
+};
+
+const NextArrow = (props: any) => {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={`${className} z-10`}
+      style={{ ...style, display: "block", right: "-25px" }}
+      onClick={onClick}
+    >
+      <div className="bg-primary hover:bg-gray-50 rounded-full  shadow-lg flex items-center justify-center border border-gray-100">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 32 32"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-white hover:text-primary"
+        >
+          <path d="m9 18 6-6-6-6" />
+        </svg>
+      </div>
+    </div>
+  );
+};
 
 function AmenitiesList({ ownerId }: { ownerId: string }) {
   const [loading, setLoading] = useState(false);
@@ -52,6 +109,8 @@ function AmenitiesList({ ownerId }: { ownerId: string }) {
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
     responsive: [
       {
         breakpoint: 1024,
@@ -81,7 +140,7 @@ function AmenitiesList({ ownerId }: { ownerId: string }) {
   }
 
   return (
-    <div className="mx-auto w-full">
+    <div className="mx-auto w-full px-8 relative">
       {amenityList.length > 0 ? (
         <Slider {...settings}>
           {amenityList.map((amenity) => (
