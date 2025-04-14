@@ -12,14 +12,26 @@ import { CardContent } from "@/components/ui/card-content";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { BASE_URL } from "@/constants/environments";
-import { OwnerProps } from "@/types";
+import { OwnerProps, Promotion } from "@/types";
 import { ConfigProvider, Slider } from "antd";
-import { Calendar, Clock, Filter, Ruler, Users, X } from "lucide-react";
+import {
+  Calendar,
+  Clock,
+  Filter,
+  Ruler,
+  Users,
+  X,
+  GiftIcon,
+} from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
+import ReactSlider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 interface Workspace {
   id: string;
@@ -38,6 +50,7 @@ interface Workspace {
 function WorkspaceOwnerDetail() {
   const { ownerId } = useParams() as { ownerId: string };
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
@@ -158,6 +171,58 @@ function WorkspaceOwnerDetail() {
     fetchWorkspaces();
   }, [ownerId]);
 
+  useEffect(() => {
+    if (!ownerId) return;
+
+    const fetchPromotions = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `${BASE_URL}/workspace-owners/${ownerId}/promotions`
+        );
+
+        if (!response.ok) {
+          throw new Error(`Error fetching promotions for owner ${ownerId}`);
+        }
+
+        const data = await response.json();
+        console.log("Promotions data:", data);
+
+        // Filter to only show Active promotions
+        let activePromotions = [];
+
+        if (Array.isArray(data.promotions)) {
+          activePromotions = data.promotions.filter(
+            (promo: Promotion) => promo.status === "Active"
+          );
+        }
+
+        console.log("Active promotions count:", activePromotions.length);
+        console.log("Active promotions:", activePromotions);
+
+        // Process promotions without fetching workspace names
+        const processedPromotions = activePromotions.map((promo: Promotion) => {
+          return {
+            ...promo,
+            workspaceName: promo.workspaceID
+              ? "Không gian làm việc"
+              : "Không gian làm việc",
+          };
+        });
+
+        console.log("Processed promotions:", processedPromotions);
+        setPromotions(processedPromotions);
+      } catch (error) {
+        console.error("Error fetching promotions:", error);
+        setPromotions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPromotions();
+  }, [ownerId]); // Only depend on ownerId
+
   if (loading) {
     return (
       <div className="text-center">
@@ -267,6 +332,32 @@ function WorkspaceOwnerDetail() {
     );
   }
 
+  const sliderSettings = {
+    dots: promotions.length > 1,
+    infinite: promotions.length > 1,
+    speed: 500,
+    slidesToShow: promotions.length === 1 ? 1 : Math.min(promotions.length, 3),
+    slidesToScroll: 1,
+    arrows: promotions.length > 1,
+    nextArrow: undefined,
+    prevArrow: undefined,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow:
+            promotions.length === 1 ? 1 : Math.min(promotions.length, 2),
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
       {/* Owner Profile Card */}
@@ -374,6 +465,122 @@ function WorkspaceOwnerDetail() {
             <span className="font-medium">Bộ lọc</span>
           </button>
         </div>
+
+        {/* Promotions Section */}
+        {promotions.length > 0 && (
+          <div className="mb-10 bg-white p-6 rounded-xl shadow-md border border-gray-100">
+            <h2 className="text-xl font-bold text-fourth mb-4 flex items-center gap-2">
+              <span className="text-primary">
+                <GiftIcon />
+              </span>{" "}
+              Mã khuyến mãi đang có hiệu lực
+            </h2>
+            {promotions.length > 1 ? (
+              <div className="slider-container">
+                <ReactSlider {...sliderSettings}>
+                  {promotions.map((promotion) => (
+                    <div key={promotion.id} className="px-2 pb-4">
+                      <div
+                        className="border-2 border-dashed border-primary/40 bg-gradient-to-br from-white to-primary/5 rounded-lg p-4 hover:shadow-lg transition-all duration-300 hover:border-primary cursor-pointer h-full"
+                        onClick={() =>
+                          router.push(`/workspace/${promotion.workspaceID}`)
+                        }
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="text-lg font-bold text-primary mb-1">
+                              {promotion.code}
+                            </p>
+                            <p className="text-sm text-gray-600 mb-2">
+                              {promotion.workspaceName || "Không gian làm việc"}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {dayjs(promotion.startDate).format("DD/MM/YYYY")}{" "}
+                              - {dayjs(promotion.endDate).format("DD/MM/YYYY")}
+                            </p>
+                          </div>
+                          <div className="bg-gradient-to-br from-primary to-secondary text-white text-lg font-bold rounded-full h-14 w-14 flex items-center justify-center shadow-md transform transition-transform hover:scale-105">
+                            {promotion.discount}%
+                          </div>
+                        </div>
+                        {promotion.description && (
+                          <p className="text-xs text-gray-600 mt-3 border-t border-primary/20 pt-2">
+                            {promotion.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </ReactSlider>
+                <style jsx global>{`
+                  .slider-container .slick-arrow {
+                    background: #835101;
+                    border-radius: 50%;
+                    width: 30px;
+                    height: 30px;
+                    display: flex !important;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1;
+                  }
+                  .slider-container .slick-arrow:before {
+                    font-size: 20px;
+                    line-height: 1;
+                    opacity: 0.75;
+                    color: white;
+                  }
+                  .slider-container .slick-arrow:hover {
+                    background: #b49057;
+                  }
+                  .slider-container .slick-prev {
+                    left: -10px;
+                  }
+                  .slider-container .slick-next {
+                    right: -10px;
+                  }
+                  .slider-container .slick-dots li button:before {
+                    color: #835101;
+                  }
+                  .slider-container .slick-dots li.slick-active button:before {
+                    color: #835101;
+                  }
+                `}</style>
+              </div>
+            ) : (
+              <div className="max-w-md mx-auto">
+                <div
+                  className="border-2 border-dashed border-primary/40 bg-gradient-to-br from-white to-primary/5 rounded-lg p-4 hover:shadow-lg transition-all duration-300 hover:border-primary cursor-pointer"
+                  onClick={() =>
+                    router.push(`/workspace/${promotions[0].workspaceID}`)
+                  }
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-lg font-bold text-primary mb-1">
+                        {promotions[0].code}
+                      </p>
+                      <p className="text-sm text-gray-600 mb-2">
+                        {promotions[0].workspaceName || "Không gian làm việc"}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {dayjs(promotions[0].startDate).format("DD/MM/YYYY")} -{" "}
+                        {dayjs(promotions[0].endDate).format("DD/MM/YYYY")}
+                      </p>
+                    </div>
+                    <div className="bg-gradient-to-br from-primary to-secondary text-white text-lg font-bold rounded-full h-14 w-14 flex items-center justify-center shadow-md transform transition-transform hover:scale-105">
+                      {promotions[0].discount}%
+                    </div>
+                  </div>
+                  {promotions[0].description && (
+                    <p className="text-xs text-gray-600 mt-3 border-t border-primary/20 pt-2">
+                      {promotions[0].description}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {showFilters && (
           <div className="mb-10 bg-white p-6 rounded-xl shadow-md border border-gray-100">
