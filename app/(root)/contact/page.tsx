@@ -44,11 +44,11 @@ function Contact() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
-      <section className="text-center">
+      <section className="">
         <p className="text-4xl font-bold relative inline-block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-sm hover:drop-shadow-md transition-all duration-300">
           Liên hệ
         </p>
-        <p className="text-gray-600 mt-4 max-w-4xl mx-auto">
+        <p className="text-gray-600 mt-4 text-lg">
           Nền tảng của chúng tôi là cầu nối giữa những người đang tìm kiếm không
           gian làm việc linh hoạt và các doanh nghiệp sở hữu co-working space.
           Chúng tôi luôn sẵn sàng hỗ trợ bạn, dù bạn là người thuê đang tìm chỗ

@@ -305,34 +305,48 @@ const Notification = ({ customer }: { customer: Customer }) => {
   return (
     <div className="relative" ref={dropdownRef}>
       <div
-        className="relative cursor-pointer p-3 bg-secondary hover:bg-fourth rounded-full text-white border"
+        className="relative cursor-pointer p-3 bg-gradient-to-br from-primary to-primary/80 hover:from-fourth hover:to-fourth/80 rounded-full text-white border border-white/20 shadow-md transition-all duration-300 transform hover:scale-110"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <Bell size={24} />
+        <Bell size={24} className="animate-pulse" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+          <motion.span
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{
+              type: "spring",
+              stiffness: 500,
+              damping: 15,
+            }}
+            className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg"
+          >
             {unreadCount}
-          </span>
+          </motion.span>
         )}
       </div>
 
       {isOpen && (
         <motion.div
-          initial={{ scale: 0, rotate: "180deg" }}
-          animate={{
-            scale: 1,
-            rotate: "0deg",
-            transition: {
-              type: "spring",
-              bounce: 0.25,
-            },
+          initial={{ opacity: 0, y: -20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -20, scale: 0.95 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="absolute right-0 mt-4 w-80 bg-gradient-to-br from-[#835101] to-[#bb8e55] shadow-xl rounded-lg border border-white/10 overflow-hidden backdrop-blur-sm z-50"
+          style={{
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3)",
           }}
-          exit={{ scale: 0, rotate: "180deg" }}
-          className="absolute right-0 mt-4 w-80 bg-[#835101] shadow-lg rounded-lg border overflow-hidden"
         >
           <Link href="/notification">
-            <div className="p-4 font-semibold border-b text-white">
-              Thông báo
+            <div className="p-4 font-semibold border-b border-white/20 text-white flex items-center justify-between bg-black/10">
+              <span className="flex items-center gap-2">
+                <Bell size={18} />
+                Thông báo
+              </span>
+              {unreadCount > 0 && (
+                <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                  {unreadCount} mới
+                </span>
+              )}
             </div>
           </Link>
           {notifications.length > 0 ? (
