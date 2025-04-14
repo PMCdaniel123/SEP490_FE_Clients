@@ -179,7 +179,6 @@ function WorkspaceOwnerDetail() {
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
-    applyFilters(value, selectedCategory, priceRange, areaRange, capacityRange);
   };
 
   const toggleFilters = () => {
