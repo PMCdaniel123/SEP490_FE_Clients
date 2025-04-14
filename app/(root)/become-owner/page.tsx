@@ -30,7 +30,7 @@ export default function BecomeOwner() {
   };
 
   const handleLoginOwner = () => {
-    window.open("https://sep-490-fe-owners.vercel.app/", "_blank");
+    window.open("https://workhive-owners.vercel.app/", "_blank");
   };
 
   return (
