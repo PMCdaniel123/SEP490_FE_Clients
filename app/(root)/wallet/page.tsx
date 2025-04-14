@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowUp, ArrowDown, Wallet, History } from "lucide-react";
+import { ArrowUp, ArrowDown, Wallet, History, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
 import { toast } from "react-toastify";
 import Loader from "@/components/loader/Loader";
+import BankInformationForm from "@/components/bank-info-form/bank-info-form";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -253,7 +254,7 @@ const WalletPage = () => {
           </Card>
 
           <Tabs defaultValue="deposit" className="mb-6">
-            <TabsList className="grid grid-cols-2 mb-4 bg-gray-100/70 rounded-xl overflow-hidden p-1">
+            <TabsList className="grid grid-cols-3 mb-4 bg-gray-100/70 rounded-xl overflow-hidden p-1">
               <TabsTrigger
                 value="deposit"
                 className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary  data-[state=active]:shadow-sm rounded-lg transition-all duration-300 p-4"
@@ -265,6 +266,12 @@ const WalletPage = () => {
                 className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
               >
                 Lịch sử giao dịch
+              </TabsTrigger>
+              <TabsTrigger
+                value="bankinfo"
+                className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
+              >
+                Thông tin ngân hàng
               </TabsTrigger>
             </TabsList>
 
@@ -406,6 +413,25 @@ const WalletPage = () => {
                       <p className="text-gray-500">Chưa có giao dịch nào</p>
                     </div>
                   )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent
+              value="bankinfo"
+              className="animate-in fade-in-50 duration-300"
+            >
+              <Card className="shadow-sm hover:shadow-md transition-all duration-300 border-gray-100 overflow-hidden">
+                <CardHeader className="bg-gray-50/50 border-b border-gray-100">
+                  <CardTitle className="text-xl text-primary flex items-center gap-2">
+                    <CreditCard size={18} />
+                    Thông tin ngân hàng
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <BankInformationForm
+                    customerId={customer?.id ? Number(customer.id) : undefined}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
