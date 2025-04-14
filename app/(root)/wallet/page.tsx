@@ -40,6 +40,7 @@ const WalletPage = () => {
       paymentMethod: string;
       description: string;
       status: string;
+      afterTransactionAmount: number;
     }[]
   >([]);
   const [error, setError] = useState("");
@@ -88,6 +89,7 @@ const WalletPage = () => {
           created_At: string;
           description: string;
           status: string;
+          afterTransactionAmount: number;
         }
 
         const formattedTransactions = data.userTransactionHistoryDTOs.map(
@@ -101,7 +103,7 @@ const WalletPage = () => {
                 : "Nạp tiền",
               amount: tx.amount,
               date: tx.created_At,
-              paymentMethod: "Giao dịch Ví",
+              afterTransactionAmount: tx.afterTransactionAmount,
               description: tx.description,
               status:
                 tx.status === "PAID"
