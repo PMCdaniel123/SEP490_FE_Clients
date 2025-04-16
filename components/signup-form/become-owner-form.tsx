@@ -46,7 +46,7 @@ export default function BecomeOwnerForm({ onClose }: { onClose: () => void }) {
 
       toast.success("Đăng ký thành công!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -57,7 +57,7 @@ export default function BecomeOwnerForm({ onClose }: { onClose: () => void }) {
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });

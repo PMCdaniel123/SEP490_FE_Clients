@@ -89,7 +89,7 @@ function WorkspaceOwnerDetail() {
           error instanceof Error ? error.message : "Đã xảy ra lỗi!";
         toast.error(errorMessage, {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -159,7 +159,7 @@ function WorkspaceOwnerDetail() {
           error instanceof Error ? error.message : "Đã xảy ra lỗi!";
         toast.error(errorMessage, {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -446,7 +446,7 @@ function WorkspaceOwnerDetail() {
               <button
                 key={category}
                 onClick={() => handleCategoryChange(category)}
-                className={`text-sm md:text-base font-medium transition-all duration-200 hover:text-black hover:border-b-2 hover:border-primary py-2 ${
+                className={`text-sm md:text-base font-medium transition-all duration-200 hover:text-primary hover:border-b-2 hover:border-primary py-2 ${
                   selectedCategory === category
                     ? "border-b-2 border-primary text-primary font-semibold"
                     : "text-gray-600"

@@ -253,15 +253,15 @@ export default function PropertyGrid() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-6 md:gap-8">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => handleCategoryChange(category)}
-              className={`text-sm sm:text-lg font-medium ${
+              className={`text-sm sm:text-base font-medium transition-all duration-200 hover:text-primary hover:border-b-2 hover:border-primary py-2 ${
                 selectedCategory === category
-                  ? "border-b-2 border-black"
-                  : "text-gray-500"
+                  ? "border-b-2 border-primary text-primary font-semibold"
+                  : "text-gray-600"
               }`}
             >
               {category}
@@ -279,7 +279,7 @@ export default function PropertyGrid() {
           >
             <Select
               defaultValue="newest"
-              style={{ width: 150 }}
+              style={{ width: 180 }}
               onChange={(value) => setSortOption(value)}
               options={[
                 { value: "newest", label: "Mới nhất" },
@@ -292,7 +292,7 @@ export default function PropertyGrid() {
           </ConfigProvider>
 
           <button
-            className="flex items-center space-x-2 px-4 py-2 border rounded-full text-sm sm:text-base"
+            className="flex items-center space-x-2 px-4 py-2 border rounded-full text-sm sm:text-base hover:bg-primary hover:text-white transition-all duration-200"
             onClick={toggleFilters}
           >
             <Filter size={18} />

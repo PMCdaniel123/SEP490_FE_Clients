@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import SearchBanner from "@/components/search-banner/search-banner";

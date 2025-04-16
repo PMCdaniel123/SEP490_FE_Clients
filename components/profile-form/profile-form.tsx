@@ -103,7 +103,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
     if (!customer) {
       toast.error("Chưa đăng nhập", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -124,7 +124,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
           error instanceof Error ? error.message : "Đã xảy ra lỗi!";
         toast.error(errorMessage, {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -173,7 +173,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
 
       toast.success("Cập nhật hồ sơ thành công!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -185,7 +185,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });

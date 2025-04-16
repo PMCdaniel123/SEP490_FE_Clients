@@ -92,7 +92,7 @@ const WorkspaceDetail = () => {
           error instanceof Error ? error.message : "Đã xảy ra lỗi!";
         toast.error(errorMessage, {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -125,7 +125,7 @@ const WorkspaceDetail = () => {
           error instanceof Error ? error.message : "Đã xảy ra lỗi!";
         toast.error(errorMessage, {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -258,7 +258,14 @@ const WorkspaceDetail = () => {
 
           <div className="flex flex-col gap-6">
             <h2 className="text-xl font-bold text-primary">Mô tả chi tiết</h2>
-            <p className="text-fifth">{workspace.description}</p>
+            {/* <p className="text-fifth">{workspace.description}</p> */}
+            <div className="flex flex-col gap-2">
+              {workspace.description.split("\n").map((line, index) => (
+                <p key={index} className="text-fifth">
+                  {line}
+                </p>
+              ))}
+            </div>
           </div>
 
           <div className="flex flex-col gap-6">

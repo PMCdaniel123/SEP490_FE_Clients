@@ -41,9 +41,9 @@ export default function HighRatingSpace() {
         return response.json();
       })
       .then((data) => {
-        const highRatingWorkspaces = data.workspaces.filter(
-          (workspace: Workspace) => workspace.rate >= 3
-        );
+        const highRatingWorkspaces = data.workspaces
+          .filter((workspace: Workspace) => workspace.rate >= 4)
+          .sort((a: Workspace, b: Workspace) => b.rate - a.rate);
         setWorkspaces(highRatingWorkspaces);
         setLoading(false);
       })
