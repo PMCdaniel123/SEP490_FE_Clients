@@ -3,7 +3,7 @@ import { MenuItemProps, WorkspaceProps } from "@/types";
 export const menuItems: MenuItemProps[] = [
   { name: "Trang chủ", path: "/" },
   { name: "Giới thiệu", path: "/about-us" },
-  { name: "Không gian", path: "/workspace" },
+  // { name: "Không gian", path: "/workspace" },
   { name: "Liên hệ", path: "/contact" },
 ];
 

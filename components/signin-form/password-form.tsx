@@ -52,7 +52,7 @@ export function PasswordForm({
       if (!response.ok) {
         toast.error("Đăng nhập thất bại! Vui lòng kiểm tra lại.", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -86,7 +86,7 @@ export function PasswordForm({
         };
         toast.success("Đăng nhập thành công!", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -96,7 +96,7 @@ export function PasswordForm({
       } catch {
         toast.error("Có lỗi xảy ra khi đăng nhập.", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -105,7 +105,7 @@ export function PasswordForm({
     } catch {
       toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });

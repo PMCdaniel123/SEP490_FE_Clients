@@ -56,7 +56,7 @@ export function SignUpForm({
       ) {
         toast.error("Email hoặc số điện thoại đã được sử dụng", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -66,7 +66,7 @@ export function SignUpForm({
 
       toast.success("Đăng ký thành công!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: true,
         theme: "dark",
       });
@@ -74,7 +74,7 @@ export function SignUpForm({
       if (response.status !== 201) {
         toast.error("Đăng ký thất bại! Vui lòng kiểm tra lại.", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -107,7 +107,7 @@ export function SignUpForm({
         };
         toast.success("Đăng nhập thành công!", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -117,7 +117,7 @@ export function SignUpForm({
       } catch {
         toast.error("Có lỗi xảy ra khi giải mã token.", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -128,7 +128,7 @@ export function SignUpForm({
     } catch {
       toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: true,
         theme: "light",
       });

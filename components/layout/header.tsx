@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   BookUser,
   BriefcaseBusiness,
+  Building,
   ChevronsUpDown,
   History,
   LogOut,
@@ -83,11 +84,11 @@ function Header() {
             error instanceof Error ? error.message : "Đã xảy ra lỗi!";
           toast.error(errorMessage, {
             position: "top-right",
-            autoClose: 2000,
+            autoClose: 1500,
             hideProgressBar: false,
             theme: "light",
           });
-          localStorage.removeItem("token");
+          Cookies.remove("token");
           return;
         }
       };
@@ -170,6 +171,63 @@ function Header() {
             ></span>
           </li>
         ))}
+        <li className="relative group pl-2 flex items-center justify-center font-semibold cursor-pointer">
+          <p
+            className={`font-medium text-base transition-colors duration-200 py-4 px-4 rounded ${
+              pathname?.includes("workspace")
+                ? "bg-gradient-to-r from-primary to-secondary"
+                : ""
+            }`}
+          >
+            Phân loại
+          </p>
+
+          <span
+            className={`absolute left-0 transform -translate-x-1 h-4 w-4 rounded-full bg-secondary transition-all duration-300 ${
+              pathname?.includes("workspace")
+                ? "opacity-100"
+                : "opacity-0 group-hover:opacity-100"
+            }`}
+          ></span>
+
+          <ul className="absolute top-full p-2 mt-2 md:min-w-[400px] bg-white shadow-lg rounded-lg opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-2 transition-all duration-300 z-50 border">
+            <li
+              className={`flex items-center gap-4 p-3 rounded-lg bg-white text-gray-700 md:min-w-[400px] ${
+                pathname === "/workspace"
+                  ? "border border-primary"
+                  : "hover:bg-secondary hover:text-white"
+              }`}
+              onClick={() => router.push("/workspace")}
+            >
+              <Building className="border-r-2 border-primary w-1/5" size={26} />
+              <div className="w-4/5">
+                <p className="font-semibold text-base">Không gian</p>
+                <p className="font-light text-sm">
+                  Danh sách không gian của chúng tôi
+                </p>
+              </div>
+            </li>
+            <li
+              className={`mt-2 flex items-center gap-4 p-3 rounded-lg bg-white text-gray-700 md:min-w-[400px] ${
+                pathname === "/workspace-owner"
+                  ? "border border-primary"
+                  : "hover:bg-secondary hover:text-white"
+              }`}
+              onClick={() => router.push("/workspace-owner")}
+            >
+              <BriefcaseBusiness
+                className="border-r-2 border-primary w-1/5"
+                size={26}
+              />
+              <div className="w-4/5">
+                <p className="font-semibold text-base">Thương hiệu</p>
+                <p className="font-light text-sm">
+                  Danh sách thương hiệu của chúng tôi
+                </p>
+              </div>
+            </li>
+          </ul>
+        </li>
       </nav>
       <div className="flex items-center gap-3 md:gap-4">
         <Link
@@ -313,7 +371,7 @@ function Header() {
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
-          className="absolute top-full left-0 w-full bg-gradient-to-b from-primary to-primary/95 text-white flex flex-col items-center gap-3 py-4 md:hidden shadow-lg border-t border-white/10"
+          className="absolute top-full left-0 w-full bg-primary text-white flex flex-col items-center gap-3 py-4 md:hidden shadow-lg border-t border-white/10"
         >
           {menuItems.map((item) => (
             <Link
@@ -329,6 +387,28 @@ function Header() {
               {item.name}
             </Link>
           ))}
+          <Link
+            href={"/workspace"}
+            className={`font-medium text-base py-2 px-4 rounded-lg ${
+              pathname === "/workspace"
+                ? "bg-secondary/40 text-white"
+                : "hover:bg-secondary/20"
+            } transition-colors duration-200 w-4/5 text-center`}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Không gian
+          </Link>
+          <Link
+            href={"/workspace-owner"}
+            className={`font-medium text-base py-2 px-4 rounded-lg ${
+              pathname === "/workspace-owner"
+                ? "bg-secondary/40 text-white"
+                : "hover:bg-secondary/20"
+            } transition-colors duration-200 w-4/5 text-center`}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            Thương hiệu
+          </Link>
           <Link
             href="/become-owner"
             className="font-medium w-4/5 mt-2"
