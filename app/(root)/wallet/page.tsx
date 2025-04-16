@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import TransactionHistory from "@/components/transaction-history/transaction-history";
 import HelpSection from "@/components/help-section/help-section";
+import WithdrawalRequest from "@/components/withdrawal-request/withdrawal-request";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "@/stores";
@@ -47,6 +48,12 @@ const WalletPage = () => {
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+  const [bankInfo, setBankInfo] = useState<{
+    bankName: string;
+    bankNumber: string;
+    bankAccountName: string;
+  } | null>(null);
+  const [activeTab, setActiveTab] = useState("deposit");
 
   const predefinedAmounts = [100000, 200000, 500000, 1000000];
 
@@ -73,6 +80,8 @@ const WalletPage = () => {
           hideProgressBar: false,
           theme: "light",
         });
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -123,13 +132,36 @@ const WalletPage = () => {
           hideProgressBar: false,
           theme: "light",
         });
-      } finally {
-        setIsLoading(false);
+      }
+    };
+
+    const fetchBankInfo = async () => {
+      try {
+        const response = await fetch(
+          `${BASE_URL}/users/wallet/getcustomerwalletinformation?customerId=${customer.id}`
+        );
+        if (!response.ok) {
+          if (response.status !== 404) {
+            throw new Error("Failed to fetch bank information");
+          }
+          setBankInfo(null);
+          return;
+        }
+        const data = await response.json();
+        setBankInfo({
+          bankName: data.bankName || "",
+          bankNumber: data.bankNumber || "",
+          bankAccountName: data.bankAccountName || "",
+        });
+      } catch (error) {
+        console.error("Error fetching bank info:", error);
+        setBankInfo(null);
       }
     };
 
     fetchBalance();
     fetchTransactions();
+    fetchBankInfo();
   }, [customer]);
 
   const handleDeposit = () => {
@@ -145,6 +177,22 @@ const WalletPage = () => {
     }
 
     setIsModalOpen(true);
+  };
+
+  const handleOpenWithdrawTab = () => {
+    setActiveTab("withdraw");
+    const withdrawTab = document.querySelector(
+      '[value="withdraw"]'
+    ) as HTMLButtonElement;
+    if (withdrawTab) withdrawTab.click();
+  };
+
+  const handleOpenBankInfoTab = () => {
+    setActiveTab("bankinfo");
+    const bankInfoTab = document.querySelector(
+      '[value="bankinfo"]'
+    ) as HTMLButtonElement;
+    if (bankInfoTab) bankInfoTab.click();
   };
 
   const confirmDeposit = async () => {
@@ -214,6 +262,29 @@ const WalletPage = () => {
     setError("");
   };
 
+  const handleWithdrawalSuccess = () => {
+    // Refresh balance after successful withdrawal request
+    if (!customer?.id) return;
+
+    const fetchBalance = async () => {
+      try {
+        const response = await fetch(
+          `${BASE_URL}/users/wallet/getamountwalletbyuserid?UserId=${customer.id}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const formatted =
+            data === null || data === undefined ? "0" : data.amount;
+          setBalance(formatted);
+        }
+      } catch (error) {
+        console.error("Error refreshing balance:", error);
+      }
+    };
+
+    fetchBalance();
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gradient-to-b from-white via-white to-gray-50 shadow-lg rounded-lg my-8 border border-gray-100">
       <div className="flex justify-between items-center mb-6">
@@ -243,23 +314,47 @@ const WalletPage = () => {
                 <div className="flex gap-2">
                   <Button
                     className="bg-white text-primary hover:bg-white/90 shadow-md"
-                    onClick={handleDeposit}
+                    onClick={() => {
+                      setActiveTab("deposit");
+                      const depositTab = document.querySelector(
+                        '[value="deposit"]'
+                      ) as HTMLButtonElement;
+                      if (depositTab) depositTab.click();
+                    }}
                   >
                     <ArrowUp size={16} className="mr-1" />
                     Nạp tiền
+                  </Button>
+                  <Button
+                    className="bg-secondary text-white hover:bg-secondary/90 shadow-md"
+                    onClick={handleOpenWithdrawTab}
+                  >
+                    <ArrowDown size={16} className="mr-1" />
+                    Rút tiền
                   </Button>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Tabs defaultValue="deposit" className="mb-6">
-            <TabsList className="grid grid-cols-3 mb-4 bg-gray-100/70 rounded-xl overflow-hidden p-1">
+          <Tabs
+            defaultValue="deposit"
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="mb-6"
+          >
+            <TabsList className="grid grid-cols-4 mb-4 bg-gray-100/70 rounded-xl overflow-hidden p-1">
               <TabsTrigger
                 value="deposit"
                 className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary  data-[state=active]:shadow-sm rounded-lg transition-all duration-300 p-4"
               >
                 Nạp tiền
+              </TabsTrigger>
+              <TabsTrigger
+                value="withdraw"
+                className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
+              >
+                Rút tiền
               </TabsTrigger>
               <TabsTrigger
                 value="history"
@@ -359,6 +454,29 @@ const WalletPage = () => {
                       )}
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent
+              value="withdraw"
+              className="animate-in fade-in-50 duration-300"
+            >
+              <Card className="shadow-sm hover:shadow-md transition-all duration-300 border-gray-100 overflow-hidden">
+                <CardHeader className="bg-gray-50/50 border-b border-gray-100">
+                  <CardTitle className="text-xl text-primary flex items-center gap-2">
+                    <ArrowDown size={18} className="text-red-500" />
+                    Rút tiền
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <WithdrawalRequest
+                    customerId={customer?.id ? Number(customer.id) : undefined}
+                    balance={balance}
+                    bankInfo={bankInfo}
+                    onBankInfoTabClick={handleOpenBankInfoTab}
+                    onWithdrawalSuccess={handleWithdrawalSuccess}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>

@@ -6,6 +6,14 @@ import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
 import { BASE_URL } from "@/constants/environments";
 import Loader from "@/components/loader/Loader";
+import { Search } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface BankInformationFormProps {
   customerId?: number;
@@ -17,6 +25,21 @@ interface BankInfo {
   bankAccountName: string;
 }
 
+interface Bank {
+  id: string;
+  name: string;
+  code: string;
+  bin: string;
+  shortName: string;
+  logo: string;
+  transferSupported: number;
+  lookupSupported: number;
+  short_name: string;
+  support: number;
+  isTransfer: number;
+  swift_code: string;
+}
+
 const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
   const [bankInfo, setBankInfo] = useState<BankInfo>({
     bankName: "",
@@ -25,6 +48,40 @@ const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [banks, setBanks] = useState<Bank[]>([]);
+  const [filteredBanks, setFilteredBanks] = useState<Bank[]>([]);
+  const [banksFetching, setBanksFetching] = useState(false);
+  const [bankSearchValue, setBankSearchValue] = useState("");
+  const [bankDropdownOpen, setBankDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    // Fetch banks from API
+    const fetchBanks = async () => {
+      setBanksFetching(true);
+      try {
+        const response = await fetch("https://api.vietqr.io/v2/banks");
+        if (!response.ok) {
+          throw new Error("Failed to fetch banks");
+        }
+
+        const data = await response.json();
+        if (data && data.data) {
+          setBanks(data.data);
+          setFilteredBanks(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching banks:", error);
+        toast.error("Có lỗi xảy ra khi tải danh sách ngân hàng", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      } finally {
+        setBanksFetching(false);
+      }
+    };
+
+    fetchBanks();
+  }, []);
 
   useEffect(() => {
     if (!customerId) return;
@@ -66,11 +123,33 @@ const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
     fetchBankInfo();
   }, [customerId]);
 
+  useEffect(() => {
+    if (bankSearchValue.trim() === "") {
+      setFilteredBanks(banks);
+    } else {
+      const searchTerm = bankSearchValue.toLowerCase().trim();
+      const filtered = banks.filter(
+        (bank) =>
+          bank.name.toLowerCase().includes(searchTerm) ||
+          bank.shortName.toLowerCase().includes(searchTerm) ||
+          (bank.code && bank.code.toLowerCase().includes(searchTerm))
+      );
+      setFilteredBanks(filtered);
+    }
+  }, [bankSearchValue, banks]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setBankInfo((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleBankChange = (value: string) => {
+    setBankInfo((prev) => ({
+      ...prev,
+      bankName: value,
     }));
   };
 
@@ -153,15 +232,102 @@ const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
           >
             Tên ngân hàng
           </label>
-          <Input
-            id="bankName"
-            name="bankName"
-            value={bankInfo.bankName}
-            onChange={handleInputChange}
-            placeholder="VD: Techcombank, Vietcombank, MB Bank..."
-            className="w-full"
-            required
-          />
+          {banksFetching ? (
+            <div className="w-full h-10 bg-gray-100 rounded animate-pulse flex items-center justify-center">
+              <div className="text-xs text-gray-500">
+                Đang tải danh sách ngân hàng...
+              </div>
+            </div>
+          ) : (
+            <div className="relative">
+              <Select
+                onValueChange={handleBankChange}
+                value={bankInfo.bankName}
+                name="bankName"
+                open={bankDropdownOpen}
+                onOpenChange={setBankDropdownOpen}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Chọn ngân hàng">
+                    {bankInfo.bankName && (
+                      <div className="flex items-center gap-2">
+                        {banks.find((b) => b.name === bankInfo.bankName)
+                          ?.logo && (
+                          <img
+                            src={
+                              banks.find((b) => b.name === bankInfo.bankName)
+                                ?.logo
+                            }
+                            alt={bankInfo.bankName}
+                            className="w-5 h-5 object-contain"
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                            }}
+                          />
+                        )}
+                        <span>{bankInfo.bankName}</span>
+                      </div>
+                    )}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent className="max-h-[300px]">
+                  <div className="p-2 sticky top-0 bg-white z-10 border-b">
+                    <div className="relative">
+                      <Input
+                        placeholder="Tìm kiếm ngân hàng"
+                        value={bankSearchValue}
+                        onChange={(e) => setBankSearchValue(e.target.value)}
+                        className="pl-10"
+                      />
+                      <Search
+                        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                        size={16}
+                      />
+                    </div>
+                  </div>
+                  <div className="pt-2">
+                    {filteredBanks.length === 0 ? (
+                      <div className="py-6 text-center text-gray-500">
+                        Không tìm thấy ngân hàng phù hợp
+                      </div>
+                    ) : (
+                      filteredBanks.map((bank) => (
+                        <SelectItem
+                          key={bank.id}
+                          value={bank.name}
+                          className="flex items-center"
+                        >
+                          <div className="flex items-center gap-2">
+                            {bank.logo ? (
+                              <img
+                                src={bank.logo}
+                                alt={bank.name}
+                                className="w-5 h-5 object-contain"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = "none";
+                                }}
+                              />
+                            ) : (
+                              <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center text-xs text-gray-600">
+                                {bank.shortName?.charAt(0) ||
+                                  bank.name.charAt(0)}
+                              </div>
+                            )}
+                            <span className="text-sm">{bank.name}</span>
+                            {bank.code && (
+                              <span className="text-xs text-gray-500 ml-1">
+                                ({bank.code})
+                              </span>
+                            )}
+                          </div>
+                        </SelectItem>
+                      ))
+                    )}
+                  </div>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
         </div>
 
         <div>
