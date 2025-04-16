@@ -11,6 +11,7 @@ interface Transaction {
   paymentMethod: string;
   description: string;
   status: string;
+  afterTransactionAmount: number;
 }
 
 interface TransactionHistoryProps {
@@ -68,7 +69,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                       {dayjs(tx.date).format("DD/MM/YYYY - HH:mm")}
                     </span>
                     <span className="text-gray-500 text-sm">
-                      {tx.paymentMethod}
+                      Số dư: {formatCurrency(tx.afterTransactionAmount)}
                     </span>
                   </div>
 
