@@ -43,7 +43,7 @@ function HomePage() {
 
         <HighRatingSpace />
 
-        <div className="mb-8 mt-16 flex items-center justify-between">
+        <div className="mb-8 mt-16 flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-0">
           <SectionTitle>
             Các thương hiệu hàng đầu <br /> mà bạn không thể bỏ lỡ!
           </SectionTitle>
