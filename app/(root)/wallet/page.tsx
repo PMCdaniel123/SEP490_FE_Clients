@@ -138,7 +138,7 @@ const WalletPage = () => {
     const fetchBankInfo = async () => {
       try {
         const response = await fetch(
-          `${BASE_URL}/users/wallet/getcustomerwalletinformation?customerId=${customer.id}`
+          `${BASE_URL}/users/wallet/getcustomerwalletinformation/${customer.id}`
         );
         if (!response.ok) {
           if (response.status !== 404) {

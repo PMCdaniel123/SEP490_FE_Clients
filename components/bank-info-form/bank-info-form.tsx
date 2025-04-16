@@ -90,7 +90,7 @@ const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `${BASE_URL}/users/wallet/getcustomerwalletinformation?customerId=${customerId}`
+          `${BASE_URL}/users/wallet/getcustomerwalletinformation/${customerId}`
         );
 
         if (!response.ok) {
