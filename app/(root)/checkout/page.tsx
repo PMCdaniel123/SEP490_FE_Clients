@@ -98,7 +98,7 @@ export default function Checkout() {
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -134,7 +134,7 @@ export default function Checkout() {
           error instanceof Error ? error.message : "Đã xảy ra lỗi!";
         toast.error(errorMessage, {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -200,16 +200,24 @@ export default function Checkout() {
         body: JSON.stringify(request),
       });
 
-      if (!response.ok) {
-        throw new Error("Có lỗi xảy ra khi thanh toán.");
+      const data = await response.json();
+
+      // Check for wallet lock error in the successful response
+      if (
+        data &&
+        data.notification === "Ví của bạn đã bị khóa" &&
+        data.isLock === 1
+      ) {
+        throw new Error(
+          "Ví của bạn hiện đang bị khóa do thực hiện yêu cầu rút tiền"
+        );
       }
 
-      const data = await response.json();
       dispatch(clearCart());
       if (paymentMethod === "2") {
         toast.success("Thanh toán thành công bằng WorkHive Wallet!", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -229,7 +237,7 @@ export default function Checkout() {
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });

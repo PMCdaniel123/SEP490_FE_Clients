@@ -44,7 +44,7 @@ const SuccessComponent = () => {
 
       toast.success("Nạp tiền thành công!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -60,7 +60,7 @@ const SuccessComponent = () => {
       console.error("Error updating wallet amount:", error);
       toast.error("Có lỗi xảy ra khi cập nhật số dư ví.", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -87,11 +87,11 @@ const SuccessComponent = () => {
           );
           const data = await response.json();
           console.log(data);
-          
+
           // Trigger notification fetch after successful booking status update
           const event = new CustomEvent(notificationEvents.BOOKING_SUCCESS);
           window.dispatchEvent(event);
-          
+
           localStorage.removeItem("order");
         } catch (error) {
           console.error("Error updating workspace time status:", error);

@@ -78,7 +78,7 @@ function DateSelect({
           error instanceof Error ? error.message : "Đã xảy ra lỗi!";
         toast.error(errorMessage, {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -165,7 +165,7 @@ function DateSelect({
           "Khoảng thời gian đã bị đặt trước. Vui lòng chọn ngày khác!",
           {
             position: "top-right",
-            autoClose: 2000,
+            autoClose: 1500,
             hideProgressBar: false,
             theme: "light",
           }

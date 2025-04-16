@@ -224,7 +224,7 @@ const UserReview: React.FC<ReviewListProps> = ({
 
       toast.success("Cập nhật đánh giá thành công!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
       });
 
       setIsEditing(false);
@@ -236,7 +236,7 @@ const UserReview: React.FC<ReviewListProps> = ({
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
       });
     } finally {
       setUploading(false);
@@ -273,7 +273,7 @@ const UserReview: React.FC<ReviewListProps> = ({
 
       toast.success("Xóa đánh giá thành công!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
       });
 
       setIsDeleteModalOpen(false);
@@ -284,7 +284,7 @@ const UserReview: React.FC<ReviewListProps> = ({
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
       });
     }
   };

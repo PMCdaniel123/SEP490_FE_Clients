@@ -8,7 +8,7 @@ import { CardContent } from "@/components/ui/card-content";
 import Loader from "@/components/loader/Loader";
 import Pagination from "@/components/pagination/pagination";
 import { Badge } from "@/components/ui/badge";
-import { Slider, ConfigProvider } from "antd";
+import { Slider, ConfigProvider, Select } from "antd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BASE_URL } from "@/constants/environments";
@@ -26,6 +26,7 @@ interface Workspace {
   category: string;
   area: number;
   status: string;
+  createdAt: string; // Added for sorting by newest
 }
 
 export default function PropertyGrid() {
@@ -46,6 +47,7 @@ export default function PropertyGrid() {
     0, 100,
   ]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortOption, setSortOption] = useState<string>("newest");
 
   useEffect(() => {
     fetch(`${BASE_URL}/workspaces`)
@@ -96,6 +98,11 @@ export default function PropertyGrid() {
         setLoading(false);
       });
   }, []);
+
+  // Re-sort workspaces when sort option changes
+  useEffect(() => {
+    setCurrentPage(1); // Reset to first page when sorting changes
+  }, [sortOption]);
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
@@ -175,6 +182,43 @@ export default function PropertyGrid() {
     applyFilters(searchQuery, category, priceRange, areaRange, capacityRange);
   };
 
+  // Sort workspaces based on selected sort option
+  const sortWorkspaces = (workspaces: Workspace[]) => {
+    const sortedWorkspaces = [...workspaces];
+
+    switch (sortOption) {
+      case "newest":
+        return sortedWorkspaces.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      case "price-asc":
+        return sortedWorkspaces.sort((a, b) => {
+          const priceA = Math.min(
+            a.shortTermPrice || Infinity,
+            a.longTermPrice || Infinity
+          );
+          const priceB = Math.min(
+            b.shortTermPrice || Infinity,
+            b.longTermPrice || Infinity
+          );
+          return priceA - priceB;
+        });
+      case "price-desc":
+        return sortedWorkspaces.sort((a, b) => {
+          const priceA = Math.min(a.shortTermPrice || 0, a.longTermPrice || 0);
+          const priceB = Math.min(b.shortTermPrice || 0, b.longTermPrice || 0);
+          return priceB - priceA;
+        });
+      case "area-asc":
+        return sortedWorkspaces.sort((a, b) => a.area - b.area);
+      case "area-desc":
+        return sortedWorkspaces.sort((a, b) => b.area - a.area);
+      default:
+        return sortedWorkspaces;
+    }
+  };
+
   if (loading) {
     return (
       <div className="text-center">
@@ -194,7 +238,7 @@ export default function PropertyGrid() {
 
   const totalPages = Math.ceil(filteredWorkspaces.length / 9);
 
-  const paginatedWorkspaces = filteredWorkspaces.slice(
+  const paginatedWorkspaces = sortWorkspaces(filteredWorkspaces).slice(
     (currentPage - 1) * 9,
     currentPage * 9
   );
@@ -209,15 +253,15 @@ export default function PropertyGrid() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-wrap gap-6 md:gap-8">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => handleCategoryChange(category)}
-              className={`text-sm sm:text-lg font-medium ${
+              className={`text-sm sm:text-base font-medium transition-all duration-200 hover:text-primary hover:border-b-2 hover:border-primary py-2 ${
                 selectedCategory === category
-                  ? "border-b-2 border-black"
-                  : "text-gray-500"
+                  ? "border-b-2 border-primary text-primary font-semibold"
+                  : "text-gray-600"
               }`}
             >
               {category}
@@ -225,13 +269,36 @@ export default function PropertyGrid() {
           ))}
         </div>
 
-        <button
-          className="flex items-center space-x-2 px-4 py-2 border rounded-full text-sm sm:text-base"
-          onClick={toggleFilters}
-        >
-          <Filter size={18} />
-          <span>Bộ lọc</span>
-        </button>
+        <div className="flex items-center space-x-3">
+          <ConfigProvider
+            theme={{
+              token: {
+                colorPrimary: "#835101",
+              },
+            }}
+          >
+            <Select
+              defaultValue="newest"
+              style={{ width: 180 }}
+              onChange={(value) => setSortOption(value)}
+              options={[
+                { value: "newest", label: "Mới nhất" },
+                { value: "price-asc", label: "Giá tăng dần" },
+                { value: "price-desc", label: "Giá giảm dần" },
+                { value: "area-asc", label: "Diện tích tăng dần" },
+                { value: "area-desc", label: "Diện tích giảm dần" },
+              ]}
+            />
+          </ConfigProvider>
+
+          <button
+            className="flex items-center space-x-2 px-4 py-2 border rounded-full text-sm sm:text-base hover:bg-primary hover:text-white transition-all duration-200"
+            onClick={toggleFilters}
+          >
+            <Filter size={18} />
+            <span>Bộ lọc</span>
+          </button>
+        </div>
       </div>
 
       {showFilters && (

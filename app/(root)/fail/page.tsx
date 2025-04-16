@@ -43,7 +43,7 @@ const FailComponent = () => {
 
       toast.success("Nạp tiền thành công!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -55,7 +55,7 @@ const FailComponent = () => {
       console.error("Error updating wallet amount:", error);
       toast.error("Có lỗi xảy ra khi cập nhật số dư ví.", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });

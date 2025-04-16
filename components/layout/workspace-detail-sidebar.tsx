@@ -55,7 +55,7 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
     if (startTime === "" || endTime === "") {
       toast.error("Vui lòng chọn thời gian!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -109,7 +109,7 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
           error instanceof Error ? error.message : "Đã xảy ra lỗi!";
         toast.error(errorMessage, {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
