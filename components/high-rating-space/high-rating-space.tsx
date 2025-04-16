@@ -119,7 +119,7 @@ export default function HighRatingSpace() {
             <div key={workspace.id} className="px-3 py-2">
               <Link href={`/workspace/${workspace.id}`} className="block">
                 <motion.div
-                  whileHover={{ y: -5 }}
+                  whileHover={{ y: -10 }}
                   transition={{ duration: 0.3 }}
                   onMouseEnter={() => setHoveredCard(workspace.id)}
                   onMouseLeave={() => setHoveredCard(null)}
@@ -147,28 +147,6 @@ export default function HighRatingSpace() {
                           {workspace.rate.toFixed(1)}
                         </Badge>
                       </div>
-
-                      {/* <div className="absolute top-3 right-3">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="bg-white/80 hover:bg-white rounded-full h-8 w-8 shadow-md"
-                        >
-                          <Heart
-                            className={`${
-                              hoveredCard === workspace.id
-                                ? "text-red-500"
-                                : "text-gray-500"
-                            }`}
-                            size={18}
-                            fill={
-                              hoveredCard === workspace.id
-                                ? "currentColor"
-                                : "none"
-                            }
-                          />
-                        </Button>
-                      </div> */}
 
                       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                         <div className="flex justify-between items-end">

@@ -7,11 +7,13 @@ import HighRatingSpace from "@/components/high-rating-space/high-rating-space";
 import SectionTitle from "@/components/ui/section-tilte";
 // import Banner from "@/components/ui/banner";
 import FeatureSection from "@/components/ui/feauture-section";
-import { Send } from "lucide-react";
+import { Search, Send } from "lucide-react";
 import AnimatedText from "@/components/animate-ui/animated-text";
 import AnimatedGradientSection from "@/components/animate-ui/animated-gradient-section";
 import FloatingCard from "@/components/animate-ui/floating-card";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import HotWorkspaceOwner from "@/components/hot-workspace-owner/hot-workspace-owner";
 
 function HomePage() {
   return (
@@ -40,6 +42,21 @@ function HomePage() {
         </div>
 
         <HighRatingSpace />
+
+        <div className="mb-8 mt-16 flex items-center justify-between">
+          <SectionTitle>
+            Các thương hiệu hàng đầu <br /> mà bạn không thể bỏ lỡ!
+          </SectionTitle>
+          <Link
+            href={"/workspace-owner"}
+            className="flex items-center gap-2 font-semibold md:text-base text-primary cursor-pointer hover:underline hover:text-secondary transition-colors duration-300"
+          >
+            <Search />
+            <span>Xem tất cả</span>
+          </Link>
+        </div>
+
+        <HotWorkspaceOwner />
 
         <div className="mt-20 mb-16">
           <AnimatedGradientSection

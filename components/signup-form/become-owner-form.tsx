@@ -34,9 +34,9 @@ export default function BecomeOwnerForm({ onClose }: { onClose: () => void }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: data.email,
-          phone: data.phone,
-          password: data.password,
+          email: data.email.trim(),
+          phone: data.phone.trim(),
+          password: data.password.trim(),
         }),
       });
 
