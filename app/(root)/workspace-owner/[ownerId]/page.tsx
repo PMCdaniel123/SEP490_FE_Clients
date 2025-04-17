@@ -89,7 +89,7 @@ function WorkspaceOwnerDetail() {
           error instanceof Error ? error.message : "Đã xảy ra lỗi!";
         toast.error(errorMessage, {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -159,7 +159,7 @@ function WorkspaceOwnerDetail() {
           error instanceof Error ? error.message : "Đã xảy ra lỗi!";
         toast.error(errorMessage, {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -323,7 +323,7 @@ function WorkspaceOwnerDetail() {
     applyFilters(searchQuery, category, priceRange, areaRange, capacityRange);
   };
 
-  if (workspaces.length === 0) {
+  if (!loading && workspaces.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-6 py-12 text-center">
         <img src="/404.png" alt="No data" className="w-96 mx-auto mt-6" />
@@ -389,7 +389,7 @@ function WorkspaceOwnerDetail() {
               className="relative h-32 w-32 rounded-full ring-4 ring-white overflow-hidden shadow-lg p-0"
             >
               <Image
-                src={ownerData?.avatar || "/logo.png"}
+                src={ownerData?.avatar || "/owner_icon.png"}
                 alt="Avatar"
                 fill
                 className="object-cover bg-primary/10"
@@ -405,7 +405,7 @@ function WorkspaceOwnerDetail() {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <AnimatedText
-              text={ownerData?.licenseName || "Doanh nghiệp"}
+              text={ownerData?.licenseName || "Thương hiệu"}
               animation="fade"
               className="text-2xl font-bold text-fourth"
               delay={0.4}
@@ -417,7 +417,7 @@ function WorkspaceOwnerDetail() {
                 transition={{ type: "spring", stiffness: 120, delay: 0.5 }}
               >
                 <Badge className="bg-secondary/80 hover:bg-secondary text-white">
-                  Chủ doanh nghiệp
+                  Thương hiệu
                 </Badge>
               </motion.div>
               {ownerData?.licenseAddress && (
@@ -446,7 +446,7 @@ function WorkspaceOwnerDetail() {
               <button
                 key={category}
                 onClick={() => handleCategoryChange(category)}
-                className={`text-sm md:text-base font-medium transition-all duration-200 hover:text-black hover:border-b-2 hover:border-primary py-2 ${
+                className={`text-sm md:text-base font-medium transition-all duration-200 hover:text-primary hover:border-b-2 hover:border-primary py-2 ${
                   selectedCategory === category
                     ? "border-b-2 border-primary text-primary font-semibold"
                     : "text-gray-600"

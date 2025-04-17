@@ -45,7 +45,7 @@ export const validatePhone = createAsyncThunk<
     if (!response.ok) {
       toast.error("Số điện thoại không hợp lệ!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -56,7 +56,7 @@ export const validatePhone = createAsyncThunk<
     if (result.toLowerCase().includes("không tìm thấy")) {
       toast.error("Số điện thoại không hợp lệ!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -84,7 +84,7 @@ export const validateEmail = createAsyncThunk<
     if (!response.ok) {
       toast.error("Email không hợp lệ!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -95,7 +95,7 @@ export const validateEmail = createAsyncThunk<
     if (result.toLowerCase().includes("không tìm thấy")) {
       toast.error("Email không hợp lệ!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });

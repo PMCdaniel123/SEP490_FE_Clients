@@ -24,7 +24,7 @@ function ForgotPasswordForm({
     if (!email) {
       toast.error("Vui lòng nhập email!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -48,7 +48,7 @@ function ForgotPasswordForm({
       if (result.notification === "Tài khoản không tồn tại") {
         toast.error("Tài khoản không tồn tại.", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -59,7 +59,7 @@ function ForgotPasswordForm({
       if (!response.ok) {
         toast.error("Email không tồn tại hoặc có lỗi xảy ra.", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -69,7 +69,7 @@ function ForgotPasswordForm({
       // Only proceed if response is OK
       toast.success("Vui lòng kiểm tra email để lấy mã xác nhận!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -81,7 +81,7 @@ function ForgotPasswordForm({
       console.log(error);
       toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });

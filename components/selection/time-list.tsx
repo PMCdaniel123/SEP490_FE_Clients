@@ -62,7 +62,7 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
           error instanceof Error ? error.message : "Đã xảy ra lỗi!";
         toast.error(errorMessage, {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });

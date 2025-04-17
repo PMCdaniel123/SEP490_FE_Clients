@@ -95,7 +95,7 @@ export default function NotificationPage() {
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -129,7 +129,7 @@ export default function NotificationPage() {
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -145,7 +145,7 @@ export default function NotificationPage() {
     if (unreadNotifications.length === 0) {
       toast.info("Không có thông báo nào để đánh dấu đã đọc", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
       });
       return;
     }
@@ -187,7 +187,7 @@ export default function NotificationPage() {
 
       toast.success("Tất cả thông báo đã được đánh dấu là đã đọc", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
       });
     } catch (error) {
       const errorMessage =
@@ -196,7 +196,7 @@ export default function NotificationPage() {
           : "Đã xảy ra lỗi khi đánh dấu thông báo!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
       });
 
       // Revert to previous state if there was an error

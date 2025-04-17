@@ -98,7 +98,7 @@ export default function Checkout() {
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -134,7 +134,7 @@ export default function Checkout() {
           error instanceof Error ? error.message : "Đã xảy ra lỗi!";
         toast.error(errorMessage, {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -217,7 +217,7 @@ export default function Checkout() {
       if (paymentMethod === "2") {
         toast.success("Thanh toán thành công bằng WorkHive Wallet!", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -237,7 +237,7 @@ export default function Checkout() {
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });

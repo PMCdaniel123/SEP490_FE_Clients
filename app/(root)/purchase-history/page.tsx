@@ -224,7 +224,7 @@ export default function PurchaseHistoryPage() {
       console.log(data);
       toast.success("Hủy đơn đặt chỗ thành công!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -250,7 +250,7 @@ export default function PurchaseHistoryPage() {
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });

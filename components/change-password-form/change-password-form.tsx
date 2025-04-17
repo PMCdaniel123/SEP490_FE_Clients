@@ -47,9 +47,9 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
 
   const onSubmit = async (data: z.infer<typeof changePasswordSchema>) => {
     if (!customer) {
-      toast.error("User not authenticated", {
+      toast.error("Người dùng không có quyền truy cập.", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -78,7 +78,7 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
 
       toast.success("Cập nhật mật khẩu thành công!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -95,7 +95,7 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });

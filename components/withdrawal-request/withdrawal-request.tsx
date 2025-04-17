@@ -69,7 +69,7 @@ const WithdrawalRequest = ({
         console.error("Error fetching withdrawal requests:", error);
         toast.error("Không thể tải lịch sử yêu cầu rút tiền", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });

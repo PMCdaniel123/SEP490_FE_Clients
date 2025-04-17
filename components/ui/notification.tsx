@@ -143,7 +143,7 @@ const Notification = ({ customer }: { customer: Customer }) => {
             : "Có lỗi xảy ra khi tải thông báo!";
         toast.error(errorMessage, {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -182,7 +182,7 @@ const Notification = ({ customer }: { customer: Customer }) => {
           : "Có lỗi xảy ra khi đánh dấu thông báo đã đọc!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -224,7 +224,7 @@ const Notification = ({ customer }: { customer: Customer }) => {
 
       toast.success("Tất cả thông báo đã được đánh dấu là đã đọc", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -235,7 +235,7 @@ const Notification = ({ customer }: { customer: Customer }) => {
           : "Có lỗi xảy ra khi đánh dấu tất cả thông báo đã đọc!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });

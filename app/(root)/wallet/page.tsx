@@ -85,7 +85,7 @@ const WalletPage = () => {
       } catch {
         toast.error("Có lỗi xảy ra khi tải số dư ví.", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -141,7 +141,7 @@ const WalletPage = () => {
       } catch {
         toast.error("Có lỗi xảy ra khi tải lịch sử giao dịch.", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -190,7 +190,7 @@ const WalletPage = () => {
       setError("Số tiền nạp phải lớn hơn 1000 đ.");
       toast.error("Số tiền nạp phải lớn hơn 1000 đ.", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -246,7 +246,7 @@ const WalletPage = () => {
     } catch {
       toast.error("Có lỗi xảy ra khi nạp tiền.", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });

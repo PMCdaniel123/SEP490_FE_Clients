@@ -81,7 +81,7 @@ function ResetPasswordForm({
       if (!response.ok) {
         toast.error("Token không chính xác hoặc đã hết hạn.", {
           position: "top-right",
-          autoClose: 2000,
+          autoClose: 1500,
           hideProgressBar: false,
           theme: "light",
         });
@@ -89,7 +89,7 @@ function ResetPasswordForm({
       }
       toast.success("Đặt lại mật khẩu thành công!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -99,7 +99,7 @@ function ResetPasswordForm({
       console.log(error);
       toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
