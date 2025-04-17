@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
 import { BASE_URL } from "@/constants/environments";
 import Loader from "@/components/loader/Loader";
-import { Search } from "lucide-react";
+import { InfoIcon, Search } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spin } from "antd";
 
 interface BankInformationFormProps {
   customerId?: number;
@@ -53,9 +54,10 @@ const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
   const [banksFetching, setBanksFetching] = useState(false);
   const [bankSearchValue, setBankSearchValue] = useState("");
   const [bankDropdownOpen, setBankDropdownOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
-    // Fetch banks from API
+    // Fetch banks API
     const fetchBanks = async () => {
       setBanksFetching(true);
       try {
@@ -84,42 +86,6 @@ const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
   }, []);
 
   useEffect(() => {
-    if (!customerId) return;
-
-    const fetchBankInfo = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(
-          `${BASE_URL}/users/wallet/getcustomerwalletinformation/${customerId}`
-        );
-
-        if (!response.ok) {
-          if (response.status !== 404) {
-            throw new Error("Failed to fetch bank information");
-          }
-          // If 404, we just continue with empty state (user has no bank info yet)
-          return;
-        }
-
-        const data = await response.json();
-        if (data) {
-          setBankInfo({
-            bankName: data.bankName || "",
-            bankNumber: data.bankNumber || "",
-            bankAccountName: data.bankAccountName || "",
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching bank info:", error);
-        toast.error("Có lỗi xảy ra khi tải thông tin ngân hàng", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchBankInfo();
   }, [customerId]);
 
@@ -164,7 +130,7 @@ const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
       return;
     }
 
-    // Simple validation
+    //validation
     if (
       !bankInfo.bankName ||
       !bankInfo.bankNumber ||
@@ -201,16 +167,61 @@ const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
 
       toast.success("Cập nhật thông tin ngân hàng thành công", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 2000,
       });
+      setIsEditMode(false);
+      // Refresh bank information after successful update
+      // window.location.reload();
     } catch (error) {
       console.error("Error updating bank info:", error);
       toast.error("Có lỗi xảy ra khi cập nhật thông tin ngân hàng", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 2000,
       });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const toggleEditMode = () => {
+    setIsEditMode(!isEditMode);
+    if (isEditMode) {
+      fetchBankInfo();
+    }
+  };
+
+  const fetchBankInfo = async () => {
+    if (!customerId) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${BASE_URL}/users/wallet/getcustomerwalletinformation/${customerId}`
+      );
+
+      if (!response.ok) {
+        if (response.status !== 404) {
+          throw new Error("Failed to fetch bank information");
+        }
+        return;
+      }
+
+      const data = await response.json();
+      if (data) {
+        setBankInfo({
+          bankName: data.bankName || "",
+          bankNumber: data.bankNumber || "",
+          bankAccountName: data.bankAccountName || "",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching bank info:", error);
+      toast.error("Có lỗi xảy ra khi tải thông tin ngân hàng", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -218,6 +229,95 @@ const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
     return (
       <div className="flex justify-center items-center py-10">
         <Loader />
+      </div>
+    );
+  }
+
+  // View mode display of bank information
+  if (!isEditMode && bankInfo.bankName && bankInfo.bankNumber) {
+    return (
+      <div className="space-y-6">
+        <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-medium text-primary">
+              Thông tin ngân hàng
+            </h3>
+            <Button
+              type="button"
+              onClick={toggleEditMode}
+              variant="outline"
+              className="px-3 py-1 h-8 text-sm"
+            >
+              Chỉnh sửa
+            </Button>
+          </div>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 gap-2">
+              <div className="flex flex-col">
+                <span className="text-sm text-gray-500">Tên ngân hàng</span>
+                <div className="flex items-center gap-2 mt-1">
+                  {banks.find((b) => b.name === bankInfo.bankName)?.logo && (
+                    <img
+                      src={
+                        banks.find((b) => b.name === bankInfo.bankName)?.logo
+                      }
+                      alt={bankInfo.bankName}
+                      className="w-5 h-5 object-contain"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                  )}
+                  <span className="font-medium">{bankInfo.bankName}</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col mt-3">
+                <span className="text-sm text-gray-500">Số tài khoản</span>
+                <span className="font-medium mt-1">{bankInfo.bankNumber}</span>
+              </div>
+
+              <div className="flex flex-col mt-3">
+                <span className="text-sm text-gray-500">Tên chủ tài khoản</span>
+                <span className="font-medium mt-1">
+                  {bankInfo.bankAccountName}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-secondary border border-third rounded-lg p-4 text-sm text-white">
+          <div className="flex items-start">
+            <div className="flex-shrink-0 pt-0.5">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-white"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="font-medium mb-1">Thông tin quan trọng</h3>
+              <p>
+                Thông tin ngân hàng của bạn sẽ được sử dụng trong các trường hợp
+                rút tiền về Tài khoản ngân hàng. Vui lòng đảm bảo thông tin
+                chính xác.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -367,38 +467,28 @@ const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
         </div>
       </div>
 
-      <div className="pt-4">
+      <div className="pt-4 flex gap-4 justify-end">
+        <Button
+          type="button"
+          onClick={toggleEditMode}
+          variant="outline"
+          className="text-gray-700"
+          disabled={isSaving}
+        >
+          Hủy
+        </Button>
         <Button
           type="submit"
-          className="w-full bg-primary hover:bg-primary/90 text-white"
+          className="bg-primary hover:bg-primary/90 text-white"
           disabled={isSaving}
         >
           {isSaving ? (
             <span className="flex items-center">
-              <svg
-                className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
+              <Spin size="small" className="mr-2" style={{ color: "white" }} />
               Đang lưu...
             </span>
           ) : (
-            "Cập nhật thông tin ngân hàng"
+            "Lưu thay đổi"
           )}
         </Button>
       </div>
@@ -406,22 +496,7 @@ const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
       <div className="bg-secondary border border-third rounded-lg p-4 text-sm text-white mt-6">
         <div className="flex items-start">
           <div className="flex-shrink-0 pt-0.5">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-white"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 16v-4" />
-              <path d="M12 8h.01" />
-            </svg>
+            <InfoIcon className="text-white" size={20} />
           </div>
           <div className="ml-3">
             <h3 className="font-medium mb-1">Thông tin quan trọng</h3>

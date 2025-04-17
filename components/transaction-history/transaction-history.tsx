@@ -56,6 +56,8 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                         <ArrowUpCircle className="text-green-500" />
                       ) : tx.type === "Hoàn tiền" ? (
                         <ArrowUpCircle className="text-yellow-500" />
+                      ) : tx.type === "Rút tiền" ? (
+                        <ArrowDownCircle className="text-blue-500" />
                       ) : (
                         <ArrowDownCircle className="text-red-500" />
                       )}
@@ -83,6 +85,8 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({
                           ? "text-green-500"
                           : tx.status === "Hoàn tiền"
                           ? "text-yellow-500"
+                          : tx.status === "Withdraw Success"
+                          ? "text-blue-500"
                           : "text-red-500"
                       }`}
                     >

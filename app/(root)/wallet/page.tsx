@@ -1,7 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowUp, ArrowDown, Wallet, History, CreditCard } from "lucide-react";
+import {
+  ArrowUp,
+  ArrowDown,
+  Wallet,
+  History,
+  CreditCard,
+  LockIcon,
+  AlertTriangle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -54,6 +62,7 @@ const WalletPage = () => {
     bankAccountName: string;
   } | null>(null);
   const [activeTab, setActiveTab] = useState("deposit");
+  const [isWalletLocked, setIsWalletLocked] = useState(false);
 
   const predefinedAmounts = [100000, 200000, 500000, 1000000];
 
@@ -110,6 +119,8 @@ const WalletPage = () => {
                 ? "Thanh toán"
                 : tx.description.toLowerCase().includes("hoàn")
                 ? "Hoàn tiền"
+                : tx.description.toLowerCase().includes("rút")
+                ? "Rút tiền"
                 : "Nạp tiền",
               amount: tx.amount,
               date: tx.created_At,
@@ -119,7 +130,9 @@ const WalletPage = () => {
                 tx.status === "PAID"
                   ? "Hoàn thành"
                   : tx.status === "REFUND"
-                  ? "Hoàn tiền"
+                  ? "Hoàn thành"
+                  : tx.status === "Withdraw Success"
+                  ? "Hoàn thành"
                   : "Thất bại",
             };
           }
@@ -145,6 +158,7 @@ const WalletPage = () => {
             throw new Error("Failed to fetch bank information");
           }
           setBankInfo(null);
+          setIsWalletLocked(false); // Reset lock
           return;
         }
         const data = await response.json();
@@ -153,9 +167,16 @@ const WalletPage = () => {
           bankNumber: data.bankNumber || "",
           bankAccountName: data.bankAccountName || "",
         });
+
+        if (data && data.isLock === 1) {
+          setIsWalletLocked(true);
+        } else {
+          setIsWalletLocked(false);
+        }
       } catch (error) {
         console.error("Error fetching bank info:", error);
         setBankInfo(null);
+        setIsWalletLocked(false);
       }
     };
 
@@ -263,26 +284,47 @@ const WalletPage = () => {
   };
 
   const handleWithdrawalSuccess = () => {
-    // Refresh balance after successful withdrawal request
+    // Refresh balance and wallet information after successful withdrawal request
     if (!customer?.id) return;
 
-    const fetchBalance = async () => {
+    const refreshWalletData = async () => {
       try {
-        const response = await fetch(
+        // Fetch balance
+        const balanceResponse = await fetch(
           `${BASE_URL}/users/wallet/getamountwalletbyuserid?UserId=${customer.id}`
         );
-        if (response.ok) {
-          const data = await response.json();
+        if (balanceResponse.ok) {
+          const data = await balanceResponse.json();
           const formatted =
             data === null || data === undefined ? "0" : data.amount;
           setBalance(formatted);
         }
+
+        // Fetch wallet information including lock status
+        const walletInfoResponse = await fetch(
+          `${BASE_URL}/users/wallet/getcustomerwalletinformation/${customer.id}`
+        );
+        if (walletInfoResponse.ok) {
+          const data = await walletInfoResponse.json();
+          setBankInfo({
+            bankName: data.bankName || "",
+            bankNumber: data.bankNumber || "",
+            bankAccountName: data.bankAccountName || "",
+          });
+
+          // Update wallet lock status
+          if (data && data.isLock === 1) {
+            setIsWalletLocked(true);
+          } else {
+            setIsWalletLocked(false);
+          }
+        }
       } catch (error) {
-        console.error("Error refreshing balance:", error);
+        console.error("Error refreshing wallet data:", error);
       }
     };
 
-    fetchBalance();
+    refreshWalletData();
   };
 
   return (
@@ -337,6 +379,13 @@ const WalletPage = () => {
             </CardContent>
           </Card>
 
+          {isWalletLocked && (
+            <div className="mb-6 p-4 bg-yellow-100 text-yellow-700 rounded-lg flex items-center gap-2">
+              <AlertTriangle size={20} />
+              <span>Ví của bạn đang bị khóa.</span>
+            </div>
+          )}
+
           <Tabs
             defaultValue="deposit"
             value={activeTab}
@@ -382,78 +431,109 @@ const WalletPage = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
-                  <div className="mb-4 space-y-6">
-                    <div>
-                      <p className="text-sm font-medium text-gray-700 mb-3">
-                        Chọn số tiền
-                      </p>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                        {predefinedAmounts.map((preAmount) => (
-                          <Button
-                            key={preAmount}
-                            variant={
-                              rawAmount === preAmount ? "default" : "outline"
-                            }
-                            className={`
-                              ${
-                                rawAmount === preAmount
-                                  ? "bg-primary text-white shadow-md transform scale-105"
-                                  : "hover:border-primary/50 hover:text-primary"
-                              }
-                              transition-all duration-200 border-2 h-14
-                            `}
-                            onClick={() => selectPredefinedAmount(preAmount)}
-                          >
-                            {formatCurrency(preAmount)}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="border-t border-gray-100 pt-6">
-                      <p className="text-sm font-medium text-gray-700 mb-3">
-                        Hoặc nhập số tiền khác
-                      </p>
-                      <div className="flex gap-3 items-stretch">
-                        <div className="flex-1 relative">
-                          <Input
-                            type="text"
-                            placeholder="Nhập số tiền"
-                            value={amount}
-                            onChange={handleAmountChange}
-                            className="text-lg h-12 pr-16"
-                          />
+                  {isWalletLocked ? (
+                    <div className="py-8">
+                      <div className="flex flex-col items-center justify-center text-center space-y-4">
+                        <div className="p-3 bg-red-100 rounded-full">
+                          <LockIcon size={36} className="text-red-500" />
                         </div>
+                        <h3 className="text-xl font-semibold text-gray-800">
+                          Ví của bạn đang bị khóa
+                        </h3>
+                        <p className="text-gray-600 max-w-md">
+                          Ví của bạn hiện đang bị khóa do có yêu cầu rút tiền
+                          đang xử lý. Bạn không thể nạp tiền trong thời gian
+                          này.
+                        </p>
+                        <p className="text-gray-600 text-sm italic">
+                          Vui lòng liên hệ hỗ trợ hoặc đợi đến khi yêu cầu rút
+                          tiền của bạn được xử lý.
+                        </p>
                         <Button
-                          className="min-w-[120px] h-12 bg-primary hover:bg-primary/90 text-white shadow-sm hover:shadow transition-all"
-                          onClick={handleDeposit}
+                          className="bg-primary hover:bg-primary/90 text-white mt-2"
+                          onClick={() => setIsHelpModalOpen(true)}
                         >
-                          <ArrowUp size={16} className="mr-2" />
-                          Tiếp tục
+                          Liên hệ hỗ trợ
                         </Button>
                       </div>
-                      {error && (
-                        <p className="text-red-500 mt-2 text-sm flex items-center gap-1">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="12"></line>
-                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                          </svg>
-                          {error}
-                        </p>
-                      )}
                     </div>
-                  </div>
+                  ) : (
+                    <div className="mb-4 space-y-6">
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 mb-3">
+                          Chọn số tiền
+                        </p>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                          {predefinedAmounts.map((preAmount) => (
+                            <Button
+                              key={preAmount}
+                              variant={
+                                rawAmount === preAmount ? "default" : "outline"
+                              }
+                              className={`
+                                ${
+                                  rawAmount === preAmount
+                                    ? "bg-primary text-white shadow-md transform scale-105"
+                                    : "hover:border-primary/50 hover:text-primary"
+                                }
+                                transition-all duration-200 border-2 h-14
+                              `}
+                              onClick={() => selectPredefinedAmount(preAmount)}
+                              disabled={isWalletLocked}
+                            >
+                              {formatCurrency(preAmount)}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="border-t border-gray-100 pt-6">
+                        <p className="text-sm font-medium text-gray-700 mb-3">
+                          Hoặc nhập số tiền khác
+                        </p>
+                        <div className="flex gap-3 items-stretch">
+                          <div className="flex-1 relative">
+                            <Input
+                              type="text"
+                              placeholder="Nhập số tiền"
+                              value={amount}
+                              onChange={handleAmountChange}
+                              className="text-lg h-12 pr-16"
+                              disabled={isWalletLocked}
+                            />
+                          </div>
+                          <Button
+                            className="min-w-[120px] h-12 bg-primary hover:bg-primary/90 text-white shadow-sm hover:shadow transition-all"
+                            onClick={handleDeposit}
+                            disabled={isWalletLocked}
+                          >
+                            <ArrowUp size={16} className="mr-2" />
+                            Tiếp tục
+                          </Button>
+                        </div>
+                        {error && (
+                          <p className="text-red-500 mt-2 text-sm flex items-center gap-1">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <line x1="12" y1="8" x2="12" y2="12"></line>
+                              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            {error}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -506,6 +586,13 @@ const WalletPage = () => {
                       >
                         <ArrowUp size={12} className="text-yellow-500" />
                         Hoàn tiền
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className="flex items-center gap-1 border-blue-500 text-blue-700 bg-blue-50"
+                      >
+                        <ArrowDown size={12} className="text-blue-500" />
+                        Rút tiền
                       </Badge>
                       <Badge
                         variant="outline"

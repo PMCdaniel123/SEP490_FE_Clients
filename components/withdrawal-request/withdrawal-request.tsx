@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowDown, DollarSign, CreditCard } from "lucide-react";
+import { ArrowDown, DollarSign, CreditCard, InfoIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -59,7 +59,11 @@ const WithdrawalRequest = ({
         }
         const data = await response.json();
         if (data && data.customerWithdrawalRequests) {
-          setWithdrawalRequests(data.customerWithdrawalRequests);
+          const sortedRequests = [...data.customerWithdrawalRequests].sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          setWithdrawalRequests(sortedRequests);
         }
       } catch (error) {
         console.error("Error fetching withdrawal requests:", error);
@@ -77,8 +81,67 @@ const WithdrawalRequest = ({
     fetchWithdrawalRequests();
   }, [customerId]);
 
+  // Make fetchWithdrawalRequests available outside the useEffect
+  const fetchWithdrawalRequests = async () => {
+    if (!customerId) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${BASE_URL}/users/customerwithdrawalrequests/${customerId}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch withdrawal requests");
+      }
+      const data = await response.json();
+      if (data && data.customerWithdrawalRequests) {
+        const sortedRequests = [...data.customerWithdrawalRequests].sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setWithdrawalRequests(sortedRequests);
+      }
+    } catch (error) {
+      console.error("Error fetching withdrawal requests:", error);
+      toast.error("Không thể tải lịch sử yêu cầu rút tiền", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handling request check
+  const hasActiveHandlingRequest = () => {
+    if (!withdrawalRequests.length) return false;
+    const handlingRequests = withdrawalRequests.filter(
+      (request) => request.status === "Handling"
+    );
+
+    if (handlingRequests.length === 0) return false;
+    const now = new Date();
+    return handlingRequests.some((request) => {
+      const createdAt = new Date(request.createdAt);
+      const hoursDifference =
+        (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
+      return hoursDifference < 24;
+    });
+  };
+
   const handleWithdraw = () => {
-    // Check if bank information is available
+    if (Number(balance) <= 0) {
+      toast.error("Số dư của bạn phải lớn hơn 0 để có thể rút tiền", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        theme: "light",
+      });
+      return;
+    }
+
     if (
       !bankInfo ||
       !bankInfo.bankName ||
@@ -87,21 +150,23 @@ const WithdrawalRequest = ({
     ) {
       toast.error("Vui lòng cập nhật thông tin ngân hàng trước khi rút tiền", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 2000,
         hideProgressBar: false,
         theme: "light",
       });
       return;
     }
 
-    // Check minimum balance for withdrawal
-    if (Number(balance) < 50000) {
-      toast.error("Số dư ví tối thiểu để rút tiền là 50,000 đ", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        theme: "light",
-      });
+    if (hasActiveHandlingRequest()) {
+      toast.error(
+        "Bạn đã có một yêu cầu rút tiền đang xử lý. Vui lòng chờ sau 24 giờ hoặc đợi yêu cầu hiện tại được hoàn thành",
+        {
+          position: "top-right",
+          autoClose: 2000,
+          hideProgressBar: false,
+          theme: "light",
+        }
+      );
       return;
     }
 
@@ -130,28 +195,21 @@ const WithdrawalRequest = ({
 
       toast.success("Yêu cầu rút tiền đã được gửi thành công", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 2000,
         hideProgressBar: false,
         theme: "light",
       });
 
-      // Update withdrawal requests list
-      const updatedResponse = await fetch(
-        `${BASE_URL}/users/customerwithdrawalrequests/${customerId}`
-      );
-      if (updatedResponse.ok) {
-        const data = await updatedResponse.json();
-        if (data && data.customerWithdrawalRequests) {
-          setWithdrawalRequests(data.customerWithdrawalRequests);
-        }
-      }
+      // Update withdrawal requests list using our extracted function
+      await fetchWithdrawalRequests();
 
+      // Close the modal and trigger callbacks
       setIsWithdrawModalOpen(false);
       onWithdrawalSuccess();
     } catch {
       toast.error("Có lỗi xảy ra khi gửi yêu cầu rút tiền.", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 2000,
         hideProgressBar: false,
         theme: "light",
       });
@@ -232,20 +290,20 @@ const WithdrawalRequest = ({
                         "bg-yellow-100 text-yellow-800 border-yellow-200"
                       }
                       ${
-                        request.status === "Done" &&
+                        request.status === "Success" &&
                         "bg-green-100 text-green-800 border-green-200"
                       }
                       ${
-                        request.status === "Rejected" &&
+                        request.status === "Fail" &&
                         "bg-red-100 text-red-800 border-red-200"
                       }
                     `}
                   >
                     {request.status === "Handling"
                       ? "Đang xử lý"
-                      : request.status === "Done"
+                      : request.status === "Success"
                       ? "Đã hoàn thành"
-                      : request.status === "Rejected"
+                      : request.status === "Fail"
                       ? "Đã từ chối"
                       : request.status}
                   </Badge>
@@ -257,7 +315,8 @@ const WithdrawalRequest = ({
                   Ngày tạo: {formatDate(request.createdAt)}
                 </div>
                 {request.managerResponse &&
-                  request.managerResponse !== "N/A" && (
+                  request.managerResponse !== "N/A" &&
+                  request.status === "Fail" && (
                     <div className="mt-2 bg-gray-50 p-2 rounded border border-gray-100">
                       <p className="text-xs text-gray-400">Phản hồi:</p>
                       <p className="text-sm">{request.managerResponse}</p>
@@ -394,27 +453,13 @@ const WithdrawalRequest = ({
 
             <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
               <p className="text-center text-sm text-yellow-700 flex items-center justify-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-info"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 16v-4" />
-                  <path d="M12 8h.01" />
-                </svg>
+                <InfoIcon className="h-5 w-5" />
                 Yêu cầu rút tiền của bạn sẽ được xử lý trong vòng 24 giờ làm
                 việc
               </p>
             </div>
           </div>
+
           <DialogFooter className="flex gap-2 border-t pt-4">
             <Button
               className="flex-1 bg-primary text-white hover:bg-primary/90"
