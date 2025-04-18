@@ -382,7 +382,7 @@ export default function PurchaseHistoryPage() {
                             ...(dayjs(tx.booking_StartDate).diff(
                               dayjs(),
                               "hour"
-                            ) > 0
+                            ) >= 8
                               ? [
                                   {
                                     key: "cancel",
