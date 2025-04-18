@@ -323,7 +323,7 @@ function WorkspaceOwnerDetail() {
     applyFilters(searchQuery, category, priceRange, areaRange, capacityRange);
   };
 
-  if (!loading && workspaces.length === 0) {
+  if (!loading && !ownerData) {
     return (
       <div className="max-w-7xl mx-auto px-6 py-12 text-center">
         <img src="/404.png" alt="No data" className="w-96 mx-auto mt-6" />

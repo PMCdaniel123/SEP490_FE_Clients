@@ -190,7 +190,7 @@ function Header() {
             }`}
           ></span>
 
-          <ul className="absolute top-full p-2 mt-2 md:min-w-[400px] bg-white shadow-lg rounded-lg opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-2 transition-all duration-300 z-50 border">
+          <ul className="absolute top-full p-2 mt-2 md:min-w-[400px] bg-white shadow-lg rounded-lg opacity-0 hidden group-hover:block group-hover:opacity-100 group-hover:translate-y-0 translate-y-2 transition-all duration-300 z-50 border">
             <li
               className={`flex items-center gap-4 p-3 rounded-lg bg-white text-gray-700 md:min-w-[400px] ${
                 pathname === "/workspace"
