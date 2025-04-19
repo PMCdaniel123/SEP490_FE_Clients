@@ -12,7 +12,7 @@ import { CardContent } from "@/components/ui/card-content";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { BASE_URL } from "@/constants/environments";
-import { OwnerProps, Promotion } from "@/types";
+import { HotWorkspaceOwnerProps, Promotion } from "@/types";
 import { ConfigProvider, Slider } from "antd";
 import {
   Calendar,
@@ -22,6 +22,9 @@ import {
   Users,
   X,
   GiftIcon,
+  Star,
+  CalendarCheck,
+  Building2,
 } from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
@@ -54,7 +57,18 @@ function WorkspaceOwnerDetail() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
-  const [ownerData, setOwnerData] = useState<OwnerProps | null>(null);
+  const [ownerData, setOwnerData] = useState<HotWorkspaceOwnerProps | null>({
+    workspaceOwnerId: 0,
+    phone: "",
+    email: "",
+    googleMapUrl: "",
+    licenseName: "",
+    licenseAddress: "",
+    avatar: "",
+    rateAverage: 0,
+    numberOfBooking: 0,
+    numberOfWorkspace: 0,
+  });
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     "Tất cả"
   );
@@ -82,7 +96,24 @@ function WorkspaceOwnerDetail() {
         }
 
         const data = await response.json();
-        setOwnerData(data.owner);
+
+        const ownerDataResponse = await fetch(
+          `${BASE_URL}/users/searchbyownername?OwnerName=${data.owner.licenseName}`
+        );
+
+        if (!ownerDataResponse.ok) {
+          throw new Error("Có lỗi xảy ra khi tải thông tin chủ doanh nghiệp.");
+        }
+
+        const ownerDataJson = await ownerDataResponse.json();
+
+        const formatted =
+          ownerDataJson.workspaceOwnerByOwnerNameDTOs === null ||
+          ownerDataJson.workspaceOwnerByOwnerNameDTOs === undefined
+            ? null
+            : ownerDataJson.workspaceOwnerByOwnerNameDTOs[0];
+
+        setOwnerData(formatted);
         setLoading(false);
       } catch (error) {
         const errorMessage =
@@ -93,6 +124,7 @@ function WorkspaceOwnerDetail() {
           hideProgressBar: false,
           theme: "light",
         });
+        setOwnerData(null);
         setLoading(false);
       }
     };
@@ -386,7 +418,7 @@ function WorkspaceOwnerDetail() {
             <FloatingCard
               intensity={10}
               glareIntensity={0.2}
-              className="relative h-32 w-32 rounded-full ring-4 ring-white overflow-hidden shadow-lg p-0"
+              className="relative w-32 h-32 lg:h-48 lg:w-48 rounded-full ring-4 ring-white overflow-hidden shadow-lg p-0"
             >
               <Image
                 src={ownerData?.avatar || "/owner_icon.png"}
@@ -399,7 +431,7 @@ function WorkspaceOwnerDetail() {
 
           {/* Name & Info */}
           <motion.div
-            className="ml-40 pt-4"
+            className="ml-0 lg:ml-60 pt-24 lg:pt-4"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -407,16 +439,16 @@ function WorkspaceOwnerDetail() {
             <AnimatedText
               text={ownerData?.licenseName || "Thương hiệu"}
               animation="fade"
-              className="text-2xl font-bold text-fourth"
+              className="text-xl md:text-2xl font-bold text-fourth"
               delay={0.4}
             />
-            <div className="flex items-center gap-2 text-sm text-fifth">
+            <div className="flex md:flex-row flex-col md:items-center gap-2 text-sm text-fifth">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 120, delay: 0.5 }}
               >
-                <Badge className="bg-secondary/80 hover:bg-secondary text-white">
+                <Badge className="bg-secondary/80 hover:bg-secondary text-white text-xs">
                   Thương hiệu
                 </Badge>
               </motion.div>
@@ -427,11 +459,38 @@ function WorkspaceOwnerDetail() {
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.4, delay: 0.6 }}
                 >
-                  <span className="truncate max-w-md">
-                    {ownerData.licenseAddress}
-                  </span>
+                  <span>{ownerData.licenseAddress}</span>
                 </motion.p>
               )}
+            </div>
+            <div className="grid grid-cols-3 gap-2 mt-2 md:w-1/2">
+              <div className="flex flex-col gap-2 items-center rounded-xl border-2 text-fourth text-sm px-2 py-4">
+                <span className="flex items-center gap-2 justify-center font-medium text-base">
+                  <Star size={20} className="text-primary" />{" "}
+                  {ownerData?.rateAverage || 0}
+                </span>
+                <span className="flex items-center gap-2 justify-center font-medium text-sm">
+                  sao
+                </span>
+              </div>
+              <div className="flex flex-col gap-2 items-center rounded-xl border-2 text-fourth text-sm px-2 py-4">
+                <span className="flex items-center gap-2 justify-center font-medium text-base">
+                  <CalendarCheck size={20} className="text-primary" />{" "}
+                  {ownerData?.numberOfBooking || 0}
+                </span>
+                <span className="flex items-center gap-2 justify-center font-medium text-sm">
+                  lượt đặt
+                </span>
+              </div>
+              <div className="flex flex-col gap-2 items-center rounded-xl border-2 text-fourth text-sm px-2 py-4">
+                <span className="flex items-center gap-2 justify-center font-medium text-base">
+                  <Building2 size={20} className="text-primary" />{" "}
+                  {ownerData?.numberOfWorkspace || 0}
+                </span>
+                <span className="flex items-center gap-2 justify-center font-medium text-sm">
+                  không gian
+                </span>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -732,9 +791,12 @@ function WorkspaceOwnerDetail() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {paginatedWorkspaces.map((workspace) => (
-              <ShinyCard key={workspace.id}>
+              <ShinyCard
+                key={workspace.id}
+                className="transition-transform transform md:hover:scale-105 cursor-pointer"
+              >
                 <div
-                  className="relative overflow-hidden rounded-lg shadow-md transition-transform transform hover:scale-105 cursor-pointer"
+                  className="relative overflow-hidden rounded-lg shadow-md"
                   onClick={() => router.push(`/workspace/${workspace.id}`)}
                 >
                   <div className="relative group">

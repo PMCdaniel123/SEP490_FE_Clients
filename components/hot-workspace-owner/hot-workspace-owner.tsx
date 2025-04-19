@@ -47,14 +47,14 @@ function HotWorkspaceOwner() {
           data.workspaceOwnerByOwnerNameDTOs === undefined
             ? []
             : data.workspaceOwnerByOwnerNameDTOs
-                .filter((item: HotWorkspaceOwnerProps) => item.rateAverage > 4)
-                .sort(
-                  (a: HotWorkspaceOwnerProps, b: HotWorkspaceOwnerProps) =>
-                    b.rateAverage - a.rateAverage
-                )
+                .filter((item: HotWorkspaceOwnerProps) => item.rateAverage >= 4)
                 .sort(
                   (a: HotWorkspaceOwnerProps, b: HotWorkspaceOwnerProps) =>
                     b.numberOfBooking - a.numberOfBooking
+                )
+                .sort(
+                  (a: HotWorkspaceOwnerProps, b: HotWorkspaceOwnerProps) =>
+                    b.rateAverage - a.rateAverage
                 )
                 .slice(0, 5);
         setOwnerList(formattedData);

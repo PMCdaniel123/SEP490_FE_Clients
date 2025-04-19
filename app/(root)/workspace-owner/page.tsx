@@ -23,19 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ConfigProvider, Slider } from "antd";
 import { Input } from "@/components/ui/input";
-
-interface HotWorkspaceOwnerProps {
-  workspaceOwnerId: number;
-  phone: string;
-  email: string;
-  googleMapUrl: string;
-  licenseName: string;
-  licenseAddress: string;
-  avatar: string;
-  rateAverage: number;
-  numberOfBooking: number;
-  numberOfWorkspace: number;
-}
+import { HotWorkspaceOwnerProps } from "@/types";
 
 function OwnerPage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -69,11 +57,11 @@ function OwnerPage() {
             : data.workspaceOwnerByOwnerNameDTOs
                 .sort(
                   (a: HotWorkspaceOwnerProps, b: HotWorkspaceOwnerProps) =>
-                    b.rateAverage - a.rateAverage
+                    b.numberOfBooking - a.numberOfBooking
                 )
                 .sort(
                   (a: HotWorkspaceOwnerProps, b: HotWorkspaceOwnerProps) =>
-                    b.numberOfBooking - a.numberOfBooking
+                    b.rateAverage - a.rateAverage
                 );
         setOwnerList(formattedData);
         setFilterOwnerList(formattedData);

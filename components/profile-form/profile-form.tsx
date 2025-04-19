@@ -231,7 +231,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
                   />
                 ) : (
                   <img
-                    src="/logo.png"
+                    src="/WorkHive.svg"
                     alt="Default Avatar"
                     className="w-full h-full object-cover"
                   />
