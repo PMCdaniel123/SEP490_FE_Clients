@@ -5,119 +5,14 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { toast } from "react-toastify";
-import { BASE_URL } from "@/constants/environments";
 import { notificationEvents } from "@/components/ui/notification";
 
 const SuccessComponent = () => {
-  const order =
-    typeof window !== "undefined" ? localStorage.getItem("order") : null;
-  const searchParams = useSearchParams();
-
-  const updateWalletAmount = async (
-    customerWalletId: string,
-    orderCode: string,
-    amount: string
-  ) => {
-    try {
-      const updateResponse = await fetch(
-        `${BASE_URL}/users/wallet/updatewalletamount`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            customerWalletId,
-            orderCode,
-            amount,
-          }),
-        }
-      );
-
-      if (!updateResponse.ok) {
-        throw new Error("Có lỗi xảy ra khi cập nhật số dư ví.");
-      }
-
-      await updateResponse.json();
-
-      toast.success("Nạp tiền thành công!", {
-        position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        theme: "light",
-      });
-
-      // Trigger notification fetch after successful wallet update
-      const event = new CustomEvent(notificationEvents.BOOKING_SUCCESS);
-      window.dispatchEvent(event);
-
-      localStorage.removeItem("customerWalletId");
-      localStorage.removeItem("orderCode");
-      localStorage.removeItem("amount");
-    } catch (error) {
-      console.error("Error updating wallet amount:", error);
-      toast.error("Có lỗi xảy ra khi cập nhật số dư ví.", {
-        position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        theme: "light",
-      });
-    }
-  };
-
   useEffect(() => {
-    if (order !== null) {
-      const parsedOrder = JSON.parse(order);
-      const updateWorkspaceTimeStatus = async () => {
-        try {
-          const response = await fetch(
-            `${BASE_URL}/users/booking/updatetimestatus`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                bookingId: parsedOrder.bookingId,
-                orderCode: parsedOrder.orderCode,
-              }),
-            }
-          );
-          const data = await response.json();
-          console.log(data);
-
-          // Trigger notification fetch after successful booking status update
-          const event = new CustomEvent(notificationEvents.BOOKING_SUCCESS);
-          window.dispatchEvent(event);
-
-          localStorage.removeItem("order");
-        } catch (error) {
-          console.error("Error updating workspace time status:", error);
-        }
-      };
-
-      updateWorkspaceTimeStatus();
-    }
-
-    const status = searchParams?.get("status");
-    if (status === "PAID") {
-      const customerWalletId = localStorage.getItem("customerWalletId");
-      const orderCode = localStorage.getItem("orderCode");
-      const amount = localStorage.getItem("amount");
-
-      console.log("Retrieved from localStorage:", {
-        customerWalletId,
-        orderCode,
-        amount,
-      });
-
-      if (customerWalletId && orderCode && amount) {
-        updateWalletAmount(customerWalletId, orderCode, amount);
-      }
-    }
-  }, [order, searchParams]);
+    // Trigger notification fetch after successful booking status update
+    const event = new CustomEvent(notificationEvents.BOOKING_SUCCESS);
+    window.dispatchEvent(event);
+  }, []);
 
   return (
     <div className="flex  items-center justify-center min-h-screen bg-gray-100 px-8">
