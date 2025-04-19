@@ -210,3 +210,16 @@ export interface OwnerProps {
   message: string | null;
   avatar: string;
 }
+
+export interface HotWorkspaceOwnerProps {
+  workspaceOwnerId: number;
+  phone: string;
+  email: string;
+  googleMapUrl: string;
+  licenseName: string;
+  licenseAddress: string;
+  avatar: string;
+  rateAverage: number;
+  numberOfBooking: number;
+  numberOfWorkspace: number;
+}

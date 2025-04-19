@@ -329,7 +329,7 @@ const WorkspaceDetail = () => {
 
           {workspace.googleMapUrl && <GoogleMap url={workspace.googleMapUrl} />}
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 px-4">
             <SimilarSpace category={workspace.category} />
           </div>
 

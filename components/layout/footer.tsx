@@ -4,66 +4,116 @@ import Link from "next/link";
 
 function Footer() {
   return (
-    <footer className="bg-seventh">
-      <div className="mx-auto px-4 py-16 sm:px-20">
-        <div className="grid grid-cols-1 sm:grid-cols-6 gap-8">
-          <div className="col-span-1 sm:col-span-2">
-            <h2 className="text-5xl font-extrabold text-primary">WorkHive</h2>
-            <p className="text-fifth text-sm mt-6">
-              Chúng tôi cung cấp một nền tảng sáng tạo để quản lý đặt chỗ, thanh toán và không gian làm việc một cách dễ dàng.
+    <footer className="bg-seventh text-fourth text-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
+          {/* Brand Section */}
+          <div className="space-y-4">
+            <h2 className="text-3xl font-extrabold text-primary">WorkHive</h2>
+            <p className="text-fifth">
+              Chúng tôi cung cấp một nền tảng sáng tạo để quản lý đặt chỗ, thanh
+              toán và không gian làm việc một cách dễ dàng.
             </p>
-            <div className="flex gap-4 mt-4">
-              <button className="bg-sixth hover:bg-fifth px-4 py-2 rounded-lg">
+            <div className="flex gap-2">
+              <button className="bg-sixth hover:bg-fifth text-sm px-4 py-2 rounded-md transition duration-300">
                 CH Play
               </button>
-              <button className="bg-sixth hover:bg-fifth px-4 py-2 rounded-lg">
+              <button className="bg-sixth hover:bg-fifth text-sm px-4 py-2 rounded-md transition duration-300">
                 App Store
               </button>
             </div>
           </div>
 
-          <div className="col-span-1">
-            <h3 className="font-bold text-fourth">TRUY CẬP NHANH</h3>
-            <ul className="mt-4 font-base text-base space-y-2 text-fourth">
+          {/* Quick Links */}
+          <div>
+            <h3 className="font-semibold text-base mb-4">TRUY CẬP NHANH</h3>
+            <ul className="space-y-2">
               <li>
-                <Link href="/">Trang chủ</Link>
+                <Link
+                  href="/"
+                  className="hover:underline hover:text-primary hover:font-medium transition-all duration-200"
+                >
+                  Trang chủ
+                </Link>
               </li>
               <li>
-                <Link href="/about">Giới thiệu</Link>
+                <Link
+                  href="/about-us"
+                  className="hover:underline hover:text-primary hover:font-medium transition-all duration-200"
+                >
+                  Giới thiệu
+                </Link>
               </li>
               <li>
-                <Link href="/workspace">Không gian</Link>
+                <Link
+                  href="/workspace"
+                  className="hover:underline hover:text-primary hover:font-medium transition-all duration-200"
+                >
+                  Không gian
+                </Link>
               </li>
               <li>
-                <Link href="/contact">Liên hệ</Link>
+                <Link
+                  href="/workspace-owner"
+                  className="hover:underline hover:text-primary hover:font-medium transition-all duration-200"
+                >
+                  Thương hiệu
+                </Link>
               </li>
             </ul>
           </div>
 
-          <div className="col-span-1">
-            <h3 className="font-bold text-fourth">TRỢ GIÚP</h3>
-            <ul className="mt-4 font-base text-base space-y-2 text-fourth">
+          {/* Support Links */}
+          <div>
+            <h3 className="font-semibold text-base mb-4">TRỢ GIÚP</h3>
+            <ul className="space-y-2">
               <li>
-                <Link href="/contact-us">Liên hệ WorkHive</Link>
+                <Link
+                  href="/contact"
+                  className="hover:underline hover:text-primary hover:font-medium transition-all duration-200"
+                >
+                  Liên hệ WorkHive
+                </Link>
               </li>
               <li>
-                <Link href="/#">Phản hồi dịch vụ</Link>
+                <Link
+                  href="/contact"
+                  className="hover:underline hover:text-primary hover:font-medium transition-all duration-200"
+                >
+                  Phản hồi dịch vụ
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/become-owner"
+                  className="hover:underline hover:text-primary hover:font-medium transition-all duration-200"
+                >
+                  Trở thành doanh nghiệp
+                </Link>
               </li>
             </ul>
           </div>
 
-          <div className="col-span-1 sm:col-span-2">
-            <h3 className="font-bold text-fourth">THÔNG TIN LIÊN HỆ</h3>
-            <ul className="mt-4 font-base text-base space-y-2 text-fourth">
-              <li>Số điện thoại: 1234567890</li>
-              <li>Email: workhive@email.com</li>
-              <li>Địa chỉ: 123 Lê Văn Việt, Thủ Đức</li>
+          {/* Contact Info */}
+          <div>
+            <h3 className="font-semibold text-base mb-4">THÔNG TIN LIÊN HỆ</h3>
+            <ul className="space-y-2">
+              <li>
+                <strong>Số điện thoại:</strong> 0867-435-157
+              </li>
+              <li>
+                <strong>Email:</strong> workhive.vn.official@gmail.com
+              </li>
+              <li>
+                <strong>Địa chỉ:</strong> 114 Nguyễn Cơ Thạch, An Lợi Đông, Thủ
+                Đức, Hồ Chí Minh, Việt Nam
+              </li>
             </ul>
-            <div className="flex gap-4 mt-4">
-              <Facebook className="text-fourth hover:text-gray-800" />
-              <Twitter className="text-fourth hover:text-gray-800" />
-              <Instagram className="text-fourth hover:text-gray-800" />
-              <Linkedin className="text-fourth hover:text-gray-800" />
+            <div className="flex gap-3 mt-4">
+              <Facebook className="hover:text-primary transition-colors" />
+              <Twitter className="hover:text-primary transition-colors" />
+              <Instagram className="hover:text-primary transition-colors" />
+              <Linkedin className="hover:text-primary transition-colors" />
             </div>
           </div>
         </div>
@@ -71,13 +121,10 @@ function Footer() {
 
       <Separator className="bg-sixth" />
 
-      <div className="bg-seventh text-center py-4 flex items-center justify-between px-20">
-        <p className="text-fourth font-semibold">
-          © 2025 SP25SE173 | All rights reserved
-        </p>
-        <p className="text-fourth font-semibold">
-          Created with love by GSP25SE13
-        </p>
+      {/* Bottom Footer */}
+      <div className="bg-seventh text-center text-xs md:text-sm py-4 px-4 md:px-20 flex flex-col md:flex-row items-center justify-between gap-2">
+        <p className="font-medium">© 2025 SP25SE173 | All rights reserved</p>
+        <p className="font-medium">Created with ❤️ by GSP25SE13</p>
       </div>
     </footer>
   );

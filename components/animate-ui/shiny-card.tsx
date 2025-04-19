@@ -31,7 +31,7 @@ export default function ShinyCard({ className, children }: ShinyCardProps) {
     <div
       ref={containerRef}
       className={cn(
-        "group relative w-96 overflow-hidden rounded-lg border border-border bg-white text-zinc-200 shadow-lg",
+        "group relative w-full overflow-hidden rounded-lg border border-border bg-white text-zinc-200 shadow-lg",
         className
       )}
     >

@@ -89,9 +89,9 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
 
   const settings = {
     dots: true,
-    infinite: workspaces.length > 3,
+    infinite: workspaces.length > 2,
     speed: 500,
-    slidesToShow: Math.min(3, workspaces.length),
+    slidesToShow: Math.min(2, workspaces.length),
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 5000,
@@ -100,7 +100,7 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
       {
         breakpoint: 1280,
         settings: {
-          slidesToShow: Math.min(3, workspaces.length),
+          slidesToShow: Math.min(2, workspaces.length),
           slidesToScroll: 1,
         },
       },
@@ -132,7 +132,7 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
         {workspaces.map((workspace) => (
           <div key={workspace.id} className="px-3 py-2">
             <Card
-              className="relative overflow-hidden rounded-lg shadow-md transition-transform transform hover:scale-105 cursor-pointer h-full"
+              className="relative overflow-hidden rounded-lg shadow-md transition-transform transform hover:scale-100 cursor-pointer h-full"
               onClick={() => router.push(`/workspace/${workspace.id}`)}
             >
               <div className="relative group">
