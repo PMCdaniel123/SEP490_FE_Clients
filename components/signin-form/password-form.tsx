@@ -125,7 +125,7 @@ export function PasswordForm({
       <div className="flex items-center w-full mb-2">
         <div>
           <Image
-            src="/logo.png"
+            src="/WorkHive.svg"
             alt="Image"
             width={60}
             height={60}

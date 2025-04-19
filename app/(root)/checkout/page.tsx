@@ -61,7 +61,7 @@ export default function Checkout() {
   const dispatch = useDispatch();
   const router = useRouter();
   const [voucherCode, setVoucherCode] = useState<CheckoutDiscount | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState("bank");
+  const [paymentMethod, setPaymentMethod] = useState("1");
   const [isProcessing, setIsProcessing] = useState(false);
   const cart =
     typeof window !== "undefined" ? localStorage.getItem("cart") : null;
@@ -212,8 +212,6 @@ export default function Checkout() {
           "Ví của bạn hiện đang bị khóa do thực hiện yêu cầu rút tiền"
         );
       }
-
-      dispatch(clearCart());
       if (paymentMethod === "2") {
         toast.success("Thanh toán thành công bằng WorkHive Wallet!", {
           position: "top-right",
@@ -224,6 +222,7 @@ export default function Checkout() {
         const event = new CustomEvent(notificationEvents.BOOKING_SUCCESS);
         window.dispatchEvent(event);
         router.push("/success");
+        dispatch(clearCart());
       } else {
         const bookingData = {
           bookingId: data.bookingId,
@@ -231,6 +230,7 @@ export default function Checkout() {
         };
         localStorage.setItem("order", JSON.stringify(bookingData));
         router.push(data.checkoutUrl);
+        dispatch(clearCart());
       }
     } catch (error) {
       const errorMessage =
@@ -422,10 +422,10 @@ export default function Checkout() {
             <span className="font-semibold">{formatCurrency(total)}</span>
           </div>
           <div className="flex justify-between">
-            <span>Mã giảm giá:</span>
+            <span>Giảm giá:</span>
             {voucherCode && (
               <span className="font-semibold">
-                {voucherCode?.code} - {voucherCode?.discount}%
+                - {formatCurrency(total * ((voucherCode?.discount || 0) / 100))}
               </span>
             )}
           </div>

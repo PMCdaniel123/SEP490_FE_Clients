@@ -190,17 +190,17 @@ function Header() {
             }`}
           ></span>
 
-          <ul className="absolute top-full p-2 mt-2 md:min-w-[400px] bg-white shadow-lg rounded-lg opacity-0 hidden group-hover:block group-hover:opacity-100 group-hover:translate-y-0 translate-y-2 transition-all duration-300 z-50 border">
+          <ul className="absolute top-full left-1/2 -translate-x-1/2 p-2 md:min-w-[360px] bg-white shadow-lg rounded-lg invisible opacity-0 pointer-events-none group-hover:visible group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 translate-y-2 transition-all duration-300 z-50 border">
             <li
-              className={`flex items-center gap-4 p-3 rounded-lg bg-white text-gray-700 md:min-w-[400px] ${
+              className={`flex items-center gap-4 p-3 rounded-lg bg-white text-gray-700 md:min-w-[360px] ${
                 pathname === "/workspace"
                   ? "border border-primary"
                   : "hover:bg-secondary hover:text-white"
               }`}
               onClick={() => router.push("/workspace")}
             >
-              <Building className="border-r-2 border-primary w-1/5" size={26} />
-              <div className="w-4/5">
+              <Building className="border-r-2 border-primary w-1/6" size={26} />
+              <div className="w-5/6">
                 <p className="font-semibold text-base">Không gian</p>
                 <p className="font-light text-sm">
                   Danh sách không gian của chúng tôi
@@ -208,7 +208,7 @@ function Header() {
               </div>
             </li>
             <li
-              className={`mt-2 flex items-center gap-4 p-3 rounded-lg bg-white text-gray-700 md:min-w-[400px] ${
+              className={`mt-2 flex items-center gap-4 p-3 rounded-lg bg-white text-gray-700 md:min-w-[360px] ${
                 pathname === "/workspace-owner"
                   ? "border border-primary"
                   : "hover:bg-secondary hover:text-white"
@@ -216,10 +216,10 @@ function Header() {
               onClick={() => router.push("/workspace-owner")}
             >
               <BriefcaseBusiness
-                className="border-r-2 border-primary w-1/5"
+                className="border-r-2 border-primary w-1/6"
                 size={26}
               />
-              <div className="w-4/5">
+              <div className="w-5/6">
                 <p className="font-semibold text-base">Thương hiệu</p>
                 <p className="font-light text-sm">
                   Danh sách thương hiệu của chúng tôi
@@ -264,23 +264,26 @@ function Header() {
             </div>
           </AnimatedBorderTrail>
         ) : (
-          <div ref={dropdownRef} className="relative h-full">
+          <div
+            ref={dropdownRef}
+            className="relative h-full max-w-[140px] md:max-w-none"
+          >
             <div
-              className="group flex items-center justify-center border rounded-xl py-2 px-4 gap-3 bg-secondary/70 hover:bg-fourth cursor-pointer transition-all duration-300 shadow-md"
+              className="group flex items-center justify-center border rounded-xl py-2 px-4 gap-3 bg-secondary/70 hover:bg-fourth cursor-pointer transition-all duration-300 shadow-md w-full"
               onClick={() => setOpenAccount(!openAccount)}
             >
               <Image
-                src={customer?.avatar || "/logo.png"}
+                src={customer?.avatar || "/WorkHive.svg"}
                 alt="Logo"
                 width={40}
                 height={40}
                 className="rounded-full border-2 border-white bg-white object-cover"
               />
-              <div className="hidden md:flex flex-col justify-center items-start md:w-[120px]">
-                <p className="text-sm font-semibold truncate md:w-[120px]">
+              <div className="hidden md:flex flex-col justify-center items-start md:w-[140px]">
+                <p className="text-sm font-semibold truncate md:w-[140px]">
                   {customer?.fullName}
                 </p>
-                <p className="text-xs font-medium truncate md:w-[120px] opacity-90">
+                <p className="text-xs font-medium truncate md:w-[140px] opacity-90">
                   {customer?.email}
                 </p>
               </div>
@@ -294,11 +297,11 @@ function Header() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute top-full right-0 z-10 mt-2 w-auto gap-3 rounded-xl bg-white shadow-xl pb-2 text-black border border-secondary overflow-hidden"
+                className="absolute top-full right-0 z-10 mt-2 rounded-xl bg-white shadow-xl pb-2 text-black border border-secondary overflow-hidden w-max min-w-[220px]"
               >
                 <div className="flex items-center justify-center py-3 px-4 gap-4 bg-gradient-to-r from-primary to-fourth">
                   <Image
-                    src={customer?.avatar || "/logo.png"}
+                    src={customer?.avatar || "/WorkHive.svg"}
                     alt="Logo"
                     width={48}
                     height={48}
