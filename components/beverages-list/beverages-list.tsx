@@ -69,15 +69,13 @@ function BeveragesList({ ownerId }: { ownerId: string }) {
     );
   }
 
-  console.log(drinkList, foodList);
-
   return (
     <div className="mx-auto w-full flex flex-col gap-4 mt-8">
       <p className="text-base font-semibold leading-none text-black">
         1. Thức uống
       </p>
       {beverageList.length > 0 && drinkList.length > 0 ? (
-        <div>
+        <div className="grid grid-cols-1 md:grid-cols-2">
           {beverageList.map(
             (beverage) =>
               beverage.category === "Thức uống" && (
@@ -94,7 +92,7 @@ function BeveragesList({ ownerId }: { ownerId: string }) {
         2. Đồ ăn
       </p>
       {beverageList.length > 0 && foodList.length > 0 ? (
-        <div>
+        <div className="grid grid-cols-1 md:grid-cols-2">
           {beverageList.map(
             (beverage) =>
               beverage.category === "Đồ ăn" && (

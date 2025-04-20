@@ -149,6 +149,11 @@ export interface Policies {
   policyName: string;
 }
 
+export interface Details {
+  id: string;
+  detailName: string;
+}
+
 export interface Workspace {
   id: string;
   name: string;
@@ -164,10 +169,12 @@ export interface Workspace {
   prices: Price[];
   facilities: Facilities[];
   policies: Policies[];
+  details: Details[];
   is24h: number;
   ownerId: string;
   openTime: string;
   closeTime: string;
+  code: string;
 }
 
 export interface Promotion {
