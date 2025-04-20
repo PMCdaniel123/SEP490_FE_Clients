@@ -49,15 +49,19 @@ function AmenitiesItem({
         onClick={() => setIsOpen(true)}
       >
         <div className="relative">
-          <img src={imgUrl} alt={name} className="w-full h-60 object-cover" />
-          <div className="absolute top-2 left-2 bg-primary text-white px-3 py-1 rounded-md text-sm flex md:flex-row flex-col gap-2 items-center">
+          <img
+            src={imgUrl}
+            alt={name}
+            className="w-full h-80 md:h-60 object-cover"
+          />
+          <div className="absolute top-2 left-2 bg-primary text-white px-3 py-1 rounded-md text-sm flex gap-2 items-center">
             <Banknote /> {formatCurrency(Number(price))}
           </div>
         </div>
-        <CardContent className="p-4 flex flex-col gap-2">
-          <p className="text-base font-semibold line-clamp-1">{name}</p>
-          <p className="text-gray-600 text-sm">Số lượng: {quantity}</p>
-          <p className="text-gray-600 text-sm">Loại: {category}</p>
+        <CardContent className="p-4 flex flex-col gap-2 border-t border-primary">
+          <p className="text-sm font-semibold line-clamp-1">{name}</p>
+          <p className="text-gray-600 text-xs">Số lượng: {quantity}</p>
+          <p className="text-gray-600 text-xs">Loại: {category}</p>
         </CardContent>
       </Card>
 

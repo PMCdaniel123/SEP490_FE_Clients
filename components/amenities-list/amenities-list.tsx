@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Slider from "react-slick";
@@ -10,62 +9,6 @@ import { toast } from "react-toastify";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { BASE_URL } from "@/constants/environments";
-
-const PrevArrow = (props: any) => {
-  const { className, style, onClick } = props;
-  return (
-    <div
-      className={`${className} z-10 `}
-      style={{ ...style, display: "block", left: "-25px" }}
-      onClick={onClick}
-    >
-      <div className="bg-primary hover:bg-gray-50 rounded-full  shadow-lg flex items-center justify-center border border-gray-100">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 32 32"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="text-white hover:text-primary"
-        >
-          <path d="m15 18-6-6 6-6" />
-        </svg>
-      </div>
-    </div>
-  );
-};
-
-const NextArrow = (props: any) => {
-  const { className, style, onClick } = props;
-  return (
-    <div
-      className={`${className} z-10`}
-      style={{ ...style, display: "block", right: "-25px" }}
-      onClick={onClick}
-    >
-      <div className="bg-primary hover:bg-gray-50 rounded-full  shadow-lg flex items-center justify-center border border-gray-100">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 32 32"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="text-white hover:text-primary"
-        >
-          <path d="m9 18 6-6-6-6" />
-        </svg>
-      </div>
-    </div>
-  );
-};
 
 function AmenitiesList({ ownerId }: { ownerId: string }) {
   const [loading, setLoading] = useState(false);
@@ -109,13 +52,14 @@ function AmenitiesList({ ownerId }: { ownerId: string }) {
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
-    nextArrow: <NextArrow />,
-    prevArrow: <PrevArrow />,
+    autoplay: true,
+    autoplaySpeed: 5000,
+    pauseOnHover: true,
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 2,
+          slidesToShow: 3,
           slidesToScroll: 1,
           infinite: true,
           dots: true,
@@ -140,9 +84,9 @@ function AmenitiesList({ ownerId }: { ownerId: string }) {
   }
 
   return (
-    <div className="mx-auto w-full px-8 relative">
+    <div className="mx-auto w-full relative px-8">
       {amenityList.length > 0 ? (
-        <Slider {...settings}>
+        <Slider {...settings} className="high-rating-slider">
           {amenityList.map((amenity) => (
             <div key={amenity.id} className="px-2">
               <AmenitiesItem {...amenity} />
@@ -152,6 +96,20 @@ function AmenitiesList({ ownerId }: { ownerId: string }) {
       ) : (
         <p className="text-sm text-sixth italic flex items-center">Trống</p>
       )}
+      <style jsx global>{`
+        .high-rating-slider .slick-dots li button:before {
+          font-size: 10px;
+          color: #835101;
+        }
+        .high-rating-slider .slick-dots li.slick-active button:before {
+          color: rgb(188, 122, 15);
+        }
+        .high-rating-slider .slick-prev:before,
+        .high-rating-slider .slick-next:before {
+          color: #835101;
+          font-size: 24px;
+        }
+      `}</style>
     </div>
   );
 }

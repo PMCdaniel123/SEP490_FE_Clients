@@ -51,6 +51,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Link from "next/link";
+import MoreDetailList from "@/components/details-list/more-detail-list";
+import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
 
 const WorkspaceDetail = () => {
   const { workspaceId } = useParams() as { workspaceId: string };
@@ -178,8 +181,17 @@ const WorkspaceDetail = () => {
         <div className="lg:col-span-2 space-y-6 flex flex-col gap-8">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-2">
-              <h1 className="text-3xl font-bold text-primary">
-                {workspace.name}
+              <h1 className="text-2xl md:text-3xl font-bold text-primary flex md:items-center flex-col md:flex-row md:gap-4">
+                <span>{workspace.name}</span>
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 120, delay: 0.5 }}
+                >
+                  <Badge className="bg-secondary hover:bg-secondary/80 text-white text-xs px-4 py-1">
+                    {workspace.code}
+                  </Badge>
+                </motion.div>
               </h1>
               <p className="text-fifth max-w-xl">{workspace.address}</p>
             </div>
@@ -192,18 +204,18 @@ const WorkspaceDetail = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div
-              className="flex items-center gap-4 cursor-pointer relative group overflow-hidden rounded-xl p-3 border border-transparent hover:border-primary hover:bg-secondary/20 transition-all duration-300"
+              className="flex items-center gap-4 cursor-pointer relative group overflow-hidden rounded-xl p-3 border hover:border-primary hover:bg-secondary/20 transition-all duration-300"
               onClick={() => router.push(`/workspace-owner/${ownerData?.id}`)}
             >
-              <div className="absolute -left-16 top-0 h-full w-12 rotate-[30deg] scale-y-150 bg-primary/10 transition-all duration-700 group-hover:left-[calc(100%+1rem)]"></div>
+              <div className="absolute -left-20 top-0 h-full w-12 rotate-[30deg] scale-y-150 bg-primary/10 transition-all duration-700 group-hover:left-[calc(100%+1rem)]"></div>
               <Image
                 width={50}
                 height={50}
                 src={ownerData?.avatar || "/owner_icon.png"}
                 alt={ownerData?.licenseName || ""}
-                className="rounded-full"
+                className="rounded-full border"
               />
               <div className="flex flex-col gap-1">
                 <p className="font-bold">{ownerData?.licenseName}</p>
@@ -258,7 +270,11 @@ const WorkspaceDetail = () => {
 
           <div className="flex flex-col gap-6">
             <h2 className="text-xl font-bold text-primary">Mô tả chi tiết</h2>
-            {/* <p className="text-fifth">{workspace.description}</p> */}
+            <MoreDetailList details={workspace.details} />
+          </div>
+
+          <div className="flex flex-col gap-6">
+            <h2 className="text-xl font-bold text-primary">Thông tin chung</h2>
             <div className="flex flex-col gap-2">
               {workspace.description.split("\n").map((line, index) => (
                 <p key={index} className="text-fifth">
@@ -329,7 +345,7 @@ const WorkspaceDetail = () => {
 
           {workspace.googleMapUrl && <GoogleMap url={workspace.googleMapUrl} />}
 
-          <div className="flex flex-col gap-6 px-4">
+          <div className="flex flex-col gap-6 px-8">
             <SimilarSpace category={workspace.category} />
           </div>
 
@@ -463,6 +479,8 @@ const WorkspaceDetail = () => {
         open={isBeverageOpen}
         onCancel={() => setIsBeverageOpen(false)}
         footer={null}
+        width={1000}
+        centered
       >
         <BeveragesList ownerId={workspace.ownerId} />
       </Modal>
