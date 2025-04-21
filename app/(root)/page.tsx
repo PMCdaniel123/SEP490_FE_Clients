@@ -14,8 +14,19 @@ import FloatingCard from "@/components/animate-ui/floating-card";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import HotWorkspaceOwner from "@/components/hot-workspace-owner/hot-workspace-owner";
+import NearSpaceList from "@/components/near-space-list/near-space-list";
+import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function HomePage() {
+  const [km, setKm] = useState("5");
+
   return (
     <div>
       <SearchBanner />
@@ -23,18 +34,55 @@ function HomePage() {
         <SectionTitle>
           WorkHive cung cấp đa dạng <br /> giải pháp không gian làm việc
         </SectionTitle>
+
         <SpaceList />
-        {/* <div className="flex items-center justify-between mb-4 mt-12">
+
+        <div className="mb-8 mt-16 flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-0">
           <SectionTitle>Nơi làm việc gần bạn</SectionTitle>
-          <div className="flex items-center text-[#835101] cursor-pointer">
-            <MapPin className="mr-2 text-black" size={24} />
-            <span>
-              Hiển thị <br />
-              trên bản đồ
-            </span>
+          <div className="flex items-center gap-2">
+            <p>Khoảng cách mong muốn</p>
+            <Select value={km} onValueChange={(value) => setKm(value)}>
+              <SelectTrigger className="py-6 px-4 rounded-md w-full">
+                <SelectValue placeholder="Chọn khoảng cách mong muốn" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                  value="5"
+                >
+                  5 km
+                </SelectItem>
+                <SelectItem
+                  className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                  value="10"
+                >
+                  10 km
+                </SelectItem>
+                <SelectItem
+                  className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                  value="15"
+                >
+                  15 km
+                </SelectItem>
+                <SelectItem
+                  className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                  value="20"
+                >
+                  20 km
+                </SelectItem>
+                <SelectItem
+                  className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                  value="All"
+                >
+                  Trên 20 km
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </div> */}
-        {/* <NearSpaceList /> */}
+        </div>
+
+        <NearSpaceList km={km} />
+
         <div className="mb-8 mt-16">
           <SectionTitle>
             Không gian làm việc <br /> được đánh giá cao

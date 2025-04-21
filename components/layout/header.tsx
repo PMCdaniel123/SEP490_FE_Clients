@@ -119,11 +119,12 @@ function Header() {
     setSignUpModalOpen(false);
   };
 
-  const handleLogOut = () => {
-    setOpenAccount(!openAccount);
+  const handleLogOut = async () => {
     dispatch(logout());
+    setOpenAccount(!openAccount);
     localStorage.removeItem("auth");
-    window.location.reload();
+
+    window.location.href = "/";
   };
 
   return (
@@ -145,7 +146,7 @@ function Header() {
           WorkHive
         </h1>
       </div>
-      <nav className="hidden md:flex items-center justify-around gap-10">
+      <nav className="hidden md:flex items-center justify-around gap-6 xl:gap-8">
         {menuItems.map((item) => (
           <li
             key={item.path}
@@ -179,7 +180,7 @@ function Header() {
                 : ""
             }`}
           >
-            Phân loại
+            Danh mục
           </p>
 
           <span
