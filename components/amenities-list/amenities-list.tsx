@@ -27,7 +27,11 @@ function AmenitiesList({ ownerId }: { ownerId: string }) {
         }
 
         const data = await response.json();
-        setAmenityList(Array.isArray(data.amenities) ? data.amenities : []);
+        setAmenityList(
+          Array.isArray(data.amenities)
+            ? data.amenities.filter((a: AmenityProps) => a.status === "Active")
+            : []
+        );
         setLoading(false);
       } catch (error) {
         const errorMessage =

@@ -642,7 +642,7 @@ function WorkspaceOwnerDetail() {
         )}
 
         {showFilters && (
-          <div className="mb-10 bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <div className="mb-4 bg-white p-4 rounded-xl shadow-md border border-gray-100">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-bold text-fourth">
                 Lọc kết quả tìm kiếm
@@ -655,7 +655,7 @@ function WorkspaceOwnerDetail() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-fourth mb-2">
@@ -664,7 +664,7 @@ function WorkspaceOwnerDetail() {
                   <Input
                     type="text"
                     placeholder="Nhập từ khóa tìm kiếm..."
-                    className="w-full focus-visible:ring-primary"
+                    className="w-full py-6 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     value={searchQuery}
                     onChange={(e) => {
                       e.preventDefault();
@@ -699,7 +699,7 @@ function WorkspaceOwnerDetail() {
                       }
                     />
                   </ConfigProvider>
-                  <div className="flex justify-between text-sm text-fifth mt-2">
+                  <div className="flex justify-between text-sm">
                     <span>{formatCurrency(priceRange[0])}</span>
                     <span>{formatCurrency(priceRange[1])}</span>
                   </div>
@@ -728,7 +728,7 @@ function WorkspaceOwnerDetail() {
                       }
                     />
                   </ConfigProvider>
-                  <div className="flex justify-between text-sm text-fifth mt-2">
+                  <div className="flex justify-between text-sm">
                     <span>{areaRange[0]} m²</span>
                     <span>{areaRange[1]} m²</span>
                   </div>
@@ -755,7 +755,7 @@ function WorkspaceOwnerDetail() {
                       }
                     />
                   </ConfigProvider>
-                  <div className="flex justify-between text-sm text-fifth mt-2">
+                  <div className="flex justify-between text-sm">
                     <span>{capacityRange[0]} người</span>
                     <span>{capacityRange[1]} người</span>
                   </div>
@@ -763,7 +763,7 @@ function WorkspaceOwnerDetail() {
               </div>
             </div>
 
-            <div className="flex gap-3 mt-6">
+            <div className="flex gap-2 mt-4">
               <Button
                 onClick={() => applyFilters()}
                 className="bg-primary hover:bg-primary/90 text-white font-medium px-6"

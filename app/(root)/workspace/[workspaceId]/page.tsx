@@ -13,6 +13,8 @@ import {
   Globe,
   Facebook,
   Instagram,
+  AlertTriangle,
+  Home,
 } from "lucide-react";
 import Loader from "@/components/loader/Loader";
 import { useParams, useRouter } from "next/navigation";
@@ -174,6 +176,67 @@ const WorkspaceDetail = () => {
     return <div className="text-center">Workspace not found</div>;
   }
 
+  if (workspace.status === "Inactive") {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden"
+        >
+          <div className="p-8 flex flex-col items-center text-center">
+            <div className="rounded-full bg-red-100 p-4 mb-6">
+              <AlertTriangle size={50} className="text-red-500" />
+            </div>
+
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">
+              Không gian tạm ngưng hoạt động
+            </h1>
+            <p className="text-gray-600 mb-6">
+              Không gian &quot;{workspace.name}&quot; hiện không khả dụng. Có
+              thể không gian đang được bảo trì hoặc tạm dừng hoạt động.
+            </p>
+
+            <img
+              src={workspace.images[0]?.imgUrl || "/space.jpg"}
+              alt={workspace.name}
+              className="w-full h-60 object-cover rounded-lg mb-6 opacity-70"
+            />
+
+            <div className="bg-gray-50 p-4 rounded-lg mb-8 w-full">
+              <p className="text-sm text-gray-500">
+                Địa chỉ:{" "}
+                <span className="font-medium text-gray-700">
+                  {workspace.address}
+                </span>
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 w-full">
+              <Button
+                onClick={() => router.push("/")}
+                className="bg-primary hover:bg-primary/90 text-white flex-1 gap-2 py-6"
+              >
+                <Home size={18} />
+                <span>Trở về trang chủ</span>
+              </Button>
+
+              <Button
+                onClick={() =>
+                  router.push(`/workspace-owner/${workspace.ownerId}`)
+                }
+                className="bg-secondary hover:bg-secondary/90 text-white flex-1 gap-2 py-6"
+              >
+                <span>Xem không gian khác</span>
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col container mx-auto px-10 py-8 gap-20">
       <ImageList workspace={workspace} />
@@ -269,12 +332,12 @@ const WorkspaceDetail = () => {
           />
 
           <div className="flex flex-col gap-6">
-            <h2 className="text-xl font-bold text-primary">Mô tả chi tiết</h2>
+            <h2 className="text-xl font-bold text-primary">Thông tin chung</h2>
             <MoreDetailList details={workspace.details} />
           </div>
 
           <div className="flex flex-col gap-6">
-            <h2 className="text-xl font-bold text-primary">Thông tin chung</h2>
+            <h2 className="text-xl font-bold text-primary">Mô tả chi tiết</h2>
             <div className="flex flex-col gap-2">
               {workspace.description.split("\n").map((line, index) => (
                 <p key={index} className="text-fifth">
