@@ -43,7 +43,10 @@ interface Bank {
   swift_code: string;
 }
 
-const BankInformationForm = ({ customerId, onBankInfoUpdated }: BankInformationFormProps) => {
+const BankInformationForm = ({
+  customerId,
+  onBankInfoUpdated,
+}: BankInformationFormProps) => {
   const [bankInfo, setBankInfo] = useState<BankInfo>({
     bankName: "",
     bankNumber: "",
@@ -108,10 +111,18 @@ const BankInformationForm = ({ customerId, onBankInfoUpdated }: BankInformationF
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setBankInfo((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    if (name === "bankAccountName") {
+      setBankInfo((prev) => ({
+        ...prev,
+        [name]: value.toUpperCase(),
+      }));
+    } else {
+      setBankInfo((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleBankChange = (value: string) => {
@@ -467,6 +478,7 @@ const BankInformationForm = ({ customerId, onBankInfoUpdated }: BankInformationF
             onChange={handleInputChange}
             placeholder="Tên chủ tài khoản ngân hàng"
             className="w-full"
+            style={{ textTransform: "uppercase" }}
             required
           />
         </div>

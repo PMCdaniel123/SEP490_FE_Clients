@@ -3,7 +3,7 @@
 import { Details } from "@/types";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { ChevronDown, ChevronUp, Info } from "lucide-react";
+import { Info, Plus, Minus } from "lucide-react";
 
 function MoreDetailList({ details }: { details: Details[] }) {
   const [showAll, setShowAll] = useState(false);
@@ -12,19 +12,19 @@ function MoreDetailList({ details }: { details: Details[] }) {
   const hasMoreDetails = details.length > 6;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {details.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
             {displayedDetails.map((detail) => (
               <div
                 key={detail.id}
-                className="rounded-lg p-4 bg-gradient-to-br from-secondary to-secondary/90 hover:shadow-md transition-all duration-300 border border-secondary/20 flex items-center gap-2"
+                className="flex items-center gap-4 p-4 rounded-2xl border border-gray-200 bg-white hover:shadow-md transition-all duration-300 hover:-translate-y-[2px]"
               >
-                <div className="bg-white/10 p-1.5 rounded-full">
-                  <Info size={14} className="text-white/80" />
+                <div className="flex items-center justify-center bg-primary/10 text-primary rounded-full w-10 h-10">
+                  <Info size={20} />
                 </div>
-                <p className="text-sm font-medium text-white">
+                <p className="text-sm font-medium text-gray-800">
                   {detail.detailName}
                 </p>
               </div>
@@ -32,22 +32,21 @@ function MoreDetailList({ details }: { details: Details[] }) {
           </div>
 
           {hasMoreDetails && (
-            <div className="flex justify-center mt-2">
+            <div className="flex justify-center">
               <Button
                 onClick={() => setShowAll(!showAll)}
                 variant="outline"
-                size="sm"
-                className="rounded-full px-4 py-1 h-auto bg-white/80 backdrop-blur-sm hover:bg-white border border-gray-200 text-primary font-medium flex items-center gap-1.5 transition-all duration-300 hover:shadow-md"
+                className="flex items-center gap-2 px-5 py-2 text-sm font-medium text-gray-700 border border-gray-200 rounded-full hover:bg-gray-50 transition-all"
               >
                 {showAll ? (
                   <>
-                    <ChevronUp size={16} />
-                    <span>Thu gọn</span>
+                    <Minus size={18} />
+                    Thu gọn
                   </>
                 ) : (
                   <>
-                    <ChevronDown size={16} />
-                    <span>Xem thêm {details.length - 6} chi tiết</span>
+                    <Plus size={18} />
+                    Xem thêm {details.length - 6} chi tiết
                   </>
                 )}
               </Button>
@@ -55,10 +54,12 @@ function MoreDetailList({ details }: { details: Details[] }) {
           )}
         </>
       ) : (
-        <div className="flex items-center justify-center py-6 bg-gray-50 rounded-lg border border-dashed border-gray-200">
-          <p className="text-sm text-gray-500 italic flex items-center gap-2">
-            <Info size={16} className="opacity-70" />
-            Không có thông tin chi tiết
+        <div className="flex flex-col items-center justify-center py-10 bg-gray-50 border border-dashed border-gray-300 rounded-2xl">
+          <div className="bg-gray-100 p-3 rounded-full mb-3">
+            <Info size={24} className="text-gray-400" />
+          </div>
+          <p className="text-gray-500 font-medium text-sm">
+            Không có thông tin vị trí chỗ ngồi
           </p>
         </div>
       )}
