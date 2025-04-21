@@ -54,7 +54,6 @@ import {
 } from "@/components/ui/tooltip";
 import Link from "next/link";
 import MoreDetailList from "@/components/details-list/more-detail-list";
-import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 
 const WorkspaceDetail = () => {
@@ -250,10 +249,19 @@ const WorkspaceDetail = () => {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 120, delay: 0.5 }}
+                  className="relative"
                 >
-                  <Badge className="bg-secondary hover:bg-secondary/80 text-white text-xs px-4 py-1">
-                    {workspace.code}
-                  </Badge>
+                  <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-lg blur-sm opacity-75 animate-pulse"></div>
+                  <div className="relative flex items-center bg-white dark:bg-gray-950 py-1.5 px-3 rounded-lg border border-secondary/30 shadow-sm overflow-hidden">
+                    <div className="mr-2 h-3 w-3 rounded-full bg-secondary"></div>
+                    <span className="text-xs font-semibold text-gray-800">
+                      MÃ BÀN
+                    </span>
+                    <div className="mx-2 h-4 w-[1px] bg-gray-300"></div>
+                    <span className="text-sm font-bold text-secondary tracking-wider">
+                      {workspace.code}
+                    </span>
+                  </div>
                 </motion.div>
               </h1>
               <p className="text-fifth max-w-xl">{workspace.address}</p>
@@ -332,7 +340,9 @@ const WorkspaceDetail = () => {
           />
 
           <div className="flex flex-col gap-6">
-            <h2 className="text-xl font-bold text-primary">Thông tin chung</h2>
+            <h2 className="text-xl font-bold text-primary">
+              Thông tin chỗ ngồi
+            </h2>
             <MoreDetailList details={workspace.details} />
           </div>
 

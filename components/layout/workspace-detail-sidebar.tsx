@@ -148,16 +148,16 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
       </div>
       {workspace.is24h !== 1 ? (
         <div className="flex flex-col gap-2">
-          <p className="text-primary text-base flex items-center gap-2">
+          <p className="text-primary font-bold text-base flex items-center gap-2">
             <Clock5 /> Mở cửa lúc: {workspace.openTime}
           </p>
-          <p className="text-primary text-base flex items-center gap-2">
+          <p className="text-primary font-bold text-base flex items-center gap-2">
             <Clock10 /> Đóng cửa lúc: {workspace.closeTime}
           </p>
         </div>
       ) : (
         <div>
-          <p className="text-primary text-base flex items-center gap-2">
+          <p className="text-primary font-bold text-base flex items-center gap-2">
             <Clock /> Mở cửa 24h
           </p>
         </div>
