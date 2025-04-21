@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -18,6 +19,7 @@ import { Spin } from "antd";
 
 interface BankInformationFormProps {
   customerId?: number;
+  onBankInfoUpdated?: (bankInfo: BankInfo) => void;
 }
 
 interface BankInfo {
@@ -41,7 +43,7 @@ interface Bank {
   swift_code: string;
 }
 
-const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
+const BankInformationForm = ({ customerId, onBankInfoUpdated }: BankInformationFormProps) => {
   const [bankInfo, setBankInfo] = useState<BankInfo>({
     bankName: "",
     bankNumber: "",
@@ -170,6 +172,9 @@ const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
         autoClose: 2000,
       });
       setIsEditMode(false);
+      if (onBankInfoUpdated) {
+        onBankInfoUpdated(bankInfo);
+      }
       // Refresh bank information after successful update
       // window.location.reload();
     } catch (error) {
@@ -233,7 +238,7 @@ const BankInformationForm = ({ customerId }: BankInformationFormProps) => {
     );
   }
 
-  // View mode display of bank information
+  // bank information
   if (!isEditMode && bankInfo.bankName && bankInfo.bankNumber) {
     return (
       <div className="space-y-6">

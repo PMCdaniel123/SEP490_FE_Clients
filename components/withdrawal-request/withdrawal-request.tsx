@@ -41,6 +41,7 @@ const WithdrawalRequest = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [withdrawalRequests, setWithdrawalRequests] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  // Removed unused localBankInfo state and its associated useEffect
 
   useEffect(() => {
     if (!customerId) {
