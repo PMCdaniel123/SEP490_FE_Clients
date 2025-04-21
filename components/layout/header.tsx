@@ -179,7 +179,7 @@ function Header() {
                 : ""
             }`}
           >
-            Phân loại
+            Danh mục
           </p>
 
           <span
