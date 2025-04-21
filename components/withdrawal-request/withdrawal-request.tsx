@@ -7,13 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "react-toastify";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Modal } from "antd";
 import { BASE_URL } from "@/constants/environments";
 
 interface WithdrawalRequestProps {
@@ -38,6 +32,7 @@ const WithdrawalRequest = ({
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
   const [withdrawTitle, setWithdrawTitle] = useState("Yêu cầu rút tiền");
   const [withdrawDescription, setWithdrawDescription] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [withdrawalRequests, setWithdrawalRequests] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -176,7 +171,9 @@ const WithdrawalRequest = ({
 
   const confirmWithdraw = async () => {
     if (!customerId) return;
-
+    
+    setIsSubmitting(true);
+    
     try {
       const response = await fetch(`${BASE_URL}/customer-withdrawal-requests`, {
         method: "POST",
@@ -214,6 +211,8 @@ const WithdrawalRequest = ({
         hideProgressBar: false,
         theme: "light",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -380,104 +379,113 @@ const WithdrawalRequest = ({
         </div>
       )}
 
-      <Dialog open={isWithdrawModalOpen} onOpenChange={setIsWithdrawModalOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader className="border-b pb-4">
-            <DialogTitle className="text-xl font-bold text-primary flex items-center gap-2">
-              <ArrowDown className="h-5 w-5" />
-              Yêu cầu rút tiền
-            </DialogTitle>
-          </DialogHeader>
-          <div className="my-6 space-y-6">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-center font-medium">
-                Số dư hiện tại:{" "}
-                <span className="text-primary font-bold text-lg">
-                  {formatCurrency(Number(balance))}
-                </span>
-              </p>
-            </div>
+      <Modal
+        title={
+          <div className="text-xl font-bold text-primary flex items-center gap-2">
+            <ArrowDown className="h-5 w-5" />
+            Yêu cầu rút tiền
+          </div>
+        }
+        open={isWithdrawModalOpen}
+        onCancel={() => setIsWithdrawModalOpen(false)}
+        footer={[
+          <Button
+            key="cancel"
+            variant="outline"
+            onClick={() => setIsWithdrawModalOpen(false)}
+            className="flex-1 m-4 px-6"
+            disabled={isSubmitting}
+          >
+            Hủy
+          </Button>,
+          <Button
+            key="submit"
+            className="flex-1 bg-primary text-white hover:bg-primary/90"
+            onClick={confirmWithdraw}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                Đang xử lý...
+              </>
+            ) : (
+              "Gửi yêu cầu rút tiền"
+            )}
+          </Button>,
+        ]}
+        width={500}
+      >
+        <div className="my-6 space-y-6">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <p className="text-center font-medium">
+              Số dư hiện tại:{" "}
+              <span className="text-primary font-bold text-lg">
+                {formatCurrency(Number(balance))}
+              </span>
+            </p>
+          </div>
 
-            <div className="space-y-4">
-              <div>
-                <label
-                  htmlFor="withdrawTitle"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Tiêu đề
-                </label>
-                <Input
-                  id="withdrawTitle"
-                  value={withdrawTitle}
-                  onChange={(e) => setWithdrawTitle(e.target.value)}
-                  placeholder="Tiêu đề yêu cầu rút tiền"
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="withdrawDescription"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Mô tả (không bắt buộc)
-                </label>
-                <Textarea
-                  id="withdrawDescription"
-                  value={withdrawDescription}
-                  onChange={(e) => setWithdrawDescription(e.target.value)}
-                  placeholder="Mô tả chi tiết (nếu cần)"
-                  className="w-full"
-                  rows={3}
-                />
-              </div>
+          <div className="space-y-4">
+            <div>
+              <label
+                htmlFor="withdrawTitle"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Tiêu đề
+              </label>
+              <Input
+                id="withdrawTitle"
+                value={withdrawTitle}
+                onChange={(e) => setWithdrawTitle(e.target.value)}
+                placeholder="Tiêu đề yêu cầu rút tiền"
+                className="w-full"
+              />
             </div>
-
-            <div className="border-t border-gray-200 pt-4">
-              <p className="text-sm mb-3">Thông tin ngân hàng:</p>
-              <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Ngân hàng:</span>
-                  <span className="font-medium">{bankInfo?.bankName}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Số tài khoản:</span>
-                  <span className="font-medium">{bankInfo?.bankNumber}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Chủ tài khoản:</span>
-                  <span className="font-medium">
-                    {bankInfo?.bankAccountName}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
-              <p className="text-center text-sm text-yellow-700 flex items-center justify-center gap-2">
-                <InfoIcon className="h-5 w-5" />
-                Yêu cầu rút tiền của bạn sẽ được xử lý trong vòng 24 giờ làm
-                việc
-              </p>
+            <div>
+              <label
+                htmlFor="withdrawDescription"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Mô tả (không bắt buộc)
+              </label>
+              <Textarea
+                id="withdrawDescription"
+                value={withdrawDescription}
+                onChange={(e) => setWithdrawDescription(e.target.value)}
+                placeholder="Mô tả chi tiết (nếu cần)"
+                className="w-full"
+                rows={3}
+              />
             </div>
           </div>
 
-          <DialogFooter className="flex gap-2 border-t pt-4">
-            <Button
-              className="flex-1 bg-primary text-white hover:bg-primary/90"
-              onClick={confirmWithdraw}
-            >
-              Gửi yêu cầu rút tiền
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setIsWithdrawModalOpen(false)}
-              className="flex-1"
-            >
-              Hủy
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          <div className="border-t border-gray-200 pt-4">
+            <p className="text-sm mb-3">Thông tin ngân hàng:</p>
+            <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Ngân hàng:</span>
+                <span className="font-medium">{bankInfo?.bankName}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Số tài khoản:</span>
+                <span className="font-medium">{bankInfo?.bankNumber}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Chủ tài khoản:</span>
+                <span className="font-medium">{bankInfo?.bankAccountName}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
+            <p className="text-center text-sm text-yellow-700 flex items-center justify-center gap-2">
+              <InfoIcon className="h-5 w-5" />
+              Yêu cầu rút tiền của bạn sẽ được xử lý trong vòng 24 giờ làm việc
+            </p>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 };
