@@ -89,7 +89,7 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
 
   const settings = {
     dots: true,
-    infinite: workspaces.length > 2,
+    infinite: workspaces.length > 3,
     speed: 500,
     slidesToShow: Math.min(2, workspaces.length),
     slidesToScroll: 1,

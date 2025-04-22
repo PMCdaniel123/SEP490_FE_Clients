@@ -307,7 +307,7 @@ export default function PropertyGrid() {
             <h2 className="text-lg font-bold">Bộ lọc tìm kiếm</h2>
             <button
               onClick={toggleFilters}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-primary transition-colors p-1 rounded-full hover:bg-gray-100"
             >
               <X size={20} />
             </button>
@@ -315,14 +315,14 @@ export default function PropertyGrid() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <div className="mb-4">
+              <div className="mb-5">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Tìm kiếm theo tên hoặc địa chỉ
                 </label>
                 <Input
                   type="text"
                   placeholder="Nhập từ khóa tìm kiếm..."
-                  className="w-full"
+                  className="w-full py-6 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
                 />

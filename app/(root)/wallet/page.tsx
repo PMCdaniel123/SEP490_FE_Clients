@@ -327,6 +327,15 @@ const WalletPage = () => {
     refreshWalletData();
   };
 
+  const handleBankInfoUpdated = (updatedBankInfo: {
+    bankName: string;
+    bankNumber: string;
+    bankAccountName: string;
+  }) => {
+    // Update the local state when bank info is updated
+    setBankInfo(updatedBankInfo);
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gradient-to-b from-white via-white to-gray-50 shadow-lg rounded-lg my-8 border border-gray-100">
       <div className="flex justify-between items-center mb-6">
@@ -636,6 +645,7 @@ const WalletPage = () => {
                 <CardContent className="pt-6">
                   <BankInformationForm
                     customerId={customer?.id ? Number(customer.id) : undefined}
+                    onBankInfoUpdated={handleBankInfoUpdated}
                   />
                 </CardContent>
               </Card>
