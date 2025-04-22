@@ -250,7 +250,14 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
       <Button
         className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base"
         onClick={handleSelectedDateValidte}
-        disabled={startTime === "" || endTime === "" || customer === null}
+        disabled={
+          startTime === "" ||
+          endTime === "" ||
+          customer === null ||
+          customer.phone === null ||
+          customer.phone === "" ||
+          customer.phone === undefined
+        }
       >
         {isButtonLoading ? (
           <LoadingOutlined style={{ color: "white" }} />
@@ -263,6 +270,14 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
           Vui lòng đăng nhập trước khi tiến hành thanh toán
         </p>
       )}
+      {customer !== null &&
+        (customer.phone === null ||
+          customer.phone === "" ||
+          customer.phone === undefined) && (
+          <p className="text-red-500 mt-2 text-xs">
+            Vui lòng cập nhật sđt trước khi tiến hành thanh toán
+          </p>
+        )}
       <Modal
         title={
           <div className="flex items-center gap-2 text-primary">

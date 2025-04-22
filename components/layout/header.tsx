@@ -74,17 +74,18 @@ function Header() {
           }
 
           const result = await decodeResponse.json();
-          const avatarUrl = result.user.name
-            ? `https://ui-avatars.com/api/?name=${encodeURIComponent(
+          const avatar_res: string = result.user.avatar;
+          const avatarUrl = avatar_res.includes("res.cloudinary.com")
+            ? result.user.avatar
+            : `https://ui-avatars.com/api/?name=${encodeURIComponent(
                 result.user.name
-              )}&format=png`
-            : "/WorkHive.svg";
+              )}&format=png`;
           const customerData = {
             id: result.user.id,
             fullName: result.user.name,
-            email: result.user.email,
-            phone: result.user.Phone,
-            roleId: result.user.RoleId,
+            email: result.user.email.trim(),
+            phone: result.user.phone,
+            roleId: result.user.roleId,
             avatar: avatarUrl,
           };
 

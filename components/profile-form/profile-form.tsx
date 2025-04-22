@@ -137,11 +137,13 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
       userId: customer.id,
       name: data.name,
       email: data.email,
-      location: data.address,
       phone: data.phoneNumber,
-      dateOfBirth: data.dob ? formatDateForAPI(data.dob) : data.dob,
-      sex: data.gender,
       avatar: avatarUrl,
+      ...(data.gender !== "" && { sex: data.gender }),
+      ...(data.address !== "Chưa cập nhật" && { location: data.address }),
+      ...(data.dob !== "Chưa cập nhật" && {
+        dateOfBirth: formatDateForAPI(data.dob),
+      }),
     };
 
     try {
@@ -171,7 +173,13 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
         );
       }
 
-      toast.success("Cập nhật hồ sơ thành công!", {
+      const res_data = await response.json();
+
+      if (res_data.notification === "Email và số điện thoại đã được sử dụng") {
+        throw new Error(res_data.notification);
+      }
+
+      toast.success(res_data.notification, {
         position: "top-right",
         autoClose: 1500,
         hideProgressBar: false,
@@ -332,6 +340,11 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
               className="w-full p-2 border rounded-lg mt-1"
               disabled={formData.phoneNumber === null}
             />
+            {errors.phoneNumber && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.phoneNumber.message}
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium">Ngày sinh</label>
@@ -341,6 +354,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
               {...register("dob", {
                 validate: (value) => {
                   if (!value) return true;
+                  if (value === "Chưa cập nhật") return true;
 
                   if (!/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
                     return "Định dạng ngày không hợp lệ (DD/MM/YYYY)";
