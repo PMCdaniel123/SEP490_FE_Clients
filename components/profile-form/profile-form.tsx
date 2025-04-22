@@ -73,13 +73,10 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
     register,
     handleSubmit,
     reset,
-    watch,
     formState: { errors },
   } = useForm({
     defaultValues: formattedFormData,
   });
-
-  const phoneNumber = watch("phoneNumber");
 
   const togglePasswordForm = () => {
     setShowPasswordForm(!showPasswordForm);
@@ -333,7 +330,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
                 },
               })}
               className="w-full p-2 border rounded-lg mt-1"
-              disabled={phoneNumber !== "Chưa cập nhật"}
+              disabled={formData.phoneNumber === null}
             />
           </div>
           <div>

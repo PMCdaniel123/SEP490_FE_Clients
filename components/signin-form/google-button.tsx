@@ -14,7 +14,6 @@ import { login } from "@/stores/slices/authSlice";
 function GoogleButton({ onClose }: { onClose?: () => void }) {
   const [idToken, setIdToken] = useState<string | null>(null);
   const dispatch = useDispatch<AppDispatch>();
-
   const handleSuccess = async (credentialResponse: CredentialResponse) => {
     const token = credentialResponse.credential; // This is the idToken
     if (token) {

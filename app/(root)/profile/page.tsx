@@ -106,8 +106,11 @@ function Profile() {
             confirmPassword: "",
           });
 
-          if (user.avatar) {
-            setAvatar(user.avatar);
+          // if (user.avatar) {
+          //   setAvatar(user.avatar);
+          // }
+          if (customer.avatar) {
+            setAvatar(customer.avatar);
           }
         } catch (error) {
           const errorMessage =
