@@ -264,6 +264,21 @@ export default function Checkout() {
     );
   }
 
+  if (
+    customer &&
+    (customer.phone === null ||
+      customer.phone === "" ||
+      customer.phone === undefined)
+  ) {
+    toast.error("Vui lọng cập nhật sđt trước khi tiến hành thanh toán", {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      theme: "light",
+    });
+    window.location.href = "/profile";
+  }
+
   return (
     <div className="mx-auto px-10 py-8 grid grid-cols-1 md:grid-cols-3 gap-10 max-w-7xl">
       <div className="md:col-span-2 space-y-6">

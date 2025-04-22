@@ -11,7 +11,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
-import { Edit } from "lucide-react";
+import { Edit, TriangleAlert } from "lucide-react";
 
 function Profile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -100,14 +100,17 @@ function Profile() {
             address: user.location || "Chưa cập nhật",
             phoneNumber: user.phone || "Chưa cập nhật",
             dob: user.dateOfBirth || "Chưa cập nhật",
-            gender: user.sex || "Chưa cập nhật",
+            gender: user.sex || "",
             currentPassword: "",
             newPassword: "",
             confirmPassword: "",
           });
 
-          if (user.avatar) {
-            setAvatar(user.avatar);
+          // if (user.avatar) {
+          //   setAvatar(user.avatar);
+          // }
+          if (customer.avatar) {
+            setAvatar(customer.avatar);
           }
         } catch (error) {
           const errorMessage =
@@ -171,81 +174,96 @@ function Profile() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-8">
-      <div className="w-full lg:w-1/3 bg-secondary p-6 rounded-lg text-center text-white sticky top-4 h-fit">
-        <div className="w-32 h-32 mx-auto bg-white rounded-full overflow-hidden border">
-          {avatar ? (
-            <img
-              src={
-                typeof avatar === "string"
-                  ? avatar
-                  : URL.createObjectURL(avatar)
-              }
-              alt="Avatar"
-              className="w-full h-full object-cover"
-            />
+    <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col gap-8">
+      {(customer?.phone === "" ||
+        customer?.phone === null ||
+        customer?.phone === undefined) && (
+        <div className="w-full bg-red-200 text-center p-8 flex justify-center rounded-lg">
+          <p className="text-lg text-red-500 flex gap-4 items-center">
+            <TriangleAlert />
+            Bạn cần cập nhật số điện thoại trước khi tiến hành các dịch vụ của
+            chúng tôi.
+          </p>
+        </div>
+      )}
+      <div className="flex flex-col lg:flex-row gap-8">
+        <div className="w-full lg:w-1/3 bg-secondary p-6 rounded-lg text-center text-white sticky top-4 h-fit">
+          <div className="w-32 h-32 mx-auto bg-white rounded-full overflow-hidden border">
+            {avatar ? (
+              <img
+                src={
+                  typeof avatar === "string"
+                    ? avatar
+                    : URL.createObjectURL(avatar)
+                }
+                alt="Avatar"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <img
+                src="/WorkHive.svg"
+                alt="Default Avatar"
+                className="w-full h-full object-cover"
+              />
+            )}
+          </div>
+          <p className="font-bold text-2xl pt-5">{formData.name}</p>
+          <div className="text-left space-y-2 bg-white rounded-lg px-4 py-8 mt-8">
+            <p className="text-gray-600">
+              <span className="font-semibold">Email:</span> {formData.email}
+            </p>
+            <p className="text-gray-600">
+              <span className="font-semibold">Địa chỉ:</span> {formData.address}
+            </p>
+            <p className="text-gray-600">
+              <span className="font-semibold">Số điện thoại:</span>{" "}
+              {formData.phoneNumber}
+            </p>
+            <p className="text-gray-600">
+              <span className="font-semibold">Ngày sinh:</span>{" "}
+              {formData.dob === "Chưa cập nhật" ||
+              !dayjs(formData.dob).isValid()
+                ? "Chưa cập nhật"
+                : dayjs(formData.dob).format("DD/MM/YYYY")}
+            </p>
+            <p className="text-gray-600">
+              <span className="font-semibold">Giới tính:</span>{" "}
+              {formData.gender === "" ? "Chưa cập nhật" : formData.gender}
+            </p>
+          </div>
+        </div>
+
+        <div className="w-full lg:w-2/3">
+          {!isEditing ? (
+            <div>
+              <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold text-primary">
+                  Xin chào, {formData.name}
+                </h1>
+                <button
+                  className="my-4 px-4 py-2 rounded-lg bg-primary border-black hover:bg-secondary text-white hover:border-primary border font-medium flex gap-2 items-center"
+                  onClick={() => setIsEditing(true)}
+                >
+                  <Edit size={20} /> Chỉnh sửa hồ sơ
+                </button>
+              </div>
+              <UserReview
+                reviews={reviews}
+                userId={customer?.id ? Number(customer.id) : 0}
+                onReviewUpdated={fetchReviews}
+              />
+            </div>
           ) : (
-            <img
-              src="/WorkHive.svg"
-              alt="Default Avatar"
-              className="w-full h-full object-cover"
+            <EditProfileForm
+              formData={formData}
+              avatar={avatar}
+              handleChange={handleChange}
+              handleAvatarChange={handleAvatarChange}
+              handleSubmit={handleSubmit}
+              handleCancel={handleCancel}
             />
           )}
         </div>
-        <p className="font-bold text-2xl pt-5">{formData.name}</p>
-        <div className="text-left space-y-2 bg-white rounded-lg px-4 py-8 mt-8">
-          <p className="text-gray-600">
-            <span className="font-semibold">Email:</span> {formData.email}
-          </p>
-          <p className="text-gray-600">
-            <span className="font-semibold">Địa chỉ:</span> {formData.address}
-          </p>
-          <p className="text-gray-600">
-            <span className="font-semibold">Số điện thoại:</span>{" "}
-            {formData.phoneNumber}
-          </p>
-          <p className="text-gray-600">
-            <span className="font-semibold">Ngày sinh:</span>{" "}
-            {formData.dob === "Chưa cập nhật" || !dayjs(formData.dob).isValid()
-              ? "Chưa cập nhật"
-              : dayjs(formData.dob).format("DD/MM/YYYY")}
-          </p>
-          <p className="text-gray-600">
-            <span className="font-semibold">Giới tính:</span> {formData.gender}
-          </p>
-        </div>
-      </div>
-
-      <div className="w-full lg:w-2/3">
-        {!isEditing ? (
-          <div>
-            <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold text-primary">
-                Xin chào, {formData.name}
-              </h1>
-              <button
-                className="my-4 px-4 py-2 rounded-lg bg-primary border-black hover:bg-secondary text-white hover:border-primary border font-medium flex gap-2 items-center"
-                onClick={() => setIsEditing(true)}
-              >
-                <Edit size={20} /> Chỉnh sửa hồ sơ
-              </button>
-            </div>
-            <UserReview
-              reviews={reviews}
-              userId={customer?.id ? Number(customer.id) : 0}
-              onReviewUpdated={fetchReviews}
-            />
-          </div>
-        ) : (
-          <EditProfileForm
-            formData={formData}
-            avatar={avatar}
-            handleChange={handleChange}
-            handleAvatarChange={handleAvatarChange}
-            handleSubmit={handleSubmit}
-            handleCancel={handleCancel}
-          />
-        )}
       </div>
     </div>
   );
