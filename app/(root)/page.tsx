@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import AnimateInView from "@/components/animate-ui/animate-section";
 
 function HomePage() {
   const [km, setKm] = useState("5");
@@ -31,80 +32,96 @@ function HomePage() {
     <div>
       <SearchBanner />
       <div className="max-w-7xl mx-auto p-6 mt-8">
-        <SectionTitle>
-          WorkHive cung cấp đa dạng <br /> giải pháp không gian làm việc
-        </SectionTitle>
+        <AnimateInView>
+          <div>
+            <SectionTitle>
+              WorkHive cung cấp đa dạng <br /> giải pháp không gian làm việc
+            </SectionTitle>
 
-        <SpaceList />
-
-        <div className="mb-8 mt-16 flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-0">
-          <SectionTitle>Nơi làm việc gần bạn</SectionTitle>
-          <div className="flex items-center gap-2">
-            <p>Khoảng cách mong muốn</p>
-            <Select value={km} onValueChange={(value) => setKm(value)}>
-              <SelectTrigger className="py-6 px-4 rounded-md w-full">
-                <SelectValue placeholder="Chọn khoảng cách mong muốn" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem
-                  className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
-                  value="5"
-                >
-                  5 km
-                </SelectItem>
-                <SelectItem
-                  className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
-                  value="10"
-                >
-                  10 km
-                </SelectItem>
-                <SelectItem
-                  className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
-                  value="15"
-                >
-                  15 km
-                </SelectItem>
-                <SelectItem
-                  className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
-                  value="20"
-                >
-                  20 km
-                </SelectItem>
-                <SelectItem
-                  className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
-                  value="All"
-                >
-                  Trên 20 km
-                </SelectItem>
-              </SelectContent>
-            </Select>
+            <SpaceList />
           </div>
-        </div>
+        </AnimateInView>
 
-        <NearSpaceList km={km} />
+        <AnimateInView delay={0.2}>
+          <div>
+            <div className="mb-8 mt-16 flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-0">
+              <SectionTitle>Nơi làm việc gần bạn</SectionTitle>
+              <div className="flex items-center gap-2">
+                <p>Khoảng cách mong muốn</p>
+                <Select value={km} onValueChange={(value) => setKm(value)}>
+                  <SelectTrigger className="py-6 px-4 rounded-md w-full">
+                    <SelectValue placeholder="Chọn khoảng cách mong muốn" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem
+                      className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                      value="5"
+                    >
+                      5 km
+                    </SelectItem>
+                    <SelectItem
+                      className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                      value="10"
+                    >
+                      10 km
+                    </SelectItem>
+                    <SelectItem
+                      className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                      value="15"
+                    >
+                      15 km
+                    </SelectItem>
+                    <SelectItem
+                      className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                      value="20"
+                    >
+                      20 km
+                    </SelectItem>
+                    <SelectItem
+                      className="rounded-sm flex items-center gap-2 focus:bg-primary focus:text-white p-2 transition-colors duration-200"
+                      value="All"
+                    >
+                      Trên 20 km
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
-        <div className="mb-8 mt-16">
-          <SectionTitle>
-            Không gian làm việc <br /> được đánh giá cao
-          </SectionTitle>
-        </div>
+            <NearSpaceList km={km} />
+          </div>
+        </AnimateInView>
 
-        <HighRatingSpace />
+        <AnimateInView delay={0.4}>
+          <div>
+            <div className="mb-8 mt-16">
+              <SectionTitle>
+                Không gian làm việc <br /> được đánh giá cao
+              </SectionTitle>
+            </div>
 
-        <div className="mb-8 mt-16 flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-0">
-          <SectionTitle>
-            Các thương hiệu hàng đầu <br /> mà bạn không thể bỏ lỡ!
-          </SectionTitle>
-          <Link
-            href={"/workspace-owner"}
-            className="flex items-center gap-2 font-semibold md:text-base text-primary cursor-pointer hover:underline hover:text-secondary transition-colors duration-300"
-          >
-            <Search />
-            <span>Xem tất cả</span>
-          </Link>
-        </div>
+            <HighRatingSpace />
+          </div>
+        </AnimateInView>
 
-        <HotWorkspaceOwner />
+        <AnimateInView delay={0.6}>
+          <div>
+            <div className="mb-8 mt-16 flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-0">
+              <SectionTitle>
+                Các thương hiệu hàng đầu <br /> mà bạn không thể bỏ lỡ!
+              </SectionTitle>
+              <Link
+                href={"/workspace-owner"}
+                className="flex items-center gap-2 font-semibold md:text-base text-primary cursor-pointer hover:underline hover:text-secondary transition-colors duration-300"
+              >
+                <Search />
+                <span>Xem tất cả</span>
+              </Link>
+            </div>
+
+            <HotWorkspaceOwner />
+          </div>
+        </AnimateInView>
 
         <div className="mt-20 mb-16">
           <AnimatedGradientSection
