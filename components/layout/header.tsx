@@ -44,10 +44,67 @@ function Header() {
   const dispatch = useDispatch();
   const { customer } = useSelector((state: RootState) => state.auth);
   const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
   const [isToken, setIsToken] = useState(false);
 
   useEffect(() => {
-    if (token !== null && token !== undefined && token !== "") {
+    if (
+      google_token !== null &&
+      google_token !== undefined &&
+      google_token !== ""
+    ) {
+      const getCustomerData = async () => {
+        try {
+          const decodeResponse = await fetch(
+            `${BASE_URL}/auth/user/google-login`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                idToken: google_token,
+              }),
+            }
+          );
+
+          if (!decodeResponse.ok) {
+            throw new Error("Có lỗi xảy ra khi đăng nhập.");
+          }
+
+          const result = await decodeResponse.json();
+          const avatarUrl = result.user.name
+            ? `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                result.user.name
+              )}&format=png`
+            : "/WorkHive.svg";
+          const customerData = {
+            id: result.user.id,
+            fullName: result.user.name,
+            email: result.user.email,
+            phone: result.user.Phone,
+            roleId: result.user.RoleId,
+            avatar: avatarUrl,
+          };
+
+          setIsToken(true);
+          dispatch(login(customerData));
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+          toast.error(errorMessage, {
+            position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: false,
+            theme: "light",
+          });
+          Cookies.remove("google_token");
+          return;
+        }
+      };
+      getCustomerData();
+    } else if (token !== null && token !== undefined && token !== "") {
       const getCustomerData = async () => {
         try {
           const decodeResponse = await fetch(
@@ -94,7 +151,7 @@ function Header() {
       };
       getCustomerData();
     }
-  }, [dispatch, token]);
+  }, [dispatch, token, google_token]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -119,11 +176,11 @@ function Header() {
     setSignUpModalOpen(false);
   };
 
-  const handleLogOut = () => {
-    setOpenAccount(!openAccount);
+  const handleLogOut = async () => {
     dispatch(logout());
+    setOpenAccount(!openAccount);
     localStorage.removeItem("auth");
-    window.location.reload();
+    window.location.href = "/";
   };
 
   return (
@@ -145,7 +202,7 @@ function Header() {
           WorkHive
         </h1>
       </div>
-      <nav className="hidden md:flex items-center justify-around gap-10">
+      <nav className="hidden md:flex items-center justify-around gap-6 xl:gap-8">
         {menuItems.map((item) => (
           <li
             key={item.path}
@@ -179,7 +236,7 @@ function Header() {
                 : ""
             }`}
           >
-            Phân loại
+            Danh mục
           </p>
 
           <span

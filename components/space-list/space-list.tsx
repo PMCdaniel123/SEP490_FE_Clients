@@ -14,7 +14,7 @@ import Link from "next/link";
 import ShinyCard from "../animate-ui/shiny-card";
 
 interface WorkspaceWithStatus extends Workspace {
-  status?: string;
+  status: string;
 }
 
 export default function SpaceList() {

@@ -25,6 +25,7 @@ export interface Workspace {
   category: string;
   prices: { price: number; category: string }[];
   images: { imgUrl: string }[];
+  status: string;
 }
 
 export default function HighRatingSpace() {
@@ -41,7 +42,14 @@ export default function HighRatingSpace() {
         return response.json();
       })
       .then((data) => {
-        const highRatingWorkspaces = data.workspaces
+        const filteredWorkspaces = data.workspaces.filter(
+          (workspace: Workspace) => workspace.status === "Active"
+        );
+        if (filteredWorkspaces.length === 0) {
+          setLoading(false);
+          return;
+        }
+        const highRatingWorkspaces = filteredWorkspaces
           .filter((workspace: Workspace) => workspace.rate >= 4)
           .sort((a: Workspace, b: Workspace) => b.rate - a.rate);
         setWorkspaces(highRatingWorkspaces);

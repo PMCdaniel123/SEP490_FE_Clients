@@ -26,7 +26,11 @@ function BeveragesList({ ownerId }: { ownerId: string }) {
         }
 
         const data = await response.json();
-        setBeverageList(Array.isArray(data.beverages) ? data.beverages : []);
+        setBeverageList(
+          Array.isArray(data.beverages)
+            ? data.beverages.filter((b: BeverageProps) => b.status === "Active")
+            : []
+        );
         setDrinkList(
           Array.isArray(data.beverages)
             ? data.beverages.filter(

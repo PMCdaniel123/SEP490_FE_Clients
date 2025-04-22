@@ -175,6 +175,7 @@ export interface Workspace {
   openTime: string;
   closeTime: string;
   code: string;
+  status: string;
 }
 
 export interface Promotion {

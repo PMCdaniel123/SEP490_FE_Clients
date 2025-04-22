@@ -79,7 +79,7 @@ export const workspaceList: WorkspaceProps[] = [
 
 export const paymentMethods = [
   { value: "1", label: "Thanh toán bằng ngân hàng", image: "/vietqr.png" },
-  { value: "2", label: "Thanh toán bằng ví WorkHive", image: "/WorkHive.svg" },
+  { value: "2", label: "Thanh toán bằng ví WorkHive", image: "/WalletLogo.jpg" },
 ];
 
 export const searchAddress: string[] = [

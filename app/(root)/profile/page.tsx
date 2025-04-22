@@ -78,7 +78,8 @@ function Profile() {
 
   useEffect(() => {
     const token = Cookies.get("token");
-    if (token && customer) {
+    const google_token = Cookies.get("google_token");
+    if ((token || google_token) && customer) {
       const fetchProfile = async () => {
         try {
           setLoading(true);
