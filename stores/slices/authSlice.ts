@@ -124,6 +124,7 @@ const authSlice = createSlice({
       state.user = null;
       state.loginStep = "phone";
       Cookies.remove("token");
+      Cookies.remove("google_token");
     },
     setLoginStep(state, action: PayloadAction<"phone" | "email" | "password">) {
       state.loginStep = action.payload;

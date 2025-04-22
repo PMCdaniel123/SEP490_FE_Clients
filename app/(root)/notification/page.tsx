@@ -208,7 +208,8 @@ export default function NotificationPage() {
 
   useEffect(() => {
     const token = Cookies.get("token");
-    if (token && customer?.id) {
+    const google_token = Cookies.get("google_token");
+    if ((token || google_token) && customer?.id) {
       fetchNotifications();
     }
   }, [customer, fetchNotifications]);
