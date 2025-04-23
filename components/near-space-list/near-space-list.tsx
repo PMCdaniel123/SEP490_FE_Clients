@@ -43,6 +43,7 @@ export default function NearSpaceList({ km }: { km: string }) {
       (position) => {
         const { latitude, longitude } = position.coords;
         setLocation({ lat: latitude, lng: longitude });
+        setError(null); // Clear any previous error messages
         const fetchWorkspaces = async () => {
           setLoading(true);
           try {
@@ -82,9 +83,11 @@ export default function NearSpaceList({ km }: { km: string }) {
 
         fetchWorkspaces();
       },
-      (err) => {
+      () => {
         setLoading(false);
-        setError("Unable to retrieve location: " + err.message);
+        setError(
+          "Không thể truy cập vị trí của bạn. Vui lòng cấp quyền truy cập vị trí để xem không gian làm việc gần bạn."
+        );
       }
     );
   }, [km]);
