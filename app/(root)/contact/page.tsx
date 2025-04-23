@@ -62,7 +62,7 @@ function Contact() {
           <SectionTitle>Liên hệ với chúng tôi</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4">
             {/* Contact Info */}
-            <div className="bg-gray-100 p-6 rounded-lg">
+            <div className="bg-gray-100 p-6 rounded-lg w-full col-span-1">
               <div className="flex items-center gap-4">
                 <Phone className="text-brown-700 text-2xl" />
                 <h3 className="text-lg font-semibold">Liên hệ qua hotline</h3>
@@ -83,7 +83,7 @@ function Contact() {
             </div>
 
             {/* Contact Form */}
-            <div className="col-span-2 bg-white p-6 rounded-lg shadow-lg">
+            <div className="col-span-1 md:col-span-2 bg-white p-6 rounded-lg shadow-lg w-full">
               {success && (
                 <p className="text-green-500">
                   Tin nhắn đã được gửi thành công!
@@ -98,8 +98,8 @@ function Contact() {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded-lg"
-                  placeholder="Your Name *"
+                  className="w-full p-2 border rounded-lg col-span-3 md:col-span-1"
+                  placeholder="Họ tên *"
                   required
                 />
                 <input
@@ -107,8 +107,8 @@ function Contact() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded-lg"
-                  placeholder="Your Email *"
+                  className="w-full p-2 border rounded-lg col-span-3 md:col-span-1"
+                  placeholder="Email *"
                   required
                 />
                 <input
@@ -116,8 +116,8 @@ function Contact() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded-lg"
-                  placeholder="Your Phone *"
+                  className="w-full p-2 border rounded-lg col-span-3 md:col-span-1"
+                  placeholder="Số điện thoại *"
                   required
                 />
                 <textarea

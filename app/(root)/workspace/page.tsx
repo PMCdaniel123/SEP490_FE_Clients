@@ -345,7 +345,7 @@ export default function PropertyGrid() {
                         Math.max(w.shortTermPrice || 0, w.longTermPrice || 0)
                       )
                     )}
-                    step={50000}
+                    step={1000}
                     value={priceRange}
                     onChange={(value) =>
                       setPriceRange(value as [number, number])

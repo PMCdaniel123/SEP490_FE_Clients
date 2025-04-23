@@ -122,7 +122,7 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         <button
           type="button"
           onClick={toggleShowPassword}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2"
+          className="absolute right-3 top-2/3 transform -translate-y-1/2"
         >
           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
         </button>
@@ -142,7 +142,7 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         <button
           type="button"
           onClick={toggleShowPassword}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2"
+          className="absolute right-3 top-2/3 transform -translate-y-1/2"
         >
           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
         </button>
@@ -162,7 +162,7 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
         <button
           type="button"
           onClick={toggleShowPassword}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2"
+          className="absolute right-3 top-2/3 transform -translate-y-1/2"
         >
           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
         </button>
