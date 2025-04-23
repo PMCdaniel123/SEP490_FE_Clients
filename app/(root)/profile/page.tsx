@@ -187,7 +187,7 @@ function Profile() {
         </div>
       )}
       <div className="flex flex-col lg:flex-row gap-8">
-        <div className="w-full lg:w-1/3 bg-secondary p-6 rounded-lg text-center text-white sticky top-4 h-fit">
+        <div className="w-full lg:w-1/3 bg-secondary p-6 rounded-lg text-center text-white md:sticky md:top-28 h-fit">
           <div className="w-32 h-32 mx-auto bg-white rounded-full overflow-hidden border">
             {avatar ? (
               <img
@@ -236,7 +236,7 @@ function Profile() {
         <div className="w-full lg:w-2/3">
           {!isEditing ? (
             <div>
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col md:flex-row justify-between items-center">
                 <h1 className="text-2xl font-bold text-primary">
                   Xin chào, {formData.name}
                 </h1>

@@ -223,7 +223,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
           Chỉnh sửa thông tin cá nhân
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="col-span-2">
+          <div className="col-span-1 md:col-span-2">
             <label className="block text-sm font-medium">Ảnh đại diện</label>
             <div className="flex items-center">
               <div className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden border my-2 mr-2">

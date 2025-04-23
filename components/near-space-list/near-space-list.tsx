@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import Slider from "react-slick";
-import { Users, Ruler, MapPin, Calendar, Clock } from "lucide-react";
+import { Users, Ruler, MapPin, Calendar, Clock, LandPlot } from "lucide-react";
 import { Card } from "../ui/card";
 import { CardContent } from "../ui/card-content";
 import { Badge } from "../ui/badge";
@@ -19,6 +19,7 @@ import { BASE_URL } from "@/constants/environments";
 
 interface WorkspaceWithStatus extends Workspace {
   status: string;
+  distanceKm: number;
 }
 
 interface Location {
@@ -43,6 +44,7 @@ export default function NearSpaceList({ km }: { km: string }) {
       (position) => {
         const { latitude, longitude } = position.coords;
         setLocation({ lat: latitude, lng: longitude });
+        setError(null); // Clear any previous error messages
         const fetchWorkspaces = async () => {
           setLoading(true);
           try {
@@ -82,9 +84,11 @@ export default function NearSpaceList({ km }: { km: string }) {
 
         fetchWorkspaces();
       },
-      (err) => {
+      () => {
         setLoading(false);
-        setError("Unable to retrieve location: " + err.message);
+        setError(
+          "Không thể truy cập vị trí của bạn. Vui lòng cấp quyền truy cập vị trí để xem không gian làm việc gần bạn."
+        );
       }
     );
   }, [km]);
@@ -144,7 +148,6 @@ export default function NearSpaceList({ km }: { km: string }) {
     <>
       <div className="max-w-7xl mx-auto p-6 pb-12">
         <div>
-          {error && <p className="text-red-500">{error}</p>}
           {location ? (
             <p className="text-gray-500 md:ml-3 mb-4">
               {workspaces.length} không gian gần bạn được tìm thấy
@@ -182,6 +185,15 @@ export default function NearSpaceList({ km }: { km: string }) {
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                           />
                         </div>
+
+                        {location && (
+                          <div className="absolute top-3 right-3">
+                            <Badge className="bg-secondary hover:bg-secondary/80 text-white px-2 py-1 rounded-md text-sm flex items-center">
+                              <LandPlot className="mr-1" size={16} />
+                              {workspace.distanceKm.toFixed(2)} km
+                            </Badge>
+                          </div>
+                        )}
 
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
                           <div className="flex justify-between items-end">

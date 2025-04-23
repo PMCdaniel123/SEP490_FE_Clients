@@ -52,6 +52,7 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
     images: string[];
     facilities: string[];
     policies: string[];
+    status: string;
   }
 
   useEffect(() => {
@@ -92,6 +93,7 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
             images: { imgUrl: string }[];
             facilities: { facilityName: string }[];
             policies: { policyName: string }[];
+            status: string;
           }) => ({
             id: workspace.id,
             name: workspace.name,
@@ -102,6 +104,7 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
             category: workspace.category,
             area: workspace.area,
             is24h: workspace.is24h,
+            status: workspace.status,
             shortTermPrice:
               workspace.prices.find((price: Price) => price.category === "Giờ")
                 ?.price || null,
@@ -120,8 +123,12 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
           })
         );
 
-        setResults(mappedResults);
-        setFilteredResults(mappedResults);
+        const successfulResults = mappedResults.filter(
+          (result: SearchResult) => result.status === "Active"
+        );
+
+        setResults(successfulResults);
+        setFilteredResults(successfulResults);
 
         const uniqueFacilities = Array.from(
           new Set(
@@ -135,8 +142,20 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
         );
         setFacilityOptions(uniqueFacilities as string[]);
 
-        if (mappedResults.length > 0) {
-          setSelectedResult(mappedResults[0].id);
+        const maxPrice = Math.max(
+          ...successfulResults.map((w: SearchResult) =>
+            Math.max(w.shortTermPrice || 0, w.longTermPrice || 0)
+          )
+        );
+        const maxArea = Math.max(
+          ...successfulResults.map((w: SearchResult) => w.area || 0)
+        );
+
+        setPriceRange([0, maxPrice > 0 ? maxPrice : 1000000]);
+        setAreaRange([0, maxArea > 0 ? maxArea : 500]);
+
+        if (successfulResults.length > 0) {
+          setSelectedResult(successfulResults[0].id);
         }
       } catch (error) {
         console.error("Error fetching search results:", error);
@@ -272,7 +291,7 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
             <h2 className="text-lg font-bold mb-4">Bộ lọc</h2>
 
             <div className="mb-4">
-              <p className="font-medium">Giá (VND):</p>
+              <p className="font-medium mb-2">Giá (VND):</p>
               <ConfigProvider
                 theme={{
                   token: {
@@ -283,13 +302,17 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
                 <Slider
                   range
                   min={0}
-                  max={1000000}
-                  step={50000}
+                  max={Math.max(
+                    ...results.map((w) =>
+                      Math.max(w.shortTermPrice || 0, w.longTermPrice || 0)
+                    )
+                  )}
+                  step={1000}
                   value={priceRange}
                   onChange={(value) => setPriceRange(value as [number, number])}
                 />
               </ConfigProvider>
-              <div className="flex justify-between">
+              <div className="flex justify-between text-sm">
                 <span>{formatPrice(priceRange[0])}</span>
                 <span>{formatPrice(priceRange[1])}</span>
               </div>
@@ -315,7 +338,7 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
             </div>
 
             <div className="mb-4">
-              <p className="font-medium">Diện tích (m²):</p>
+              <p className="font-medium mb-2">Diện tích (m²):</p>
               <ConfigProvider
                 theme={{
                   token: {
@@ -326,12 +349,12 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
                 <Slider
                   range
                   min={0}
-                  max={500}
+                  max={Math.max(...results.map((w) => w.area || 0))}
                   value={areaRange}
                   onChange={(value) => setAreaRange(value as [number, number])}
                 />
               </ConfigProvider>
-              <div className="flex justify-between">
+              <div className="flex justify-between text-sm">
                 <span>{areaRange[0]} m²</span>
                 <span>{areaRange[1]} m²</span>
               </div>
@@ -418,7 +441,7 @@ const SearchPage = ({ params }: { params: Promise<{ query?: string }> }) => {
         </div>
       </div>
 
-      <div className="w-full md:w-2/4 bg-white p-4 rounded-lg shadow-md sticky top-6 h-fit">
+      <div className="w-full md:w-2/4 bg-white p-4 rounded-lg shadow-md sticky top-28 h-fit">
         <h2 className="text-xl font-bold mb-4">Bản đồ</h2>
         <div
           className="relative overflow-hidden rounded-lg"
