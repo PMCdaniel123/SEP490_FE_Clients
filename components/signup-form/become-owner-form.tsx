@@ -50,7 +50,7 @@ export default function BecomeOwnerForm({ onClose }: { onClose: () => void }) {
         hideProgressBar: false,
         theme: "light",
       });
-      window.open("https://sep-490-fe-owners.vercel.app/", "_blank");
+      window.open("https://owner.workhive.io.vn/", "_blank");
       onClose();
     } catch (error) {
       const errorMessage =
