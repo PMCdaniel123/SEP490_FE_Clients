@@ -221,10 +221,17 @@ export default function PurchaseHistoryPage() {
       });
       if (!response.ok) throw new Error("Có lỗi xảy ra khi hủy đơn đặt chỗ.");
       const data = await response.json();
+      if (
+        data &&
+        data.notification === "Ví đã bị khóa để thực hiện yêu cầu rút tiền" &&
+        data.isLock === 1
+      ) {
+        throw new Error("Không thể hủy do bạn đang thực hiện yêu cầu rút tiền");
+      }
       console.log(data);
       toast.success("Hủy đơn đặt chỗ thành công!", {
         position: "top-right",
-        autoClose: 1500,
+        autoClose: 2000,
         hideProgressBar: false,
         theme: "light",
       });
@@ -250,7 +257,7 @@ export default function PurchaseHistoryPage() {
         error instanceof Error ? error.message : "Đã xảy ra lỗi!";
       toast.error(errorMessage, {
         position: "top-right",
-        autoClose: 1500,
+        autoClose: 2500,
         hideProgressBar: false,
         theme: "light",
       });
@@ -502,11 +509,17 @@ export default function PurchaseHistoryPage() {
           <ul className="list-disc pl-5 space-y-2 text-gray-700">
             <li>
               <span className="font-medium">Hủy trước ít nhất 8 giờ</span> so
-              với thời gian đặt chỗ bắt đầu: Hoàn 100% giá trị đặt chỗ.
+              với thời gian đặt chỗ bắt đầu: Hoàn 80% giá trị đặt chỗ.
             </li>
             <li>
               <span className="font-medium">Hủy sau thời hạn 8 giờ:</span> Không
               hỗ trợ hoàn tiền.
+            </li>
+            <li>
+              <span className="font-medium">
+                Lưu ý: trong thời gian yêu cầu rút tiền
+              </span>{" "}
+              không thể thực hiện hủy đơn đặt chỗ.
             </li>
           </ul>
 
@@ -519,10 +532,10 @@ export default function PurchaseHistoryPage() {
               <span className="font-medium">Ví WorkHive</span> trong vòng{" "}
               <span className="font-medium">7 ngày làm việc</span>.
             </li>
-            <li>
+            {/* <li>
               Thời gian hoàn tiền có thể thay đổi tùy theo quy trình xử lý nhà
               cung cấp dịch vụ thanh toán.
-            </li>
+            </li> */}
           </ul>
 
           <h4 className="text-md font-medium text-gray-800 mt-4">

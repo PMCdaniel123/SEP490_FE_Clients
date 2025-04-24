@@ -385,6 +385,14 @@ function Header() {
                 </Link>
                 <Link
                   onClick={() => setOpenAccount(!openAccount)}
+                  href="/wallet"
+                  className="px-4 flex items-center gap-3 hover:bg-primary hover:text-white py-2.5 transition-colors duration-200 cursor-pointer"
+                >
+                  <Wallet size={16} />
+                  <span>Ví WorkHive</span>
+                </Link>
+                <Link
+                  onClick={() => setOpenAccount(!openAccount)}
                   href="/purchase-history"
                   className="px-4 flex items-center gap-3 hover:bg-primary hover:text-white py-2.5 transition-colors duration-200 cursor-pointer"
                 >
@@ -399,14 +407,7 @@ function Header() {
                   <MessageCircle size={16} />
                   <span>Trung tâm hỗ trợ</span>
                 </Link>
-                <Link
-                  onClick={() => setOpenAccount(!openAccount)}
-                  href="/wallet"
-                  className="px-4 flex items-center gap-3 hover:bg-primary hover:text-white py-2.5 transition-colors duration-200 cursor-pointer"
-                >
-                  <Wallet size={16} />
-                  <span>Ví WorkHive</span>
-                </Link>
+
                 <Separator className="my-1" />
                 <li
                   onClick={handleLogOut}
