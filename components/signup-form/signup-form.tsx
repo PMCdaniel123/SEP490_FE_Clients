@@ -47,7 +47,6 @@ export function SignUpForm({
     setIsLoading(true);
     try {
       const response = await axios.post(`${BASE_URL}/users/register`, data);
-      console.log("Sign up successful:", response.data);
 
       if (
         response.data &&
@@ -139,7 +138,14 @@ export function SignUpForm({
   };
 
   const handleCloseSignUpForm = () => {
-    reset();
+    reset({
+      name: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+      sex: "",
+    });
     onCloseSignUpForm();
   };
 
@@ -257,6 +263,9 @@ export function SignUpForm({
               className="py-4 px-4 rounded-md bg-white shadow-sm border border-gray-300"
               {...register("sex")}
             >
+              <option value="" disabled>
+                -- Vui lòng chọn giới tính --
+              </option>
               <option value="Nam">Nam</option>
               <option value="Nữ">Nữ</option>
               <option value="Khác">Khác</option>

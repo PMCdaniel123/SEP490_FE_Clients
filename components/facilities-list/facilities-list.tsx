@@ -13,7 +13,7 @@ function FacilitiesList({ facilities }: { facilities: Facilities[] }) {
     <div>
       {facilities.length > 0 ? (
         <>
-          <div className="grid grid-cols-2 gap-2 md:max-w-4xl text-fourth font-semibold">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:max-w-4xl text-fourth font-semibold">
             {displayedFacilities.map((facility, index) => (
               <FacilitiesItem label={facility.facilityName} key={index} />
             ))}

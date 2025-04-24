@@ -239,7 +239,7 @@ function DateSelect({
               <span className="font-medium">Chọn khoảng thời gian</span>
             </div>
             {duration > 0 && (
-              <Badge className="bg-white text-primary">
+              <Badge className="bg-white text-primary hover:bg-white">
                 {duration} ngày
               </Badge>
             )}

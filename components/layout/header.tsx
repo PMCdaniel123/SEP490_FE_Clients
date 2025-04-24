@@ -199,7 +199,7 @@ function Header() {
             className="object-contain"
           />
         </div>
-        <h1 className="text-3xl font-extrabold bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent drop-shadow-sm hover:drop-shadow-md transition-all duration-300">
+        <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent drop-shadow-sm hover:drop-shadow-md transition-all duration-300">
           WorkHive
         </h1>
       </div>

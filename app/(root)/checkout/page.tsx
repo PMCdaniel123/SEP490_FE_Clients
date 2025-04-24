@@ -164,6 +164,41 @@ export default function Checkout() {
     await proceedCheckout();
   };
 
+  const checkOverlapTime = async () => {
+    setIsProcessing(true);
+    const response = await fetch(
+      `${BASE_URL}/users/booking/checktimesoverlap`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          workspaceId: workspaceId,
+          startDate: startTime,
+          endDate: endTime,
+        }),
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Khoảng thời gian đã được sử dụng");
+    }
+    const data = await response.json();
+    if (data === "Khoảng thời gian đã được sử dụng") {
+      throw new Error("Khoảng thời gian đã được sử dụng");
+    }
+    if (
+      data ===
+      "Thời gian đặt phải trong cùng một ngày và trong giờ mở cửa của workspace"
+    ) {
+      throw new Error(
+        "Thời gian đặt phải trong cùng một ngày và trong giờ mở cửa của workspace"
+      );
+    }
+    setIsProcessing(false);
+    return true;
+  };
+
   const proceedCheckout = async () => {
     setIsProcessing(true);
     const amenitiesRequest = amenityList.map((amenity) => ({
@@ -187,6 +222,7 @@ export default function Checkout() {
     };
 
     try {
+      await checkOverlapTime();
       const apiUrl =
         paymentMethod === "2"
           ? `${BASE_URL}/users/bookingbyworkhivewallet`
@@ -245,6 +281,7 @@ export default function Checkout() {
       setIsProcessing(false);
     }
   };
+
   const handleClearBeverageAndAmenity = () => {
     dispatch(clearBeverageAndAmenity());
   };
