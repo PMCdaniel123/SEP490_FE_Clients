@@ -171,9 +171,9 @@ const WithdrawalRequest = ({
 
   const confirmWithdraw = async () => {
     if (!customerId) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       const response = await fetch(`${BASE_URL}/customer-withdrawal-requests`, {
         method: "POST",
@@ -334,11 +334,15 @@ const WithdrawalRequest = ({
                 <DollarSign size={18} />
               </div>
               <div>
-                <h3 className="font-medium mb-1">Thông tin rút tiền</h3>
+                <h3 className="font-medium mb-1">LƯU Ý:</h3>
                 <p className="text-sm text-gray-600">
                   Tạo yêu cầu rút tiền để chuyển tiền từ ví WorkHive về tài
-                  khoản ngân hàng của bạn. Yêu cầu sẽ được xử lý trong vòng 24
-                  giờ làm việc.
+                  khoản ngân hàng của bạn. Yêu cầu sẽ được nhân viên xử lý trong
+                  vòng 24 giờ làm việc.
+                </p>
+                <p className="text-sm text-gray-600 pt-4">
+                  Trong quá trình xử lý yêu cầu, bạn không thể thực hiện các
+                  giao dịch nạp tiền hoặc hủy đặt chỗ.
                 </p>
               </div>
             </div>
