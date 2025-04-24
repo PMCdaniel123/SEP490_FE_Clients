@@ -243,13 +243,13 @@ const WorkspaceDetail = () => {
         <div className="lg:col-span-2 space-y-6 flex flex-col gap-8">
           <div className="flex items-center justify-between gap-4">
             <div className="flex flex-col gap-2">
-              <h1 className="text-2xl md:text-3xl font-bold text-primary flex md:items-center flex-col md:flex-row md:gap-4">
+              <h1 className="text-2xl md:text-3xl font-bold text-primary flex flex-col gap-2">
                 <span>{workspace.name}</span>
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 120, delay: 0.5 }}
-                  className="relative w-fit md:w-full my-2 md:my-0"
+                  className="relative w-fit my-2"
                 >
                   <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-lg blur-sm opacity-75 animate-pulse"></div>
                   <div className="relative flex items-center bg-white dark:bg-gray-950 py-1.5 px-3 rounded-lg border border-secondary/30 shadow-sm overflow-hidden">

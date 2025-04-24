@@ -256,7 +256,8 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
           customer === null ||
           customer.phone === null ||
           customer.phone === "" ||
-          customer.phone === undefined
+          customer.phone === undefined ||
+          isButtonLoading
         }
       >
         {isButtonLoading ? (

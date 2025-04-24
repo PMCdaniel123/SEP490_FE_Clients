@@ -179,7 +179,7 @@ function TimeList({ workspaceId }: { workspaceId: string }) {
 
     return (
       <>
-        <span className="font-medium">{dayjs(start).format("HH:mm")}</span> -
+        <span className="font-medium">{dayjs(start).format("HH:mm")}</span> -{" "}
         <span className="font-medium">{dayjs(end).format("HH:mm")}</span>
         <span className="text-xs ml-2 text-gray-500">
           {dayjs(start).format("DD/MM/YYYY")}
