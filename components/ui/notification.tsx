@@ -116,7 +116,6 @@ const Notification = ({ customer }: { customer: Customer }) => {
             !notifications.some((oldNotif) => oldNotif.id === newNotif.id)
         );
 
-        // Update state only if there are changes
         if (
           hasNewNotifications ||
           fetchedNotifications.length !== notifications.length
@@ -221,26 +220,12 @@ const Notification = ({ customer }: { customer: Customer }) => {
         });
         window.dispatchEvent(event);
       });
-
-      toast.success("Tất cả thông báo đã được đánh dấu là đã đọc", {
-        position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        theme: "light",
-      });
     } catch (error) {
       const errorMessage =
         error instanceof Error
           ? error.message
           : "Có lỗi xảy ra khi đánh dấu tất cả thông báo đã đọc!";
-      toast.error(errorMessage, {
-        position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        theme: "light",
-      });
-
-      // Revert to previous state if there was an error
+      console.log(errorMessage);
       fetchNotifications(true);
     } finally {
       setIsMarkingAll(false);
