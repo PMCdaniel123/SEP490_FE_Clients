@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BASE_URL } from "@/constants/environments";
 import ShinyCard from "@/components/animate-ui/shiny-card";
+import SectionTitle from "@/components/ui/section-tilte";
 
 interface Workspace {
   id: string;
@@ -236,11 +237,11 @@ export default function PropertyGrid() {
     );
   }
 
-  const totalPages = Math.ceil(filteredWorkspaces.length / 9);
+  const totalPages = Math.ceil(filteredWorkspaces.length / 12);
 
   const paginatedWorkspaces = sortWorkspaces(filteredWorkspaces).slice(
-    (currentPage - 1) * 9,
-    currentPage * 9
+    (currentPage - 1) * 12,
+    currentPage * 12
   );
 
   const formatPrice = (price: number) => {
@@ -251,8 +252,9 @@ export default function PropertyGrid() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="w-[90%] mx-auto pt-16 pb-20 px-6">
+      <SectionTitle>Danh sách Không gian</SectionTitle>
+      <div className="flex flex-wrap items-center justify-between gap-4 mt-10">
         <div className="flex flex-wrap gap-6 md:gap-8">
           {categories.map((category) => (
             <button
@@ -315,7 +317,7 @@ export default function PropertyGrid() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <div className="mb-5">
+              <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Tìm kiếm theo tên hoặc địa chỉ
                 </label>
@@ -329,7 +331,9 @@ export default function PropertyGrid() {
               </div>
 
               <div className="mb-4">
-                <p className="font-medium mb-2">Khoảng giá (VND):</p>
+                <p className="text-sm font-medium text-gray-700">
+                  Khoảng giá (VND):
+                </p>
                 <ConfigProvider
                   theme={{
                     token: {
@@ -361,7 +365,9 @@ export default function PropertyGrid() {
 
             <div>
               <div className="mb-4">
-                <p className="font-medium mb-2">Diện tích (m²):</p>
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Diện tích (m²):
+                </p>
                 <ConfigProvider
                   theme={{
                     token: {
@@ -386,7 +392,9 @@ export default function PropertyGrid() {
               </div>
 
               <div className="mb-4">
-                <p className="font-medium mb-2">Sức chứa (người):</p>
+                <p className="text-sm font-medium text-gray-700 mb-2">
+                  Sức chứa (người):
+                </p>
                 <ConfigProvider
                   theme={{
                     token: {
@@ -431,7 +439,7 @@ export default function PropertyGrid() {
           {filteredWorkspaces.length} kết quả được tìm thấy
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {paginatedWorkspaces.map((workspace) => (
             <ShinyCard
               key={workspace.id}
@@ -442,7 +450,7 @@ export default function PropertyGrid() {
                 onClick={() => router.push(`/workspace/${workspace.id}`)}
               >
                 <div className="relative group">
-                  <div className="overflow-hidden h-56">
+                  <div className="overflow-hidden h-40">
                     <img
                       src={workspace.images[0]?.imgUrl || "/placeholder.png"}
                       alt={workspace.name}
@@ -459,20 +467,20 @@ export default function PropertyGrid() {
                   </div>
                 </div>
 
-                <CardContent className="p-5">
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 line-clamp-1">
+                <CardContent className="p-3">
+                  <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1">
                     {workspace.name}
                   </h3>
-                  <p className="text-gray-600 text-sm mb-3 flex items-center">
+                  <p className="text-gray-600 text-xs mb-3 flex items-center">
                     <span className="truncate">{workspace.address}</span>
                   </p>
 
                   <div className="grid grid-cols-2 gap-2 mb-4">
-                    <div className="flex items-center text-gray-700 text-sm">
+                    <div className="flex items-center text-gray-700 text-xs">
                       <Users className="mr-1 text-blue-500" size={16} />
                       <span>{workspace.capacity} người</span>
                     </div>
-                    <div className="flex items-center text-gray-700 text-sm justify-end">
+                    <div className="flex items-center text-gray-700 text-xs justify-end">
                       <Ruler className="mr-1 text-green-500" size={16} />
                       <span>{workspace.area} m²</span>
                     </div>
@@ -486,7 +494,7 @@ export default function PropertyGrid() {
                             <Clock className="mr-1 text-orange-500" size={16} />
                             <span>Theo giờ</span>
                           </div>
-                          <span className="font-semibold text-gray-900">
+                          <span className="font-semibold text-gray-900 text-sm">
                             {formatPrice(workspace.shortTermPrice)}
                           </span>
                         </div>
@@ -501,13 +509,16 @@ export default function PropertyGrid() {
                             />
                             <span>Theo ngày</span>
                           </div>
-                          <span className="font-semibold text-gray-900">
+                          <span className="font-semibold text-gray-900 text-sm">
                             {formatPrice(workspace.longTermPrice)}
                           </span>
                         </div>
                       )}
                     </div>
                   </div>
+                  <Button className="w-full mt-4 text-white">
+                    Xem chi tiết
+                  </Button>
                 </CardContent>
               </div>
             </ShinyCard>

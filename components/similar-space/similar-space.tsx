@@ -91,7 +91,7 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
     dots: true,
     infinite: workspaces.length > 3,
     speed: 500,
-    slidesToShow: Math.min(2, workspaces.length),
+    slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 5000,
@@ -100,14 +100,14 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
       {
         breakpoint: 1280,
         settings: {
-          slidesToShow: Math.min(2, workspaces.length),
+          slidesToShow: 3,
           slidesToScroll: 1,
         },
       },
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: Math.min(2, workspaces.length),
+          slidesToShow: 2,
           slidesToScroll: 1,
         },
       },
@@ -130,13 +130,13 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
 
       <Slider {...settings} className="similar-space-slider">
         {workspaces.map((workspace) => (
-          <div key={workspace.id} className="px-3 py-2">
+          <div key={workspace.id} className="p-2">
             <Card
               className="relative overflow-hidden rounded-lg shadow-md transition-transform transform hover:scale-100 cursor-pointer h-full"
               onClick={() => router.push(`/workspace/${workspace.id}`)}
             >
               <div className="relative group">
-                <div className="overflow-hidden h-56">
+                <div className="overflow-hidden h-36">
                   <img
                     src={workspace.images[0]?.imgUrl || "/placeholder.png"}
                     alt={workspace.name}
@@ -153,20 +153,20 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
                 </div>
               </div>
 
-              <CardContent className="p-5">
-                <h3 className="text-xl font-bold text-gray-800 mb-1 line-clamp-1">
+              <CardContent className="p-3">
+                <h3 className="text-base font-bold text-gray-800 mb-1 line-clamp-1">
                   {workspace.name}
                 </h3>
-                <p className="text-gray-600 text-sm mb-3 flex items-center">
+                <p className="text-gray-600 text-xs mb-3 flex items-center">
                   <span className="truncate">{workspace.address}</span>
                 </p>
 
-                <div className="grid grid-cols-2 gap-2 mb-4">
-                  <div className="flex items-center text-gray-700 text-sm">
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <div className="flex items-center text-gray-700 text-xs">
                     <Users className="mr-1 text-blue-500" size={16} />
                     <span>{workspace.capacity} người</span>
                   </div>
-                  <div className="flex items-center text-gray-700 text-sm justify-end">
+                  <div className="flex items-center text-gray-700 text-xs justify-end">
                     <Ruler className="mr-1 text-green-500" size={16} />
                     <span>{workspace.area} m²</span>
                   </div>
@@ -181,7 +181,7 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
                             <Clock className="mr-1 text-orange-500" size={16} />
                             <span>Theo giờ</span>
                           </div>
-                          <span className="font-semibold text-gray-900">
+                          <span className="font-semibold text-gray-900 text-sm">
                             {new Intl.NumberFormat("vi-VN", {
                               style: "currency",
                               currency: "VND",
@@ -200,7 +200,7 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
                             />
                             <span>Theo ngày</span>
                           </div>
-                          <span className="font-semibold text-gray-900">
+                          <span className="font-semibold text-gray-900 text-sm">
                             {new Intl.NumberFormat("vi-VN", {
                               style: "currency",
                               currency: "VND",

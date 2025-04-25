@@ -36,6 +36,7 @@ import {
 import { LoadingOutlined } from "@ant-design/icons";
 import { BASE_URL } from "@/constants/environments";
 import { notificationEvents } from "@/components/ui/notification";
+import SectionTitle from "@/components/ui/section-tilte";
 
 interface CheckoutDiscount {
   code: string;
@@ -147,12 +148,12 @@ export default function Checkout() {
 
   useEffect(() => {
     if (!customer) {
-      router.push("/workspace");
+      router.push(`/workspace/${workspaceId}`);
     }
     if (cart === null) {
-      router.push("/workspace");
+      router.push(`/workspace/${workspaceId}`);
     }
-  }, [customer, cart, router]);
+  }, [customer, cart, router, workspaceId]);
 
   const onCheckout = async () => {
     if (paymentMethod === "2") {
@@ -317,9 +318,11 @@ export default function Checkout() {
   }
 
   return (
-    <div className="mx-auto px-10 py-8 grid grid-cols-1 md:grid-cols-3 gap-10 max-w-7xl">
-      <div className="md:col-span-2 space-y-6">
-        <h2 className="text-2xl font-bold text-primary">Thanh toán</h2>
+    <div className="mx-auto pt-10 pb-20 grid grid-cols-1 md:grid-cols-5 gap-12 w-[90%] px-6">
+      <div className="md:col-span-3 flex flex-col gap-8">
+        <div>
+          <SectionTitle>Thanh toán</SectionTitle>
+        </div>
 
         <div className="bg-white p-6 rounded-lg shadow-lg border flex flex-col gap-8">
           <h3 className="text-lg font-semibold">Thông tin người đặt</h3>
@@ -330,7 +333,7 @@ export default function Checkout() {
               </p>
               <input
                 type="text"
-                className="py-2 focus:outline-none"
+                className="py-2 focus:outline-none text-sm"
                 placeholder="Nhập họ và tên"
                 value={customer?.fullName ? customer?.fullName : ""}
                 disabled
@@ -342,7 +345,7 @@ export default function Checkout() {
               </p>
               <input
                 type="email"
-                className="py-2 focus:outline-none"
+                className="py-2 focus:outline-none text-sm"
                 placeholder="Nhập email"
                 value={customer?.email ? customer?.email : ""}
                 disabled
@@ -354,7 +357,7 @@ export default function Checkout() {
               </p>
               <input
                 type="text"
-                className="py-2 focus:outline-none"
+                className="py-2 focus:outline-none text-sm"
                 placeholder="Nhập số điện thoại"
                 value={customer?.phone ? customer?.phone : ""}
                 disabled
@@ -435,7 +438,7 @@ export default function Checkout() {
         </div>
       </div>
 
-      <div className="bg-white border p-4 rounded-lg h-fit sticky top-6 shadow-lg flex flex-col gap-4">
+      <div className="bg-white border p-4 rounded-lg h-fit sticky top-6 shadow-lg flex flex-col gap-4 col-span-1 md:col-span-2">
         <div className="flex flex-col mt-4">
           <h3 className="text-lg font-semibold text-primary">
             {workspace?.name}

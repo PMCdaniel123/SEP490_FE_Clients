@@ -237,13 +237,13 @@ const WorkspaceDetail = () => {
   }
 
   return (
-    <div className="flex flex-col container mx-auto px-10 py-8 gap-20">
+    <div className="flex flex-col mx-auto pt-10 pb-20 gap-10 w-[90%] px-6">
       <ImageList workspace={workspace} />
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6 flex flex-col gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+        <div className="lg:col-span-3 flex flex-col gap-8">
           <div className="flex items-center justify-between gap-4">
             <div className="flex flex-col gap-2">
-              <h1 className="text-2xl md:text-3xl font-bold text-primary flex flex-col gap-2">
+              <h1 className="text-xl md:text-2xl font-bold text-primary flex flex-col gap-2">
                 <span>{workspace.name}</span>
                 <motion.div
                   initial={{ scale: 0 }}
@@ -255,7 +255,7 @@ const WorkspaceDetail = () => {
                   <div className="relative flex items-center bg-white dark:bg-gray-950 py-1.5 px-3 rounded-lg border border-secondary/30 shadow-sm overflow-hidden">
                     <div className="mr-2 h-3 w-3 rounded-full bg-secondary"></div>
                     <span className="text-xs font-semibold text-gray-800">
-                      MÃ BÀN
+                      MÃ KHÔNG GIAN
                     </span>
                     <div className="mx-2 h-4 w-[1px] bg-gray-300"></div>
                     <span className="text-sm font-bold text-secondary tracking-wider">
@@ -264,7 +264,7 @@ const WorkspaceDetail = () => {
                   </div>
                 </motion.div>
               </h1>
-              <p className="text-fifth max-w-xl">{workspace.address}</p>
+              <p className="text-fifth">{workspace.address}</p>
             </div>
             <div className="flex items-center justify-center gap-8 text-primary">
               <Share2
@@ -277,7 +277,7 @@ const WorkspaceDetail = () => {
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div
-              className="flex items-center gap-4 cursor-pointer relative group overflow-hidden rounded-xl p-3 border hover:border-primary hover:bg-secondary/20 transition-all duration-300"
+              className="flex items-center gap-4 cursor-pointer relative group overflow-hidden rounded-xl p-2 border hover:border-primary hover:bg-secondary/20 transition-all duration-300"
               onClick={() => router.push(`/workspace-owner/${ownerData?.id}`)}
             >
               <div className="absolute -left-20 top-0 h-full w-12 rotate-[30deg] scale-y-150 bg-primary/10 transition-all duration-700 group-hover:left-[calc(100%+1rem)]"></div>
@@ -289,8 +289,8 @@ const WorkspaceDetail = () => {
                 className="rounded-full border"
               />
               <div className="flex flex-col gap-1">
-                <p className="font-bold">{ownerData?.licenseName}</p>
-                <p>Chủ doanh nghiệp</p>
+                <p className="font-bold text-sm">{ownerData?.licenseName}</p>
+                <p className="text-sm">Chủ doanh nghiệp</p>
               </div>
               <div className="ml-auto flex items-center text-primary opacity-70 group-hover:opacity-100">
                 <svg
@@ -409,16 +409,16 @@ const WorkspaceDetail = () => {
               <HandPlatter size={28} /> <span>Thực đơn</span>
             </h2>
             <button
-              className="text-fourth border border-1 border-primary rounded-xl p-4 font-semibold md:max-w-[250px] hover:bg-primary hover:text-white transition-colors duration-300"
+              className="text-sm border border-1 border-primary rounded-lg py-2 px-4 font-medium bg-primary text-white hover:bg-secondary transition-colors duration-300"
               onClick={() => setIsBeverageOpen(true)}
             >
-              Hiển thị Menu dịch vụ
+              Hiển thị thực đơn
             </button>
           </div>
 
           {workspace.googleMapUrl && <GoogleMap url={workspace.googleMapUrl} />}
 
-          <div className="flex flex-col gap-6 px-8">
+          <div className="flex flex-col">
             <SimilarSpace category={workspace.category} />
           </div>
 
@@ -430,7 +430,7 @@ const WorkspaceDetail = () => {
           </div>
         </div>
 
-        <div className="flex flex-col p-4 bg-white border rounded-xl shadow-xl w-full max-w-full h-fit lg:sticky lg:top-4 lg:max-h-[90vh] overflow-auto">
+        <div className="col-span-1 md:col-span-2 flex flex-col p-6 bg-white border rounded-xl shadow-xl w-full max-w-full h-fit lg:sticky lg:top-24 lg:max-h-[85vh] overflow-auto">
           <WorkspaceDetailSidebar workspace={workspace} />
         </div>
       </div>
@@ -552,8 +552,7 @@ const WorkspaceDetail = () => {
         open={isBeverageOpen}
         onCancel={() => setIsBeverageOpen(false)}
         footer={null}
-        width={1000}
-        centered
+        width={800}
       >
         <BeveragesList ownerId={workspace.ownerId} />
       </Modal>

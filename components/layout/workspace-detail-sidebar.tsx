@@ -131,13 +131,12 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
 
   return (
     <div>
-      <div className="flex justify-between items-center mt-4">
+      <div className="flex justify-between items-center mt-4 mb-6">
         <h2 className="text-2xl font-bold text-fourth">
           {formatCurrency(Number(workspace.shortTermPrice))} -{" "}
           {formatCurrency(Number(workspace.longTermPrice))}
         </h2>
       </div>
-      <Separator className="my-6" />
       <div>
         <p className="text-fifth text-sm">
           Thuê theo giờ: {formatCurrency(Number(workspace.shortTermPrice))}{" "}
@@ -148,17 +147,17 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
       </div>
       {workspace.is24h !== 1 ? (
         <div className="flex flex-col gap-2">
-          <p className="text-primary font-bold text-base flex items-center gap-2">
-            <Clock5 /> Mở cửa lúc: {workspace.openTime}
+          <p className="text-primary font-bold text-sm flex items-center gap-2">
+            <Clock5 size={20} /> Mở cửa lúc: {workspace.openTime}
           </p>
-          <p className="text-primary font-bold text-base flex items-center gap-2">
-            <Clock10 /> Đóng cửa lúc: {workspace.closeTime}
+          <p className="text-primary font-bold text-sm flex items-center gap-2">
+            <Clock10 size={20} /> Đóng cửa lúc: {workspace.closeTime}
           </p>
         </div>
       ) : (
         <div>
-          <p className="text-primary font-bold text-base flex items-center gap-2">
-            <Clock /> Mở cửa 24h
+          <p className="text-primary font-bold text-sm flex items-center gap-2">
+            <Clock size={20} /> Mở cửa 24h
           </p>
         </div>
       )}
@@ -241,12 +240,6 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
           <Amenity key={item.id} item={item} />
         ))}
       </div>
-      {startTime !== "" && endTime !== "" && (
-        <p className="text-base font-medium">
-          Tổng tiền: {formatCurrency(total)}
-        </p>
-      )}
-      <Separator className="my-6" />
       <Button
         className="w-full py-6 bg-primary text-white font-semibold rounded-lg text-base"
         onClick={handleSelectedDateValidte}
@@ -262,8 +255,10 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
       >
         {isButtonLoading ? (
           <LoadingOutlined style={{ color: "white" }} />
+        ) : startTime !== "" && endTime !== "" ? (
+          <p>Đặt ngay: {formatCurrency(total)}</p>
         ) : (
-          "Đặt ngay"
+          <p>Đặt ngay</p>
         )}
       </Button>
       {customer === null && (

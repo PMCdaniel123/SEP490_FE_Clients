@@ -71,8 +71,8 @@ export default function HighRatingSpace() {
 
   if (workspaces.length === 0) {
     return (
-      <div className="text-center">
-        <p className="text-gray-600 text-lg">Không có dữ liệu để hiển thị.</p>
+      <div className="w-full mx-auto text-center">
+        <p className="text-gray-600 text-base">Không có dữ liệu để hiển thị.</p>
       </div>
     );
   }
@@ -81,7 +81,7 @@ export default function HighRatingSpace() {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 3,
+    slidesToShow: 4,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 5000,
@@ -113,7 +113,7 @@ export default function HighRatingSpace() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 pb-12">
+    <div className="w-full mx-auto pt-4">
       <Slider {...settings} className="high-rating-slider">
         {workspaces.map((workspace) => {
           const shortTermPrice = workspace.prices.find(
@@ -124,7 +124,7 @@ export default function HighRatingSpace() {
           )?.price;
 
           return (
-            <div key={workspace.id} className="px-3 py-2">
+            <div key={workspace.id} className="p-3">
               <Link href={`/workspace/${workspace.id}`} className="block">
                 <motion.div
                   whileHover={{ y: -10 }}
@@ -132,9 +132,9 @@ export default function HighRatingSpace() {
                   onMouseEnter={() => setHoveredCard(workspace.id)}
                   onMouseLeave={() => setHoveredCard(null)}
                 >
-                  <Card className="relative overflow-hidden rounded-xl shadow-lg border border-gray-100 h-full">
+                  <Card className="relative overflow-hidden rounded-lg shadow-lg border border-gray-100 h-full">
                     <div className="relative group">
-                      <div className="overflow-hidden h-56">
+                      <div className="overflow-hidden h-40">
                         <img
                           src={
                             workspace.images[0]?.imgUrl || "/placeholder.png"
@@ -165,21 +165,21 @@ export default function HighRatingSpace() {
                       </div>
                     </div>
 
-                    <CardContent className="p-5">
-                      <h3 className="text-xl font-bold text-gray-800 mb-1 line-clamp-1">
+                    <CardContent className="p-3">
+                      <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1">
                         {workspace.name}
                       </h3>
-                      <p className="text-gray-600 text-sm mb-3 flex items-center">
+                      <p className="text-gray-600 text-xs mb-3 flex items-center">
                         <MapPin className="mr-1 text-gray-400" size={14} />
                         <span className="truncate">{workspace.address}</span>
                       </p>
 
                       <div className="grid grid-cols-2 gap-2 mb-4">
-                        <div className="flex items-center text-gray-700 text-sm">
+                        <div className="flex items-center text-gray-700 text-xs">
                           <Users className="mr-1 text-blue-500" size={16} />
                           <span>{workspace.capacity} người</span>
                         </div>
-                        <div className="flex items-center text-gray-700 text-sm justify-end">
+                        <div className="flex items-center text-gray-700 text-xs justify-end">
                           <Ruler className="mr-1 text-green-500" size={16} />
                           <span>{workspace.area} m²</span>
                         </div>
@@ -196,7 +196,7 @@ export default function HighRatingSpace() {
                                 />
                                 <span>Theo giờ</span>
                               </div>
-                              <span className="font-semibold text-gray-900">
+                              <span className="font-semibold text-gray-900 text-sm">
                                 {new Intl.NumberFormat("vi-VN", {
                                   style: "currency",
                                   currency: "VND",
@@ -214,7 +214,7 @@ export default function HighRatingSpace() {
                                 />
                                 <span>Theo ngày</span>
                               </div>
-                              <span className="font-semibold text-gray-900">
+                              <span className="font-semibold text-gray-900 text-sm">
                                 {new Intl.NumberFormat("vi-VN", {
                                   style: "currency",
                                   currency: "VND",

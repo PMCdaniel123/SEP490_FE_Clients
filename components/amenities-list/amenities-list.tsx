@@ -88,7 +88,7 @@ function AmenitiesList({ ownerId }: { ownerId: string }) {
   }
 
   return (
-    <div className="mx-auto w-full relative px-8">
+    <div className="mx-auto w-full relative pb-8">
       {amenityList.length > 0 ? (
         <Slider {...settings} className="high-rating-slider">
           {amenityList.map((amenity) => (
