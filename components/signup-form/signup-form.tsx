@@ -158,7 +158,7 @@ export function SignUpForm({
         onSubmit={handleSubmit(handleSignUp)}
       >
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-2xl font-bold text-primary">
+          <h1 className="text-xl font-bold text-primary">
             {role === "owner"
               ? "Đăng ký tài khoản doanh nghiệp"
               : "Tạo tài khoản"}
@@ -170,7 +170,7 @@ export function SignUpForm({
               Họ và tên
             </Label>
             <Input
-              className="py-6 px-4 rounded-md bg-white shadow-sm"
+              className="py-4 px-4 rounded-md bg-white shadow-sm text-sm"
               id="name"
               type="text"
               placeholder="Nhập họ và tên"
@@ -188,7 +188,7 @@ export function SignUpForm({
               Email
             </Label>
             <Input
-              className="py-6 px-4 rounded-md bg-white shadow-sm"
+              className="py-4 px-4 rounded-md bg-white shadow-sm text-sm"
               id="email"
               type="email"
               placeholder="Nhập email"
@@ -206,7 +206,7 @@ export function SignUpForm({
               Số điện thoại
             </Label>
             <Input
-              className="py-6 px-4 rounded-md bg-white shadow-sm"
+              className="py-4 px-4 rounded-md bg-white shadow-sm text-sm"
               id="phone"
               type="tel"
               placeholder="Nhập số điện thoại"
@@ -224,7 +224,7 @@ export function SignUpForm({
               Mật khẩu
             </Label>
             <Input
-              className="py-6 px-4 rounded-md bg-white shadow-sm"
+              className="py-4 px-4 rounded-md bg-white shadow-sm text-sm"
               id="password"
               type="password"
               placeholder="Nhập mật khẩu"
@@ -242,7 +242,7 @@ export function SignUpForm({
               Nhập lại mật khẩu
             </Label>
             <Input
-              className="py-6 px-4 rounded-md bg-white shadow-sm"
+              className="py-4 px-4 rounded-md bg-white shadow-sm text-sm"
               id="confirmPassword"
               type="password"
               placeholder="Nhập lại mật khẩu"
@@ -260,7 +260,7 @@ export function SignUpForm({
             </Label>
             <select
               id="sex"
-              className="py-4 px-4 rounded-md bg-white shadow-sm border border-gray-300"
+              className="py-2 px-4 rounded-md bg-white shadow-sm text-sm border border-gray-300"
               {...register("sex")}
             >
               <option value="" disabled>

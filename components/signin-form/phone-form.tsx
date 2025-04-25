@@ -80,8 +80,8 @@ export function PhoneForm({
           Quên mật khẩu?
         </button>
       </div>
-      <div className="flex items-center w-full sm:gap-4">
-        <div className="w-1/3">
+      <div className="flex flex-col md:flex-row mditems-center w-full gap-4">
+        <div className="md:w-1/3">
           <button
             type="submit"
             disabled={isLoading}
@@ -103,7 +103,7 @@ export function PhoneForm({
           </button>
         </div>
         <div
-          className="flex items-center gap-2 w-2/3 text-fourth hover:text-primary cursor-pointer text-sm"
+          className="flex items-center gap-2 md:w-2/3 text-fourth hover:text-primary cursor-pointer text-sm"
           onClick={() => dispatch(setLoginStep("email"))}
         >
           <Mail /> <span className="font-semibold">Đăng nhập bằng Email</span>
@@ -111,7 +111,7 @@ export function PhoneForm({
       </div>
       <div className="flex items-center my-6 w-full">
         <hr className="w-[10%] border-sixth h-1" />
-        <span className="w-[50%] px-3 text-fifth font-semibold text-sm">
+        <span className="w-[60%] md:w-[50%] px-3 text-fifth font-semibold text-sm">
           Hoặc tiếp tục với
         </span>
         <hr className="w-full border-sixth h-1" />
