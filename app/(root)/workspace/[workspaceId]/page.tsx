@@ -237,7 +237,7 @@ const WorkspaceDetail = () => {
   }
 
   return (
-    <div className="flex flex-col mx-auto pt-10 pb-20 gap-10 w-[90%] px-6">
+    <div className="flex flex-col mx-auto pt-10 pb-20 gap-10 w-full md:w-[90%] px-6">
       <ImageList workspace={workspace} />
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
         <div className="lg:col-span-3 flex flex-col gap-8">

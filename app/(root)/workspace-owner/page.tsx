@@ -179,7 +179,7 @@ function OwnerPage() {
 
   if (ownerList.length === 0) {
     return (
-      <div className="w-[90%] mx-auto pt-16 pb-20 text-center">
+      <div className="w-full md:w-[90%] mx-auto pt-16 pb-20 text-center">
         <img src="/404.png" alt="No data" className="w-96 mx-auto mt-6" />
         <p className="text-gray-600 text-lg">Không có dữ liệu để hiển thị.</p>
       </div>
@@ -194,7 +194,7 @@ function OwnerPage() {
   );
 
   return (
-    <div className="w-[90%] mx-auto pt-16 pb-20 px-6">
+    <div className="w-full md:w-[90%] mx-auto pt-16 pb-20 px-6">
       <SectionTitle>Danh sách thương hiệu</SectionTitle>
       <div className="flex flex-wrap items-center justify-end gap-4 mt-10">
         <button

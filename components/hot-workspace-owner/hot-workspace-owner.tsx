@@ -86,7 +86,7 @@ function HotWorkspaceOwner() {
 
   if (ownerList.length === 0) {
     return (
-      <div className="w-full mx-auto text-center">
+      <div className="w-full mx-auto text-center mt-10">
         <p className="text-gray-600 text-base">Không có dữ liệu để hiển thị.</p>
       </div>
     );
@@ -128,7 +128,7 @@ function HotWorkspaceOwner() {
   };
 
   return (
-    <div className="w-full mx-auto pt-4">
+    <div className="w-full mx-auto pt-4 px-6 md:px-0">
       <Slider {...settings} className="high-rating-slider">
         {ownerList.map((owner) => {
           return (

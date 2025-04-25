@@ -358,7 +358,7 @@ function WorkspaceOwnerDetail() {
 
   if (!loading && !ownerData) {
     return (
-      <div className="w-[90%] mx-auto pt-16 pb-20 text-center">
+      <div className="w-full md:w-[90%] mx-auto pt-16 pb-20 text-center">
         <img src="/404.png" alt="No data" className="w-96 mx-auto mt-6" />
         <p className="text-gray-600 text-lg">Không có dữ liệu để hiển thị.</p>
       </div>
@@ -392,7 +392,7 @@ function WorkspaceOwnerDetail() {
   };
 
   return (
-    <div className="w-[90%] mx-auto pt-16 pb-20 px-6">
+    <div className="w-full md:w-[90%] mx-auto pt-16 pb-20 px-6">
       {/* Owner Profile Card */}
       <ShinyCard className="w-full bg-white rounded-lg overflow-hidden shadow-md mb-12">
         {/* Cover Image */}
@@ -464,7 +464,7 @@ function WorkspaceOwnerDetail() {
                 </motion.p>
               )}
             </div>
-            <div className="grid grid-cols-3 gap-2 mt-2 w-1/3">
+            <div className="grid grid-cols-3 gap-2 mt-2 w-full lg:w-1/3">
               <div className="flex flex-col gap-2 items-center rounded-lg border-2 text-fourth text-sm p-2">
                 <span className="flex items-center gap-2 justify-center font-medium text-base">
                   <Star size={20} className="text-primary" />{" "}
@@ -788,7 +788,7 @@ function WorkspaceOwnerDetail() {
             {filteredWorkspaces.length} không gian làm việc được tìm thấy
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {paginatedWorkspaces.map((workspace) => (
               <ShinyCard
                 key={workspace.id}
@@ -817,7 +817,7 @@ function WorkspaceOwnerDetail() {
                   </div>
 
                   <CardContent className="p-3">
-                    <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1">
+                    <h3 className="text-base md:text-lg font-bold text-gray-800 mb-1 line-clamp-1">
                       {workspace.name}
                     </h3>
                     <p className="text-gray-600 text-xs mb-3 flex items-center">
@@ -839,14 +839,14 @@ function WorkspaceOwnerDetail() {
                       <div className="flex flex-col gap-1">
                         {workspace.shortTermPrice > 0 && (
                           <div className="flex justify-between items-center">
-                            <div className="flex items-center text-gray-700 text-sm">
+                            <div className="flex items-center text-gray-700 text-xs md:text-sm">
                               <Clock
                                 className="mr-1 text-orange-500"
                                 size={16}
                               />
                               <span>Theo giờ</span>
                             </div>
-                            <span className="font-semibold text-gray-900 text-sm">
+                            <span className="font-semibold text-gray-900 text-xs md:text-sm">
                               {formatCurrency(workspace.shortTermPrice)}
                             </span>
                           </div>
@@ -854,21 +854,21 @@ function WorkspaceOwnerDetail() {
 
                         {workspace.longTermPrice > 0 && (
                           <div className="flex justify-between items-center">
-                            <div className="flex items-center text-gray-700 text-sm">
+                            <div className="flex items-center text-gray-700 text-xs md:text-sm">
                               <Calendar
                                 className="mr-1 text-purple-500"
                                 size={16}
                               />
                               <span>Theo ngày</span>
                             </div>
-                            <span className="font-semibold text-gray-900 text-sm">
+                            <span className="font-semibold text-gray-900 text-xs md:text-sm">
                               {formatCurrency(workspace.longTermPrice)}
                             </span>
                           </div>
                         )}
                       </div>
                     </div>
-                    <Button className="w-full mt-4 text-white">
+                    <Button className="w-full mt-4 text-white hidden md:block">
                       Xem chi tiết
                     </Button>
                   </CardContent>

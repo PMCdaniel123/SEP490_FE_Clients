@@ -318,7 +318,7 @@ export default function Checkout() {
   }
 
   return (
-    <div className="mx-auto pt-10 pb-20 grid grid-cols-1 md:grid-cols-5 gap-12 w-[90%] px-6">
+    <div className="mx-auto pt-10 pb-20 grid grid-cols-1 md:grid-cols-5 gap-12 w-full md:w-[90%] px-6">
       <div className="md:col-span-3 flex flex-col gap-8">
         <div>
           <SectionTitle>Thanh toán</SectionTitle>

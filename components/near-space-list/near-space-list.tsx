@@ -103,7 +103,7 @@ export default function NearSpaceList({ km }: { km: string }) {
 
   if (workspaces.length === 0) {
     return (
-      <div className="w-full mx-auto text-center">
+      <div className="w-full mx-auto text-center mt-10">
         <p className="text-gray-600 text-base">Không có dữ liệu để hiển thị.</p>
       </div>
     );
@@ -136,7 +136,7 @@ export default function NearSpaceList({ km }: { km: string }) {
       {
         breakpoint: 640,
         settings: {
-          slidesToShow: 1,
+          slidesToShow: 2,
           slidesToScroll: 1,
           dots: false,
         },
@@ -146,7 +146,7 @@ export default function NearSpaceList({ km }: { km: string }) {
 
   return (
     <>
-      <div className="w-full mx-auto">
+      <div className="w-full mx-auto px-6 md:px-0">
         <div className="mt-10">
           {location ? (
             <p className="text-gray-500 md:ml-3 mb-4">

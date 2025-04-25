@@ -44,6 +44,12 @@ export default function BecomeOwnerForm({ onClose }: { onClose: () => void }) {
         throw new Error("Email hoặc số điện thoại đã tồn tại!");
       }
 
+      const res_data = await response.text();
+
+      if (res_data.toLowerCase().includes("đã được sử dụng")) {
+        throw new Error("Email hoặc số điện thoại đã được sử dụng!");
+      }
+
       toast.success("Đăng ký thành công!", {
         position: "top-right",
         autoClose: 1500,

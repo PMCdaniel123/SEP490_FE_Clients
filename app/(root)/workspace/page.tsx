@@ -230,7 +230,7 @@ export default function PropertyGrid() {
 
   if (workspaces.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-6 py-12 text-center">
+      <div className="w-full md:w-[90%] mx-auto px-6 py-12 text-center">
         <img src="/404.png" alt="No data" className="w-96 mx-auto mt-6" />
         <p className="text-gray-600 text-lg">Không có dữ liệu để hiển thị.</p>
       </div>
@@ -252,7 +252,7 @@ export default function PropertyGrid() {
   };
 
   return (
-    <div className="w-[90%] mx-auto pt-16 pb-20 px-6">
+    <div className="w-full md:w-[90%] mx-auto pt-16 pb-20 px-6">
       <SectionTitle>Danh sách Không gian</SectionTitle>
       <div className="flex flex-wrap items-center justify-between gap-4 mt-10">
         <div className="flex flex-wrap gap-6 md:gap-8">
@@ -439,7 +439,7 @@ export default function PropertyGrid() {
           {filteredWorkspaces.length} kết quả được tìm thấy
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {paginatedWorkspaces.map((workspace) => (
             <ShinyCard
               key={workspace.id}
@@ -468,7 +468,7 @@ export default function PropertyGrid() {
                 </div>
 
                 <CardContent className="p-3">
-                  <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1">
+                  <h3 className="text-base md:text-lg font-bold text-gray-800 mb-1 line-clamp-1">
                     {workspace.name}
                   </h3>
                   <p className="text-gray-600 text-xs mb-3 flex items-center">
@@ -490,11 +490,11 @@ export default function PropertyGrid() {
                     <div className="flex flex-col gap-1">
                       {workspace.shortTermPrice > 0 && (
                         <div className="flex justify-between items-center">
-                          <div className="flex items-center text-gray-700 text-sm">
+                          <div className="flex items-center text-gray-700 text-xs md:text-sm">
                             <Clock className="mr-1 text-orange-500" size={16} />
                             <span>Theo giờ</span>
                           </div>
-                          <span className="font-semibold text-gray-900 text-sm">
+                          <span className="font-semibold text-gray-900 text-xs md:text-sm">
                             {formatPrice(workspace.shortTermPrice)}
                           </span>
                         </div>
@@ -502,21 +502,21 @@ export default function PropertyGrid() {
 
                       {workspace.longTermPrice > 0 && (
                         <div className="flex justify-between items-center">
-                          <div className="flex items-center text-gray-700 text-sm">
+                          <div className="flex items-center text-gray-700 text-xs md:text-sm">
                             <Calendar
                               className="mr-1 text-purple-500"
                               size={16}
                             />
                             <span>Theo ngày</span>
                           </div>
-                          <span className="font-semibold text-gray-900 text-sm">
+                          <span className="font-semibold text-gray-900 text-xs md:text-sm">
                             {formatPrice(workspace.longTermPrice)}
                           </span>
                         </div>
                       )}
                     </div>
                   </div>
-                  <Button className="w-full mt-4 text-white">
+                  <Button className="w-full mt-4 text-white hidden md:block">
                     Xem chi tiết
                   </Button>
                 </CardContent>

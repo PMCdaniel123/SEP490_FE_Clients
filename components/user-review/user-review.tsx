@@ -18,6 +18,7 @@ import type {
   UploadFileStatus,
 } from "antd/es/upload/interface";
 import dayjs from "dayjs";
+import { Star } from "lucide-react";
 
 interface Review {
   id: number;
@@ -310,8 +311,9 @@ const UserReview: React.FC<ReviewListProps> = ({
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
-      <h2 className="text-xl font-bold mb-4">
-        ⭐ {reviews.length} Đánh giá của bạn
+      <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+        <Star size={20} stroke={"0"} fill="#FFC107" /> {reviews.length} Đánh giá
+        của bạn
       </h2>
       <div className="text-gray-600">
         {reviews.length > 0 ? (

@@ -31,7 +31,7 @@ function HomePage() {
   return (
     <div>
       <SearchBanner />
-      <div className="w-[90%] mx-auto p-6 mt-8">
+      <div className="w-full md:w-[90%] mx-auto p-6 mt-8">
         <AnimateInView>
           <div>
             <SectionTitle>
@@ -135,7 +135,7 @@ function HomePage() {
                   text="Đăng ký dịch vụ của WorkHive ngay"
                   animation="fade"
                   tag="h3"
-                  className="text-2xl md:text-xl font-bold text-white mb-4"
+                  className="text-xl font-bold text-white mb-4"
                 />
                 <p className="text-white/90 mb-6 text-sm">
                   Tăng thêm thu nhập từ không gian của bạn. Chúng tôi giúp bạn

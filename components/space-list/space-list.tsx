@@ -58,7 +58,7 @@ export default function SpaceList() {
 
   if (workspaces.length === 0) {
     return (
-      <div className="w-full mx-auto text-center">
+      <div className="w-full mx-auto text-center mt-10">
         <p className="text-gray-600 text-base">Không có dữ liệu để hiển thị.</p>
       </div>
     );
@@ -66,7 +66,7 @@ export default function SpaceList() {
 
   return (
     <div className="w-full mx-auto">
-      <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+      <div className="mt-10 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         {workspaces.slice(0, 8).map((workspace) => (
           <ShinyCard
             key={workspace.id}
@@ -95,7 +95,7 @@ export default function SpaceList() {
               </div>
 
               <CardContent className="p-3">
-                <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1">
+                <h3 className="text-base md:text-lg font-bold text-gray-800 mb-1 line-clamp-1">
                   {workspace.name}
                 </h3>
                 <p className="text-gray-600 text-xs mb-3 flex items-center">
@@ -118,11 +118,11 @@ export default function SpaceList() {
                   <div className="flex flex-col gap-1">
                     {workspace.shortTermPrice > 0 && (
                       <div className="flex justify-between items-center">
-                        <div className="flex items-center text-gray-700 text-sm">
+                        <div className="flex items-center text-gray-700 text-xs md:text-sm">
                           <Clock className="mr-1 text-orange-500" size={16} />
                           <span>Theo giờ</span>
                         </div>
-                        <span className="font-semibold text-gray-900 text-sm">
+                        <span className="font-semibold text-gray-900 text-xs md:text-sm">
                           {new Intl.NumberFormat("vi-VN", {
                             style: "currency",
                             currency: "VND",
@@ -133,14 +133,14 @@ export default function SpaceList() {
 
                     {workspace.longTermPrice > 0 && (
                       <div className="flex justify-between items-center">
-                        <div className="flex items-center text-gray-700 text-sm">
+                        <div className="flex items-center text-gray-700 text-xs md:text-sm">
                           <Calendar
                             className="mr-1 text-purple-500"
                             size={16}
                           />
                           <span>Theo ngày</span>
                         </div>
-                        <span className="font-semibold text-gray-900 text-sm">
+                        <span className="font-semibold text-gray-900 text-xs md:text-sm">
                           {new Intl.NumberFormat("vi-VN", {
                             style: "currency",
                             currency: "VND",
@@ -151,7 +151,9 @@ export default function SpaceList() {
                   </div>
                 </div>
 
-                <Button className="w-full mt-4 text-white">Xem chi tiết</Button>
+                <Button className="w-full mt-4 text-white hidden md:block">
+                  Xem chi tiết
+                </Button>
               </CardContent>
             </div>
           </ShinyCard>
