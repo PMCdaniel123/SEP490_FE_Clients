@@ -66,7 +66,7 @@ export default function SpaceList() {
 
   return (
     <div className="w-full mx-auto">
-      <div className="mt-10 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+      <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         {workspaces.slice(0, 8).map((workspace) => (
           <ShinyCard
             key={workspace.id}
