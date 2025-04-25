@@ -25,7 +25,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
 import { clearBeverageAndAmenity, clearCart } from "@/stores/slices/cartSlice";
 import dayjs from "dayjs";
-// import { Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -37,6 +36,13 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { BASE_URL } from "@/constants/environments";
 import { notificationEvents } from "@/components/ui/notification";
 import SectionTitle from "@/components/ui/section-tilte";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import "dayjs/locale/vi";
+
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
+dayjs.locale("vi");
 
 interface CheckoutDiscount {
   code: string;
@@ -86,9 +92,8 @@ export default function Checkout() {
         const isValidTime =
           startDate.isValid() &&
           endDate.isValid() &&
-          ((startDate.isSameOrBefore(now, "date") &&
-            endDate.isSameOrAfter(now, "date")) ||
-            startDate.isAfter(now, "date")) &&
+          startDate.isSameOrBefore(now, "date") &&
+          endDate.isSameOrAfter(now, "date") &&
           item.status === "Active";
 
         return isValidTime;
@@ -324,7 +329,7 @@ export default function Checkout() {
           <SectionTitle>Thanh toán</SectionTitle>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-lg border flex flex-col gap-8">
+        <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg border flex flex-col gap-8">
           <h3 className="text-lg font-semibold">Thông tin người đặt</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col w-full border rounded-md h-full justify-center px-6 py-3 relative">
@@ -366,7 +371,7 @@ export default function Checkout() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-lg border flex flex-col gap-8">
+        <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg border flex flex-col gap-8">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Mã khuyến mãi</h3>
           </div>
@@ -392,7 +397,7 @@ export default function Checkout() {
                     <span>
                       {promotion.code} - (Giảm giá {promotion.discount}%)
                     </span>
-                    <span className="text-xs ml-2">
+                    <span className="text-xs ml-2 hidden md:inline">
                       ({dayjs(promotion.startDate).format("HH:mm DD/MM/YYYY")} -{" "}
                       {dayjs(promotion.endDate).format("HH:mm DD/MM/YYYY")})
                     </span>
@@ -408,7 +413,7 @@ export default function Checkout() {
         </div>
 
         {/* Payment Methods */}
-        <div className="bg-white p-6 rounded-lg shadow-lg border flex flex-col gap-8">
+        <div className="bg-white p-4 md:p-6 rounded-lg shadow-lg border flex flex-col gap-8">
           <h3 className="text-lg font-semibold">Phương thức thanh toán</h3>
           <RadioGroup
             defaultValue={paymentMethod}

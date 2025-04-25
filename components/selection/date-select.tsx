@@ -14,10 +14,14 @@ import Loader from "../loader/Loader";
 import { BASE_URL } from "@/constants/environments";
 import isBetween from "dayjs/plugin/isBetween";
 import { Badge } from "@/components/ui/badge";
-import 'dayjs/locale/vi';
+import "dayjs/locale/vi";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
+dayjs.locale("vi");
 dayjs.extend(isBetween);
-dayjs.locale('vi');
 
 const { RangePicker } = DatePicker;
 
@@ -192,7 +196,7 @@ function DateSelect({
   // Calculate duration in days
   const calculateDuration = () => {
     if (!date?.from || !date?.to) return 0;
-    return dayjs(date.to).diff(dayjs(date.from), 'day') + 1;
+    return dayjs(date.to).diff(dayjs(date.from), "day") + 1;
   };
 
   const duration = calculateDuration();
@@ -200,12 +204,14 @@ function DateSelect({
   // Format date range for display
   const formatDateRange = () => {
     if (!date?.from || !date?.to) return "";
-    
-    if (dayjs(date.from).isSame(date.to, 'day')) {
-      return dayjs(date.from).format('DD/MM/YYYY');
+
+    if (dayjs(date.from).isSame(date.to, "day")) {
+      return dayjs(date.from).format("DD/MM/YYYY");
     }
-    
-    return `${dayjs(date.from).format('DD/MM/YYYY')} - ${dayjs(date.to).format('DD/MM/YYYY')}`;
+
+    return `${dayjs(date.from).format("DD/MM/YYYY")} - ${dayjs(date.to).format(
+      "DD/MM/YYYY"
+    )}`;
   };
 
   return (
@@ -218,7 +224,10 @@ function DateSelect({
           <Calendar className="h-4 w-4 text-primary" />
           <span className="text-black text-sm font-medium">Chọn ngày</span>
           {isDatePickerOpen && (
-            <Badge variant="outline" className="bg-primary/10 text-primary text-xs">
+            <Badge
+              variant="outline"
+              className="bg-primary/10 text-primary text-xs"
+            >
               Đã chọn
             </Badge>
           )}
@@ -230,7 +239,7 @@ function DateSelect({
           size={18}
         />
       </div>
-      
+
       {isDatePickerOpen && (
         <div className="mt-2 border rounded-lg shadow-sm overflow-hidden">
           <div className="bg-primary text-white px-4 py-2 flex items-center justify-between">
@@ -244,7 +253,7 @@ function DateSelect({
               </Badge>
             )}
           </div>
-          
+
           <div className="p-4 bg-white">
             <ConfigProvider
               theme={{
@@ -259,7 +268,7 @@ function DateSelect({
                     <Calendar className="h-4 w-4" />
                     <span>Khoảng thời gian</span>
                   </div>
-                  
+
                   <RangePicker
                     className="w-full py-2"
                     onChange={handleDateChange}
@@ -268,7 +277,7 @@ function DateSelect({
                       date?.from ? dayjs(date.from) : undefined,
                       date?.to ? dayjs(date.to) : undefined,
                     ]}
-                    placeholder={['Ngày bắt đầu', 'Ngày kết thúc']}
+                    placeholder={["Ngày bắt đầu", "Ngày kết thúc"]}
                     disabledDate={(current) => {
                       if (!current) return false;
 
@@ -286,22 +295,27 @@ function DateSelect({
                     }}
                   />
                 </div>
-                
+
                 {date?.from && date?.to && (
                   <div className="flex items-center justify-between bg-gray-50 p-3 rounded-md">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-primary" />
-                      <span className="text-sm font-medium">{formatDateRange()}</span>
+                      <span className="text-sm font-medium">
+                        {formatDateRange()}
+                      </span>
                     </div>
                     <Badge variant="outline" className="text-primary">
                       {duration} ngày
                     </Badge>
                   </div>
                 )}
-                
+
                 <div className="flex items-center gap-2 text-amber-600 bg-amber-50 p-3 rounded-md">
                   <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                  <p className="text-sm">Các ngày đã được đặt sẽ không thể chọn. Thời gian hoạt động: {open} - {close}.</p>
+                  <p className="text-sm">
+                    Các ngày đã được đặt sẽ không thể chọn. Thời gian hoạt động:{" "}
+                    {open} - {close}.
+                  </p>
                 </div>
               </div>
             </ConfigProvider>

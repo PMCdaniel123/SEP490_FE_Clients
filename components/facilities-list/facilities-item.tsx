@@ -68,7 +68,7 @@ function FacilitiesItem({ label }: FacilitiesItemProps) {
   return (
     <div className="flex items-center mb-2 gap-4">
       {icon}
-      <span>{label}</span>
+      <span className="text-sm md:text-base">{label}</span>
     </div>
   );
 }

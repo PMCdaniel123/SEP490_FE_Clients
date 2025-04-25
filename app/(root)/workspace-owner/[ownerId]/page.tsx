@@ -36,6 +36,13 @@ import ReactSlider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import SectionTitle from "@/components/ui/section-tilte";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import "dayjs/locale/vi";
+
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
+dayjs.locale("vi");
 
 interface Workspace {
   id: string;
@@ -219,19 +226,25 @@ function WorkspaceOwnerDetail() {
         }
 
         const data = await response.json();
-        console.log("Promotions data:", data);
 
-        // Filter to only show Active promotions
         let activePromotions = [];
+        const now = dayjs();
 
         if (Array.isArray(data.promotions)) {
-          activePromotions = data.promotions.filter(
-            (promo: Promotion) => promo.status === "Active"
-          );
-        }
+          activePromotions = data.promotions.filter((promo: Promotion) => {
+            const startDate = dayjs(promo.startDate);
+            const endDate = dayjs(promo.endDate);
 
-        console.log("Active promotions count:", activePromotions.length);
-        console.log("Active promotions:", activePromotions);
+            const isValidTime =
+              startDate.isValid() &&
+              endDate.isValid() &&
+              startDate.isSameOrBefore(now, "date") &&
+              endDate.isSameOrAfter(now, "date") &&
+              promo.status === "Active";
+
+            return isValidTime;
+          });
+        }
 
         // Process promotions without fetching workspace names
         const processedPromotions = activePromotions.map((promo: Promotion) => {
@@ -243,7 +256,6 @@ function WorkspaceOwnerDetail() {
           };
         });
 
-        console.log("Processed promotions:", processedPromotions);
         setPromotions(processedPromotions);
       } catch (error) {
         console.error("Error fetching promotions:", error);
@@ -386,6 +398,7 @@ function WorkspaceOwnerDetail() {
         breakpoint: 768,
         settings: {
           slidesToShow: 1,
+          dots: false,
         },
       },
     ],
@@ -443,7 +456,7 @@ function WorkspaceOwnerDetail() {
               className="text-xl font-bold text-fourth"
               delay={0.4}
             />
-            <div className="flex md:flex-row flex-col md:items-center gap-2 text-sm text-fifth">
+            <div className="flex flex-col gap-2 text-sm text-fifth">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -464,7 +477,7 @@ function WorkspaceOwnerDetail() {
                 </motion.p>
               )}
             </div>
-            <div className="grid grid-cols-3 gap-2 mt-2 w-full lg:w-1/3">
+            <div className="grid grid-cols-3 gap-2 mt-2 w-full lg:w-1/2">
               <div className="flex flex-col gap-2 items-center rounded-lg border-2 text-fourth text-sm p-2">
                 <span className="flex items-center gap-2 justify-center font-medium text-base">
                   <Star size={20} className="text-primary" />{" "}

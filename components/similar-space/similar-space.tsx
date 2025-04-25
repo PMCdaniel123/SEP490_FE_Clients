@@ -116,7 +116,7 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-          dots: true,
+          dots: false,
         },
       },
     ],
@@ -128,93 +128,98 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
         Các không gian tương tự
       </h2>
 
-      <Slider {...settings} className="similar-space-slider">
-        {workspaces.map((workspace) => (
-          <div key={workspace.id} className="p-2">
-            <Card
-              className="relative overflow-hidden rounded-lg shadow-md transition-transform transform hover:scale-100 cursor-pointer h-full"
-              onClick={() => router.push(`/workspace/${workspace.id}`)}
-            >
-              <div className="relative group">
-                <div className="overflow-hidden h-36">
-                  <img
-                    src={workspace.images[0]?.imgUrl || "/placeholder.png"}
-                    alt={workspace.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                </div>
-
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                  <div className="flex justify-between items-end">
-                    <Badge className="bg-primary hover:bg-secondary text-white">
-                      {workspace.category}
-                    </Badge>
+      <div className="px-6">
+        <Slider {...settings} className="similar-space-slider">
+          {workspaces.map((workspace) => (
+            <div key={workspace.id} className="p-2">
+              <Card
+                className="relative overflow-hidden rounded-lg shadow-md transition-transform transform hover:scale-100 cursor-pointer h-full"
+                onClick={() => router.push(`/workspace/${workspace.id}`)}
+              >
+                <div className="relative group">
+                  <div className="overflow-hidden h-36">
+                    <img
+                      src={workspace.images[0]?.imgUrl || "/placeholder.png"}
+                      alt={workspace.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
                   </div>
-                </div>
-              </div>
 
-              <CardContent className="p-3">
-                <h3 className="text-base font-bold text-gray-800 mb-1 line-clamp-1">
-                  {workspace.name}
-                </h3>
-                <p className="text-gray-600 text-xs mb-3 flex items-center">
-                  <span className="truncate">{workspace.address}</span>
-                </p>
-
-                <div className="grid grid-cols-2 gap-2 mb-3">
-                  <div className="flex items-center text-gray-700 text-xs">
-                    <Users className="mr-1 text-blue-500" size={16} />
-                    <span>{workspace.capacity} người</span>
-                  </div>
-                  <div className="flex items-center text-gray-700 text-xs justify-end">
-                    <Ruler className="mr-1 text-green-500" size={16} />
-                    <span>{workspace.area} m²</span>
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                    <div className="flex justify-between items-end">
+                      <Badge className="bg-primary hover:bg-secondary text-white">
+                        {workspace.category}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
 
-                <div className="border-t border-gray-300 pt-3">
-                  <div className="flex flex-col gap-1">
-                    {workspace.shortTermPrice !== undefined &&
-                      workspace.shortTermPrice > 0 && (
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center text-gray-700 text-sm">
-                            <Clock className="mr-1 text-orange-500" size={16} />
-                            <span>Theo giờ</span>
+                <CardContent className="p-3">
+                  <h3 className="text-base font-bold text-gray-800 mb-1 line-clamp-1">
+                    {workspace.name}
+                  </h3>
+                  <p className="text-gray-600 text-xs mb-3 flex items-center">
+                    <span className="truncate">{workspace.address}</span>
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-2 mb-3">
+                    <div className="flex items-center text-gray-700 text-xs">
+                      <Users className="mr-1 text-blue-500" size={16} />
+                      <span>{workspace.capacity} người</span>
+                    </div>
+                    <div className="flex items-center text-gray-700 text-xs justify-end">
+                      <Ruler className="mr-1 text-green-500" size={16} />
+                      <span>{workspace.area} m²</span>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-gray-300 pt-3">
+                    <div className="flex flex-col gap-1">
+                      {workspace.shortTermPrice !== undefined &&
+                        workspace.shortTermPrice > 0 && (
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center text-gray-700 text-sm">
+                              <Clock
+                                className="mr-1 text-orange-500"
+                                size={16}
+                              />
+                              <span>Theo giờ</span>
+                            </div>
+                            <span className="font-semibold text-gray-900 text-sm">
+                              {new Intl.NumberFormat("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              }).format(workspace.shortTermPrice)}
+                            </span>
                           </div>
-                          <span className="font-semibold text-gray-900 text-sm">
-                            {new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(workspace.shortTermPrice)}
-                          </span>
-                        </div>
-                      )}
+                        )}
 
-                    {workspace.longTermPrice !== undefined &&
-                      workspace.longTermPrice > 0 && (
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center text-gray-700 text-sm">
-                            <Calendar
-                              className="mr-1 text-purple-500"
-                              size={16}
-                            />
-                            <span>Theo ngày</span>
+                      {workspace.longTermPrice !== undefined &&
+                        workspace.longTermPrice > 0 && (
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center text-gray-700 text-sm">
+                              <Calendar
+                                className="mr-1 text-purple-500"
+                                size={16}
+                              />
+                              <span>Theo ngày</span>
+                            </div>
+                            <span className="font-semibold text-gray-900 text-sm">
+                              {new Intl.NumberFormat("vi-VN", {
+                                style: "currency",
+                                currency: "VND",
+                              }).format(workspace.longTermPrice)}
+                            </span>
                           </div>
-                          <span className="font-semibold text-gray-900 text-sm">
-                            {new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
-                            }).format(workspace.longTermPrice)}
-                          </span>
-                        </div>
-                      )}
+                        )}
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        ))}
-      </Slider>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </Slider>
+      </div>
 
       <style jsx global>{`
         .similar-space-slider .slick-dots li button:before {
