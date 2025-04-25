@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { ConfigProvider, Slider } from "antd";
 import { Input } from "@/components/ui/input";
 import { HotWorkspaceOwnerProps } from "@/types";
+import SectionTitle from "@/components/ui/section-tilte";
 
 function OwnerPage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -178,23 +179,24 @@ function OwnerPage() {
 
   if (ownerList.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-6 py-12 text-center">
+      <div className="w-full md:w-[90%] mx-auto pt-16 pb-20 text-center">
         <img src="/404.png" alt="No data" className="w-96 mx-auto mt-6" />
         <p className="text-gray-600 text-lg">Không có dữ liệu để hiển thị.</p>
       </div>
     );
   }
 
-  const totalPages = Math.ceil(filterOwnerList.length / 9);
+  const totalPages = Math.ceil(filterOwnerList.length / 12);
 
   const paginatedOwnerList = filterOwnerList.slice(
-    (currentPage - 1) * 9,
-    currentPage * 9
+    (currentPage - 1) * 12,
+    currentPage * 12
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-      <div className="flex flex-wrap items-center justify-end gap-4">
+    <div className="w-full md:w-[90%] mx-auto pt-16 pb-20 px-6">
+      <SectionTitle>Danh sách thương hiệu</SectionTitle>
+      <div className="flex flex-wrap items-center justify-end gap-4 mt-10">
         <button
           className="flex items-center space-x-2 px-4 py-2 border border-primary rounded-full text-sm sm:text-base hover:bg-primary hover:text-white transition-all duration-200"
           onClick={toggleFilters}
@@ -218,7 +220,7 @@ function OwnerPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block font-medium mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Tìm kiếm theo tên hoặc địa chỉ thương hiệu
               </label>
               <Input
@@ -231,7 +233,7 @@ function OwnerPage() {
             </div>
 
             <div>
-              <p className="font-medium mb-2">Số sao:</p>
+              <p className="text-sm font-medium text-gray-700 mb-2">Số sao:</p>
               <ConfigProvider
                 theme={{
                   token: {
@@ -256,7 +258,9 @@ function OwnerPage() {
             </div>
 
             <div>
-              <p className="font-medium mb-2">Lượt đặt:</p>
+              <p className="text-sm font-medium text-gray-700 mb-2">
+                Lượt đặt:
+              </p>
               <ConfigProvider
                 theme={{
                   token: {
@@ -283,7 +287,9 @@ function OwnerPage() {
             </div>
 
             <div>
-              <p className="font-medium mb-2">Số lượng không gian:</p>
+              <p className="text-sm font-medium text-gray-700 mb-2">
+                Số lượng không gian:
+              </p>
               <ConfigProvider
                 theme={{
                   token: {
@@ -329,12 +335,9 @@ function OwnerPage() {
           {filterOwnerList.length} kết quả được tìm thấy
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {paginatedOwnerList.map((owner) => (
-            <div
-              key={owner.workspaceOwnerId}
-              className="px-3 py-2 relative group"
-            >
+            <div key={owner.workspaceOwnerId} className="relative group">
               <Link
                 href={`/workspace-owner/${owner.workspaceOwnerId}`}
                 className="block"
@@ -343,7 +346,7 @@ function OwnerPage() {
                   whileHover={{ scale: 1.02 }}
                   transition={{ type: "spring", stiffness: 200, damping: 15 }}
                 >
-                  <Card className="relative overflow-hidden rounded-xl shadow-lg border border-gray-100 h-full">
+                  <Card className="relative overflow-hidden rounded-lg shadow-lg border border-gray-100 h-full">
                     <div
                       className={
                         "absolute -left-40 top-0 h-full w-14 rotate-[30deg] scale-y-150 bg-primary/20 transition-all duration-700 group-hover:left-[calc(100%+8rem)]"
@@ -358,7 +361,7 @@ function OwnerPage() {
                         />
                       </div>
 
-                      <div className="absolute -bottom-8 left-4 h-28 w-28 rounded-xl overflow-hidden border-2 border-secondary">
+                      <div className="absolute -bottom-8 left-4 h-20 w-20 rounded-lg overflow-hidden border-2 border-secondary">
                         <Image
                           src={owner?.avatar || "/owner_icon.png"}
                           alt="Avatar"
@@ -377,46 +380,46 @@ function OwnerPage() {
                         ></motion.div>
                       </div>
 
-                      <div className="absolute -bottom-8 left-36 overflow-hidden">
+                      <div className="absolute -bottom-8 left-28 overflow-hidden">
                         <Badge className="bg-primary hover:bg-secondary text-white">
                           Thương hiệu
                         </Badge>
                       </div>
                     </div>
 
-                    <CardContent className="p-5 mt-6">
+                    <CardContent className="p-3 mt-6">
                       <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1">
                         {owner.licenseName}
                       </h3>
-                      <p className="text-gray-600 text-sm mb-3 flex items-center">
+                      <p className="text-gray-600 text-xs mb-3 flex items-center">
                         <MapPin className="mr-1 text-gray-400" size={14} />
                         <span className="truncate">{owner.licenseAddress}</span>
                       </p>
                       <div className="grid grid-cols-3 gap-2 mb-2">
-                        <div className="flex flex-col gap-2 items-center rounded-xl border-2 text-fourth text-sm px-2 py-4">
-                          <span className="flex items-center gap-2 justify-center font-medium text-base">
-                            <Star size={20} className="text-primary" />{" "}
+                        <div className="flex flex-col gap-2 items-center rounded-lg border-2 text-fourth text-sm p-1">
+                          <span className="flex items-center gap-2 justify-center font-medium text-sm">
+                            <Star size={16} className="text-primary" />{" "}
                             {owner.rateAverage}
                           </span>
-                          <span className="flex items-center gap-2 justify-center font-medium text-sm">
+                          <span className="flex items-center gap-2 justify-center font-medium text-xs">
                             sao
                           </span>
                         </div>
-                        <div className="flex flex-col gap-2 items-center rounded-xl border-2 text-fourth text-sm px-2 py-4">
-                          <span className="flex items-center gap-2 justify-center font-medium text-base">
-                            <CalendarCheck size={20} className="text-primary" />{" "}
+                        <div className="flex flex-col gap-2 items-center rounded-lg border-2 text-fourth text-sm p-1">
+                          <span className="flex items-center gap-2 justify-center font-medium text-sm">
+                            <CalendarCheck size={16} className="text-primary" />{" "}
                             {owner.numberOfBooking}
                           </span>
-                          <span className="flex items-center gap-2 justify-center font-medium text-sm">
+                          <span className="flex items-center gap-2 justify-center font-medium text-xs">
                             lượt đặt
                           </span>
                         </div>
-                        <div className="flex flex-col gap-2 items-center rounded-xl border-2 text-fourth text-sm px-2 py-4">
-                          <span className="flex items-center gap-2 justify-center font-medium text-base">
-                            <Building2 size={20} className="text-primary" />{" "}
+                        <div className="flex flex-col gap-2 items-center rounded-lg border-2 text-fourth text-sm p-1">
+                          <span className="flex items-center gap-2 justify-center font-medium text-sm">
+                            <Building2 size={16} className="text-primary" />{" "}
                             {owner.numberOfWorkspace}
                           </span>
-                          <span className="flex items-center gap-2 justify-center font-medium text-sm">
+                          <span className="flex items-center gap-2 justify-center font-medium text-xs">
                             không gian
                           </span>
                         </div>

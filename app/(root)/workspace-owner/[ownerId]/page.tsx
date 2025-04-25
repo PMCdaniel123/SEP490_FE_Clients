@@ -35,6 +35,14 @@ import dayjs from "dayjs";
 import ReactSlider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import SectionTitle from "@/components/ui/section-tilte";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import "dayjs/locale/vi";
+
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
+dayjs.locale("vi");
 
 interface Workspace {
   id: string;
@@ -218,19 +226,25 @@ function WorkspaceOwnerDetail() {
         }
 
         const data = await response.json();
-        console.log("Promotions data:", data);
 
-        // Filter to only show Active promotions
         let activePromotions = [];
+        const now = dayjs();
 
         if (Array.isArray(data.promotions)) {
-          activePromotions = data.promotions.filter(
-            (promo: Promotion) => promo.status === "Active"
-          );
-        }
+          activePromotions = data.promotions.filter((promo: Promotion) => {
+            const startDate = dayjs(promo.startDate);
+            const endDate = dayjs(promo.endDate);
 
-        console.log("Active promotions count:", activePromotions.length);
-        console.log("Active promotions:", activePromotions);
+            const isValidTime =
+              startDate.isValid() &&
+              endDate.isValid() &&
+              startDate.isSameOrBefore(now, "date") &&
+              endDate.isSameOrAfter(now, "date") &&
+              promo.status === "Active";
+
+            return isValidTime;
+          });
+        }
 
         // Process promotions without fetching workspace names
         const processedPromotions = activePromotions.map((promo: Promotion) => {
@@ -242,7 +256,6 @@ function WorkspaceOwnerDetail() {
           };
         });
 
-        console.log("Processed promotions:", processedPromotions);
         setPromotions(processedPromotions);
       } catch (error) {
         console.error("Error fetching promotions:", error);
@@ -263,11 +276,11 @@ function WorkspaceOwnerDetail() {
     );
   }
 
-  const totalPages = Math.ceil(filteredWorkspaces.length / 9);
+  const totalPages = Math.ceil(filteredWorkspaces.length / 12);
 
   const paginatedWorkspaces = filteredWorkspaces.slice(
-    (currentPage - 1) * 9,
-    currentPage * 9
+    (currentPage - 1) * 12,
+    currentPage * 12
   );
 
   const formatCurrency = (value: number) => {
@@ -357,7 +370,7 @@ function WorkspaceOwnerDetail() {
 
   if (!loading && !ownerData) {
     return (
-      <div className="max-w-7xl mx-auto px-6 py-12 text-center">
+      <div className="w-full md:w-[90%] mx-auto pt-16 pb-20 text-center">
         <img src="/404.png" alt="No data" className="w-96 mx-auto mt-6" />
         <p className="text-gray-600 text-lg">Không có dữ liệu để hiển thị.</p>
       </div>
@@ -385,17 +398,18 @@ function WorkspaceOwnerDetail() {
         breakpoint: 768,
         settings: {
           slidesToShow: 1,
+          dots: false,
         },
       },
     ],
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+    <div className="w-full md:w-[90%] mx-auto pt-16 pb-20 px-6">
       {/* Owner Profile Card */}
-      <ShinyCard className="w-full bg-white rounded-xl overflow-hidden shadow-md mb-12">
+      <ShinyCard className="w-full bg-white rounded-lg overflow-hidden shadow-md mb-12">
         {/* Cover Image */}
-        <div className="relative h-60 md:h-80 w-full">
+        <div className="relative h-48 w-full">
           <Image
             src="/banner.png"
             alt="Cover"
@@ -410,7 +424,7 @@ function WorkspaceOwnerDetail() {
         <div className="relative px-6 pb-6">
           {/* Avatar */}
           <motion.div
-            className="absolute -top-16 left-6"
+            className="absolute -top-12 left-6"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -439,10 +453,10 @@ function WorkspaceOwnerDetail() {
             <AnimatedText
               text={ownerData?.licenseName || "Thương hiệu"}
               animation="fade"
-              className="text-xl md:text-2xl font-bold text-fourth"
+              className="text-xl font-bold text-fourth"
               delay={0.4}
             />
-            <div className="flex md:flex-row flex-col md:items-center gap-2 text-sm text-fifth">
+            <div className="flex flex-col gap-2 text-sm text-fifth">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -463,8 +477,8 @@ function WorkspaceOwnerDetail() {
                 </motion.p>
               )}
             </div>
-            <div className="grid grid-cols-3 gap-2 mt-2 md:w-1/2">
-              <div className="flex flex-col gap-2 items-center rounded-xl border-2 text-fourth text-sm px-2 py-4">
+            <div className="grid grid-cols-3 gap-2 mt-2 w-full lg:w-1/2">
+              <div className="flex flex-col gap-2 items-center rounded-lg border-2 text-fourth text-sm p-2">
                 <span className="flex items-center gap-2 justify-center font-medium text-base">
                   <Star size={20} className="text-primary" />{" "}
                   {ownerData?.rateAverage || 0}
@@ -473,7 +487,7 @@ function WorkspaceOwnerDetail() {
                   sao
                 </span>
               </div>
-              <div className="flex flex-col gap-2 items-center rounded-xl border-2 text-fourth text-sm px-2 py-4">
+              <div className="flex flex-col gap-2 items-center rounded-lg border-2 text-fourth text-sm p-2">
                 <span className="flex items-center gap-2 justify-center font-medium text-base">
                   <CalendarCheck size={20} className="text-primary" />{" "}
                   {ownerData?.numberOfBooking || 0}
@@ -482,7 +496,7 @@ function WorkspaceOwnerDetail() {
                   lượt đặt
                 </span>
               </div>
-              <div className="flex flex-col gap-2 items-center rounded-xl border-2 text-fourth text-sm px-2 py-4">
+              <div className="flex flex-col gap-2 items-center rounded-lg border-2 text-fourth text-sm p-2">
                 <span className="flex items-center gap-2 justify-center font-medium text-base">
                   <Building2 size={20} className="text-primary" />{" "}
                   {ownerData?.numberOfWorkspace || 0}
@@ -528,17 +542,17 @@ function WorkspaceOwnerDetail() {
         {/* Promotions Section */}
         {promotions.length > 0 && (
           <div className="mb-10 bg-white p-6 rounded-xl shadow-md border border-gray-100">
-            <h2 className="text-xl font-bold text-fourth mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-bold text-fourth mb-4 flex items-center gap-2">
               <span className="text-primary">
                 <GiftIcon />
               </span>{" "}
               Mã khuyến mãi đang có hiệu lực
             </h2>
             {promotions.length > 1 ? (
-              <div className="slider-container">
+              <div className="slider-container pb-6">
                 <ReactSlider {...sliderSettings}>
                   {promotions.map((promotion) => (
-                    <div key={promotion.id} className="px-2 pb-4">
+                    <div key={promotion.id} className="px-2">
                       <div
                         className="border-2 border-dashed border-primary/40 bg-gradient-to-br from-white to-primary/5 rounded-lg p-4 hover:shadow-lg transition-all duration-300 hover:border-primary cursor-pointer h-full"
                         onClick={() =>
@@ -658,7 +672,7 @@ function WorkspaceOwnerDetail() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-fourth mb-2">
+                  <label className="block text-sm font-medium text-fourth mb-1">
                     Tìm kiếm theo tên hoặc địa chỉ
                   </label>
                   <Input
@@ -674,7 +688,7 @@ function WorkspaceOwnerDetail() {
                 </div>
 
                 <div className="mb-6">
-                  <p className="font-medium mb-3 text-fourth">
+                  <p className="text-sm font-medium mb-3 text-fourth">
                     Khoảng giá (VND):
                   </p>
                   <ConfigProvider
@@ -708,7 +722,7 @@ function WorkspaceOwnerDetail() {
 
               <div>
                 <div className="mb-6">
-                  <p className="font-medium mb-3 text-fourth">
+                  <p className="text-sm font-medium mb-3 text-fourth">
                     Diện tích (m²):
                   </p>
                   <ConfigProvider
@@ -735,7 +749,7 @@ function WorkspaceOwnerDetail() {
                 </div>
 
                 <div className="mb-6">
-                  <p className="font-medium mb-3 text-fourth">
+                  <p className="text-sm font-medium mb-3 text-fourth">
                     Sức chứa (người):
                   </p>
                   <ConfigProvider
@@ -782,14 +796,12 @@ function WorkspaceOwnerDetail() {
         )}
 
         <div className="mt-10">
-          <h2 className="text-2xl font-bold text-fourth mb-6">
-            Không gian làm việc
-          </h2>
-          <p className="text-gray-500 mb-6">
+          <SectionTitle>Không gian làm việc</SectionTitle>
+          <p className="text-gray-500 mb-6 mt-10">
             {filteredWorkspaces.length} không gian làm việc được tìm thấy
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {paginatedWorkspaces.map((workspace) => (
               <ShinyCard
                 key={workspace.id}
@@ -800,7 +812,7 @@ function WorkspaceOwnerDetail() {
                   onClick={() => router.push(`/workspace/${workspace.id}`)}
                 >
                   <div className="relative group">
-                    <div className="overflow-hidden h-56">
+                    <div className="overflow-hidden h-40">
                       <img
                         src={workspace.images[0]?.imgUrl || "/placeholder.png"}
                         alt={workspace.name}
@@ -817,20 +829,20 @@ function WorkspaceOwnerDetail() {
                     </div>
                   </div>
 
-                  <CardContent className="p-5">
-                    <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 line-clamp-1">
+                  <CardContent className="p-3">
+                    <h3 className="text-base md:text-lg font-bold text-gray-800 mb-1 line-clamp-1">
                       {workspace.name}
                     </h3>
-                    <p className="text-gray-600 text-sm mb-3 flex items-center">
+                    <p className="text-gray-600 text-xs mb-3 flex items-center">
                       <span className="truncate">{workspace.address}</span>
                     </p>
 
                     <div className="grid grid-cols-2 gap-2 mb-4">
-                      <div className="flex items-center text-gray-700 text-sm">
+                      <div className="flex items-center text-gray-700 text-xs">
                         <Users className="mr-1 text-blue-500" size={16} />
                         <span>{workspace.capacity} người</span>
                       </div>
-                      <div className="flex items-center text-gray-700 text-sm justify-end">
+                      <div className="flex items-center text-gray-700 text-xs justify-end">
                         <Ruler className="mr-1 text-green-500" size={16} />
                         <span>{workspace.area} m²</span>
                       </div>
@@ -840,14 +852,14 @@ function WorkspaceOwnerDetail() {
                       <div className="flex flex-col gap-1">
                         {workspace.shortTermPrice > 0 && (
                           <div className="flex justify-between items-center">
-                            <div className="flex items-center text-gray-700 text-sm">
+                            <div className="flex items-center text-gray-700 text-xs md:text-sm">
                               <Clock
                                 className="mr-1 text-orange-500"
                                 size={16}
                               />
                               <span>Theo giờ</span>
                             </div>
-                            <span className="font-semibold text-gray-900">
+                            <span className="font-semibold text-gray-900 text-xs md:text-sm">
                               {formatCurrency(workspace.shortTermPrice)}
                             </span>
                           </div>
@@ -855,20 +867,23 @@ function WorkspaceOwnerDetail() {
 
                         {workspace.longTermPrice > 0 && (
                           <div className="flex justify-between items-center">
-                            <div className="flex items-center text-gray-700 text-sm">
+                            <div className="flex items-center text-gray-700 text-xs md:text-sm">
                               <Calendar
                                 className="mr-1 text-purple-500"
                                 size={16}
                               />
                               <span>Theo ngày</span>
                             </div>
-                            <span className="font-semibold text-gray-900">
+                            <span className="font-semibold text-gray-900 text-xs md:text-sm">
                               {formatCurrency(workspace.longTermPrice)}
                             </span>
                           </div>
                         )}
                       </div>
                     </div>
+                    <Button className="w-full mt-4 text-white hidden md:block">
+                      Xem chi tiết
+                    </Button>
                   </CardContent>
                 </div>
               </ShinyCard>

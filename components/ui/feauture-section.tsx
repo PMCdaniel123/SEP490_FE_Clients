@@ -1,7 +1,8 @@
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
+
+import SectionTitle from "./section-tilte";
 
 interface FeatureSectionProps {
-  title: string;
   description: string;
   buttonText: string;
   buttonLink: string;
@@ -10,7 +11,6 @@ interface FeatureSectionProps {
 }
 
 export default function FeatureSection({
-  title,
   description,
   buttonText,
   buttonLink,
@@ -18,13 +18,12 @@ export default function FeatureSection({
   imageUrl,
 }: FeatureSectionProps) {
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between gap-8 max-w-6xl mx-auto py-12 px-6">
+    <div className="flex flex-col md:flex-row items-center justify-between gap-8 w-full mx-auto py-12">
       <div className="md:w-1/2 text-left">
-        <h2 className="text-3xl md:text-4xl font-bold text-[#835101] leading-tight">
-          {title}
-        </h2>
-        <div className="w-12 h-1 bg-gray-700 my-4"></div>
-        <p className="text-gray-600 text-lg mb-6">{description}</p>
+        <SectionTitle>
+          Khám phá thêm về việc trở thành <br /> chủ không gian làm việc
+        </SectionTitle>
+        <p className="text-gray-600 text-sm my-6">{description}</p>
         <div className="flex space-x-6 mb-6">
           {secondaryLinks.map((link, index) => (
             <a
@@ -46,13 +45,11 @@ export default function FeatureSection({
       </div>
 
       <div className="md:w-1/2 flex justify-end">
-        <div className="relative w-full max-w-md">
-          <Image
+        <div className="relative w-full">
+          <img
             src={imageUrl}
             alt="Feature"
-            width={500}
-            height={400}
-            className="rounded-lg shadow-md"
+            className="rounded-lg shadow-md object-cover max-h-[300px] w-full"
           />
         </div>
       </div>

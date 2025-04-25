@@ -31,18 +31,20 @@ function ReviewList({ workspaceId }: ReviewListProps) {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth < 768);
     };
-    
+
     handleResize();
-    window.addEventListener('resize', handleResize);
-    
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
     const fetchReviews = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${BASE_URL}/users/rating/getallratingbyworkspaceid/${workspaceId}`);
+        const response = await fetch(
+          `${BASE_URL}/users/rating/getallratingbyworkspaceid/${workspaceId}`
+        );
         if (!response.ok) {
           throw new Error("Có lỗi xảy ra khi tải đánh giá.");
         }
@@ -60,25 +62,28 @@ function ReviewList({ workspaceId }: ReviewListProps) {
 
   const filterReviews = () => {
     let filtered = reviews;
-  
+
     if (selectedRating) {
       filtered = filtered.filter((review) => review.rate === selectedRating);
     }
-  
+
     if (hasImages) {
       filtered = filtered.filter((review) => review.images.length > 0);
     }
 
     filtered = filtered.sort(
-      (a, b) => new Date(b.created_At).getTime() - new Date(a.created_At).getTime()
+      (a, b) =>
+        new Date(b.created_At).getTime() - new Date(a.created_At).getTime()
     );
-  
+
     return filtered;
   };
 
   const filteredReviews = filterReviews();
   const averageRating = reviews.length
-    ? (reviews.reduce((sum, review) => sum + review.rate, 0) / reviews.length).toFixed(1)
+    ? (
+        reviews.reduce((sum, review) => sum + review.rate, 0) / reviews.length
+      ).toFixed(1)
     : "0";
 
   return (
@@ -101,7 +106,11 @@ function ReviewList({ workspaceId }: ReviewListProps) {
 
           <div className="flex flex-wrap gap-2 mb-4 overflow-x-auto pb-2 -mx-2 px-2">
             <button
-              className={`px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base rounded-lg border whitespace-nowrap ${selectedRating === null ? "bg-primary text-white" : "border-gray-300"}`}
+              className={`px-3 py-2 text-sm rounded-lg border whitespace-nowrap ${
+                selectedRating === null
+                  ? "bg-primary text-white"
+                  : "border-gray-300"
+              }`}
               onClick={() => setSelectedRating(null)}
             >
               Tất Cả
@@ -109,22 +118,35 @@ function ReviewList({ workspaceId }: ReviewListProps) {
             {[5, 4, 3, 2, 1].map((star) => (
               <button
                 key={star}
-                className={`px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base rounded-lg border whitespace-nowrap ${selectedRating === star ? "bg-primary text-white" : "border-gray-300"}`}
+                className={`px-3 py-2 text-sm rounded-lg border whitespace-nowrap ${
+                  selectedRating === star
+                    ? "bg-primary text-white"
+                    : "border-gray-300"
+                }`}
                 onClick={() => setSelectedRating(star)}
               >
                 {star} Sao ({reviews.filter((r) => r.rate === star).length})
               </button>
             ))}
             <button
-              className={`px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base rounded-lg border whitespace-nowrap ${hasImages ? "bg-gray-500 text-white" : "border-gray-300"}`}
+              className={`px-3 py-1.5 text-sm rounded-lg border whitespace-nowrap ${
+                hasImages ? "bg-gray-500 text-white" : "border-gray-300"
+              }`}
               onClick={() => setHasImages(!hasImages)}
             >
               Có Hình Ảnh ({reviews.filter((r) => r.images.length > 0).length})
             </button>
           </div>
 
-          <div className={`grid ${isSmallScreen ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'} gap-4 mb-4`}>
-            {(showAll ? filteredReviews : filteredReviews.slice(0, isSmallScreen ? 2 : 4)).map((review, index) => (
+          <div
+            className={`grid ${
+              isSmallScreen ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"
+            } gap-4 mb-4`}
+          >
+            {(showAll
+              ? filteredReviews
+              : filteredReviews.slice(0, isSmallScreen ? 2 : 4)
+            ).map((review, index) => (
               <ReviewItem
                 key={index}
                 avatar={review.user_Avatar}
