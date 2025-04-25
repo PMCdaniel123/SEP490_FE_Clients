@@ -45,10 +45,10 @@ export default function BecomeOwner() {
           className="z-0"
         />
         <div className="relative z-20 text-white flex flex-col justify-center items-center h-full text-center px-6">
-          <h1 className="text-4xl font-bold mb-4">
+          <h1 className="text-xl md:text-3xl font-bold mb-4">
             Biến không gian của bạn thành cơ hội kinh doanh!
           </h1>
-          <p className="text-lg max-w-2xl">
+          <p className="text-sm md:text-base max-w-2xl">
             Bạn có không gian làm việc trống? Hãy tham gia cùng chúng tôi và
             biến không gian của bạn thành nguồn thu nhập ổn định.
           </p>
@@ -73,7 +73,7 @@ export default function BecomeOwner() {
             />
           </div>
           <div className="flex flex-col justify-center">
-            <h2 className="text-3xl font-bold mb-4">
+            <h2 className="text-xl font-bold mb-4">
               Tối ưu hóa giá trị không gian của bạn!
             </h2>
             <p className="text-gray-600 mb-4">
@@ -94,42 +94,36 @@ export default function BecomeOwner() {
         </section>
       </AnimateInView>
       <AnimateInView delay={0.2}>
-        <section className="bg-gray-100 py-16 px-6">
+        <section className="bg-gray-100 py-10 px-6">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-12">
+            <h2 className="text-xl font-bold text-center mb-10">
               Quy trình đăng ký đơn giản
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-              <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col items-center gap-2">
                 <p className="text-primary">
-                  <NotebookPen size={50} />
+                  <NotebookPen size={40} />
                 </p>
-                <h3 className="text-xl font-semibold mb-2">
-                  1. Điền thông tin
-                </h3>
-                <p className="text-gray-600">
+                <h3 className="text-lg font-semibold">1. Điền thông tin</h3>
+                <p className="text-gray-600 text-sm">
                   Chia sẻ thông tin không gian và mô hình kinh doanh của bạn.
                 </p>
               </div>
-              <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col items-center gap-2">
                 <p className="text-primary">
-                  <SquareCheckBig size={50} />
+                  <SquareCheckBig size={40} />
                 </p>
-                <h3 className="text-xl font-semibold mb-2">
-                  2. Xác thực & Duyệt
-                </h3>
-                <p className="text-gray-600">
+                <h3 className="text-lg font-semibold">2. Xác thực & Duyệt</h3>
+                <p className="text-gray-600 text-sm">
                   Đội ngũ của chúng tôi sẽ liên hệ và xác minh thông tin.
                 </p>
               </div>
-              <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col items-center gap-2">
                 <p className="text-primary">
-                  <Rocket size={50} />
+                  <Rocket size={40} />
                 </p>
-                <h3 className="text-xl font-semibold mb-2">
-                  3. Bắt đầu cho thuê
-                </h3>
-                <p className="text-gray-600">
+                <h3 className="text-lg font-semibold">3. Bắt đầu cho thuê</h3>
+                <p className="text-gray-600 text-sm">
                   Không gian của bạn sẽ hiển thị trên hệ thống và sẵn sàng được
                   đặt chỗ.
                 </p>
@@ -140,10 +134,10 @@ export default function BecomeOwner() {
       </AnimateInView>
       <AnimateInView delay={0.4}>
         <section className="py-16 px-6 max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12">
+          <h2 className="text-xl font-bold text-center mb-10">
             Tại sao nên hợp tác với chúng tôi?
           </h2>
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700 text-lg">
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700 text-base">
             <li className="flex items-center gap-2">
               <span className="text-primary">
                 <Cog size={24} />
@@ -178,14 +172,14 @@ export default function BecomeOwner() {
         </section>
       </AnimateInView>
       <AnimateInView delay={0.6}>
-        <section className="py-16 px-6 max-w-4xl mx-auto bg-gray-100 mb-20">
-          <h2 className="text-3xl font-bold text-center mb-12">
+        <section className="py-10 px-6 w-full mx-auto bg-gray-100 mb-20">
+          <h2 className="text-xl font-bold text-center mb-10">
             Câu hỏi thường gặp
           </h2>
-          <div className="space-y-6">
+          <div className="space-y-6 text-center">
             <div>
               <h4 className="font-semibold">Tôi cần chuẩn bị gì để bắt đầu?</h4>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-sm">
                 Chỉ cần có không gian trống và thông tin cơ bản. Đội ngũ chúng
                 tôi sẽ hỗ trợ bạn từng bước.
               </p>
@@ -194,7 +188,7 @@ export default function BecomeOwner() {
               <h4 className="font-semibold">
                 Làm sao để đảm bảo khách hàng tin cậy?
               </h4>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-sm">
                 Chúng tôi có hệ thống xác minh danh tính, đánh giá, và quy trình
                 thanh toán an toàn.
               </p>
@@ -203,7 +197,7 @@ export default function BecomeOwner() {
               <h4 className="font-semibold">
                 Chi phí sử dụng nền tảng là bao nhiêu?
               </h4>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-sm">
                 Miễn phí đăng ký. Chúng tôi thu hoa hồng nhỏ trên mỗi giao dịch
                 thành công.
               </p>

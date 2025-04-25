@@ -103,8 +103,8 @@ export default function NearSpaceList({ km }: { km: string }) {
 
   if (workspaces.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto p-6 text-center">
-        <p className="text-gray-600 text-lg">Không có dữ liệu để hiển thị.</p>
+      <div className="w-full mx-auto text-center mt-10">
+        <p className="text-gray-600 text-base">Không có dữ liệu để hiển thị.</p>
       </div>
     );
   }
@@ -113,7 +113,7 @@ export default function NearSpaceList({ km }: { km: string }) {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 3,
+    slidesToShow: 4,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 5000,
@@ -146,14 +146,14 @@ export default function NearSpaceList({ km }: { km: string }) {
 
   return (
     <>
-      <div className="max-w-7xl mx-auto p-6 pb-12">
-        <div>
+      <div className="w-full mx-auto px-6 md:px-0">
+        <div className="mt-10">
           {location ? (
             <p className="text-gray-500 md:ml-3 mb-4">
               {workspaces.length} không gian gần bạn được tìm thấy
             </p>
           ) : (
-            !error && <p>Getting your location...</p>
+            !error && <p>Lỗi vị trí...</p>
           )}
         </div>
         <Slider {...settings} className="near-space-slider">
@@ -166,7 +166,7 @@ export default function NearSpaceList({ km }: { km: string }) {
             )?.price;
 
             return (
-              <div key={workspace.id} className="px-3 py-2">
+              <div key={workspace.id} className="p-3">
                 <Link href={`/workspace/${workspace.id}`} className="block">
                   <motion.div
                     whileHover={{ y: -10 }}
@@ -174,9 +174,9 @@ export default function NearSpaceList({ km }: { km: string }) {
                     onMouseEnter={() => setHoveredCard(Number(workspace.id))}
                     onMouseLeave={() => setHoveredCard(null)}
                   >
-                    <Card className="relative overflow-hidden rounded-xl shadow-lg border border-gray-100 h-full">
+                    <Card className="relative overflow-hidden rounded-lg shadow-lg border border-gray-100 h-full">
                       <div className="relative group">
-                        <div className="overflow-hidden h-56">
+                        <div className="overflow-hidden h-40">
                           <img
                             src={
                               workspace.images[0]?.imgUrl || "/placeholder.png"
@@ -188,7 +188,7 @@ export default function NearSpaceList({ km }: { km: string }) {
 
                         {location && (
                           <div className="absolute top-3 right-3">
-                            <Badge className="bg-secondary hover:bg-secondary/80 text-white px-2 py-1 rounded-md text-sm flex items-center">
+                            <Badge className="bg-secondary hover:bg-secondary/80 text-white px-2 py-1 rounded-md text-xs flex items-center">
                               <LandPlot className="mr-1" size={16} />
                               {workspace.distanceKm.toFixed(2)} km
                             </Badge>
@@ -204,21 +204,21 @@ export default function NearSpaceList({ km }: { km: string }) {
                         </div>
                       </div>
 
-                      <CardContent className="p-5">
-                        <h3 className="text-xl font-bold text-gray-800 mb-1 line-clamp-1">
+                      <CardContent className="p-3">
+                        <h3 className="text-base md:text-lg font-bold text-gray-800 mb-1 line-clamp-1">
                           {workspace.name}
                         </h3>
-                        <p className="text-gray-600 text-sm mb-3 flex items-center">
+                        <p className="text-gray-600 text-xs mb-3 flex items-center">
                           <MapPin className="mr-1 text-gray-400" size={14} />
                           <span className="truncate">{workspace.address}</span>
                         </p>
 
-                        <div className="grid grid-cols-2 gap-2 mb-4">
-                          <div className="flex items-center text-gray-700 text-sm">
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                          <div className="flex items-center text-gray-700 text-xs">
                             <Users className="mr-1 text-blue-500" size={16} />
                             <span>{workspace.capacity} người</span>
                           </div>
-                          <div className="flex items-center text-gray-700 text-sm justify-end">
+                          <div className="flex items-center text-gray-700 text-xs justify-end">
                             <Ruler className="mr-1 text-green-500" size={16} />
                             <span>{workspace.area} m²</span>
                           </div>
@@ -228,14 +228,14 @@ export default function NearSpaceList({ km }: { km: string }) {
                           <div className="flex flex-col gap-1">
                             {shortTermPrice && (
                               <div className="flex justify-between items-center">
-                                <div className="flex items-center text-gray-700 text-sm">
+                                <div className="flex items-center text-gray-700 text-xs md:text-sm">
                                   <Clock
                                     className="mr-1 text-orange-500"
                                     size={16}
                                   />
                                   <span>Theo giờ</span>
                                 </div>
-                                <span className="font-semibold text-gray-900">
+                                <span className="font-semibold text-gray-900 text-xs md:text-sm">
                                   {new Intl.NumberFormat("vi-VN", {
                                     style: "currency",
                                     currency: "VND",
@@ -246,14 +246,14 @@ export default function NearSpaceList({ km }: { km: string }) {
 
                             {longTermPrice && (
                               <div className="flex justify-between items-center">
-                                <div className="flex items-center text-gray-700 text-sm">
+                                <div className="flex items-center text-gray-700 text-xs md:text-sm">
                                   <Calendar
                                     className="mr-1 text-purple-500"
                                     size={16}
                                   />
                                   <span>Theo ngày</span>
                                 </div>
-                                <span className="font-semibold text-gray-900">
+                                <span className="font-semibold text-gray-900 text-xs md:text-sm">
                                   {new Intl.NumberFormat("vi-VN", {
                                     style: "currency",
                                     currency: "VND",

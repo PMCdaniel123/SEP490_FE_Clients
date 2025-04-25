@@ -185,7 +185,7 @@ function Header() {
   };
 
   return (
-    <header className="bg-primary py-4 px-6 md:px-8 flex items-center justify-between text-white relative z-50 shadow-md">
+    <header className="bg-primary py-3 px-2 md:px-8 flex items-center justify-between text-white relative z-50 shadow-md">
       <div
         className="flex items-center gap-3 cursor-pointer group"
         onClick={() => router.push("/")}
@@ -199,11 +199,11 @@ function Header() {
             className="object-contain"
           />
         </div>
-        <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent drop-shadow-sm hover:drop-shadow-md transition-all duration-300">
+        <h1 className="text-xl md:text-2xl font-extrabold bg-gradient-to-r from-white to-secondary bg-clip-text text-transparent drop-shadow-sm hover:drop-shadow-md transition-all duration-300">
           WorkHive
         </h1>
       </div>
-      <nav className="hidden md:flex items-center justify-around gap-6 xl:gap-8">
+      <nav className="hidden md:flex items-center justify-around gap-4 xl:gap-6">
         {menuItems.map((item) => (
           <li
             key={item.path}
@@ -211,7 +211,7 @@ function Header() {
           >
             <Link
               href={item.path}
-              className={`font-medium text-base transition-colors duration-200 py-4 px-4 rounded ${
+              className={`font-medium text-sm transition-colors duration-200 py-3 px-3 rounded ${
                 pathname === item.path
                   ? "bg-gradient-to-r from-primary to-secondary"
                   : ""
@@ -221,7 +221,7 @@ function Header() {
             </Link>
 
             <span
-              className={`absolute left-0 transform -translate-x-1 h-4 w-4 rounded-full bg-secondary transition-all duration-300 ${
+              className={`absolute left-0 transform -translate-x-1 h-3 w-3 rounded-full bg-secondary transition-all duration-300 ${
                 pathname === item.path
                   ? "opacity-100"
                   : "opacity-0 group-hover:opacity-100"
@@ -231,7 +231,7 @@ function Header() {
         ))}
         <li className="relative group pl-2 flex items-center justify-center font-semibold cursor-pointer">
           <p
-            className={`font-medium text-base transition-colors duration-200 py-4 px-4 rounded ${
+            className={`font-medium text-sm transition-colors duration-200 py-3 px-3 rounded ${
               pathname?.includes("workspace")
                 ? "bg-gradient-to-r from-primary to-secondary"
                 : ""
@@ -241,45 +241,42 @@ function Header() {
           </p>
 
           <span
-            className={`absolute left-0 transform -translate-x-1 h-4 w-4 rounded-full bg-secondary transition-all duration-300 ${
+            className={`absolute left-0 transform -translate-x-1 h-3 w-3 rounded-full bg-secondary transition-all duration-300 ${
               pathname?.includes("workspace")
                 ? "opacity-100"
                 : "opacity-0 group-hover:opacity-100"
             }`}
           ></span>
 
-          <ul className="absolute top-full left-1/2 -translate-x-1/2 p-2 md:min-w-[360px] bg-white shadow-lg rounded-lg invisible opacity-0 pointer-events-none group-hover:visible group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 translate-y-2 transition-all duration-300 z-50 border">
+          <ul className="absolute top-full left-1/2 -translate-x-1/2 p-2 md:min-w-[300px] bg-white shadow-lg rounded-lg invisible opacity-0 pointer-events-none group-hover:visible group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-y-0 translate-y-2 transition-all duration-300 z-50 border">
             <li
-              className={`flex items-center gap-4 p-3 rounded-lg bg-white text-gray-700 md:min-w-[360px] ${
+              className={`flex items-center gap-2 p-2 rounded-lg bg-white text-gray-700 md:min-w-[300px] ${
                 pathname === "/workspace"
                   ? "border border-primary"
                   : "hover:bg-secondary hover:text-white"
               }`}
               onClick={() => router.push("/workspace")}
             >
-              <Building className="border-r-2 border-primary w-1/6" size={26} />
+              <Building className="w-1/6" size={20} />
               <div className="w-5/6">
-                <p className="font-semibold text-base">Không gian</p>
-                <p className="font-light text-sm">
+                <p className="font-semibold text-sm">Không gian</p>
+                <p className="font-light text-xs">
                   Danh sách không gian của chúng tôi
                 </p>
               </div>
             </li>
             <li
-              className={`mt-2 flex items-center gap-4 p-3 rounded-lg bg-white text-gray-700 md:min-w-[360px] ${
+              className={`mt-2 flex items-center gap-2 p-2 rounded-lg bg-white text-gray-700 md:min-w-[300px] ${
                 pathname === "/workspace-owner"
                   ? "border border-primary"
                   : "hover:bg-secondary hover:text-white"
               }`}
               onClick={() => router.push("/workspace-owner")}
             >
-              <BriefcaseBusiness
-                className="border-r-2 border-primary w-1/6"
-                size={26}
-              />
+              <BriefcaseBusiness className="w-1/6" size={20} />
               <div className="w-5/6">
-                <p className="font-semibold text-base">Thương hiệu</p>
-                <p className="font-light text-sm">
+                <p className="font-semibold text-sm">Thương hiệu</p>
+                <p className="font-light text-xs">
                   Danh sách thương hiệu của chúng tôi
                 </p>
               </div>
@@ -301,13 +298,13 @@ function Header() {
         {isToken && customer && <Notification customer={customer} />}
         {!isToken ? (
           <AnimatedBorderTrail trailSize="sm" trailColor="#D0BEA0">
-            <div className="flex flex-col md:flex-row items-center border rounded-xl text-fourth bg-white h-full w-full md:w-auto shadow-md overflow-hidden">
+            <div className="flex flex-col md:flex-row items-center border rounded-md text-fourth bg-white h-full w-full md:w-auto shadow-md overflow-hidden">
               <p
                 onClick={() => {
                   setSignInModalOpen(true);
                   handleCloseSignUpForm();
                 }}
-                className="z-50 text-sm font-semibold flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-3 px-4 md:px-5 rounded-t-xl md:rounded-l-xl md:rounded-t-none md:rounded-tl-xl border-b md:border-b-0 md:border-r transition-all duration-300 cursor-pointer w-full md:w-auto"
+                className="z-50 text-sm font-semibold flex items-center justify-center hover:bg-fourth hover:text-white py-2 px-4 rounded-t-md md:rounded-l-md md:rounded-t-none md:rounded-tl-md border-b md:border-b-0 md:border-r transition-all duration-300 cursor-pointer w-full md:w-auto"
               >
                 <span>Đăng nhập</span>
               </p>
@@ -315,7 +312,7 @@ function Header() {
                 onClick={() => {
                   setSignUpModalOpen(true);
                 }}
-                className="z-50 text-sm font-semibold flex items-center justify-center hover:bg-fourth hover:text-white py-3 md:py-3 px-4 md:px-5 rounded-b-xl md:rounded-r-xl md:rounded-b-none border-t md:border-t-0 md:border-l transition-all duration-300 cursor-pointer w-full md:w-auto"
+                className="z-50 text-sm font-semibold flex items-center justify-center hover:bg-fourth hover:text-white py-2 px-4 rounded-b-md md:rounded-r-md md:rounded-b-none border-t md:border-t-0 md:border-l transition-all duration-300 cursor-pointer w-full md:w-auto"
               >
                 <span>Đăng ký</span>
               </p>
@@ -327,18 +324,18 @@ function Header() {
             className="relative h-full max-w-[140px] md:max-w-none"
           >
             <div
-              className="group flex items-center justify-center border rounded-xl py-2 px-4 gap-3 bg-secondary/70 hover:bg-fourth cursor-pointer transition-all duration-300 shadow-md w-full"
+              className="group flex items-center justify-center border rounded-lg py-1.5 px-2 gap-3 bg-secondary/70 hover:bg-fourth cursor-pointer transition-all duration-300 shadow-md w-full"
               onClick={() => setOpenAccount(!openAccount)}
             >
               <Image
                 src={customer?.avatar || "/WorkHive.svg"}
                 alt="Logo"
-                width={40}
-                height={40}
+                width={30}
+                height={30}
                 className="rounded-full border-2 border-white bg-white object-cover"
               />
               <div className="hidden md:flex flex-col justify-center items-start md:w-[140px]">
-                <p className="text-sm font-semibold truncate md:w-[140px]">
+                <p className="text-xs font-semibold truncate md:w-[140px]">
                   {customer?.fullName}
                 </p>
                 <p className="text-xs font-medium truncate md:w-[140px] opacity-90">

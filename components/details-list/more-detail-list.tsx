@@ -15,16 +15,16 @@ function MoreDetailList({ details }: { details: Details[] }) {
     <div className="space-y-6">
       {details.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
             {displayedDetails.map((detail) => (
               <div
                 key={detail.id}
-                className="flex items-center gap-4 p-4 rounded-2xl border border-gray-200 bg-white hover:shadow-md transition-all duration-300 hover:-translate-y-[2px]"
+                className="flex flex-col gap-2 p-2 md:p-4 rounded-lg border border-gray-200 bg-white hover:shadow-md transition-all duration-300 hover:-translate-y-[2px]"
               >
-                <div className="flex items-center justify-center bg-primary/10 text-primary rounded-full w-10 h-10">
-                  <Info size={20} />
+                <div className="flex items-center justify-center bg-primary/10 text-primary rounded-full w-8 h-8">
+                  <Info size={16} />
                 </div>
-                <p className="text-sm font-medium text-gray-800">
+                <p className="flex text-sm font-medium text-gray-800">
                   {detail.detailName}
                 </p>
               </div>
