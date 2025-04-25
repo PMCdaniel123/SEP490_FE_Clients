@@ -112,40 +112,56 @@ const UserFeedbackDetail: React.FC<UserFeedbackDetailProps> = ({
   const [loading, setLoading] = useState(true);
   const [loadingResponse, setLoadingResponse] = useState(false);
 
-  useEffect(() => {
-    const fetchExistingFeedback = async () => {
-      try {
-        setLoading(true);
+  const fetchExistingFeedback = async () => {
+    try {
+      setLoading(true);
 
-        if (feedbackId) {
-          const response = await fetch(`${BASE_URL}/feedbacks/${feedbackId}`);
-          if (response.ok) {
-            const data = await response.json();
-            setExistingFeedback(data);
-            if (data && data.id) {
-              await fetchOwnerResponse(data.id);
-            }
-          }
-        } else {
-          const response = await fetch(
-            `${BASE_URL}/feedbacks/booking/${bookingId}`
-          );
-
-          if (response.ok) {
-            const data = await response.json();
-            setExistingFeedback(data);
-            if (data && data.id) {
-              await fetchOwnerResponse(data.id);
-            }
+      if (feedbackId) {
+        const response = await fetch(`${BASE_URL}/feedbacks/${feedbackId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setExistingFeedback(data);
+          if (data && data.id) {
+            await fetchOwnerResponse(data.id);
           }
         }
-      } catch (error) {
-        console.error("Error fetching feedback:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      } else {
+        // lay feedback id tu bookingId
+        const bookingResponse = await fetch(
+          `${BASE_URL}/feedbacks/booking/${bookingId}`
+        );
 
+        if (bookingResponse.ok) {
+          const bookingData = await bookingResponse.json();
+
+          // neu bookingData co id thi lay feedback tu id do
+          if (bookingData && bookingData.id) {
+            const feedbackResponse = await fetch(
+              `${BASE_URL}/feedbacks/${bookingData.id}`
+            );
+            if (feedbackResponse.ok) {
+              const feedbackData = await feedbackResponse.json();
+              setExistingFeedback(feedbackData);
+              await fetchOwnerResponse(bookingData.id);
+            } else {
+              setExistingFeedback(bookingData);
+              if (bookingData.id) {
+                await fetchOwnerResponse(bookingData.id);
+              }
+            }
+          } else {
+            setExistingFeedback(bookingData);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching feedback:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchExistingFeedback();
   }, [bookingId, feedbackId]);
 
@@ -213,11 +229,8 @@ const UserFeedbackDetail: React.FC<UserFeedbackDetailProps> = ({
       });
 
       if (!response.ok) throw new Error();
+      await fetchExistingFeedback();
 
-      const newFeedbackResponse = await response.json();
-      setExistingFeedback(newFeedbackResponse);
-
-      toast.success("Phản hồi đã được gửi thành công!");
       setFileList([]);
       setTitle("");
       setDescription("");
@@ -277,11 +290,15 @@ const UserFeedbackDetail: React.FC<UserFeedbackDetailProps> = ({
                         .format("DD/MM/YYYY HH:mm")}
                     </Text>
                   </div>
-                  <div className="mb-4">
+                  <div className="mb-2">
                     <Text strong>Không gian làm việc:</Text>
                     <Text className="ml-2">
                       {existingFeedback.workspaceName}
                     </Text>
+                  </div>{" "}
+                  <div className="mb-4">
+                    <Text strong>Tiêu đề:</Text>
+                    <Text className="ml-2">{existingFeedback.title}</Text>
                   </div>
                   <Divider className="my-3" />
                   <div className="mb-4">
@@ -290,7 +307,6 @@ const UserFeedbackDetail: React.FC<UserFeedbackDetailProps> = ({
                       {existingFeedback.description}
                     </Paragraph>
                   </div>
-
                   {existingFeedback.imageUrls &&
                     existingFeedback.imageUrls.length > 0 && (
                       <div>
@@ -381,8 +397,9 @@ const UserFeedbackDetail: React.FC<UserFeedbackDetailProps> = ({
               </Text>
               <Paragraph className="text-amber-700 text-sm mb-0">
                 Phản hồi của bạn đang được xem xét. Chúng tôi sẽ trả lời trong
-                vòng 24 giờ. Vui lòng kiểm tra email hoặc trung tâm hỗ trợ để
-                cập nhật thông tin mới nhất.
+                vòng 24 giờ. Vui lòng kiểm tra email hoặc{" "}
+                <a href="/user-feedbacks">trung tâm hỗ trợ để </a>
+                xem danh sách phản hồi mà bạn đã gửi.
               </Paragraph>
             </div>
           </div>

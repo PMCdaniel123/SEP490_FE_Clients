@@ -51,17 +51,17 @@ export const validatePhone = createAsyncThunk<
       });
       return rejectWithValue("Số điện thoại không hợp lệ!");
     }
-    localStorage.setItem("auth", input);
     const result = await response.text();
     if (result.toLowerCase().includes("không tìm thấy")) {
-      toast.error("Số điện thoại không hợp lệ!", {
+      toast.error(result, {
         position: "top-right",
         autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
-      return rejectWithValue("Số điện thoại không hợp lệ!");
+      return rejectWithValue(result);
     }
+    localStorage.setItem("auth", input);
     return JSON.parse(result);
   } catch {
     return rejectWithValue("Lỗi truy cập");
@@ -90,17 +90,17 @@ export const validateEmail = createAsyncThunk<
       });
       return rejectWithValue("Email không hợp lệ!");
     }
-    localStorage.setItem("auth", input);
     const result = await response.text();
     if (result.toLowerCase().includes("không tìm thấy")) {
-      toast.error("Email không hợp lệ!", {
+      toast.error(result, {
         position: "top-right",
         autoClose: 1500,
         hideProgressBar: false,
         theme: "light",
       });
-      return rejectWithValue("Email không hợp lệ!");
+      return rejectWithValue(result);
     }
+    localStorage.setItem("auth", input);
     return JSON.parse(result);
   } catch {
     return rejectWithValue("Lỗi truy cập");

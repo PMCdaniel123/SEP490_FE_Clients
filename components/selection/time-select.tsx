@@ -207,7 +207,7 @@ function TimeSelect() {
               <span className="font-medium">Thời gian đặt chỗ</span>
             </div>
             {duration.hours > 0 || duration.minutes > 0 ? (
-              <Badge className="bg-white text-primary">
+              <Badge className="bg-white text-primary hover:bg-white">
                 {duration.hours > 0 ? `${duration.hours} giờ ` : ""}
                 {duration.minutes > 0 ? `${duration.minutes} phút` : ""}
               </Badge>

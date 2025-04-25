@@ -52,17 +52,24 @@ const BankInformationForm = ({
     bankNumber: "",
     bankAccountName: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
+
+  const [editableBankInfo, setEditableBankInfo] = useState<BankInfo>({
+    bankName: "",
+    bankNumber: "",
+    bankAccountName: "",
+  });
+
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+
   const [banks, setBanks] = useState<Bank[]>([]);
   const [filteredBanks, setFilteredBanks] = useState<Bank[]>([]);
   const [banksFetching, setBanksFetching] = useState(false);
   const [bankSearchValue, setBankSearchValue] = useState("");
   const [bankDropdownOpen, setBankDropdownOpen] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
-    // Fetch banks API
     const fetchBanks = async () => {
       setBanksFetching(true);
       try {
@@ -91,7 +98,11 @@ const BankInformationForm = ({
   }, []);
 
   useEffect(() => {
-    fetchBankInfo();
+    if (customerId) {
+      fetchBankInfo();
+    } else {
+      setIsLoading(false);
+    }
   }, [customerId]);
 
   useEffect(() => {
@@ -102,34 +113,84 @@ const BankInformationForm = ({
       const filtered = banks.filter(
         (bank) =>
           bank.name.toLowerCase().includes(searchTerm) ||
-          bank.shortName.toLowerCase().includes(searchTerm) ||
+          bank.shortName?.toLowerCase().includes(searchTerm) ||
           (bank.code && bank.code.toLowerCase().includes(searchTerm))
       );
       setFilteredBanks(filtered);
     }
   }, [bankSearchValue, banks]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const fetchBankInfo = async () => {
+    if (!customerId) return;
 
-    if (name === "bankAccountName") {
-      setBankInfo((prev) => ({
-        ...prev,
-        [name]: value.toUpperCase(),
-      }));
-    } else {
-      setBankInfo((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${BASE_URL}/users/wallet/getcustomerwalletinformation/${customerId}`
+      );
+
+      if (!response.ok) {
+        if (response.status !== 404) {
+          throw new Error("Failed to fetch bank information");
+        }
+        setIsLoading(false);
+        return;
+      }
+
+      const data = await response.json();
+      if (data) {
+        const info = {
+          bankName: data.bankName || "",
+          bankNumber: data.bankNumber || "",
+          bankAccountName: data.bankAccountName || "",
+        };
+
+        setBankInfo(info);
+        setEditableBankInfo(info);
+      }
+    } catch (error) {
+      console.error("Error fetching bank info:", error);
+      toast.error("Có lỗi xảy ra khi tải thông tin ngân hàng", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setEditableBankInfo((prev) => ({
+      ...prev,
+      [name]: name === "bankAccountName" ? value.toUpperCase() : value,
+    }));
+  };
+
   const handleBankChange = (value: string) => {
-    setBankInfo((prev) => ({
+    setEditableBankInfo((prev) => ({
       ...prev,
       bankName: value,
     }));
+  };
+
+  const enterEditMode = () => {
+    setEditableBankInfo({
+      bankName: bankInfo.bankName,
+      bankNumber: bankInfo.bankNumber,
+      bankAccountName: bankInfo.bankAccountName,
+    });
+    setIsEditMode(true);
+  };
+
+  const cancelEdit = () => {
+    setIsEditMode(false);
+    setEditableBankInfo({
+      bankName: bankInfo.bankName,
+      bankNumber: bankInfo.bankNumber,
+      bankAccountName: bankInfo.bankAccountName,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -143,11 +204,10 @@ const BankInformationForm = ({
       return;
     }
 
-    //validation
     if (
-      !bankInfo.bankName ||
-      !bankInfo.bankNumber ||
-      !bankInfo.bankAccountName
+      !editableBankInfo.bankName ||
+      !editableBankInfo.bankNumber ||
+      !editableBankInfo.bankAccountName
     ) {
       toast.error("Vui lòng nhập đầy đủ thông tin", {
         position: "top-right",
@@ -167,9 +227,9 @@ const BankInformationForm = ({
           },
           body: JSON.stringify({
             customerId,
-            bankName: bankInfo.bankName,
-            bankNumber: bankInfo.bankNumber,
-            bankAccountName: bankInfo.bankAccountName,
+            bankName: editableBankInfo.bankName,
+            bankNumber: editableBankInfo.bankNumber,
+            bankAccountName: editableBankInfo.bankAccountName,
           }),
         }
       );
@@ -182,12 +242,18 @@ const BankInformationForm = ({
         position: "top-right",
         autoClose: 2000,
       });
+
+      setBankInfo({
+        bankName: editableBankInfo.bankName,
+        bankNumber: editableBankInfo.bankNumber,
+        bankAccountName: editableBankInfo.bankAccountName,
+      });
+
       setIsEditMode(false);
+
       if (onBankInfoUpdated) {
-        onBankInfoUpdated(bankInfo);
+        onBankInfoUpdated(editableBankInfo);
       }
-      // Refresh bank information after successful update
-      // window.location.reload();
     } catch (error) {
       console.error("Error updating bank info:", error);
       toast.error("Có lỗi xảy ra khi cập nhật thông tin ngân hàng", {
@@ -199,48 +265,6 @@ const BankInformationForm = ({
     }
   };
 
-  const toggleEditMode = () => {
-    setIsEditMode(!isEditMode);
-    if (isEditMode) {
-      fetchBankInfo();
-    }
-  };
-
-  const fetchBankInfo = async () => {
-    if (!customerId) return;
-
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        `${BASE_URL}/users/wallet/getcustomerwalletinformation/${customerId}`
-      );
-
-      if (!response.ok) {
-        if (response.status !== 404) {
-          throw new Error("Failed to fetch bank information");
-        }
-        return;
-      }
-
-      const data = await response.json();
-      if (data) {
-        setBankInfo({
-          bankName: data.bankName || "",
-          bankNumber: data.bankNumber || "",
-          bankAccountName: data.bankAccountName || "",
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching bank info:", error);
-      toast.error("Có lỗi xảy ra khi tải thông tin ngân hàng", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-10">
@@ -249,7 +273,6 @@ const BankInformationForm = ({
     );
   }
 
-  // bank information
   if (!isEditMode && bankInfo.bankName && bankInfo.bankNumber) {
     return (
       <div className="space-y-6">
@@ -260,7 +283,7 @@ const BankInformationForm = ({
             </h3>
             <Button
               type="button"
-              onClick={toggleEditMode}
+              onClick={enterEditMode}
               variant="outline"
               className="px-3 py-1 h-8 text-sm"
             >
@@ -358,30 +381,31 @@ const BankInformationForm = ({
             <div className="relative">
               <Select
                 onValueChange={handleBankChange}
-                value={bankInfo.bankName}
+                value={editableBankInfo.bankName}
                 name="bankName"
                 open={bankDropdownOpen}
                 onOpenChange={setBankDropdownOpen}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Chọn ngân hàng">
-                    {bankInfo.bankName && (
+                    {editableBankInfo.bankName && (
                       <div className="flex items-center gap-2">
-                        {banks.find((b) => b.name === bankInfo.bankName)
+                        {banks.find((b) => b.name === editableBankInfo.bankName)
                           ?.logo && (
                           <img
                             src={
-                              banks.find((b) => b.name === bankInfo.bankName)
-                                ?.logo
+                              banks.find(
+                                (b) => b.name === editableBankInfo.bankName
+                              )?.logo
                             }
-                            alt={bankInfo.bankName}
+                            alt={editableBankInfo.bankName}
                             className="w-5 h-5 object-contain"
                             onError={(e) => {
                               e.currentTarget.style.display = "none";
                             }}
                           />
                         )}
-                        <span>{bankInfo.bankName}</span>
+                        <span>{editableBankInfo.bankName}</span>
                       </div>
                     )}
                   </SelectValue>
@@ -456,7 +480,8 @@ const BankInformationForm = ({
           <Input
             id="bankNumber"
             name="bankNumber"
-            value={bankInfo.bankNumber}
+            type="number"
+            value={editableBankInfo.bankNumber}
             onChange={handleInputChange}
             placeholder="Nhập số tài khoản ngân hàng"
             className="w-full"
@@ -474,7 +499,7 @@ const BankInformationForm = ({
           <Input
             id="bankAccountName"
             name="bankAccountName"
-            value={bankInfo.bankAccountName}
+            value={editableBankInfo.bankAccountName}
             onChange={handleInputChange}
             placeholder="Tên chủ tài khoản ngân hàng"
             className="w-full"
@@ -487,7 +512,7 @@ const BankInformationForm = ({
       <div className="pt-4 flex gap-4 justify-end">
         <Button
           type="button"
-          onClick={toggleEditMode}
+          onClick={cancelEdit}
           variant="outline"
           className="text-gray-700"
           disabled={isSaving}
