@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/constants/environments";
 import dayjs from "dayjs";
 import Link from "next/link";
+import Cookies from "js-cookie";
 
 interface Notification {
   id: number;
@@ -51,6 +52,9 @@ const Notification = ({ customer }: { customer: Customer }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const lastFetchTimeRef = useRef<number>(0);
   const isFetchingRef = useRef<boolean>(false);
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
 
   const unreadCount = notifications.filter((n) => !n.read).length;
   const getIconForTitle = (title: string) => {
@@ -163,10 +167,19 @@ const Notification = ({ customer }: { customer: Customer }) => {
     try {
       const response = await fetch(
         `${BASE_URL}/users/updateusernotification/${id}`,
-        { method: "PATCH" }
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token || google_token}`,
+          },
+        }
       );
 
-      if (!response.ok) {
+      if (response.status === 401) {
+        router.push("/unauthorized");
+        throw new Error("Bạn không được phép truy cập!");
+      } else if (!response.ok) {
         throw new Error("Có lỗi xảy ra khi đánh dấu thông báo đã đọc.");
       }
 
@@ -208,6 +221,19 @@ const Notification = ({ customer }: { customer: Customer }) => {
       const markPromises = unreadIds.map((id) =>
         fetch(`${BASE_URL}/users/updateusernotification/${id}`, {
           method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token || google_token}`,
+          },
+        }).then((response) => {
+          if (response.status === 401) {
+            router.push("/unauthorized");
+            throw new Error("Bạn không được phép truy cập!");
+          } else if (!response.ok) {
+            throw new Error(
+              "An error occurred while marking notifications as read."
+            );
+          }
         })
       );
 

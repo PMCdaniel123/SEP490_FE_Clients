@@ -6,6 +6,8 @@ import { Users, Ruler, Sofa } from "lucide-react";
 import type { UploadFile, UploadProps } from "antd";
 import { Button } from "../ui/button";
 import { BASE_URL } from "@/constants/environments";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 interface ReviewFormProps {
   isReviewModalOpen: boolean;
@@ -25,31 +27,6 @@ interface ReviewFormProps {
   booking_Id: number;
 }
 
-const getBase64 = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-
-const uploadImage = async (image: File): Promise<string> => {
-  const formData = new FormData();
-  formData.append("image", image);
-
-  const response = await fetch(`${BASE_URL}/images/upload`, {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error("Có lỗi xảy ra khi tải lên ảnh.");
-  }
-
-  const result = await response.json();
-  return result.data[0];
-};
-
 const ReviewForm: React.FC<ReviewFormProps> = ({
   isReviewModalOpen,
   handleReviewCancel,
@@ -68,6 +45,42 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [loading, setLoading] = useState(false);
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
+  const router = useRouter();
+
+  const getBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+
+  const uploadImage = async (image: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("image", image);
+
+    const response = await fetch(`${BASE_URL}/images/upload`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token || google_token}`,
+      },
+      body: formData,
+    });
+
+    if (response.status === 401) {
+      router.push("/unauthorized");
+      throw new Error("Bạn không được phép truy cập!");
+    } else if (!response.ok) {
+      throw new Error("Có lỗi xảy ra khi tải lên ảnh.");
+    }
+
+    const result = await response.json();
+    return result.data[0];
+  };
 
   useEffect(() => {
     if (!isReviewModalOpen) {

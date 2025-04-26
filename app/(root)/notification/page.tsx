@@ -20,6 +20,7 @@ import Cookies from "js-cookie";
 import dayjs from "dayjs";
 import Pagination from "@/components/pagination/pagination";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 interface Notification {
   id: number;
@@ -36,7 +37,10 @@ export default function NotificationPage() {
   const [filter, setFilter] = useState<"all" | "unread">("all");
   const { customer } = useSelector((state: RootState) => state.auth);
   const [isMarkingAll, setIsMarkingAll] = useState(false);
-
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
+  const router = useRouter();
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // Number of notifications per page
@@ -114,12 +118,22 @@ export default function NotificationPage() {
     try {
       const response = await fetch(
         `${BASE_URL}/users/updateusernotification/${id}`,
-        { method: "PATCH" }
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token || google_token}`,
+          },
+        }
       );
 
-      if (!response.ok) {
+      if (response.status === 401) {
+        router.push("/unauthorized");
+        throw new Error("Bạn không được phép truy cập!");
+      } else if (!response.ok) {
         throw new Error("Có lỗi xảy ra khi đánh dấu thông báo đã đọc.");
       }
+
       const event = new CustomEvent(notificationEvents.MARKED_READ, {
         detail: { id },
       });
@@ -172,6 +186,17 @@ export default function NotificationPage() {
       const markPromises = unreadIds.map((id) =>
         fetch(`${BASE_URL}/users/updateusernotification/${id}`, {
           method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token || google_token}`,
+          },
+        }).then((response) => {
+          if (response.status === 401) {
+            router.push("/unauthorized");
+            throw new Error("Bạn không được phép truy cập!");
+          } else if (!response.ok) {
+            throw new Error("Có lỗi xảy ra khi đánh dấu thông báo!");
+          }
         })
       );
 
@@ -207,12 +232,10 @@ export default function NotificationPage() {
   };
 
   useEffect(() => {
-    const token = Cookies.get("token");
-    const google_token = Cookies.get("google_token");
     if ((token || google_token) && customer?.id) {
       fetchNotifications();
     }
-  }, [customer, fetchNotifications]);
+  }, [customer, fetchNotifications, token, google_token]);
 
   useEffect(() => {
     const handleNotificationMarkedRead = (event: CustomEvent) => {

@@ -16,6 +16,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spin } from "antd";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 interface BankInformationFormProps {
   customerId?: number;
@@ -68,6 +70,10 @@ const BankInformationForm = ({
   const [banksFetching, setBanksFetching] = useState(false);
   const [bankSearchValue, setBankSearchValue] = useState("");
   const [bankDropdownOpen, setBankDropdownOpen] = useState(false);
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
+  const router = useRouter();
 
   useEffect(() => {
     const fetchBanks = async () => {
@@ -99,6 +105,45 @@ const BankInformationForm = ({
 
   useEffect(() => {
     if (customerId) {
+      const fetchBankInfo = async () => {
+        if (!customerId) return;
+
+        setIsLoading(true);
+        try {
+          const response = await fetch(
+            `${BASE_URL}/users/wallet/getcustomerwalletinformation/${customerId}`
+          );
+
+          if (!response.ok) {
+            if (response.status !== 404) {
+              throw new Error("Failed to fetch bank information");
+            }
+            setIsLoading(false);
+            return;
+          }
+
+          const data = await response.json();
+          if (data) {
+            const info = {
+              bankName: data.bankName || "",
+              bankNumber: data.bankNumber || "",
+              bankAccountName: data.bankAccountName || "",
+            };
+
+            setBankInfo(info);
+            setEditableBankInfo(info);
+          }
+        } catch (error) {
+          console.error("Error fetching bank info:", error);
+          toast.error("Có lỗi xảy ra khi tải thông tin ngân hàng", {
+            position: "top-right",
+            autoClose: 3000,
+          });
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
       fetchBankInfo();
     } else {
       setIsLoading(false);
@@ -119,45 +164,6 @@ const BankInformationForm = ({
       setFilteredBanks(filtered);
     }
   }, [bankSearchValue, banks]);
-
-  const fetchBankInfo = async () => {
-    if (!customerId) return;
-
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        `${BASE_URL}/users/wallet/getcustomerwalletinformation/${customerId}`
-      );
-
-      if (!response.ok) {
-        if (response.status !== 404) {
-          throw new Error("Failed to fetch bank information");
-        }
-        setIsLoading(false);
-        return;
-      }
-
-      const data = await response.json();
-      if (data) {
-        const info = {
-          bankName: data.bankName || "",
-          bankNumber: data.bankNumber || "",
-          bankAccountName: data.bankAccountName || "",
-        };
-
-        setBankInfo(info);
-        setEditableBankInfo(info);
-      }
-    } catch (error) {
-      console.error("Error fetching bank info:", error);
-      toast.error("Có lỗi xảy ra khi tải thông tin ngân hàng", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -224,6 +230,7 @@ const BankInformationForm = ({
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token || google_token}`,
           },
           body: JSON.stringify({
             customerId,
@@ -234,7 +241,10 @@ const BankInformationForm = ({
         }
       );
 
-      if (!response.ok) {
+      if (response.status === 401) {
+        router.push("/unauthorized");
+        throw new Error("Bạn không được phép truy cập!");
+      } else if (!response.ok) {
         throw new Error("Failed to update bank information");
       }
 

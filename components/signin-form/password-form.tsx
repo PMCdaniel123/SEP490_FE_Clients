@@ -85,6 +85,13 @@ export function PasswordForm({
           roleId: decoded.claims.RoleId,
           avatar: decoded.avatarUrl,
         };
+        if (Number(customerData.roleId) !== 4) {
+          localStorage.removeItem("auth");
+          onClose?.();
+          throw new Error(
+            "Bạn không được phép truy cập! Vui lòng đăng nhập lại."
+          );
+        }
         toast.success("Đăng nhập thành công!", {
           position: "top-right",
           autoClose: 1500,
@@ -94,8 +101,10 @@ export function PasswordForm({
         dispatch(login(customerData));
         localStorage.removeItem("auth");
         onClose?.();
-      } catch {
-        toast.error("Có lỗi xảy ra khi đăng nhập.", {
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Có lỗi xảy ra.";
+        toast.error(errorMessage, {
           position: "top-right",
           autoClose: 1500,
           hideProgressBar: false,

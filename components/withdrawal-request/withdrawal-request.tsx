@@ -23,6 +23,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Pagination from "@/components/pagination/pagination";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 interface WithdrawalRequestProps {
   customerId?: number;
@@ -58,6 +60,10 @@ const WithdrawalRequest = ({
   const [itemsPerPage] = useState(5);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [paginatedRequests, setPaginatedRequests] = useState<any[]>([]);
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
+  const router = useRouter();
 
   useEffect(() => {
     if (!customerId) {
@@ -226,6 +232,7 @@ const WithdrawalRequest = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token || google_token}`,
         },
         body: JSON.stringify({
           title: withdrawTitle,
@@ -234,7 +241,10 @@ const WithdrawalRequest = ({
         }),
       });
 
-      if (!response.ok) {
+      if (response.status === 401) {
+        router.push("/unauthorized");
+        throw new Error("Bạn không được phép truy cập!");
+      } else if (!response.ok) {
         throw new Error("Có lỗi xảy ra khi gửi yêu cầu rút tiền.");
       }
 

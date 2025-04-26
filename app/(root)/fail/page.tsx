@@ -5,14 +5,19 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Suspense, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { BASE_URL } from "@/constants/environments";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 const FailComponent = () => {
   const order =
     typeof window !== "undefined" ? localStorage.getItem("order") : null;
   const searchParams = useSearchParams();
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
+  const router = useRouter();
 
   const updateWalletAmount = async (
     customerWalletId: string,
@@ -26,6 +31,7 @@ const FailComponent = () => {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token || google_token}`,
           },
           body: JSON.stringify({
             customerWalletId,
@@ -35,7 +41,10 @@ const FailComponent = () => {
         }
       );
 
-      if (!updateResponse.ok) {
+      if (updateResponse.status === 401) {
+        router.push("/unauthorized");
+        throw new Error("Bạn không được phép truy cập!");
+      } else if (!updateResponse.ok) {
         throw new Error("Có lỗi xảy ra khi cập nhật số dư ví.");
       }
 
@@ -73,6 +82,7 @@ const FailComponent = () => {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token || google_token}`,
               },
               body: JSON.stringify({
                 bookingId: parsedOrder.bookingId,
@@ -80,11 +90,21 @@ const FailComponent = () => {
               }),
             }
           );
-          const data = await response.json();
-          console.log(data);
+          if (response.status === 401) {
+            router.push("/unauthorized");
+            throw new Error("Bạn không được phép truy cập!");
+          }
+          await response.json();
           localStorage.removeItem("order");
         } catch (error) {
-          console.error("Error updating workspace time status:", error);
+          const errorMessage =
+            error instanceof Error ? error.message : "Đã xảy ra lỗi!";
+          toast.error(errorMessage, {
+            position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: false,
+            theme: "light",
+          });
         }
       };
 
@@ -97,17 +117,11 @@ const FailComponent = () => {
       const orderCode = localStorage.getItem("orderCode");
       const amount = localStorage.getItem("amount");
 
-      console.log("Retrieved from localStorage:", {
-        customerWalletId,
-        orderCode,
-        amount,
-      });
-
       if (customerWalletId && orderCode && amount) {
         updateWalletAmount(customerWalletId, orderCode, amount);
       }
     }
-  }, [order, searchParams]);
+  }, [order, searchParams, token, google_token]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-8">
