@@ -48,6 +48,7 @@ function Header() {
   const google_token =
     typeof window !== "undefined" ? Cookies.get("google_token") : null;
   const [isToken, setIsToken] = useState(false);
+  const isHomePage = pathname === "/";
 
   // Handle scroll
   useEffect(() => {
@@ -208,9 +209,13 @@ function Header() {
   return (
     <header
       className={`py-3 px-2 md:px-8 flex items-center justify-between text-white relative z-50 transition-all duration-300 ${
-        isAtTop ? "bg-transparent" : "bg-primary shadow-md"
+        isHomePage && isAtTop ? "bg-transparent" : "bg-primary shadow-md"
       }`}
-      style={isAtTop ? { position: "absolute", width: "100%", top: 0 } : {}}
+      style={
+        isHomePage && isAtTop
+          ? { position: "absolute", width: "100%", top: 0 }
+          : {}
+      }
     >
       <div
         className="flex items-center gap-3 cursor-pointer group"
@@ -318,7 +323,7 @@ function Header() {
         >
           <SlideArrowButton
             text="Trở thành doanh nghiệp"
-            primaryColor={isAtTop ? "#835101" : "#B49057"}
+            primaryColor={isHomePage && isAtTop ? "#835101" : "#B49057"}
             icon={BriefcaseBusiness}
           />
         </Link>
@@ -352,7 +357,7 @@ function Header() {
           >
             <div
               className={`group flex items-center justify-center border rounded-lg py-1.5 px-2 gap-3 ${
-                isAtTop ? "bg-secondary/80" : "bg-secondary/70"
+                isHomePage && isAtTop ? "bg-secondary/80" : "bg-secondary/70"
               } hover:bg-fourth cursor-pointer transition-all duration-300 shadow-md w-full`}
               onClick={() => setOpenAccount(!openAccount)}
             >
@@ -448,7 +453,7 @@ function Header() {
         )}
         <button
           className={`md:hidden flex items-center justify-center p-2 ${
-            isAtTop ? "bg-secondary/80" : "bg-secondary/70"
+            isHomePage && isAtTop ? "bg-secondary/80" : "bg-secondary/70"
           } rounded-xl hover:bg-fourth transition-colors duration-300`}
           onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
         >
@@ -462,7 +467,9 @@ function Header() {
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
           className={`absolute top-full left-0 w-full ${
-            isAtTop ? "bg-black/80 backdrop-blur-sm" : "bg-primary"
+            isHomePage && isAtTop
+              ? "bg-black/80 backdrop-blur-sm"
+              : "bg-primary"
           } text-white flex flex-col items-center gap-3 py-4 md:hidden shadow-lg border-t border-white/10`}
         >
           {menuItems.map((item) => (
