@@ -34,6 +34,8 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { CardContent } from "@/components/ui/card-content";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import { BASE_URL } from "@/constants/environments";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const WalletPage = () => {
   const { customer } = useSelector((state: RootState) => state.auth);
@@ -63,8 +65,11 @@ const WalletPage = () => {
   } | null>(null);
   const [activeTab, setActiveTab] = useState("deposit");
   const [isWalletLocked, setIsWalletLocked] = useState(false);
-
   const predefinedAmounts = [100000, 200000, 500000, 1000000];
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
+  const router = useRouter();
 
   useEffect(() => {
     if (!customer?.id) return;
@@ -226,6 +231,7 @@ const WalletPage = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token || google_token}`,
           },
           body: JSON.stringify({
             userId: customer.id,
@@ -234,7 +240,10 @@ const WalletPage = () => {
         }
       );
 
-      if (!response.ok) {
+      if (response.status === 401) {
+        router.push("/unauthorized");
+        throw new Error("Bạn không được phép truy cập!");
+      } else if (!response.ok) {
         throw new Error("Có lỗi xảy ra khi nạp tiền.");
       }
 

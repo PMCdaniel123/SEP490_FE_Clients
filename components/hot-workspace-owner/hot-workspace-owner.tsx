@@ -177,8 +177,8 @@ function HotWorkspaceOwner() {
                         <MapPin className="mr-1 text-gray-400" size={14} />
                         <span className="truncate">{owner.licenseAddress}</span>
                       </p>
-                      <div className="grid grid-cols-3 gap-2 mb-2">
-                        <div className="flex flex-col gap-2 items-center rounded-lg border-2 text-fourth text-sm p-1">
+                      <div className="grid grid-cols-3 gap-1 mb-2">
+                        <div className="flex flex-col gap-2 items-center rounded-lg border text-fourth text-sm p-1">
                           <span className="flex items-center gap-2 justify-center font-medium text-sm">
                             <Star size={16} className="text-primary" />{" "}
                             {owner.rateAverage}
@@ -187,7 +187,7 @@ function HotWorkspaceOwner() {
                             sao
                           </span>
                         </div>
-                        <div className="flex flex-col gap-2 items-center rounded-lg border-2 text-fourth text-sm p-1">
+                        <div className="flex flex-col gap-2 items-center rounded-lg border text-fourth text-sm p-1">
                           <span className="flex items-center gap-2 justify-center font-medium text-sm">
                             <CalendarCheck size={16} className="text-primary" />{" "}
                             {owner.numberOfBooking}
@@ -196,7 +196,7 @@ function HotWorkspaceOwner() {
                             lượt đặt
                           </span>
                         </div>
-                        <div className="flex flex-col gap-2 items-center rounded-lg border-2 text-fourth text-sm p-1">
+                        <div className="flex flex-col gap-2 items-center rounded-lg border text-fourth text-sm p-1">
                           <span className="flex items-center gap-2 justify-center font-medium text-sm">
                             <Building2 size={16} className="text-primary" />{" "}
                             {owner.numberOfWorkspace}

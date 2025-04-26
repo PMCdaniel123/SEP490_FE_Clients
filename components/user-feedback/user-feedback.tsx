@@ -26,6 +26,8 @@ import Image from "next/image";
 import dayjs from "dayjs";
 import "dayjs/locale/vi";
 import Loader from "../loader/Loader";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 const { TextArea } = Input;
 const { Title, Text, Paragraph } = Typography;
@@ -66,31 +68,6 @@ interface OwnerResponse {
   createdAt: string;
 }
 
-const getBase64 = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-
-const uploadImage = async (image: File): Promise<string> => {
-  const formData = new FormData();
-  formData.append("image", image);
-
-  const response = await fetch(`${BASE_URL}/images/upload`, {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error("Có lỗi xảy ra khi tải lên ảnh.");
-  }
-
-  const result = await response.json();
-  return result.data[0];
-};
-
 const UserFeedbackDetail: React.FC<UserFeedbackDetailProps> = ({
   userId,
   bookingId,
@@ -111,6 +88,42 @@ const UserFeedbackDetail: React.FC<UserFeedbackDetailProps> = ({
   );
   const [loading, setLoading] = useState(true);
   const [loadingResponse, setLoadingResponse] = useState(false);
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
+  const router = useRouter();
+
+  const getBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+
+  const uploadImage = async (image: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("image", image);
+
+    const response = await fetch(`${BASE_URL}/images/upload`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token || google_token}`,
+      },
+      body: formData,
+    });
+
+    if (response.status === 401) {
+      router.push("/unauthorized");
+      throw new Error("Bạn không được phép truy cập!");
+    } else if (!response.ok) {
+      throw new Error("Có lỗi xảy ra khi tải lên ảnh.");
+    }
+
+    const result = await response.json();
+    return result.data[0];
+  };
 
   const fetchExistingFeedback = async () => {
     try {
@@ -224,11 +237,18 @@ const UserFeedbackDetail: React.FC<UserFeedbackDetailProps> = ({
 
       const response = await fetch(`${BASE_URL}/feedbacks`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token || google_token}`,
+        },
         body: JSON.stringify(feedbackData),
       });
 
-      if (!response.ok) throw new Error();
+      if (response.status === 401) {
+        router.push("/unauthorized");
+        throw new Error("Bạn không được phép truy cập!");
+      } else if (!response.ok)
+        throw new Error("Có lỗi xảy ra khi gửi phản hồi.");
       await fetchExistingFeedback();
 
       setFileList([]);
