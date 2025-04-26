@@ -23,6 +23,7 @@
     "forgotPassword",
     "re styles",
     "supportUser",
-    "ownerPage"
+    "ownerPage",
+    "UnauthorizedPage"
   ]
 }
