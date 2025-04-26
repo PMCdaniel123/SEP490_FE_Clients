@@ -93,7 +93,7 @@ export default function SearchBanner() {
   };
 
   return (
-    <div className="relative w-full h-[600px] md:h-[500px]">
+    <div className="relative w-full h-[600px] md:h-[400px]">
       <Image
         src="/WorkHivebanner.png"
         alt="Banner"
@@ -110,19 +110,19 @@ export default function SearchBanner() {
           delay={0.3}
           duration={0.08}
           tag="h2"
-          className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-wide mb-2 text-shadow"
+          className="text-3xl md:text-5xl font-extrabold tracking-wide mb-2 text-shadow"
           highlightColor="#D0BEA0"
         />
-        <p className="text-lg md:text-xl text-white/90 mb-6 max-w-2xl">
+        <p className="text-lg text-white/90 mb-6 max-w-2xl">
           Tìm không gian làm việc phù hợp với nhu cầu của bạn
         </p>
 
-        <div className="w-full md:w-[90%] lg:w-[80%] xl:w-[70%] mx-auto flex items-center justify-center mt-4 md:mt-8">
+        <div className="w-full md:w-[90%] lg:w-[80%] xl:w-[70%] mx-auto flex items-center justify-center mt-4">
           <AnimatedBorderTrail trailSize="sm" trailColor="#D0BEA0">
             <div
-              className={`bg-white/95 backdrop-blur-sm text-black rounded-xl flex ${
+              className={`bg-white/95 backdrop-blur-sm text-black rounded-md flex ${
                 isSmallScreen ? "flex-col" : "flex-row"
-              } items-center justify-center w-full shadow-xl p-3 transition-all duration-300 ease-in-out`}
+              } items-center justify-center w-full shadow-xl p-2 transition-all duration-300 ease-in-out`}
             >
               <Dropdown
                 label="Địa điểm"
@@ -194,8 +194,14 @@ export default function SearchBanner() {
                   isSmallScreen ? "w-full mt-3" : "ml-3"
                 } bg-primary hover:bg-primary/80 text-white p-3 rounded-xl shadow-md transition-all duration-300 transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-2`}
               >
-                <Search size={22} />
-                <span className={isSmallScreen ? "inline" : "hidden md:inline"}>
+                <Search size={16} />
+                <span
+                  className={
+                    isSmallScreen
+                      ? "inline text-sm"
+                      : "hidden md:inline md:text-sm"
+                  }
+                >
                   Tìm kiếm
                 </span>
               </button>
@@ -230,7 +236,7 @@ function Dropdown({
 }: DropdownProps) {
   return (
     <div
-      className={`${isSmallScreen ? "w-full" : "flex-1"} p-2 md:p-3 ${
+      className={`${isSmallScreen ? "w-full" : "flex-1"} p-2 ${
         !isSmallScreen && hasBorder ? "border-r border-gray-200" : ""
       } ${
         isSmallScreen ? "border-b border-gray-200 last:border-b-0 pb-3" : ""
@@ -242,7 +248,7 @@ function Dropdown({
       </p>
       <Select.Root value={value} onValueChange={setValue}>
         <Select.Trigger
-          className={`w-full flex justify-between items-center bg-transparent text-xs md:text-sm outline-none p-1 md:p-2 cursor-pointer font-medium rounded-md hover:bg-gray-50 transition-colors ${
+          className={`w-full flex justify-between items-center bg-transparent text-xs outline-none p-1 md:p-2 cursor-pointer font-medium rounded-md hover:bg-gray-50 transition-colors ${
             value ? "text-black" : "text-gray-500"
           }`}
         >

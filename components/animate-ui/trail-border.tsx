@@ -14,7 +14,7 @@ interface AnimatedTrailProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const sizes = {
-  sm: 5,
+  sm: 4,
   md: 10,
   lg: 20,
 };
@@ -32,7 +32,7 @@ export default function AnimatedBorderTrail({
     <div
       {...props}
       className={cn(
-        "relative h-fit w-full overflow-hidden rounded-xl bg-primary p-[3px]",
+        "relative h-fit w-full overflow-hidden rounded-md bg-primary p-[3px]",
         className
       )}
     >
@@ -51,7 +51,7 @@ export default function AnimatedBorderTrail({
 
       <div
         className={cn(
-          "relative h-full w-full overflow-hidden bg-primary rounded-xl",
+          "relative h-full w-full overflow-hidden bg-primary rounded-md",
           contentClassName
         )}
       >

@@ -10,7 +10,7 @@ function PoliciesList({ policies }: { policies: Policies[] }) {
               className="flex items-center gap-4 mb-2 col-span-1"
               key={index}
             >
-              <span>
+              <span className="text-sm md:text-base">
                 {index + 1}. {policy.policyName}
               </span>
             </div>

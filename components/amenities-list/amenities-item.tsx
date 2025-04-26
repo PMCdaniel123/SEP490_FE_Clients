@@ -49,11 +49,7 @@ function AmenitiesItem({
         onClick={() => setIsOpen(true)}
       >
         <div className="relative">
-          <img
-            src={imgUrl}
-            alt={name}
-            className="w-full h-80 md:h-60 object-cover"
-          />
+          <img src={imgUrl} alt={name} className="w-full h-60 object-cover" />
           <div className="absolute top-2 left-2 bg-primary text-white px-3 py-1 rounded-md text-sm flex gap-2 items-center">
             <Banknote /> {formatCurrency(Number(price))}
           </div>
@@ -75,8 +71,8 @@ function AmenitiesItem({
         className="w-full mx-auto"
         width={640}
       >
-        <div className="md:flex gap-10 mt-10 mb-6 mx-auto items-center justify-center">
-          <div className="relative w-1/2">
+        <div className="flex flex-col md:flex-row gap-10 mt-10 mb-6 mx-auto items-center justify-center">
+          <div className="relative md:w-1/2">
             <img
               src={imgUrl}
               alt={name}
@@ -87,7 +83,7 @@ function AmenitiesItem({
             </div>
           </div>
 
-          <div className="flex flex-col justify-center gap-4 w-1/2">
+          <div className="flex flex-col justify-center gap-4 md:w-1/2">
             <p className="text-lg font-semibold">{name}</p>
             <p className="text-gray-800 text-sm">
               <span className="font-semibold">Số lượng: </span>
@@ -106,7 +102,7 @@ function AmenitiesItem({
               onClick={handleAddToCart}
             >
               <ShoppingCart />
-              <span>Thêm vào giỏ hàng</span>
+              <span>Thêm</span>
             </Button>
           </div>
         </div>

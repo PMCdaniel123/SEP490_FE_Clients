@@ -1,4 +1,3 @@
-
 import { Star } from "lucide-react";
 import Image from "next/image";
 
@@ -11,14 +10,21 @@ interface ReviewItemProps {
   images: { url: string }[];
 }
 
-function ReviewItem({ avatar, name, date, rating, review, images }: ReviewItemProps) {
+function ReviewItem({
+  avatar,
+  name,
+  date,
+  rating,
+  review,
+  images,
+}: ReviewItemProps) {
   return (
     <div className="flex flex-col gap-2 border rounded-xl p-4">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Image
             alt="avatar"
-            src={avatar}
+            src={avatar ? avatar : "/WorkHive.svg"}
             width={54}
             height={54}
             className="rounded-full border"

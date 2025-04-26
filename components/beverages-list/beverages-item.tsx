@@ -77,10 +77,10 @@ function BeveragesItem({
             </div>
             <div className="col-span-2 p-4 flex flex-col gap-4 items-start justify-center">
               <Tooltip title={name} color="#835101">
-                <h3 className="text-base font-semibold line-clamp-1">{name}</h3>
+                <h3 className="text-sm font-semibold line-clamp-1">{name}</h3>
               </Tooltip>
               <Tooltip title={description} color="#835101">
-                <p className="text-gray-600 text-sm line-clamp-2">
+                <p className="text-gray-600 text-xs line-clamp-2">
                   {description}
                 </p>
               </Tooltip>
@@ -89,7 +89,7 @@ function BeveragesItem({
                 onClick={handleAddToCart}
               >
                 <ShoppingCart />
-                <span>Thêm vào giỏ hàng</span>
+                <span>Thêm</span>
               </Button>
             </div>
           </div>

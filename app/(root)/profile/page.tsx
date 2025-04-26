@@ -174,7 +174,7 @@ function Profile() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col gap-8">
+    <div className="w-full md:w-[90%] mx-auto px-6 pt-10 py-20 flex flex-col gap-8">
       {(customer?.phone === "" ||
         customer?.phone === null ||
         customer?.phone === undefined) && (
@@ -188,7 +188,7 @@ function Profile() {
       )}
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="w-full lg:w-1/3 bg-secondary p-6 rounded-lg text-center text-white md:sticky md:top-28 h-fit">
-          <div className="w-32 h-32 mx-auto bg-white rounded-full overflow-hidden border">
+          <div className="w-24 h-24 mx-auto bg-white rounded-full overflow-hidden border">
             {avatar ? (
               <img
                 src={
@@ -207,26 +207,26 @@ function Profile() {
               />
             )}
           </div>
-          <p className="font-bold text-2xl pt-5">{formData.name}</p>
-          <div className="text-left space-y-2 bg-white rounded-lg px-4 py-8 mt-8">
-            <p className="text-gray-600">
+          <p className="font-bold text-xl pt-4">{formData.name}</p>
+          <div className="text-left space-y-2 bg-white rounded-lg p-4 mt-4">
+            <p className="text-gray-600 text-sm">
               <span className="font-semibold">Email:</span> {formData.email}
             </p>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm">
               <span className="font-semibold">Địa chỉ:</span> {formData.address}
             </p>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm">
               <span className="font-semibold">Số điện thoại:</span>{" "}
               {formData.phoneNumber}
             </p>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm">
               <span className="font-semibold">Ngày sinh:</span>{" "}
               {formData.dob === "Chưa cập nhật" ||
               !dayjs(formData.dob).isValid()
                 ? "Chưa cập nhật"
                 : dayjs(formData.dob).format("DD/MM/YYYY")}
             </p>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm">
               <span className="font-semibold">Giới tính:</span>{" "}
               {formData.gender === "" ? "Chưa cập nhật" : formData.gender}
             </p>
@@ -237,11 +237,11 @@ function Profile() {
           {!isEditing ? (
             <div>
               <div className="flex flex-col md:flex-row justify-between items-center">
-                <h1 className="text-2xl font-bold text-primary">
+                <h1 className="text-xl font-bold text-primary">
                   Xin chào, {formData.name}
                 </h1>
                 <button
-                  className="my-4 px-4 py-2 rounded-lg bg-primary border-black hover:bg-secondary text-white hover:border-primary border font-medium flex gap-2 items-center"
+                  className="px-4 py-2 rounded-lg bg-primary text-sm border-black hover:bg-secondary text-white hover:border-primary border font-medium flex gap-2 items-center"
                   onClick={() => setIsEditing(true)}
                 >
                   <Edit size={20} /> Chỉnh sửa hồ sơ

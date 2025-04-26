@@ -43,41 +43,32 @@ function Contact() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
-      <section className="">
-        <p className="text-4xl font-bold relative inline-block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent drop-shadow-sm hover:drop-shadow-md transition-all duration-300">
-          Liên hệ
-        </p>
-        <p className="text-gray-600 mt-4 text-lg">
-          Nền tảng của chúng tôi là cầu nối giữa những người đang tìm kiếm không
-          gian làm việc linh hoạt và các doanh nghiệp sở hữu co-working space.
-          Chúng tôi luôn sẵn sàng hỗ trợ bạn, dù bạn là người thuê đang tìm chỗ
-          làm việc phù hợp, hay doanh nghiệp muốn tối ưu hóa không gian của
-          mình.
-        </p>
-      </section>
-
+    <div className="w-full md:w-[90%] mx-auto px-6 pt-10 pb-20">
       <AnimateInView>
-        <section className="mt-20">
+        <section>
           <SectionTitle>Liên hệ với chúng tôi</SectionTitle>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4">
             {/* Contact Info */}
             <div className="bg-gray-100 p-6 rounded-lg w-full col-span-1">
               <div className="flex items-center gap-4">
                 <Phone className="text-brown-700 text-2xl" />
-                <h3 className="text-lg font-semibold">Liên hệ qua hotline</h3>
+                <h3 className="text-base font-semibold">Liên hệ qua hotline</h3>
               </div>
-              <p className="text-gray-600 mt-2">Chúng tôi phục vụ 24/7.</p>
-              <p className="text-gray-600 font-semibold">Phone: 0867-435-157</p>
+              <p className="text-gray-600 text-sm mt-2">
+                Chúng tôi phục vụ 24/7.
+              </p>
+              <p className="text-gray-600 text-sm font-semibold">
+                Phone: 0867-435-157
+              </p>
               <hr className="my-4" />
               <div className="flex items-center gap-4">
                 <Mail className="text-brown-700 text-2xl" />
-                <h3 className="text-lg font-semibold">Liên hệ qua Email</h3>
+                <h3 className="text-base font-semibold">Liên hệ qua Email</h3>
               </div>
-              <p className="text-gray-600 mt-2">
+              <p className="text-gray-600 text-sm mt-2">
                 Chúng tôi sẽ liên hệ với bạn trong vòng 24 giờ.{" "}
               </p>
-              <p className="text-gray-600 font-semibold">
+              <p className="text-gray-600 text-sm font-semibold">
                 workhive.vn.official@gmail.com
               </p>
             </div>
@@ -126,7 +117,7 @@ function Contact() {
                   onChange={handleChange}
                   className="w-full p-2 border rounded-lg col-span-3"
                   rows={4}
-                  placeholder="Your Message"
+                  placeholder="Tin nhắn *"
                   required
                 ></textarea>
                 <div className="col-span-3 flex justify-end">
