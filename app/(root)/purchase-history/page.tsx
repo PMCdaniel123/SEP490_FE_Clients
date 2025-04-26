@@ -26,6 +26,8 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { BASE_URL } from "@/constants/environments";
 import { notificationEvents } from "@/components/ui/notification";
+
+import Cookies from "js-cookie";
 import { Clock, TriangleAlert } from "lucide-react";
 
 interface Transaction {
@@ -82,6 +84,9 @@ export default function PurchaseHistoryPage() {
   const { customer } = useSelector((state: RootState) => state.auth);
   const [isCancelBookingModal, setIsCancelBookingModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
 
   // New state for filtering and sorting
   const [dateRange, setDateRange] = useState<
@@ -161,11 +166,15 @@ export default function PurchaseHistoryPage() {
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token || google_token}`,
           },
         }
       );
 
-      if (response.status !== 200) {
+      if (response.status === 401) {
+        router.push("/unauthorized");
+        throw new Error("Bạn không được phép truy cập!");
+      } else if (response.status !== 200) {
         throw new Error(
           response.data.notification || "Có lỗi xảy ra khi gửi đánh giá."
         );
@@ -230,12 +239,19 @@ export default function PurchaseHistoryPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token || google_token}`,
         },
         body: JSON.stringify({
           bookingId: transaction.booking_Id,
         }),
       });
-      if (!response.ok) throw new Error("Có lỗi xảy ra khi hủy đơn đặt chỗ.");
+      if (response.status === 401) {
+        router.push("/unauthorized");
+        throw new Error("Bạn không được phép truy cập!");
+      } else if (!response.ok) {
+        throw new Error("Có lỗi xảy ra khi hủy đơn đặt chỗ.");
+      }
+
       const data = await response.json();
       if (
         data &&

@@ -10,6 +10,8 @@ import { Button, Upload as AntUpload, ConfigProvider } from "antd";
 import ImgCrop from "antd-img-crop";
 import { BASE_URL } from "@/constants/environments";
 import { login } from "@/stores/slices/authSlice";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 interface EditProfileFormProps {
   formData: {
@@ -42,6 +44,10 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
   const dispatch = useDispatch();
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
+  const router = useRouter();
 
   const formatDateForDisplay = (dateString: string) => {
     if (!dateString || dateString === "Chưa cập nhật") return "";
@@ -88,10 +94,17 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
 
     const response = await fetch(`${BASE_URL}/images/upload`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token || google_token}`,
+      },
       body: formData,
     });
 
-    if (!response.ok) {
+    if (response.status === 401) {
+      router.push("/unauthorized");
+      throw new Error("Bạn không được phép truy cập!");
+    } else if (!response.ok) {
       throw new Error("Có lỗi xảy ra khi tải lên ảnh.");
     }
 
@@ -151,11 +164,15 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token || google_token}`,
         },
         body: JSON.stringify(requestData),
       });
 
-      if (!response.ok) {
+      if (response.status === 401) {
+        router.push("/unauthorized");
+        throw new Error("Bạn không được phép truy cập!");
+      } else if (!response.ok) {
         throw new Error("Cập nhật hồ sơ không thành công.");
       }
 

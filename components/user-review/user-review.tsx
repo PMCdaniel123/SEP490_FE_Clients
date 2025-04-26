@@ -19,6 +19,8 @@ import type {
 } from "antd/es/upload/interface";
 import dayjs from "dayjs";
 import { Star } from "lucide-react";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 interface Review {
   id: number;
@@ -68,6 +70,10 @@ const UserReview: React.FC<ReviewListProps> = ({
   const [uploading, setUploading] = useState(false);
   const reviewsPerPage = 3;
   const { TextArea } = Input;
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
+  const router = useRouter();
 
   const handleReviewClick = (review: Review) => {
     const reviewCopy = JSON.parse(JSON.stringify(review));
@@ -144,10 +150,17 @@ const UserReview: React.FC<ReviewListProps> = ({
 
       const response = await fetch(`${BASE_URL}/images/upload`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token || google_token}`,
+        },
         body: formData,
       });
 
-      if (!response.ok) {
+      if (response.status === 401) {
+        router.push("/unauthorized");
+        throw new Error("Bạn không được phép truy cập!");
+      } else if (!response.ok) {
         throw new Error("Có lỗi xảy ra khi tải lên ảnh.");
       }
 
@@ -198,6 +211,7 @@ const UserReview: React.FC<ReviewListProps> = ({
         headers: {
           "Content-Type": "application/json",
           accept: "application/json",
+          Authorization: `Bearer ${token || google_token}`,
         },
         body: JSON.stringify({
           userId: userId,
@@ -208,7 +222,10 @@ const UserReview: React.FC<ReviewListProps> = ({
         }),
       });
 
-      if (!response.ok) {
+      if (response.status === 401) {
+        router.push("/unauthorized");
+        throw new Error("Bạn không được phép truy cập!");
+      } else if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error(
           "Update failed with response:",

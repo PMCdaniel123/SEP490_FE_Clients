@@ -110,6 +110,11 @@ function Header() {
             roleId: result.user.roleId,
             avatar: avatarUrl,
           };
+          if (Number(customerData.roleId) !== 4) {
+            throw new Error(
+              "Bạn không được phép truy cập! Vui lòng đăng nhập lại."
+            );
+          }
 
           setIsToken(true);
           dispatch(login(customerData));

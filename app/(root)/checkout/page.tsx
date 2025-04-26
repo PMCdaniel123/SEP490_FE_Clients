@@ -39,6 +39,7 @@ import SectionTitle from "@/components/ui/section-tilte";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import "dayjs/locale/vi";
+import Cookies from "js-cookie";
 
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
@@ -72,6 +73,9 @@ export default function Checkout() {
   const [isProcessing, setIsProcessing] = useState(false);
   const cart =
     typeof window !== "undefined" ? localStorage.getItem("cart") : null;
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
 
   const fetchPromotions = async ({ workspaceId }: { workspaceId: string }) => {
     try {
@@ -178,6 +182,7 @@ export default function Checkout() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token || google_token}`,
         },
         body: JSON.stringify({
           workspaceId: workspaceId,
@@ -186,13 +191,19 @@ export default function Checkout() {
         }),
       }
     );
-    if (!response.ok) {
+
+    if (response.status === 401) {
+      router.push("/unauthorized");
+      throw new Error("Bạn không được phép truy cập!");
+    } else if (!response.ok) {
       throw new Error("Khoảng thời gian đã được sử dụng");
     }
+
     const data = await response.json();
     if (data === "Khoảng thời gian đã được sử dụng") {
       throw new Error("Khoảng thời gian đã được sử dụng");
     }
+
     if (
       data ===
       "Thời gian đặt phải trong cùng một ngày và trong giờ mở cửa của workspace"
@@ -238,9 +249,15 @@ export default function Checkout() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token || google_token}`,
         },
         body: JSON.stringify(request),
       });
+
+      if (response.status === 401) {
+        router.push("/unauthorized");
+        throw new Error("Bạn không được phép truy cập!");
+      }
 
       const data = await response.json();
 
