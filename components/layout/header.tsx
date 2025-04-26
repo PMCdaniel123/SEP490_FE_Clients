@@ -39,6 +39,7 @@ function Header() {
   const [isSignInModalOpen, setSignInModalOpen] = useState(false);
   const [openAccount, setOpenAccount] = useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAtTop, setIsAtTop] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -47,6 +48,27 @@ function Header() {
   const google_token =
     typeof window !== "undefined" ? Cookies.get("google_token") : null;
   const [isToken, setIsToken] = useState(false);
+  const isHomePage = pathname === "/";
+
+  // Handle scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      if (scrollPosition < 50) {
+        setIsAtTop(true);
+      } else {
+        setIsAtTop(false);
+      }
+    };
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     if (
@@ -190,7 +212,16 @@ function Header() {
   };
 
   return (
-    <header className="bg-primary py-3 px-2 md:px-8 flex items-center justify-between text-white relative z-50 shadow-md">
+    <header
+      className={`py-3 px-2 md:px-8 flex items-center justify-between text-white relative z-50 transition-all duration-300 ${
+        isHomePage && isAtTop ? "bg-transparent" : "bg-primary shadow-md"
+      }`}
+      style={
+        isHomePage && isAtTop
+          ? { position: "absolute", width: "100%", top: 0 }
+          : {}
+      }
+    >
       <div
         className="flex items-center gap-3 cursor-pointer group"
         onClick={() => router.push("/")}
@@ -234,6 +265,7 @@ function Header() {
             ></span>
           </li>
         ))}
+
         <li className="relative group pl-2 flex items-center justify-center font-semibold cursor-pointer">
           <p
             className={`font-medium text-sm transition-colors duration-200 py-3 px-3 rounded ${
@@ -296,7 +328,7 @@ function Header() {
         >
           <SlideArrowButton
             text="Trở thành doanh nghiệp"
-            primaryColor="#B49057"
+            primaryColor={isHomePage && isAtTop ? "#835101" : "#B49057"}
             icon={BriefcaseBusiness}
           />
         </Link>
@@ -329,7 +361,9 @@ function Header() {
             className="relative h-full max-w-[140px] md:max-w-none"
           >
             <div
-              className="group flex items-center justify-center border rounded-lg py-1.5 px-2 gap-3 bg-secondary/70 hover:bg-fourth cursor-pointer transition-all duration-300 shadow-md w-full"
+              className={`group flex items-center justify-center border rounded-lg py-1.5 px-2 gap-3 ${
+                isHomePage && isAtTop ? "bg-secondary/80" : "bg-secondary/70"
+              } hover:bg-fourth cursor-pointer transition-all duration-300 shadow-md w-full`}
               onClick={() => setOpenAccount(!openAccount)}
             >
               <Image
@@ -423,7 +457,9 @@ function Header() {
           </div>
         )}
         <button
-          className="md:hidden flex items-center justify-center p-2 bg-secondary/70 rounded-xl hover:bg-fourth transition-colors duration-300"
+          className={`md:hidden flex items-center justify-center p-2 ${
+            isHomePage && isAtTop ? "bg-secondary/80" : "bg-secondary/70"
+          } rounded-xl hover:bg-fourth transition-colors duration-300`}
           onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -435,7 +471,11 @@ function Header() {
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
-          className="absolute top-full left-0 w-full bg-primary text-white flex flex-col items-center gap-3 py-4 md:hidden shadow-lg border-t border-white/10"
+          className={`absolute top-full left-0 w-full ${
+            isHomePage && isAtTop
+              ? "bg-black/80 backdrop-blur-sm"
+              : "bg-primary"
+          } text-white flex flex-col items-center gap-3 py-4 md:hidden shadow-lg border-t border-white/10`}
         >
           {menuItems.map((item) => (
             <Link
