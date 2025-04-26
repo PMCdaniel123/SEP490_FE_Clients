@@ -24,6 +24,7 @@
     "re styles",
     "supportUser",
     "ownerPage",
-    "UnauthorizedPage"
+    "UnauthorizedPage",
+    "modifyHeader"
   ]
 }

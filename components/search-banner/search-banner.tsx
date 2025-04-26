@@ -93,7 +93,7 @@ export default function SearchBanner() {
   };
 
   return (
-    <div className="relative w-full h-[600px] md:h-[400px]">
+    <div className="relative w-full h-[600px] md:h-[480px]">
       <Image
         src="/WorkHivebanner.png"
         alt="Banner"
@@ -103,7 +103,7 @@ export default function SearchBanner() {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-60" />
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4 pt-24 md:pt-28">
         <AnimatedText
           text="WorkHive"
           animation="wave"
