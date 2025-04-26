@@ -298,13 +298,13 @@ function Header() {
         {isToken && customer && <Notification customer={customer} />}
         {!isToken ? (
           <AnimatedBorderTrail trailSize="sm" trailColor="#D0BEA0">
-            <div className="flex flex-col md:flex-row items-center border rounded-md text-fourth bg-white h-full w-full md:w-auto shadow-md overflow-hidden">
+            <div className="flex items-center border rounded-md text-fourth bg-white h-full w-full md:w-auto shadow-md overflow-hidden">
               <p
                 onClick={() => {
                   setSignInModalOpen(true);
                   handleCloseSignUpForm();
                 }}
-                className="z-50 text-sm font-semibold flex items-center justify-center hover:bg-fourth hover:text-white py-2 px-4 rounded-t-md md:rounded-l-md md:rounded-t-none md:rounded-tl-md border-b md:border-b-0 md:border-r transition-all duration-300 cursor-pointer w-full md:w-auto"
+                className="z-50 text-xs md:text-sm font-semibold flex items-center justify-center hover:bg-fourth hover:text-white px-3 py-2.5 md:px-4 rounded-l-md rounded-tl-md border-r transition-all duration-300 cursor-pointer w-auto"
               >
                 <span>Đăng nhập</span>
               </p>
@@ -312,7 +312,7 @@ function Header() {
                 onClick={() => {
                   setSignUpModalOpen(true);
                 }}
-                className="z-50 text-sm font-semibold flex items-center justify-center hover:bg-fourth hover:text-white py-2 px-4 rounded-b-md md:rounded-r-md md:rounded-b-none border-t md:border-t-0 md:border-l transition-all duration-300 cursor-pointer w-full md:w-auto"
+                className="z-50 text-xs md:text-sm font-semibold flex items-center justify-center hover:bg-fourth hover:text-white px-3 py-2.5 md:px-4 rounded-r-md border-l transition-all duration-300 cursor-pointer w-auto"
               >
                 <span>Đăng ký</span>
               </p>

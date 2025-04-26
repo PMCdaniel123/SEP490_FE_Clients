@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { Modal } from "antd";
 import { CheckCircle, Clock, XCircle, MapPin, Coffee } from "lucide-react";
 import dayjs from "dayjs";
@@ -86,9 +87,9 @@ const TransactionDetailsModal: React.FC<TransactionDetailsModalProps> = ({
               </p>
               <p className="flex items-center">
                 <strong className="mr-2">Phương thức thanh toán:</strong>{" "}
-                {selectedTransaction.payment_Method === "PayOS"
-                  ? "Chuyển khoản ngân hàng"
-                  : selectedTransaction.payment_Method}
+                {selectedTransaction.payment_Method === "WorkHive Wallet"
+                  ? "Thanh toán bằng ví WorkHive"
+                  : "Thanh toán bằng ngân hàng"}
               </p>
               <p className="flex items-center">
                 <strong className="mr-2">Mã khuyến mãi:</strong>{" "}
