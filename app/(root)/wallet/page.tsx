@@ -350,7 +350,7 @@ const WalletPage = () => {
         <>
           <Card className="mb-6 bg-gradient-to-r from-primary via-primary to-secondary text-white shadow-md hover:shadow-lg transition-shadow duration-300">
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <div className="bg-white/10 p-2 rounded-full backdrop-blur-sm">
                     <Wallet size={32} />
@@ -401,30 +401,30 @@ const WalletPage = () => {
             onValueChange={setActiveTab}
             className="mb-6"
           >
-            <TabsList className="grid grid-cols-4 mb-4 bg-gray-100/70 rounded-xl overflow-hidden p-1">
+            <TabsList className="grid grid-cols-2 sm:grid-cols-4 mb-4 bg-gray-100/70 rounded-xl overflow-hidden p-1">
               <TabsTrigger
                 value="deposit"
-                className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary  data-[state=active]:shadow-sm rounded-lg transition-all duration-300 p-4"
+                className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary data-[state=active]:shadow-sm rounded-lg transition-all duration-300 p-2 sm:p-4 text-xs sm:text-sm"
               >
                 Nạp tiền
               </TabsTrigger>
               <TabsTrigger
                 value="withdraw"
-                className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
+                className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary data-[state=active]:shadow-sm rounded-lg transition-all duration-300 p-2 sm:p-4 text-xs sm:text-sm"
               >
                 Rút tiền
               </TabsTrigger>
               <TabsTrigger
                 value="history"
-                className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
+                className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary data-[state=active]:shadow-sm rounded-lg transition-all duration-300 p-2 sm:p-4 text-xs sm:text-sm"
               >
-                Lịch sử giao dịch
+                Lịch sử
               </TabsTrigger>
               <TabsTrigger
                 value="bankinfo"
-                className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary data-[state=active]:shadow-sm rounded-lg transition-all duration-300"
+                className="data-[state=active]:text-white data-[state=active]:font-bold data-[state=active]:bg-gradient-to-r from-primary to-secondary data-[state=active]:shadow-sm rounded-lg transition-all duration-300 p-2 sm:p-4 text-xs sm:text-sm"
               >
-                Thông tin ngân hàng
+                Ngân hàng
               </TabsTrigger>
             </TabsList>
 
@@ -472,7 +472,7 @@ const WalletPage = () => {
                         <p className="text-sm font-medium text-gray-700 mb-3">
                           Chọn số tiền
                         </p>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 mb-4 sm:mb-6">
                           {predefinedAmounts.map((preAmount) => (
                             <Button
                               key={preAmount}
@@ -485,7 +485,7 @@ const WalletPage = () => {
                                     ? "bg-primary text-white shadow-md transform scale-105"
                                     : "hover:border-primary/50 hover:text-primary"
                                 }
-                                transition-all duration-200 border-2 h-14
+                                transition-all duration-200 border-2 h-12 sm:h-14 text-sm sm:text-base
                               `}
                               onClick={() => selectPredefinedAmount(preAmount)}
                               disabled={isWalletLocked}
@@ -500,7 +500,7 @@ const WalletPage = () => {
                         <p className="text-sm font-medium text-gray-700 mb-3">
                           Hoặc nhập số tiền khác
                         </p>
-                        <div className="flex gap-3 items-stretch">
+                        <div className="flex flex-col sm:flex-row gap-3 items-stretch">
                           <div className="flex-1 relative">
                             <Input
                               type="text"
@@ -576,12 +576,12 @@ const WalletPage = () => {
             >
               <Card className="shadow-sm hover:shadow-md transition-all duration-300 border-gray-100 overflow-hidden">
                 <CardHeader className="bg-gray-50/50 border-b border-gray-100">
-                  <CardTitle className="flex justify-between items-center">
+                  <CardTitle className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
                     <span className="text-xl text-primary flex items-center gap-2">
                       <History size={18} />
                       Lịch sử giao dịch
                     </span>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2 text-xs md:text-sm">
                       <Badge
                         variant="outline"
                         className="flex items-center gap-1 border-green-500 text-green-700 bg-green-50"
@@ -658,15 +658,15 @@ const WalletPage = () => {
           />
 
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md mx-4 sm:mx-auto">
               <DialogHeader className="border-b pb-4">
                 <DialogTitle className="text-xl font-bold text-primary flex items-center gap-2">
                   <Wallet className="h-5 w-5" />
                   Thanh toán qua chuyển khoản
                 </DialogTitle>
               </DialogHeader>
-              <div className="my-6 space-y-6">
-                <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="my-4 sm:my-6 space-y-4 sm:space-y-6">
+                <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
                   <p className="text-center font-medium">
                     Số tiền nạp:{" "}
                     <span className="text-primary font-bold text-lg">
@@ -676,8 +676,8 @@ const WalletPage = () => {
                 </div>
 
                 <div className="flex justify-center">
-                  <div className="flex flex-col items-center border-2 border-primary rounded-lg p-6 w-full max-w-[280px]">
-                    <div className="bg-white p-3 rounded-full mb-3 shadow-sm">
+                  <div className="flex flex-col items-center border-2 border-primary rounded-lg p-4 sm:p-6 w-full max-w-[280px]">
+                    <div className="bg-white p-2 sm:p-3 rounded-full mb-3 shadow-sm">
                       <Image
                         src="/vietqr.png"
                         alt="Bank Transfer"
@@ -695,8 +695,8 @@ const WalletPage = () => {
                   </div>
                 </div>
 
-                <div className="bg-third p-4 rounded-lg border border-secondary">
-                  <p className="text-center text-sm text-primary flex items-center justify-center gap-2">
+                <div className="bg-third p-3 sm:p-4 rounded-lg border border-secondary">
+                  <p className="text-center text-sm text-primary flex flex-wrap items-center justify-center gap-2">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -718,9 +718,9 @@ const WalletPage = () => {
                   </p>
                 </div>
               </div>
-              <DialogFooter className="flex gap-2 border-t pt-4">
+              <DialogFooter className="flex flex-col sm:flex-row gap-2 border-t pt-4">
                 <Button
-                  className="flex-1 bg-primary text-white hover:bg-primary/90"
+                  className="w-full sm:flex-1 bg-primary text-white hover:bg-primary/90"
                   onClick={confirmDeposit}
                 >
                   Xác nhận thanh toán
@@ -728,7 +728,7 @@ const WalletPage = () => {
                 <Button
                   variant="outline"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1"
+                  className="w-full sm:flex-1"
                 >
                   Hủy
                 </Button>
