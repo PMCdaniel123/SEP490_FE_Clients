@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
@@ -12,14 +13,20 @@ import Pagination from "@/components/pagination/pagination";
 import dayjs from "dayjs";
 import TransactionDetailsModal from "@/components/transaction-details-modal/transaction-details-modal";
 import ReviewForm from "@/components/review-list/review-form";
-import { Dropdown, Modal } from "antd";
-import { DownOutlined, LoadingOutlined } from "@ant-design/icons";
+import { DatePicker, Dropdown, Empty, Modal, Select, Tooltip } from "antd";
+import {
+  CalendarOutlined,
+  DownOutlined,
+  FilterOutlined,
+  LoadingOutlined,
+  SortAscendingOutlined,
+} from "@ant-design/icons";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { BASE_URL } from "@/constants/environments";
 import { notificationEvents } from "@/components/ui/notification";
-import { TriangleAlert } from "lucide-react";
+import { Clock, TriangleAlert } from "lucide-react";
 
 interface Transaction {
   booking_Id: number;
@@ -75,6 +82,15 @@ export default function PurchaseHistoryPage() {
   const { customer } = useSelector((state: RootState) => state.auth);
   const [isCancelBookingModal, setIsCancelBookingModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // New state for filtering and sorting
+  const [dateRange, setDateRange] = useState<
+    [dayjs.Dayjs | null, dayjs.Dayjs | null]
+  >([null, null]);
+  const [sortOrder, setSortOrder] = useState<
+    "newest" | "oldest" | "price-high" | "price-low"
+  >("newest");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchTransactionHistory = async () => {
@@ -265,22 +281,84 @@ export default function PurchaseHistoryPage() {
     }
   };
 
+  // loc transaction
+  const sortTransactions = (transactions: Transaction[]) => {
+    switch (sortOrder) {
+      case "oldest":
+        return [...transactions].sort(
+          (a, b) =>
+            new Date(a.booking_CreatedAt).getTime() -
+            new Date(b.booking_CreatedAt).getTime()
+        );
+      case "price-high":
+        return [...transactions].sort(
+          (a, b) => b.booking_Price - a.booking_Price
+        );
+      case "price-low":
+        return [...transactions].sort(
+          (a, b) => a.booking_Price - b.booking_Price
+        );
+      case "newest":
+      default:
+        return [...transactions].sort(
+          (a, b) =>
+            new Date(b.booking_CreatedAt).getTime() -
+            new Date(a.booking_CreatedAt).getTime()
+        );
+    }
+  };
+
+  const filterBySearch = (tx: Transaction) => {
+    if (!searchQuery.trim()) return true;
+    return tx.workspace_Name.toLowerCase().includes(searchQuery.toLowerCase());
+  };
+
+  const filterByDate = (tx: Transaction) => {
+    if (!dateRange[0] || !dateRange[1]) return true;
+
+    const startDate = dateRange[0].startOf("day");
+    const endDate = dateRange[1].endOf("day");
+
+    const txDate = dayjs(tx.booking_CreatedAt);
+    return txDate.isAfter(startDate) && txDate.isBefore(endDate);
+  };
+
   const filteredTransactions = transactions
     .filter((tx) => tx.booking_Status?.toLowerCase() === activeTab)
-    .sort(
-      (a, b) =>
-        new Date(b.booking_CreatedAt).getTime() -
-        new Date(a.booking_CreatedAt).getTime()
-    );
+    .filter(filterBySearch)
+    .filter(filterByDate);
+
+  const sortedTransactions = sortTransactions(filteredTransactions);
 
   const indexOfLastTransaction = currentPage * transactionsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
-  const currentTransactions = filteredTransactions.slice(
+  const currentTransactions = sortedTransactions.slice(
     indexOfFirstTransaction,
     indexOfLastTransaction
   );
 
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const handleDateRangeChange = (
+    dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null
+  ) => {
+    setDateRange(dates || [null, null]);
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (value: string) => {
+    setSortOrder(value as "newest" | "oldest" | "price-high" | "price-low");
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const clearFilters = () => {
+    setDateRange([null, null]);
+    setSearchQuery("");
+    setSortOrder("newest");
+    setCurrentPage(1);
+  };
 
   if (loading) {
     return (
@@ -293,19 +371,23 @@ export default function PurchaseHistoryPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-20">
       <ToastContainer />
-      <h2 className="text-2xl font-bold text-[#8B5E3C] mb-4">
+      <h2 className="text-2xl font-bold text-[#8B5E3C] mb-6">
         Lịch sử thanh toán
       </h2>
 
-      <div className="flex space-x-6 border-b">
+      {/* Improved tab navigation */}
+      <div className="flex space-x-6 border-b mb-6">
         {tabs.map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setActiveTab(tab.key.toLowerCase())}
+            onClick={() => {
+              setActiveTab(tab.key.toLowerCase());
+              setCurrentPage(1);
+            }}
             className={cn(
-              "py-2 font-medium text-gray-600",
+              "py-2 px-4 font-medium text-gray-600 border-b-2 border-transparent transition-all duration-200",
               activeTab === tab.key.toLowerCase() &&
-                "border-b-2 border-black text-black"
+                "border-[#8B5E3C] text-[#8B5E3C] font-semibold"
             )}
           >
             {tab.label}
@@ -313,41 +395,241 @@ export default function PurchaseHistoryPage() {
         ))}
       </div>
 
-      <div className="mt-6 space-y-4">
+      {/* Filters and search */}
+      <div className="bg-white p-4 rounded-lg mb-6 border border-gray-200 shadow-sm">
+        <div className="flex flex-col md:flex-row gap-4 items-center mb-4">
+          <div className="w-full md:w-1/3">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Tìm kiếm theo tên không gian làm việc"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="w-full py-2 px-4 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B5E3C] focus:border-transparent"
+              />
+              <span className="absolute right-3 top-2.5 text-gray-400">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <div className="w-full md:w-1/3">
+            <DatePicker.RangePicker
+              style={{ width: "100%", height: "40px" }}
+              value={dateRange as any}
+              onChange={handleDateRangeChange}
+              placeholder={["Từ ngày", "Đến ngày"]}
+              format="DD/MM/YYYY"
+              className="border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B5E3C] focus:border-transparent"
+            />
+          </div>
+
+          <div className="w-full md:w-1/3 flex gap-2">
+            <Select
+              style={{ width: "100%", height: "40px" }}
+              value={sortOrder}
+              onChange={handleSortChange}
+              options={[
+                { value: "newest", label: "Mới nhất" },
+                { value: "oldest", label: "Cũ nhất" },
+                { value: "price-high", label: "Giá cao - thấp" },
+                { value: "price-low", label: "Giá thấp - cao" },
+              ]}
+              className="border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8B5E3C] focus:border-transparent"
+            />
+
+            <Button
+              onClick={clearFilters}
+              className="bg-transparent text-gray-700 border border-gray-300 hover:bg-gray-100"
+            >
+              Đặt lại
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-gray-500">
+            Tìm thấy {filteredTransactions.length} kết quả
+          </p>
+          <div className="flex items-center">
+            <FilterOutlined className="mr-2" />
+            <SortAscendingOutlined />
+          </div>
+        </div>
+      </div>
+
+      {/* Transaction list */}
+      <div className="mt-4 space-y-4">
         {currentTransactions.length > 0 ? (
           currentTransactions.map((tx, index) => (
             <div
               key={index}
-              className="flex justify-between items-center bg-gray-100 p-4 rounded-lg cursor-pointer hover:bg-gray-200 transition duration-200"
-              onClick={() => showModal(tx)}
+              className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-all duration-200"
             >
-              <div className="flex items-center space-x-4">
-                {tx.bookingHistoryWorkspaceImages.length > 0 && (
-                  <img
-                    src={tx.bookingHistoryWorkspaceImages[0].imageUrl}
-                    alt="Workspace Image"
-                    className="w-16 h-16 object-cover rounded-lg shadow-md"
-                  />
-                )}
-                <div>
-                  <h3 className="font-semibold">{tx.workspace_Name}</h3>
-                  <p className="text-gray-500 text-sm">
-                    {dayjs(tx.booking_CreatedAt).format("DD/MM/YYYY HH:mm")}
-                  </p>
+              <div
+                className="flex flex-col md:flex-row md:items-center p-4 cursor-pointer"
+                onClick={() => showModal(tx)}
+              >
+                <div className="flex items-center space-x-4 flex-grow mb-4 md:mb-0">
+                  {tx.bookingHistoryWorkspaceImages.length > 0 ? (
+                    <img
+                      src={tx.bookingHistoryWorkspaceImages[0].imageUrl}
+                      alt="Workspace Image"
+                      className="w-20 h-20 object-cover rounded-lg shadow-md"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-8 w-8 text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                        />
+                      </svg>
+                    </div>
+                  )}
+
+                  <div className="flex-grow">
+                    <div className="flex items-center mb-1">
+                      <h3 className="font-semibold text-lg">
+                        {tx.workspace_Name}
+                      </h3>
+                    </div>
+
+                    <div className="text-sm text-gray-500 space-y-1">
+                      <Tooltip title="Ngày đặt chỗ">
+                        <p className="flex items-center gap-1">
+                          <CalendarOutlined />
+                          {dayjs(tx.booking_CreatedAt).format(
+                            "DD/MM/YYYY HH:mm"
+                          )}
+                        </p>
+                      </Tooltip>
+
+                      <p className="flex items-center gap-1">
+                        <span>Phương thức:</span>
+                        <span className="font-medium">
+                          {tx.payment_Method === "WorkHive Wallet"
+                            ? "Ví WorkHive"
+                            : "Chuyển khoản ngân hàng"}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <p className="font-bold">
-                  {new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  }).format(tx.booking_Price)}
-                </p>
-                {tx.booking_Status === "Success" && (
-                  <>
-                    {tx.isReview === 1 ? (
+
+                <div className="flex flex-col md:flex-row items-center md:space-x-4">
+                  <p className="font-bold text-lg mb-4 md:mb-0 text-[#8B5E3C]">
+                    {new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(tx.booking_Price)}
+                  </p>
+
+                  <div
+                    className="flex items-center space-x-2"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {tx.booking_Status === "Success" && (
+                      <>
+                        {tx.isReview === 1 ? (
+                          <Button
+                            className="bg-[#8B5E3C] text-white px-4 py-2 text-sm font-medium rounded-md min-w-[100px] hover:bg-[#7D533A]"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRebook(tx);
+                            }}
+                          >
+                            Đặt lại
+                          </Button>
+                        ) : (
+                          <Button
+                            className="bg-[#8B5E3C] text-white px-4 py-2 text-sm font-medium rounded-md min-w-[100px] hover:bg-[#7D533A]"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              showReviewModal(tx);
+                            }}
+                          >
+                            Đánh giá
+                          </Button>
+                        )}
+
+                        <Dropdown
+                          menu={{
+                            items: [
+                              {
+                                key: "rebook",
+                                label: "Đặt lại",
+                                onClick: (e) => {
+                                  e.domEvent.stopPropagation();
+                                  handleRebook(tx);
+                                },
+                              },
+                              {
+                                key: "contact",
+                                label: "Liên hệ",
+                                onClick: (e) => {
+                                  e.domEvent.stopPropagation();
+                                  handleContact(tx);
+                                },
+                              },
+                              ...(dayjs(tx.booking_StartDate).diff(
+                                dayjs(),
+                                "hour"
+                              ) >= 8
+                                ? [
+                                    {
+                                      key: "cancel",
+                                      label: (
+                                        <span className="text-red-500">
+                                          Hủy giao dịch
+                                        </span>
+                                      ),
+                                      onClick: (e: {
+                                        domEvent: {
+                                          stopPropagation: () => void;
+                                        };
+                                      }) => {
+                                        e.domEvent.stopPropagation();
+                                        handleCancelBookingModal(tx);
+                                      },
+                                    },
+                                  ]
+                                : []),
+                            ],
+                          }}
+                          trigger={["click"]}
+                        >
+                          <Button className="text-black hover:text-white bg-white border border-gray-300">
+                            <DownOutlined />
+                          </Button>
+                        </Dropdown>
+                      </>
+                    )}
+
+                    {tx.booking_Status === "Cancelled" && (
                       <Button
-                        className="text-white px-4 py-2 text-sm font-medium rounded-md min-w-[100px]"
+                        className="bg-[#8B5E3C] text-white hover:bg-[#7D533A]"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleRebook(tx);
@@ -355,98 +637,54 @@ export default function PurchaseHistoryPage() {
                       >
                         Đặt lại
                       </Button>
-                    ) : (
-                      <Button
-                        className="text-white px-4 py-2 text-sm font-medium rounded-md min-w-[100px]"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          showReviewModal(tx);
-                        }}
-                      >
-                        Đánh giá
-                      </Button>
                     )}
-                    <div onClick={(e) => e.stopPropagation()}>
-                      <Dropdown
-                        menu={{
-                          items: [
-                            {
-                              key: "rebook",
-                              label: "Đặt lại",
-                              onClick: (e) => {
-                                e.domEvent.stopPropagation();
-                                handleRebook(tx);
-                              },
-                            },
-                            {
-                              key: "contact",
-                              label: "Liên hệ",
-                              onClick: (e) => {
-                                e.domEvent.stopPropagation();
-                                handleContact(tx);
-                              },
-                            },
-                            ...(dayjs(tx.booking_StartDate).diff(
-                              dayjs(),
-                              "hour"
-                            ) >= 8
-                              ? [
-                                  {
-                                    key: "cancel",
-                                    label: (
-                                      <span className="text-red-500">
-                                        Hủy giao dịch
-                                      </span>
-                                    ),
-                                    onClick: (e: {
-                                      domEvent: { stopPropagation: () => void };
-                                    }) => {
-                                      e.domEvent.stopPropagation();
-                                      handleCancelBookingModal(tx);
-                                    },
-                                  },
-                                ]
-                              : []),
-                          ],
-                        }}
-                        trigger={["click"]}
-                      >
-                        <Button
-                          className="text-black hover:text-white bg-white"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <DownOutlined />
-                        </Button>
-                      </Dropdown>
-                    </div>
-                  </>
-                )}
-                {tx.booking_Status === "Fail" && (
-                  <Button
-                    className="text-white"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      showModal(tx);
-                    }}
-                  >
-                    Xem chi tiết
-                  </Button>
-                )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Booking period and quick actions */}
+              <div className="bg-gray-50 px-4 py-2 border-t flex flex-col md:flex-row justify-between items-center text-sm">
+                <div className="flex items-center space-x-2 mb-2 md:mb-0">
+                  <Clock className="h-4 w-4 text-gray-500" />
+                  <span>Thời gian sử dụng:</span>
+                  <span className="font-medium">
+                    {dayjs(tx.booking_StartDate).format("DD/MM/YYYY HH:mm")}
+                    {" - "}
+                    {dayjs(tx.booking_EndDate).format("DD/MM/YYYY HH:mm")}
+                  </span>
+                </div>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    showModal(tx);
+                  }}
+                  className="text-[#8B5E3C] hover:underline font-medium"
+                >
+                  Xem chi tiết
+                </button>
               </div>
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500">Không có dữ liệu</p>
+          <Empty
+            description={
+              <span className="text-gray-500">Không có giao dịch nào</span>
+            }
+            className="my-8 bg-white p-8 rounded-lg border border-gray-200"
+          />
         )}
       </div>
 
-      <Pagination
-        currentPage={currentPage}
-        totalPages={Math.ceil(
-          filteredTransactions.length / transactionsPerPage
-        )}
-        onPageChange={paginate}
-      />
+      <div className="mt-6">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(
+            filteredTransactions.length / transactionsPerPage
+          )}
+          onPageChange={(pageNumber: number) => setCurrentPage(pageNumber)}
+        />
+      </div>
 
       <TransactionDetailsModal
         isModalOpen={isModalOpen}
@@ -532,10 +770,6 @@ export default function PurchaseHistoryPage() {
               <span className="font-medium">Ví WorkHive</span> trong vòng{" "}
               <span className="font-medium">7 ngày làm việc</span>.
             </li>
-            {/* <li>
-              Thời gian hoàn tiền có thể thay đổi tùy theo quy trình xử lý nhà
-              cung cấp dịch vụ thanh toán.
-            </li> */}
           </ul>
 
           <h4 className="text-md font-medium text-gray-800 mt-4">
