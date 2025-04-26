@@ -26,6 +26,7 @@ import Time24hSelect from "../selection/time-24h-select";
 import { Clock, Clock10, Clock5 } from "lucide-react";
 import { CalendarDays } from "lucide-react";
 import { BASE_URL } from "@/constants/environments";
+import Cookies from "js-cookie";
 
 function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
   const { beverageList, amenityList, total, startTime, endTime } = useSelector(
@@ -37,6 +38,9 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
   const [isTimeListOpen, setIsTimeListOpen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch();
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
 
   useEffect(() => {
     dispatch(
@@ -70,6 +74,7 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token || google_token}`,
             },
             body: JSON.stringify({
               workspaceId: workspace.id,
@@ -78,7 +83,10 @@ function WorkspaceDetailSidebar({ workspace }: { workspace: Workspace }) {
             }),
           }
         );
-        if (!response.ok) {
+        if (response.status === 401) {
+          router.push("/unauthorized");
+          throw new Error("Bạn không được phép truy cập!");
+        } else if (!response.ok) {
           throw new Error("Khoảng thời gian đã được sử dụng");
         }
         const data = await response.json();

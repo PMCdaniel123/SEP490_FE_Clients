@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowDown, DollarSign, CreditCard, InfoIcon } from "lucide-react";
+import {
+  ArrowDown,
+  DollarSign,
+  CreditCard,
+  InfoIcon,
+  Filter,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +15,16 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "react-toastify";
 import { Modal } from "antd";
 import { BASE_URL } from "@/constants/environments";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Pagination from "@/components/pagination/pagination";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 interface WithdrawalRequestProps {
   customerId?: number;
@@ -35,8 +51,19 @@ const WithdrawalRequest = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [withdrawalRequests, setWithdrawalRequests] = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [filteredRequests, setFilteredRequests] = useState<any[]>([]);
+  const [statusFilter, setStatusFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
-  // Removed unused localBankInfo state and its associated useEffect
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [paginatedRequests, setPaginatedRequests] = useState<any[]>([]);
+  const token = typeof window !== "undefined" ? Cookies.get("token") : null;
+  const google_token =
+    typeof window !== "undefined" ? Cookies.get("google_token") : null;
+  const router = useRouter();
 
   useEffect(() => {
     if (!customerId) {
@@ -60,6 +87,7 @@ const WithdrawalRequest = ({
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
           setWithdrawalRequests(sortedRequests);
+          setFilteredRequests(sortedRequests);
         }
       } catch (error) {
         console.error("Error fetching withdrawal requests:", error);
@@ -77,7 +105,25 @@ const WithdrawalRequest = ({
     fetchWithdrawalRequests();
   }, [customerId]);
 
-  // Make fetchWithdrawalRequests available outside the useEffect
+  useEffect(() => {
+    if (statusFilter === "all") {
+      setFilteredRequests(withdrawalRequests);
+    } else {
+      setFilteredRequests(
+        withdrawalRequests.filter((request) => request.status === statusFilter)
+      );
+    }
+    setCurrentPage(1); // Reset to first page when filter changes
+  }, [statusFilter, withdrawalRequests]);
+
+  useEffect(() => {
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    setPaginatedRequests(
+      filteredRequests.slice(indexOfFirstItem, indexOfLastItem)
+    );
+  }, [filteredRequests, currentPage, itemsPerPage]);
+
   const fetchWithdrawalRequests = async () => {
     if (!customerId) return;
 
@@ -96,6 +142,13 @@ const WithdrawalRequest = ({
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         setWithdrawalRequests(sortedRequests);
+        setFilteredRequests(
+          statusFilter === "all"
+            ? sortedRequests
+            : sortedRequests.filter(
+                (request) => request.status === statusFilter
+              )
+        );
       }
     } catch (error) {
       console.error("Error fetching withdrawal requests:", error);
@@ -110,7 +163,7 @@ const WithdrawalRequest = ({
     }
   };
 
-  // Handling request check
+  //  check handling requests within 24 hours
   const hasActiveHandlingRequest = () => {
     if (!withdrawalRequests.length) return false;
     const handlingRequests = withdrawalRequests.filter(
@@ -179,6 +232,7 @@ const WithdrawalRequest = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token || google_token}`,
         },
         body: JSON.stringify({
           title: withdrawTitle,
@@ -187,7 +241,10 @@ const WithdrawalRequest = ({
         }),
       });
 
-      if (!response.ok) {
+      if (response.status === 401) {
+        router.push("/unauthorized");
+        throw new Error("Bạn không được phép truy cập!");
+      } else if (!response.ok) {
         throw new Error("Có lỗi xảy ra khi gửi yêu cầu rút tiền.");
       }
 
@@ -198,10 +255,8 @@ const WithdrawalRequest = ({
         theme: "light",
       });
 
-      // Update withdrawal requests list using our extracted function
       await fetchWithdrawalRequests();
 
-      // Close the modal and trigger callbacks
       setIsWithdrawModalOpen(false);
       onWithdrawalSuccess();
     } catch {
@@ -221,6 +276,10 @@ const WithdrawalRequest = ({
       style: "currency",
       currency: "VND",
     }).format(value);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const formatDate = (dateString: string) => {
@@ -274,57 +333,95 @@ const WithdrawalRequest = ({
               Tạo yêu cầu rút tiền mới
             </Button>
           </div>
-
-          <div className="space-y-3">
-            {withdrawalRequests.map((request) => (
-              <div
-                key={request.id}
-                className="border rounded-lg p-4 hover:shadow-sm transition-shadow"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <h4 className="font-medium">{request.title}</h4>
-                  <Badge
-                    className={`
-                      ${
-                        request.status === "Handling" &&
-                        "bg-yellow-100 text-yellow-800 border-yellow-200"
-                      }
-                      ${
-                        request.status === "Success" &&
-                        "bg-green-100 text-green-800 border-green-200"
-                      }
-                      ${
-                        request.status === "Fail" &&
-                        "bg-red-100 text-red-800 border-red-200"
-                      }
-                    `}
-                  >
-                    {request.status === "Handling"
-                      ? "Đang xử lý"
-                      : request.status === "Success"
-                      ? "Đã hoàn thành"
-                      : request.status === "Fail"
-                      ? "Đã từ chối"
-                      : request.status}
-                  </Badge>
-                </div>
-                <p className="text-sm text-gray-500 mb-2">
-                  {request.description}
-                </p>
-                <div className="text-sm text-gray-500">
-                  Ngày tạo: {formatDate(request.createdAt)}
-                </div>
-                {request.managerResponse &&
-                  request.managerResponse !== "N/A" &&
-                  request.status === "Fail" && (
-                    <div className="mt-2 bg-gray-50 p-2 rounded border border-gray-100">
-                      <p className="text-xs text-gray-400">Phản hồi:</p>
-                      <p className="text-sm">{request.managerResponse}</p>
-                    </div>
-                  )}
-              </div>
-            ))}
+          {/* filter */}
+          <div className="flex justify-between items-center mb-3">
+            <div className="flex items-center gap-2">
+              <Filter size={16} className="text-gray-500" />
+              <span className="text-sm text-gray-600">
+                Lọc theo trạng thái:
+              </span>
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Chọn trạng thái" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tất cả</SelectItem>
+                <SelectItem value="Handling">Đang xử lý</SelectItem>
+                <SelectItem value="Success">Đã hoàn thành</SelectItem>
+                <SelectItem value="Fail">Đã từ chối</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+
+          {filteredRequests.length > 0 ? (
+            <div className="space-y-3">
+              {paginatedRequests.map((request) => (
+                <div
+                  key={request.id}
+                  className="border rounded-lg p-4 hover:shadow-sm transition-shadow"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-medium">{request.title}</h4>
+                    <Badge
+                      className={`
+                        ${
+                          request.status === "Handling" &&
+                          "bg-yellow-100 text-yellow-800 border-yellow-200"
+                        }
+                        ${
+                          request.status === "Success" &&
+                          "bg-green-100 text-green-800 border-green-200"
+                        }
+                        ${
+                          request.status === "Fail" &&
+                          "bg-red-100 text-red-800 border-red-200"
+                        }
+                      `}
+                    >
+                      {request.status === "Handling"
+                        ? "Đang xử lý"
+                        : request.status === "Success"
+                        ? "Đã hoàn thành"
+                        : request.status === "Fail"
+                        ? "Đã từ chối"
+                        : request.status}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-gray-500 mb-2">
+                    {request.description}
+                  </p>
+                  <div className="text-sm text-gray-500">
+                    Ngày tạo: {formatDate(request.createdAt)}
+                  </div>
+                  {request.managerResponse &&
+                    request.managerResponse !== "N/A" &&
+                    request.status === "Fail" && (
+                      <div className="mt-2 bg-gray-50 p-2 rounded border border-gray-100">
+                        <p className="text-xs text-gray-400">Phản hồi:</p>
+                        <p className="text-sm">{request.managerResponse}</p>
+                      </div>
+                    )}
+                </div>
+              ))}
+
+              {/*paginationt */}
+              {filteredRequests.length > itemsPerPage && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={Math.ceil(filteredRequests.length / itemsPerPage)}
+                  onPageChange={handlePageChange}
+                />
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-8 bg-gray-50 rounded-lg border border-gray-100">
+              <p className="text-gray-500">
+                Không tìm thấy yêu cầu rút tiền nào{" "}
+                {statusFilter !== "all" && `với trạng thái đã chọn`}
+              </p>
+            </div>
+          )}
         </div>
       ) : (
         <div className="space-y-6">
@@ -363,19 +460,23 @@ const WithdrawalRequest = ({
             <div className="border-t border-gray-100 mt-6 pt-6">
               <div className="text-sm space-y-3">
                 <h4 className="font-medium">Thông tin tài khoản:</h4>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col gap-2">
                   <div>
                     <p className="text-gray-500">Ngân hàng:</p>
-                    <p className="font-medium">{bankInfo.bankName}</p>
+                    <p className="font-medium break-words">
+                      {bankInfo.bankName}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-500">Số tài khoản:</p>
                     <p className="font-medium">{bankInfo.bankNumber}</p>
                   </div>
-                </div>
-                <div>
-                  <p className="text-gray-500">Chủ tài khoản:</p>
-                  <p className="font-medium">{bankInfo.bankAccountName}</p>
+                  <div>
+                    <p className="text-gray-500">Chủ tài khoản:</p>
+                    <p className="font-medium break-words">
+                      {bankInfo.bankAccountName}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -467,17 +568,23 @@ const WithdrawalRequest = ({
           <div className="border-t border-gray-200 pt-4">
             <p className="text-sm mb-3">Thông tin ngân hàng:</p>
             <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-2 text-sm">
-              <div className="flex justify-between">
+              <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
                 <span className="text-gray-500">Ngân hàng:</span>
-                <span className="font-medium">{bankInfo?.bankName}</span>
+                <span className="font-medium text-right break-words">
+                  {bankInfo?.bankName}
+                </span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
                 <span className="text-gray-500">Số tài khoản:</span>
-                <span className="font-medium">{bankInfo?.bankNumber}</span>
+                <span className="font-medium text-right">
+                  {bankInfo?.bankNumber}
+                </span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
                 <span className="text-gray-500">Chủ tài khoản:</span>
-                <span className="font-medium">{bankInfo?.bankAccountName}</span>
+                <span className="font-medium text-right break-words">
+                  {bankInfo?.bankAccountName}
+                </span>
               </div>
             </div>
           </div>
