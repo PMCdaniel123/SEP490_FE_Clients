@@ -2,22 +2,25 @@ import { Policies } from "@/types";
 
 function PoliciesList({ policies }: { policies: Policies[] }) {
   return (
-    <div>
+    <div className="divide-y divide-gray-200">
       {policies.length > 0 ? (
-        <div className="grid grid-cols-1 gap-2 md:max-w-4xl text-fourth font-semibold items-center">
-          {policies.map((policy, index) => (
-            <div
-              className="flex items-center gap-4 mb-2 col-span-1"
-              key={index}
-            >
-              <span className="text-sm md:text-base">
-                {index + 1}. {policy.policyName}
-              </span>
-            </div>
-          ))}
-        </div>
+        policies.map((policy, index) => (
+          <div
+            key={index}
+            className="flex items-start gap-3 py-4 px-2 hover:bg-gray-50 transition-all duration-200"
+          >
+            <span className="text-sm font-semibold text-primary">
+              {index + 1}.
+            </span>
+            <p className="text-gray-800 text-sm md:text-base leading-relaxed">
+              {policy.policyName}
+            </p>
+          </div>
+        ))
       ) : (
-        <p className="text-sm text-sixth italic flex items-center">Trống</p>
+        <div className="p-6 text-gray-400 italic text-center">
+          Chưa có quy định nào được thêm.
+        </div>
       )}
     </div>
   );
