@@ -243,7 +243,7 @@ function Header() {
         {menuItems.map((item) => (
           <li
             key={item.path}
-            className="relative group pl-2 flex items-center justify-center font-semibold cursor-pointer"
+            className="relative group pl-3 flex items-center justify-center font-semibold cursor-pointer"
           >
             <Link
               href={item.path}
@@ -266,7 +266,7 @@ function Header() {
           </li>
         ))}
 
-        <li className="relative group pl-2 flex items-center justify-center font-semibold cursor-pointer">
+        <li className="relative group pl-3 flex items-center justify-center font-semibold cursor-pointer">
           <p
             className={`font-medium text-sm transition-colors duration-200 py-3 px-3 rounded ${
               pathname?.includes("workspace")
