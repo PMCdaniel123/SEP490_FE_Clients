@@ -578,7 +578,9 @@ export default function PurchaseHistoryPage() {
                           >
                             Đặt lại
                           </Button>
-                        ) : (
+                        ) : dayjs().unix() -
+                            dayjs(tx.booking_StartDate).unix() >=
+                          0 ? (
                           <Button
                             className="bg-[#8B5E3C] text-white px-4 py-2 text-sm font-medium rounded-md min-w-[100px] hover:bg-[#7D533A]"
                             onClick={(e) => {
@@ -587,6 +589,16 @@ export default function PurchaseHistoryPage() {
                             }}
                           >
                             Đánh giá
+                          </Button>
+                        ) : (
+                          <Button
+                            className="bg-[#8B5E3C] text-white px-4 py-2 text-sm font-medium rounded-md min-w-[100px] hover:bg-[#7D533A]"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              showModal(tx);
+                            }}
+                          >
+                            Chi tiết
                           </Button>
                         )}
 
@@ -670,7 +682,7 @@ export default function PurchaseHistoryPage() {
                   </span>
                 </div>
 
-                <button
+                {/* <button
                   onClick={(e) => {
                     e.stopPropagation();
                     showModal(tx);
@@ -678,7 +690,7 @@ export default function PurchaseHistoryPage() {
                   className="text-[#8B5E3C] hover:underline font-medium"
                 >
                   Xem chi tiết
-                </button>
+                </button> */}
               </div>
             </div>
           ))
