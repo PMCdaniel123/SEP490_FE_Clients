@@ -95,7 +95,6 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
     const response = await fetch(`${BASE_URL}/images/upload`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token || google_token}`,
       },
       body: formData,
