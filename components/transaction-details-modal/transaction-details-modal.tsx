@@ -142,19 +142,21 @@ const TransactionDetailsModal: React.FC<TransactionDetailsModalProps> = ({
                   <Tag className="mr-2 h-4 w-4 text-gray-500" />
                   <span className="text-gray-500 mr-2">Mã khuyến mãi:</span>
                   <span className="font-medium">
-                    {selectedTransaction.promotion_Code === "No Promotion"
-                      ? "Không"
-                      : selectedTransaction.promotion_Code}
+                    {selectedTransaction.promotion_Code
+                      ? selectedTransaction.promotion_Code
+                      : "Không có"}
                   </span>
                 </p>
 
-                <p className="flex items-center">
-                  <Percent className="mr-2 h-4 w-4 text-gray-500" />
-                  <span className="text-gray-500 mr-2">Giảm giá:</span>
-                  <span className="font-medium">
-                    {selectedTransaction.discount}%
-                  </span>
-                </p>
+                {selectedTransaction.promotion_Code && (
+                  <p className="flex items-center">
+                    <Percent className="mr-2 h-4 w-4 text-gray-500" />
+                    <span className="text-gray-500 mr-2">Giảm giá:</span>
+                    <span className="font-medium">
+                      {selectedTransaction.discount}%
+                    </span>
+                  </p>
+                )}
               </div>
             </div>
 
@@ -213,7 +215,7 @@ const TransactionDetailsModal: React.FC<TransactionDetailsModalProps> = ({
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-4 text-sm">
-                  <p className="flex items-center">
+                  <p className="flex items-center col-span-1 md:col-span-2">
                     <MapPin className="mr-2 h-4 w-4 text-gray-500" />
                     <span className="text-gray-500 mr-1">Địa chỉ:</span>
                     <span className="font-medium">
