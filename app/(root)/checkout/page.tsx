@@ -577,6 +577,7 @@ export default function Checkout() {
               <Button
                 className="flex-1 text-white"
                 onClick={async () => {
+                  setIsProcessing(true);
                   setIsConfirmationOpen(false);
                   await proceedCheckout();
                 }}
