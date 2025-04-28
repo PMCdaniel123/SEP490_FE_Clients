@@ -61,6 +61,14 @@ export function PasswordForm({
       }
 
       const result = await response.json();
+
+      if (
+        result.notification === "Không tìm thấy người dùng" ||
+        result.token === ""
+      ) {
+        throw new Error("Sai tài khoản hoặc mật khẩu! Vui lòng thử lại.");
+      }
+
       const token = result.token;
 
       Cookies.set("token", token, { expires: 3 });
@@ -112,8 +120,10 @@ export function PasswordForm({
         });
         return;
       }
-    } catch {
-      toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Có lỗi xảy ra.";
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 1500,
         hideProgressBar: false,
