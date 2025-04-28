@@ -79,7 +79,7 @@ function ResetPasswordForm({
         body: JSON.stringify(data),
       });
       if (!response.ok) {
-        toast.error("Token không chính xác hoặc đã hết hạn.", {
+        toast.error("OTP không chính xác hoặc đã hết hạn.", {
           position: "top-right",
           autoClose: 1500,
           hideProgressBar: false,
