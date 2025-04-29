@@ -63,7 +63,7 @@ function AmenitiesList({ ownerId }: { ownerId: string }) {
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 3,
+          slidesToShow: Math.min(3, amenityList.length),
           slidesToScroll: 1,
           infinite: true,
           dots: true,
@@ -90,7 +90,7 @@ function AmenitiesList({ ownerId }: { ownerId: string }) {
 
   return (
     <div className="mx-auto w-full relative pb-8 px-6 md:px-0">
-      {amenityList.length > 0 ? (
+      {amenityList.length > 2 ? (
         <Slider {...settings} className="high-rating-slider">
           {amenityList.map((amenity) => (
             <div key={amenity.id} className="px-2">
@@ -98,6 +98,15 @@ function AmenitiesList({ ownerId }: { ownerId: string }) {
             </div>
           ))}
         </Slider>
+      ) : amenityList.length > 1 ? (
+        <div className="px-2 grid grid-cols-3">
+          <AmenitiesItem {...amenityList[0]} />
+          <AmenitiesItem {...amenityList[1]} />
+        </div>
+      ) : amenityList.length > 0 ? (
+        <div className="px-2 grid grid-cols-3">
+          <AmenitiesItem {...amenityList[0]} />
+        </div>
       ) : (
         <p className="text-sm text-sixth italic flex items-center">Trống</p>
       )}

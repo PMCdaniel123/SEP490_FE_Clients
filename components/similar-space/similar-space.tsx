@@ -128,7 +128,7 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
         Các không gian tương tự
       </h2>
 
-      <div className="px-6">
+      <div className="px-6 md:px-0">
         <Slider {...settings} className="similar-space-slider">
           {workspaces.map((workspace) => (
             <div key={workspace.id} className="p-2">
