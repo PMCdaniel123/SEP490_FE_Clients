@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# 🐝 WorkHive - Coworking Space Booking Platform
 
-First, run the development server:
+WorkHive is a centralized platform that helps customers easily discover, book, and experience coworking spaces while offering space owners robust tools to manage their businesses. From real-time reservations to digital wallets, WorkHive aims to streamline the entire coworking experience.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Key Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### For Customers
+- 🔍 **Search & Filter:** Find workspaces based on location, price, amenities, type, and availability.
+- 🗓️ **Flexible Booking:** Book private desks, offices, meeting rooms, and conference rooms by hour/day/month.
+- 💬 **Review System:** Leave feedback and view reviews from other users.
+- 📢 **Issue Reporting:** Report low-quality or inaccurate listings.
+- 💳 **Digital Wallet:** Deposit and pay through the WorkHive Wallet 
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### For Owners
+- 🏢 **Workspace Management:** Create and manage listings, update workspace info, and control availability.
+- 💬 **Feedback Response:** View and respond to user feedback.
+- 📊 **Booking & Revenue Tracking:** View history, performance, and financial metrics.
+- 🍹 **Amenity & Beverage Management:** Add and manage additional services.
+- 🎁 **Promotions:** Set custom promotions for specific workspaces.
+- 💰 **Wallet & Withdrawal:** Manage earnings and request withdrawals.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### For Admins, Staff & Managers
+- 🛡️ **Owner Verification:** Review and approve owner submissions and licenses.
+- 👥 **User Management:** Ban/unban users and manage platform activity.
+- 📉 **Revenue & Usage Reports:** Analyze platform performance and trends.
+- 🔐 **Account Creation:** Create staff and employee accounts.
 
-## Learn More
+## 🧩 Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+| Layer        | Tech                         |
+|--------------|------------------------------|
+| Frontend     | React (Next.js), Tailwind CSS |
+| Mobile App   | React Native (Expo)           |
+| Backend      | .NET 8 (Web API)              |
+| Database     | SQL SeverSever                |
+| Deployment   | Vercel (Frontend)             |
+| Storage      | Cloudinary                    |
+| Payments     | PayOS                         |
+| Maps         | Google Maps API               |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📸 Screenshots
 
-## Deploy on Vercel
+- Booking page  
+- Owner dashboard  
+- Mobile view  
+*(Insert images or GIF demos here)*
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧪 Testing Strategy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Unit testing for critical services
+- Manual testing via test case reports
+- Role-based test flows: Customer, Owner, Admin
+
+## 📌 Planned Features
+
+- Multi-language support 🌐  
+- Multi-branch management for Owners 🏬  
+- Booking time conflict detection ⏰  
+- Revenue dashboard for Admins 📈  
+- Enhanced reporting & analytics 📊  
+
+## 📄 License
+
+This project is for academic purposes only.
+
+---
+
+Built with 💻 by Team GSP25SE13 – Ho Chi Minh City University of Technology and Education.
