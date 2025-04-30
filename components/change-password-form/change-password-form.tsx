@@ -73,7 +73,7 @@ const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
       });
 
       if (!response.ok) {
-        throw new Error("Cập nhật mật khẩu không thành công.");
+        throw new Error("Sai mật khẩu, vui lòng kiểm tra lại thông tin!.");
       }
 
       toast.success("Cập nhật mật khẩu thành công!", {

@@ -103,11 +103,21 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
     if (response.status === 401) {
       router.push("/unauthorized");
       throw new Error("Bạn không được phép truy cập!");
-    } else if (!response.ok) {
-      throw new Error("Có lỗi xảy ra khi tải lên ảnh.");
     }
 
     const result = await response.json();
+
+    if (!response.ok) {
+      // Check for validation errors
+      if (result.ValidationErrors && result.ValidationErrors.length > 0) {
+        const errorMessage =
+          result.ValidationErrors[0].errorMessage ||
+          "Có lỗi xảy ra khi tải lên ảnh.";
+        throw new Error(errorMessage);
+      }
+      throw new Error("Hình ảnh không đúng định dạng!");
+    }
+
     return result.data[0];
   };
 
