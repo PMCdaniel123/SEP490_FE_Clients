@@ -11,6 +11,7 @@ import {
   Spin,
   Divider,
   Timeline,
+  Select,
 } from "antd";
 import {
   PlusOutlined,
@@ -31,6 +32,7 @@ import { useRouter } from "next/navigation";
 
 const { TextArea } = Input;
 const { Title, Text, Paragraph } = Typography;
+const { Option } = Select;
 
 interface Message {
   sender: string;
@@ -448,16 +450,25 @@ const UserFeedbackDetail: React.FC<UserFeedbackDetailProps> = ({
       >
         <Form.Item
           name="title"
-          label={<Text strong>Tiêu đề</Text>}
-          rules={[{ required: true, message: "Vui lòng nhập tiêu đề!" }]}
+          label={<Text strong>Vấn đề bạn đang gặp phải</Text>}
+          rules={[{ required: true, message: "Vui lòng chọn loại phản hồi!" }]}
         >
-          <Input
+          <Select
             size="large"
-            placeholder="Nhập tiêu đề phản hồi..."
+            placeholder="Chọn loại phản hồi..."
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="rounded-md"
-          />
+            onChange={(value) => setTitle(value)}
+            className="rounded-md w-full"
+          >
+            <Option value="Vấn đề kỹ thuật">Vấn đề kỹ thuật</Option>
+            <Option value="Chất lượng dịch vụ">Chất lượng dịch vụ</Option>
+            <Option value="Không gian và tiện ích">
+              Không gian và tiện ích
+            </Option>
+            <Option value="Đồ ăn và thức uống">Đồ ăn và thức uống</Option>
+            <Option value="Vệ sinh và dọn dẹp">Vệ sinh và dọn dẹp</Option>
+            <Option value="Khác">Khác</Option>
+          </Select>
         </Form.Item>
 
         <Form.Item
