@@ -41,6 +41,12 @@ export function SignUpForm({
   const [isSignInModalOpen, setSignInModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Function to handle phone input and only allow numbers
+  const handlePhoneInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    e.target.value = value.replace(/\D/g, "");
+  };
+
   const handleSignUp = async (data: FormInputs) => {
     setIsLoading(true);
     try {
@@ -207,6 +213,7 @@ export function SignUpForm({
               id="phone"
               type="tel"
               placeholder="Nhập số điện thoại"
+              onInput={handlePhoneInput}
               {...register("phone")}
             />
             {errors.phone && (

@@ -3,7 +3,10 @@ import { z } from "zod";
 export const signupSchema = z.object({
   name: z.string().min(1, "Họ và tên là bắt buộc"),
   email: z.string().email("Email không hợp lệ"),
-  phone: z.string().min(10, "Số điện thoại phải có ít nhất 10 số"),
+  phone: z
+    .string()
+    .min(1, "Số điện thoại là bắt buộc")
+    .regex(/^\d+$/, "Số điện thoại chỉ được chứa các chữ số"),
   password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
   confirmPassword: z.string().min(1, "Vui lòng xác nhận mật khẩu"),
   sex: z.string(),
@@ -15,7 +18,10 @@ export const signupSchema = z.object({
 export const signupOwnerSchema = z
   .object({
     email: z.string().email("Địa chỉ email không hợp lệ"),
-    phone: z.string().min(10, "Số điện thoại phải có ít nhất 10 ký tự"),
+    phone: z
+      .string()
+      .min(1, "Số điện thoại là bắt buộc")
+      .regex(/^\d+$/, "Số điện thoại chỉ được chứa các chữ số"),
     password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
     confirmPassword: z
       .string()
@@ -27,7 +33,10 @@ export const signupOwnerSchema = z
   });
 
 export const phoneSchema = z.object({
-  phone: z.string().min(10, "Số điện thoại phải có ít nhất 10 ký tự"),
+  phone: z
+    .string()
+    .min(1, "Số điện thoại là bắt buộc")
+    .regex(/^\d+$/, "Số điện thoại chỉ được chứa các chữ số"),
 });
 
 export const emailSchema = z.object({
