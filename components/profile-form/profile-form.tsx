@@ -406,8 +406,8 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({
                     age--;
                   }
 
-                  if (age < 12 || age > 100) {
-                    return "Tuổi phải từ 12 đến 100";
+                  if (age < 12) {
+                    return "Tuổi phải từ 12 trở lên";
                   }
 
                   return true;

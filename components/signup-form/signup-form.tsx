@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signupSchema } from "@/libs/zod/schema";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SignInButton } from "@/components/signin-form/signin-button";
 import axios from "axios";
@@ -38,7 +37,6 @@ export function SignUpForm({
   });
 
   const { role } = props;
-  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const [isSignInModalOpen, setSignInModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -119,7 +117,6 @@ export function SignUpForm({
 
         dispatch(login(customerData));
         handleCloseSignUpForm();
-        window.location.reload();
       } catch {
         toast.error("Có lỗi xảy ra khi giải mã token.", {
           position: "top-right",
@@ -130,7 +127,7 @@ export function SignUpForm({
         return;
       }
 
-      router.push("/");
+      window.location.reload();
     } catch {
       toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
         position: "top-right",
