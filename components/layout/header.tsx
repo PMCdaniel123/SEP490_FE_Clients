@@ -537,7 +537,7 @@ function Header() {
 
       <SignInButton
         open={isSignInModalOpen}
-        onOpenChange={setSignInModalOpen}
+        onOpenChange={() => setSignInModalOpen(false)}
         onCloseSignUpForm={handleCloseSignUpForm}
       />
     </header>
