@@ -53,7 +53,8 @@ WorkHive is a centralized platform that helps customers easily discover, book, a
 
 - Mobile view  
 
-![6561470507108 (1)](https://github.com/user-attachments/assets/d4625773-748d-4552-be21-8066eaf76ec5)
+![6561470507108 (2)](https://github.com/user-attachments/assets/d9e99fa2-0c74-4b11-b1fe-302de7ad52b1)
+
 
 ## 🧪 Testing Strategy
 
