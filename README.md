@@ -7,7 +7,7 @@ WorkHive is a centralized platform that helps customers easily discover, book, a
 
 ### For Customers
 - 🔍 **Search & Filter:** Find workspaces based on location, price, amenities, type, and availability.
-- 🗓️ **Flexible Booking:** Book private desks, offices, meeting rooms, and conference rooms by hour/day/month.
+- 🗓️ **Flexible Booking:** Book private desks, offices, meeting rooms, and conference rooms by hour or day.
 - 💬 **Review System:** Leave feedback and view reviews from other users.
 - 📢 **Issue Reporting:** Report low-quality or inaccurate listings.
 - 💳 **Digital Wallet:** Deposit and pay through the WorkHive Wallet 
@@ -42,10 +42,18 @@ WorkHive is a centralized platform that helps customers easily discover, book, a
 
 ## 📸 Screenshots
 
-- Booking page  
-- Owner dashboard  
+- Booking page
+
+![2025-05-02 12-32-29 (2)](https://github.com/user-attachments/assets/2712bb0a-cfbb-4154-96a0-ab52116cd865)
+
+
+- Owner dashboard
+
+![2025-05-02 12-39-36](https://github.com/user-attachments/assets/1b3601c9-fc4e-4090-8cbe-65da1f27cb4e)
+
 - Mobile view  
-*(Insert images or GIF demos here)*
+
+![6561470507108 (1)](https://github.com/user-attachments/assets/d4625773-748d-4552-be21-8066eaf76ec5)
 
 ## 🧪 Testing Strategy
 
