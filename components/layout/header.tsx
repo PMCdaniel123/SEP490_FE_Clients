@@ -200,7 +200,8 @@ function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [openAccount]);
 
-  const handleCloseSignUpForm = () => {
+  const handleCloseSignUpForm = (e?: React.MouseEvent) => {
+    e?.preventDefault();
     setSignUpModalOpen(false);
   };
 
