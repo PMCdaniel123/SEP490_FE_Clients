@@ -78,6 +78,7 @@ export default function BecomeOwnerForm({ onClose }: { onClose: () => void }) {
       <form
         className="flex flex-col gap-6 w-full"
         onSubmit={handleSubmit(handleSignUp)}
+        autoComplete="off"
       >
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-xl font-bold text-primary">

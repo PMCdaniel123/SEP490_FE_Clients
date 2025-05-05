@@ -11,7 +11,7 @@ import { z } from "zod";
 import { useState } from "react";
 import { SignInButton } from "@/components/signin-form/signin-button";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
@@ -36,7 +36,6 @@ export function SignUpForm({
     resolver: zodResolver(signupSchema),
   });
 
-  const { role } = props;
   const dispatch = useDispatch<AppDispatch>();
   const [isSignInModalOpen, setSignInModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -154,18 +153,14 @@ export function SignUpForm({
 
   return (
     <>
-      <ToastContainer />
       <form
         className={cn("flex flex-col gap-6 w-full", className)}
         {...props}
         onSubmit={handleSubmit(handleSignUp)}
+        autoComplete="off"
       >
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-xl font-bold text-primary">
-            {role === "owner"
-              ? "Đăng ký tài khoản doanh nghiệp"
-              : "Tạo tài khoản"}
-          </h1>
+          <h1 className="text-xl font-bold text-primary">Tạo tài khoản</h1>
         </div>
         <div className="grid gap-4">
           <div className="grid gap-1">
