@@ -144,7 +144,7 @@ export default function BecomeOwnerForm({ onClose }: { onClose: () => void }) {
               htmlFor="confirmPassword"
               className="text-fourth font-semibold text-xs"
             >
-              Mật khẩu
+              Xác nhận mật khẩu
             </Label>
             <Input
               className="py-6 px-4 rounded-md bg-white shadow-sm"

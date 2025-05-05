@@ -123,7 +123,7 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 mb-6">
       <h2 className="text-xl font-bold text-primary">
         Các không gian tương tự
       </h2>
@@ -178,14 +178,14 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
                       {workspace.shortTermPrice !== undefined &&
                         workspace.shortTermPrice > 0 && (
                           <div className="flex justify-between items-center">
-                            <div className="flex items-center text-gray-700 text-sm">
+                            <div className="flex items-center text-gray-700 text-xs">
                               <Clock
                                 className="mr-1 text-orange-500"
                                 size={16}
                               />
                               <span>Theo giờ</span>
                             </div>
-                            <span className="font-semibold text-gray-900 text-sm">
+                            <span className="font-semibold text-gray-900 text-xs">
                               {new Intl.NumberFormat("vi-VN", {
                                 style: "currency",
                                 currency: "VND",
@@ -197,14 +197,14 @@ export default function SimilarSpace({ category }: SimilarSpaceProps) {
                       {workspace.longTermPrice !== undefined &&
                         workspace.longTermPrice > 0 && (
                           <div className="flex justify-between items-center">
-                            <div className="flex items-center text-gray-700 text-sm">
+                            <div className="flex items-center text-gray-700 text-xs">
                               <Calendar
                                 className="mr-1 text-purple-500"
                                 size={16}
                               />
                               <span>Theo ngày</span>
                             </div>
-                            <span className="font-semibold text-gray-900 text-sm">
+                            <span className="font-semibold text-gray-900 text-xs">
                               {new Intl.NumberFormat("vi-VN", {
                                 style: "currency",
                                 currency: "VND",
