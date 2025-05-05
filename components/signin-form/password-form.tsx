@@ -141,7 +141,6 @@ export function PasswordForm({
         className
       )}
       onSubmit={handleSubmit(handleSignIn)}
-      autoComplete="off"
     >
       <div className="flex items-center w-full mb-2">
         <div>

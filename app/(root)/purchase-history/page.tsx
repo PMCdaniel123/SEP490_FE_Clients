@@ -21,7 +21,7 @@ import {
   LoadingOutlined,
   SortAscendingOutlined,
 } from "@ant-design/icons";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { BASE_URL } from "@/constants/environments";
@@ -386,7 +386,6 @@ export default function PurchaseHistoryPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-20">
-      <ToastContainer />
       <h2 className="text-2xl font-bold text-[#8B5E3C] mb-6">
         Lịch sử thanh toán
       </h2>

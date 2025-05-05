@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores";
@@ -600,8 +600,6 @@ export default function Checkout() {
           </DialogContent>
         </Dialog>
       </div>
-
-      <ToastContainer />
     </div>
   );
 }

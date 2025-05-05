@@ -51,7 +51,6 @@ export function PhoneForm({
         className
       )}
       onSubmit={handleSubmit(handleContinue)}
-      autoComplete="off"
     >
       <div className="flex w-full justify-center items-center">
         <div className="flex flex-col w-full border rounded-md h-full justify-center px-6 py-3 relative">
