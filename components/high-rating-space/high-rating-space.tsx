@@ -82,7 +82,7 @@ export default function HighRatingSpace() {
     infinite: true,
     speed: 500,
     slidesToShow: 4,
-    slidesToScroll: 1,
+    slidesToScroll: 2,
     autoplay: true,
     autoplaySpeed: 5000,
     pauseOnHover: true,
