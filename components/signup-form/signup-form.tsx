@@ -157,7 +157,6 @@ export function SignUpForm({
         className={cn("flex flex-col gap-6 w-full", className)}
         {...props}
         onSubmit={handleSubmit(handleSignUp)}
-        autoComplete="off"
       >
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-xl font-bold text-primary">Tạo tài khoản</h1>

@@ -51,7 +51,6 @@ export function EmailForm({
         className
       )}
       onSubmit={handleSubmit(handleContinue)}
-      autoComplete="off"
     >
       <div className="flex flex-col w-full border rounded-md h-full justify-center px-6 py-3 relative">
         <p className="text-xs font-medium text-sixth absolute -top-2 left-5 bg-white px-4">
