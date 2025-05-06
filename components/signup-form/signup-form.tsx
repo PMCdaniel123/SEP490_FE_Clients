@@ -46,6 +46,41 @@ export function SignUpForm({
     e.target.value = value.replace(/\D/g, "");
   };
 
+  const handleLogin = async (token: string) => {
+    try {
+      const decodeResponse = await fetch(`${BASE_URL}/users/decodejwttoken`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          token: token,
+        }),
+      });
+      const decoded = await decodeResponse.json();
+      const customerData = {
+        id: decoded.claims.sub,
+        fullName: decoded.claims.name,
+        email: decoded.claims.email,
+        phone: decoded.claims.Phone,
+        roleId: decoded.claims.RoleId,
+        avatar: decoded.avatarUrl,
+      };
+
+      dispatch(login(customerData));
+      handleCloseSignUpForm();
+    } catch {
+      toast.error("Có lỗi xảy ra khi giải mã token.", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        theme: "light",
+      });
+      return;
+    }
+  };
+
   const handleSignUp = async (data: FormInputs) => {
     setIsLoading(true);
     try {
@@ -69,8 +104,8 @@ export function SignUpForm({
       toast.success("Đăng ký thành công!", {
         position: "top-right",
         autoClose: 1500,
-        hideProgressBar: true,
-        theme: "dark",
+        hideProgressBar: false,
+        theme: "light",
       });
 
       if (response.status !== 201) {
@@ -86,47 +121,48 @@ export function SignUpForm({
       const token = response.data.token;
 
       Cookies.set("token", token, { expires: 3 });
+      await handleLogin(token);
 
-      try {
-        const decodeResponse = await fetch(`${BASE_URL}/users/decodejwttoken`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            token: token,
-          }),
-        });
-        const decoded = await decodeResponse.json();
-        const customerData = {
-          id: decoded.claims.sub,
-          fullName: decoded.claims.name,
-          email: decoded.claims.email,
-          phone: decoded.claims.Phone,
-          roleId: decoded.claims.RoleId,
-          avatar: decoded.avatarUrl,
-        };
-        toast.success("Đăng nhập thành công!", {
-          position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          theme: "light",
-        });
+      // try {
+      //   const decodeResponse = await fetch(`${BASE_URL}/users/decodejwttoken`, {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //     body: JSON.stringify({
+      //       token: token,
+      //     }),
+      //   });
+      //   const decoded = await decodeResponse.json();
+      //   const customerData = {
+      //     id: decoded.claims.sub,
+      //     fullName: decoded.claims.name,
+      //     email: decoded.claims.email,
+      //     phone: decoded.claims.Phone,
+      //     roleId: decoded.claims.RoleId,
+      //     avatar: decoded.avatarUrl,
+      //   };
+      //   toast.success("Đăng nhập thành công!", {
+      //     position: "top-right",
+      //     autoClose: 1500,
+      //     hideProgressBar: false,
+      //     theme: "light",
+      //   });
 
-        dispatch(login(customerData));
-        handleCloseSignUpForm();
-      } catch {
-        toast.error("Có lỗi xảy ra khi giải mã token.", {
-          position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          theme: "light",
-        });
-        return;
-      }
+      //   dispatch(login(customerData));
+      //   handleCloseSignUpForm();
+      // } catch {
+      //   toast.error("Có lỗi xảy ra khi giải mã token.", {
+      //     position: "top-right",
+      //     autoClose: 1500,
+      //     hideProgressBar: false,
+      //     theme: "light",
+      //   });
+      //   return;
+      // }
 
-      window.location.reload();
+      // window.location.reload();
     } catch {
       toast.error("Có lỗi xảy ra. Vui lòng thử lại sau.", {
         position: "top-right",
