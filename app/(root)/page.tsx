@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import AnimateInView from "@/components/animate-ui/animate-section";
+import { FloatButton } from "antd";
 
 function HomePage() {
   const [km, setKm] = useState("5");
@@ -272,6 +273,7 @@ function HomePage() {
           </div>
         </div>
       </AnimatedGradientSection>
+      <FloatButton.BackTop />
     </div>
   );
 }

@@ -19,7 +19,7 @@ import {
 import Loader from "@/components/loader/Loader";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Modal } from "antd";
+import { FloatButton, Modal } from "antd";
 import "react-datepicker/dist/react-datepicker.css";
 import GoogleMap from "@/components/google-map/google-map";
 import DetailsList from "@/components/details-list/details-list";
@@ -434,7 +434,7 @@ const WorkspaceDetail = () => {
           <WorkspaceDetailSidebar workspace={workspace} />
         </div>
       </div>
-
+      <FloatButton.BackTop />
       <Modal
         title={null}
         open={isShareModalOpen}
