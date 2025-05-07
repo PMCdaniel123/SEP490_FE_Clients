@@ -271,6 +271,17 @@ export default function Checkout() {
           "Ví của bạn hiện đang bị khóa do thực hiện yêu cầu rút tiền"
         );
       }
+
+      if (
+        data &&
+        data.notification === "Số dư trong ví không đủ để thực hiện booking" &&
+        data.isLock === 0
+      ) {
+        throw new Error(
+          "Số dư trong ví không đủ để thực hiện đặt chỗ, vui lòng kiểm tra lại!"
+        );
+      }
+
       if (paymentMethod === "2") {
         toast.success("Thanh toán thành công bằng WorkHive Wallet!", {
           position: "top-right",
