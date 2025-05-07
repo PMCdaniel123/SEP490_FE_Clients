@@ -58,7 +58,7 @@ function Contact() {
                 Chúng tôi phục vụ 24/7.
               </p>
               <p className="text-gray-600 text-sm font-semibold">
-                Phone: 0867-435-157
+                Số điện thoại: 0867-435-157
               </p>
               <hr className="my-4" />
               <div className="flex items-center gap-4">
@@ -187,7 +187,7 @@ function Contact() {
           <SectionTitle>Bản Đồ</SectionTitle>
           <div className="w-full h-96 pt-5">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.502144056634!2d106.7218573153343!3d10.773374992324!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529292b7e4b3b%3A0x2b1b1b1b1b1b1b1b!2s114%20Nguy%E1%BB%85n%20C%C6%A1%20Th%E1%BA%A1ch%2C%20Qu%E1%BA%ADn%202%2C%20TP.HCM!5e0!3m2!1sen!2s!4v1616581234567!5m2!1sen!2s"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.6099415310764!2d106.8073027103983!3d10.841132857952651!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752731176b07b1%3A0xb752b24b379bae5e!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBGUFQgVFAuIEhDTQ!5e0!3m2!1svi!2s!4v1746595633780!5m2!1svi!2s"
               width="100%"
               height="100%"
               allowFullScreen

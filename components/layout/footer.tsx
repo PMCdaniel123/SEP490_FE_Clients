@@ -105,8 +105,8 @@ function Footer() {
                 <strong>Email:</strong> workhive.vn.official@gmail.com
               </li>
               <li>
-                <strong>Địa chỉ:</strong> 114 Nguyễn Cơ Thạch, An Lợi Đông, Thủ
-                Đức, Hồ Chí Minh, Việt Nam
+                <strong>Địa chỉ:</strong> 7 Đ. D1, Long Thạnh Mỹ, Thủ Đức, Hồ
+                Chí Minh 700000, Việt Nam
               </li>
             </ul>
             <div className="flex gap-3 mt-4">
