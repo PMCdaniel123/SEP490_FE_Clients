@@ -11,6 +11,8 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { LoadingOutlined } from "@ant-design/icons";
 import { BASE_URL } from "@/constants/environments";
+import { Checkbox } from "../ui/checkbox";
+import { useRouter } from "next/navigation";
 
 export type FormInputs = z.infer<typeof signupOwnerSchema>;
 
@@ -24,6 +26,8 @@ export default function BecomeOwnerForm({ onClose }: { onClose: () => void }) {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const router = useRouter();
 
   const handleSignUp = async (data: FormInputs) => {
     setIsLoading(true);
@@ -159,11 +163,31 @@ export default function BecomeOwnerForm({ onClose }: { onClose: () => void }) {
               </p>
             )}
           </div>
+          <div className="flex items-center gap-2">
+            <Checkbox
+              checked={checked}
+              onCheckedChange={(checked) => setChecked(!!checked)}
+              className="text-white"
+            />
+            <label
+              htmlFor="accept"
+              className="ml-2 text-sm font-medium text-gray-900"
+            >
+              Tôi đã đọc và đồng ý với{" "}
+              <span
+                className="text-primary underline hover:text-secondary cursor-pointer"
+                onClick={() => router.push("/policies")}
+              >
+                các điều khoản của WorkHive
+              </span>
+              .
+            </label>
+          </div>
           <div className="text-center w-full">
             <Button
               type="submit"
-              className="text-white py-6 font-semibold w-3/5"
-              disabled={isLoading}
+              className="text-white py-6 font-semibold w-3/5 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isLoading || !checked}
             >
               {isLoading ? (
                 <LoadingOutlined style={{ color: "white" }} />
