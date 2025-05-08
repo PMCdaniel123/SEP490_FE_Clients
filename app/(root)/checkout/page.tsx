@@ -175,7 +175,6 @@ export default function Checkout() {
   };
 
   const checkOverlapTime = async () => {
-    setIsProcessing(true);
     const response = await fetch(
       `${BASE_URL}/users/booking/checktimesoverlap`,
       {
@@ -212,7 +211,7 @@ export default function Checkout() {
         "Thời gian đặt phải trong cùng một ngày và trong giờ mở cửa của workspace"
       );
     }
-    setIsProcessing(false);
+
     return true;
   };
 
@@ -261,7 +260,6 @@ export default function Checkout() {
 
       const data = await response.json();
 
-      // Check for wallet lock error in the successful response
       if (
         data &&
         data.notification === "Ví của bạn đã bị khóa" &&
@@ -283,16 +281,27 @@ export default function Checkout() {
       }
 
       if (paymentMethod === "2") {
-        toast.success("Thanh toán thành công bằng WorkHive Wallet!", {
-          position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          theme: "light",
-        });
-        const event = new CustomEvent(notificationEvents.BOOKING_SUCCESS);
-        window.dispatchEvent(event);
-        router.push("/success");
-        dispatch(clearCart());
+        if (
+          !data.notification ||
+          data.notification ===
+            "Đặt chỗ thành công, vui lòng kiểm tra email để xem thông tin chi tiết"
+        ) {
+          toast.success(
+            data.notification || "Thanh toán thành công bằng WorkHive Wallet!",
+            {
+              position: "top-right",
+              autoClose: 1500,
+              hideProgressBar: false,
+              theme: "light",
+            }
+          );
+          const event = new CustomEvent(notificationEvents.BOOKING_SUCCESS);
+          window.dispatchEvent(event);
+          router.push("/success");
+          dispatch(clearCart());
+        } else {
+          throw new Error(data.notification);
+        }
       } else {
         const bookingData = {
           bookingId: data.bookingId,
